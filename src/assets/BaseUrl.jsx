@@ -1,1 +1,1 @@
-export const BaseUrl='https://thiqa.greelogix.com';
+export const  BaseUrl='https://thiqa.greelogix.com';
