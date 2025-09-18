@@ -1,0 +1,182 @@
+// Search Bar Component Styles (Matching the provided image)
+.search-bar-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.search-bar {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    background: white;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    direction: rtl;
+
+    &:hover {
+        border-color: #C0C0C0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:focus-within {
+        border-color: #21395D;
+        box-shadow: 0 0 0 3px rgba(33, 57, 93, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #A0A0A0;
+        font-size: 16px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        z-index: 2;
+
+        &:hover {
+            color: #21395D;
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    .search-input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 16px;
+        color: #21395D;
+        padding: 0 40px 0 16px;
+        direction: rtl;
+        text-align: right;
+        font-family: 'FF Shamel Family Sans One Book', sans-serif;
+
+        &::placeholder {
+            color: #A0A0A0;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        &:focus {
+            &::placeholder {
+                color: #C0C0C0;
+            }
+        }
+
+        &:disabled {
+            background: #F8F9FA;
+            color: #6C757D;
+            cursor: not-allowed;
+
+            &::placeholder {
+                color: #ADB5BD;
+            }
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .search-bar-container {
+        max-width: 100%;
+    }
+
+    .search-bar {
+        height: 44px;
+        padding: 0 12px;
+
+        .search-icon {
+            left: 12px;
+            font-size: 14px;
+
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        .search-input {
+            padding: 0 32px 0 12px;
+            font-size: 14px;
+
+            &::placeholder {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+// Dark mode support (optional)
+@media (prefers-color-scheme: dark) {
+    .search-bar {
+        background: #2D3748;
+        border-color: #4A5568;
+
+        &:hover {
+            border-color: #718096;
+        }
+
+        &:focus-within {
+            border-color: #63B3ED;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        .search-icon {
+            color: #A0AEC0;
+
+            &:hover {
+                color: #63B3ED;
+            }
+        }
+
+        .search-input {
+            color: #E2E8F0;
+
+            &::placeholder {
+                color: #A0AEC0;
+            }
+
+            &:focus {
+                &::placeholder {
+                    color: #718096;
+                }
+            }
+
+            &:disabled {
+                background: #1A202C;
+                color: #718096;
+
+                &::placeholder {
+                    color: #4A5568;
+                }
+            }
+        }
+    }
+}
+
+// Animation for focus state
+@keyframes searchFocus {
+    0% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    100% {
+        box-shadow: 0 0 0 3px rgba(33, 57, 93, 0.1);
+    }
+}
+
+.search-bar:focus-within {
+    animation: searchFocus 0.3s ease-out;
+}
+

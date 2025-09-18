@@ -1,0 +1,41 @@
+{
+  "profile": {
+    "likedServices": {
+      "noLikedServices": "لا توجد خدمات مفضلة بعد",
+      "noLikedServicesDescription": "ابدأ بإعجاب الخدمات لرؤيتها هنا",
+      "browseServices": "تصفح الخدمات",
+      "viewService": "عرض الخدمة",
+      "noDescription": "لا يوجد وصف متاح",
+      "generalService": "خدمة عامة"
+    },
+    "favorites": {
+      "noFavorites": "لا توجد منتجات مفضلة بعد",
+      "noFavoritesDescription": "ابدأ بإضافة المنتجات إلى مفضلتك لرؤيتها هنا",
+      "browseProducts": "تصفح المنتجات"
+    },
+    "orders": {
+      "noOrders": "لا توجد طلبات بعد",
+      "noOrdersDescription": "ستظهر سجل طلباتك هنا بمجرد إجراء أول عملية شراء",
+      "startShopping": "ابدأ التسوق"
+    },
+    "addresses": {
+      "noAddresses": "لا توجد عناوين بعد",
+      "noAddressesDescription": "أضف عنوانك الأول للبدء"
+    },
+    "notifications": {
+      "markAllAsRead": "تعيين الكل كمقروء",
+      "refresh": "تحديث",
+      "unreadNotifications": "إشعارات غير مقروءة",
+      "noNotifications": "لا توجد إشعارات بعد",
+      "noNotificationsDescription": "ليس لديك أي إشعارات في الوقت الحالي"
+    },
+    "sidebar": {
+      "likedServices": "الخدمات المفضلة",
+      "favorites": "المفضلة",
+      "myOrders": "طلباتي",
+      "myAddresses": "عنواني",
+      "notifications": "الاشعارات",
+      "personalProfile": "الملف الشخصي"
+    }
+  }
+}

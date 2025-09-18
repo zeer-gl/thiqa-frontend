@@ -1,0 +1,256 @@
+// Delete Confirmation Modal Styles
+.delete-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.delete-confirmation-modal {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 400px;
+  width: 90%;
+  margin: 20px;
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.modal-content {
+  padding: 0;
+}
+
+.modal-header {
+  padding: 24px 24px 16px 24px;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.warning-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  
+  svg {
+    animation: pulse 2s infinite;
+  }
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.modal-body {
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.confirmation-text {
+  font-size: 16px;
+  color: #475569;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+  
+  strong {
+    color: #1e293b;
+    font-weight: 600;
+  }
+}
+
+.confirmation-subtext {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-style: italic;
+}
+
+.modal-footer {
+  padding: 16px 24px 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  justify-content: center;
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.btn-cancel {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  
+  &:hover {
+    background: #f1f5f9;
+    color: #475569;
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
+  
+  &:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px 0 rgba(239, 68, 68, 0.3);
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .delete-confirmation-modal {
+    margin: 16px;
+    max-width: none;
+  }
+  
+  .modal-header {
+    padding: 20px 20px 12px 20px;
+  }
+  
+  .modal-body {
+    padding: 16px 20px;
+  }
+  
+  .modal-footer {
+    padding: 12px 20px 20px 20px;
+    flex-direction: column;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+  
+  .modal-title {
+    font-size: 18px;
+  }
+  
+  .confirmation-text {
+    font-size: 15px;
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .modal-footer {
+    flex-direction: row-reverse;
+  }
+  
+  .btn {
+    flex-direction: row-reverse;
+  }
+}
+
+// Dark mode support (if needed)
+@media (prefers-color-scheme: dark) {
+  .delete-confirmation-modal {
+    background: #1e293b;
+    color: #f1f5f9;
+  }
+  
+  .modal-header {
+    border-bottom-color: #334155;
+  }
+  
+  .modal-title {
+    color: #f1f5f9;
+  }
+  
+  .confirmation-text {
+    color: #cbd5e1;
+    
+    strong {
+      color: #f1f5f9;
+    }
+  }
+  
+  .confirmation-subtext {
+    color: #94a3b8;
+  }
+  
+  .btn-cancel {
+    background: #334155;
+    color: #cbd5e1;
+    border-color: #475569;
+    
+    &:hover {
+      background: #475569;
+      color: #f1f5f9;
+    }
+  }
+}

@@ -1,0 +1,273 @@
+// FAQ Component Styles
+.faq-container {
+    padding: 40px 0;
+
+    // Header bar style (reuse profile header look)
+    .faq-header-bar {
+        background-color: #001C410D;
+        padding: 15px 0;
+        margin-bottom: 30px;
+        border-radius: 8px;
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+
+            @media (max-width: 576px) {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #21395D; // matches $primary-color
+            margin: 0;
+
+            .home-icon {
+                color: #6c757d; // matches $gray-text-color
+            }
+        }
+    }
+
+    // Like button container
+    .faq-like-container {
+        display: flex;
+        justify-content: flex-end;
+        margin: 12px 0 20px 0;
+
+        .faq-like-btn {
+            background: transparent;
+            border: none;
+            color: #6B7280;
+            padding: 0;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: color 0.2s ease, transform 0.1s ease;
+
+            &:hover {
+                color: #EF4444;
+                transform: scale(1.05);
+            }
+
+            &.liked {
+                color: #EF4444;
+            }
+        }
+    }
+
+    .faq-header {
+        margin-bottom: 4rem;
+
+        .faq-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    .faq-list {
+        .faq-item {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+
+
+            &:hover {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .faq-question {
+                padding: 20px 24px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                font-weight: 500;
+                font-size: 16px;
+                color: #2c3e50;
+                background: white;
+                transition: all 0.3s ease;
+                border-bottom: 1px solid transparent;
+
+                &:hover {
+                    background: #f8f9fa;
+                    color: #1a252f;
+                }
+
+                &.active {
+                    color: #1a252f;
+                }
+
+                .faq-toggle {
+                    font-size: 20px;
+                    font-weight: 300;
+                    color: #6c757d;
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s ease;
+
+                    .faq-question.active & {
+                        color: #2c3e50;
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+
+            .faq-answer {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease, padding 0.3s ease;
+
+
+                &.active {
+                    max-height: 200px;
+                    padding: 20px 24px;
+                }
+
+                p {
+                    margin: 0;
+                    color: #495057;
+                    line-height: 1.6;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+
+// RTL Support
+[dir="rtl"] .faq-container {
+    .faq-header-bar {
+        .header-title {
+            justify-content: flex-end;
+        }
+    }
+    .faq-list {
+        .faq-item {
+            .faq-question {
+                text-align: right;
+                flex-direction: row-reverse;
+
+                .faq-toggle {
+                    order: -1;
+                    margin-left: 0;
+                    margin-right: 12px;
+                }
+            }
+
+            .faq-answer {
+                p {
+                    text-align: right;
+                }
+            }
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .faq-container {
+        padding: 40px 0;
+        .faq-header-bar {
+            .header-title {
+                font-size: 16px;
+                text-align: center;
+            }
+        }
+        .faq-like-container {
+            justify-content: center;
+        }
+
+        .faq-header {
+            margin-bottom: 2rem;
+
+            .faq-icon {
+                svg {
+                    width: 60px;
+                    height: 60px;
+                }
+            }
+        }
+
+        .faq-list {
+            .faq-item {
+                margin-bottom: 12px;
+                border-radius: 8px;
+
+                .faq-question {
+                    padding: 16px 20px;
+                    font-size: 15px;
+
+                    .faq-toggle {
+                        font-size: 18px;
+                    }
+                }
+
+                .faq-answer {
+                    &.active {
+                        padding: 16px 20px;
+                    }
+
+                    p {
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .faq-container {
+        padding: 30px 0;
+
+        .faq-list {
+            .faq-item {
+                .faq-question {
+                    padding: 14px 16px;
+                    font-size: 14px;
+                }
+
+                .faq-answer {
+                    &.active {
+                        padding: 14px 16px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Animation for smooth accordion
+@keyframes expandAccordion {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+
+    to {
+        max-height: 200px;
+        opacity: 1;
+    }
+}
+
+.faq-answer.active {
+    animation: expandAccordion 0.3s ease forwards;
+}

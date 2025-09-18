@@ -1,0 +1,417 @@
+@import "../utilities";
+
+.payment-form {
+
+  .payment-form-container {
+    width: 100%;
+  }
+
+  // Header section with logo and payment indicator
+  .payment-header {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-bottom: 30px;
+    gap: 20px;
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: $lightCream;
+      padding: 16px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+
+      &:hover {
+        background: #E5E7EB;
+        border-color: #9CA3AF;
+        transform: translateY(-1px);
+      }
+
+      &.selected {
+        .brand-dot {
+          background: #374151;
+          border: none;
+        }
+      }
+
+      .brand-name {
+        font-size: 18px;
+        font-weight: 500;
+        color: #374151;
+        text-transform: lowercase;
+        letter-spacing: -0.5px;
+      }
+
+      .brand-dot {
+        width: 8px;
+        height: 8px;
+        background: #F3F4F6;
+        border: 2px solid #374151;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+    }
+
+    .payment-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background:$lightCream;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+
+      &:hover {
+        background: #E5E7EB;
+        border-color: #9CA3AF;
+        transform: translateY(-1px);
+      }
+
+      &.selected {
+        .indicator-dot {
+          background: #374151;
+          border: none;
+        }
+      }
+
+      .card-icon {
+        width: 24px;
+        height: 24px;
+        background: #E5E7EB;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6B7280;
+        font-size: 12px;
+      }
+
+      .indicator-dot {
+        width: 8px;
+        height: 8px;
+        background: #F3F4F6;
+        border: 2px solid #374151;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+    }
+  }
+
+  // Main title
+  .payment-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1F2937;
+    margin: 20px 0;
+    line-height: 1.2;
+    padding-bottom: 20px;
+  }
+
+  // Selection indicator
+  .selection-indicator {
+    text-align: center;
+    margin-bottom: 30px;
+
+    .selection-text {
+      display: inline-block;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3B82F6;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+  }
+
+  // Success message
+  .success-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #D1FAE5;
+    color: #065F46;
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid #A7F3D0;
+    font-weight: 500;
+
+    i {
+      font-size: 20px;
+      color: #059669;
+    }
+
+    span {
+      font-size: 16px;
+    }
+  }
+
+  // Form fields
+  .payment-form-fields {
+    // Bootstrap grid system is used for layout
+    // Custom spacing and styling for form elements
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .input-with-icon {
+      position: relative;
+
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9CA3AF;
+        font-size: 16px;
+        z-index: 1;
+      }
+
+      .form-input {
+        padding-left: 48px;
+      }
+    }
+
+    .form-input {
+
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: transparent;
+      transition: all 0.2s ease;
+      color: #374151;
+
+      &:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      &::placeholder {
+        color: #9CA3AF;
+      }
+
+      &.is-invalid {
+        border-color: #dc3545;
+      }
+    }
+
+    .scan-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #6B7280;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 10px;
+
+      .scan-icon {
+        font-size: 18px;
+        color: #9CA3AF;
+      }
+    }
+
+    .custom-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      margin-top: 8px;
+
+      input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .checkbox-box {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        background: transparent;
+        border: 2px solid #21395D33;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease-in-out;
+        position: relative;
+      }
+
+      .checkbox-text {
+        font-size: 14px;
+        color: #374151;
+        line-height: 1.4;
+      }
+
+      &:hover .checkbox-box {
+        border-color: #94A3B8;
+      }
+
+      input[type="checkbox"]:focus-visible + .checkbox-box {
+        outline: 3px solid rgba(59, 130, 246, 0.35);
+        outline-offset: 2px;
+      }
+
+      input[type="checkbox"]:checked + .checkbox-box {
+        background: #FFFFFF; // no filled background on check
+        border-color: #111827;
+      }
+
+      input[type="checkbox"]:checked + .checkbox-box::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 12px;
+        border: solid #111827;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        top: 2px;
+        left: 6px;
+      }
+    }
+
+    .confirm-payment-btn {
+      width: 100%;
+      padding: 16px 24px;
+      background: #1F2937;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #111827;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+  }
+
+  // RTL Support
+  &.rtl {
+    .payment-header {
+      flex-direction: row-reverse;
+
+      .logo-section {
+        flex-direction: row-reverse;
+
+        &.selected::after {
+          right: auto;
+          left: -2px;
+        }
+      }
+
+      .payment-indicator {
+        flex-direction: row-reverse;
+
+        &.selected::after {
+          right: auto;
+          left: -2px;
+        }
+      }
+    }
+
+    .payment-form-fields {
+      .input-with-icon {
+        .input-icon {
+          left: auto;
+          right: 16px;
+        }
+
+        .form-input {
+          padding-left: 16px;
+          padding-right: 48px;
+        }
+      }
+
+      .scan-label {
+        flex-direction: row-reverse;
+      }
+
+      .checkbox-label {
+        flex-direction: row-reverse;
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    padding: 20px 10px;
+
+    .payment-form-container {
+      padding: 24px;
+    }
+
+    .payment-header {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .payment-title {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    &.rtl {
+      .payment-header {
+        flex-direction: column;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .payment-form-container {
+      padding: 20px;
+    }
+
+    .payment-title {
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+
+    .payment-form-fields {
+      .form-input {
+        padding: 12px 14px;
+        font-size: 13px;
+      }
+
+      .confirm-payment-btn {
+        padding: 14px 20px;
+        font-size: 15px;
+      }
+    }
+  }
+}

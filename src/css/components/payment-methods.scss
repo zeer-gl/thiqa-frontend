@@ -1,0 +1,360 @@
+@import "../utilities";
+
+.payment-methods-container {
+  padding: 2rem 0;
+
+  .container-fluid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .payment-title {
+      color: #21395D;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .selected-plan-info {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      border: 2px solid #21395D;
+
+      .plan-name {
+        color: #21395D;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .plan-price {
+        font-size: 1.2rem;
+        color: #28a745;
+        font-weight: 700;
+
+        .price-amount {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+
+  .payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .payment-method-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-color: #21395D;
+    }
+
+    &.selected {
+      border-color: #21395D;
+      box-shadow: 0 2px 8px rgba(33, 57, 93, 0.2);
+    }
+  }
+
+  .payment-method-content {
+    padding: 1rem;
+    position: relative;
+    min-height: 80px;
+  }
+
+  .payment-method-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .radio-button {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    flex-shrink: 0;
+
+    .radio-inner {
+      width: 8px;
+      height: 8px;
+      background-color: transparent;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    &.selected {
+      border-color: #21395D;
+
+      .radio-inner {
+        background-color: #21395D;
+      }
+    }
+  }
+
+  .payment-method-image {
+    flex-shrink: 0;
+    width: 50px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border-radius: 4px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .payment-method-info {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    .payment-method-name {
+      color: #333;
+      font-size: 1rem;
+      font-weight: 500;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .service-charge {
+      color: #666;
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .embedded-badge {
+      position: static;
+      align-self: flex-end;
+      margin-top: 0.2rem;
+
+      .badge-text {
+        background-color: #28a745;
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 500;
+        line-height: 1.2;
+        display: inline-block;
+        min-height: 1.2rem;
+      }
+    }
+  }
+
+  .payment-actions {
+    margin-top: 2rem;
+    text-align: center;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+
+    .btn {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      color: white;
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      width: 100%;
+
+      &:hover:not(:disabled) {
+        background-color: #5a6268;
+        border-color: #545b62;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background-color: #6c757d;
+        border-color: #6c757d;
+      }
+
+      &:not(:disabled) {
+        background-color: #21395D;
+        border-color: #21395D;
+
+        &:hover {
+          background-color: #1a2f4a;
+          border-color: #1a2f4a;
+          box-shadow: 0 2px 8px rgba(33, 57, 93, 0.3);
+        }
+      }
+
+      i {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+
+  .empty-payment-methods {
+    padding: 3rem 1rem;
+  }
+
+  .error-recovery {
+    .alert {
+      border-radius: 8px;
+      border: 1px solid #f5c6cb;
+      background-color: #f8d7da;
+      
+      .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+// RTL support for Arabic
+[dir="rtl"] .payment-methods-container {
+  .payment-method-header {
+    flex-direction: row-reverse;
+  }
+
+  .payment-method-info {
+    .embedded-badge {
+      align-self: flex-start;
+    }
+  }
+
+  .btn {
+    i {
+      transform: scaleX(-1);
+    }
+  }
+}
+
+// LTR support for English
+[dir="ltr"] .payment-methods-container {
+  .payment-method-header {
+    flex-direction: row;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .payment-methods-container {
+    padding: 1rem 0;
+
+    .payment-header {
+      .payment-title {
+        font-size: 1.5rem;
+      }
+
+      .selected-plan-info {
+        padding: 1rem;
+
+        .plan-name {
+          font-size: 1.2rem;
+        }
+
+        .plan-price {
+          font-size: 1rem;
+
+          .price-amount {
+            font-size: 1.2rem;
+          }
+        }
+      }
+    }
+
+    .payment-methods-grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .payment-method-content {
+      padding: 0.8rem;
+      min-height: 70px;
+    }
+
+    .payment-method-header {
+      gap: 0.5rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .payment-method-image {
+      width: 45px;
+      height: 28px;
+    }
+
+    .payment-method-info {
+      gap: 0.25rem;
+
+      .embedded-badge {
+        position: static;
+        align-self: flex-end;
+        margin-top: 0.15rem;
+
+        .badge-text {
+          font-size: 0.65rem;
+          padding: 0.2rem 0.4rem;
+          line-height: 1.1;
+          min-height: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+// Animation for card selection
+.payment-method-card {
+  &.selected {
+    animation: selectPulse 0.3s ease-in-out;
+  }
+}
+
+@keyframes selectPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

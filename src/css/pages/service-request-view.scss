@@ -1,0 +1,199 @@
+@import '../utilities';
+@import '../components/service-project-card';
+
+.service-request-view {
+  padding: 2rem 0;
+  min-height: 80vh;
+  background-color: #EEE7DB4F;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  // Basic Services Section
+  .basic-services-section {
+    margin-bottom: 3rem;
+
+    .service-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+
+      .heart-icon {
+        width: 24px;
+        height: 24px;
+        color: #21395D;
+        margin-top: 0.5rem;
+        opacity: 0.7;
+        font-weight: 300;
+        font-style: normal;
+      }
+
+      .service-title {
+        flex: 1;
+
+        h2 {
+          font-size: 28px;
+          font-weight: 600;
+          color: #21395D;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 16px;
+          color: #525252;
+          line-height: 1.5;
+          margin: 0;
+        }
+      }
+    }
+
+    .service-tabs {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .service-tab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        background-color: $cream;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 100px;
+
+        img {
+          width: 24px;
+          height: 24px;
+          filter: brightness(0) saturate(100%) invert(27%) sepia(154%) saturate(2832%) hue-rotate(182deg) brightness(50%) contrast(106%);
+        }
+
+        span {
+          font-size: 14px;
+          font-weight: 500;
+          color: #21395D;
+        }
+
+        &.active {
+          background-color: $navy !important;
+
+          img {
+            filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+          }
+
+          span {
+            color: white;
+          }
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(33, 57, 93, 0.15);
+        }
+      }
+    }
+  }
+
+  // Projects Section
+  .projects-section {
+    // Styles for the projects section container
+    // Individual project card styles are now in service-project-card.scss
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .service-request-view {
+    padding: 1rem 0;
+
+    .basic-services-section {
+      .service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+
+        .heart-icon {
+          margin-top: 0;
+        }
+      }
+
+      .service-tabs {
+        justify-content: center;
+        gap: 0.5rem;
+
+        .service-tab {
+          min-width: 80px;
+          padding: 0.75rem 1rem;
+
+          span {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    .projects-section {
+      .project-card {
+        padding: 1rem;
+
+        .project-info {
+          flex-direction: column;
+          gap: 1rem;
+
+          .project-status {
+            align-self: flex-end;
+          }
+        }
+
+        .project-actions {
+          justify-content: flex-start;
+        }
+
+        .accordion-content {
+          .offers-list {
+            .offer-item {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 1rem;
+
+              .offer-price {
+                width: 100%;
+                justify-content: space-between;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .service-request-view {
+    .basic-services-section {
+      .service-tabs {
+        .service-tab {
+          min-width: 70px;
+          padding: 0.5rem 0.75rem;
+
+          img {
+            width: 20px;
+            height: 20px;
+          }
+
+          span {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+} 

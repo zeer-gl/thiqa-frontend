@@ -1,0 +1,49 @@
+.payment-success-page {
+  min-height: 100vh;
+  background: #F9F7F2;
+  padding: 60px 16px;
+}
+
+.success-card {
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.success-card .title {
+  color: #21395D;
+}
+
+.success-card .subtitle {
+  color: #8B8B8B;
+  font-weight: 500;
+}
+
+.pattern-wrap img {
+  width: 140px;
+}
+
+.dots span {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #E6DFD4;
+  margin: 0 8px;
+}
+
+.home-btn {
+  background-color: #21395D !important;
+  color: #fff !important;
+  border-radius: 12px;
+  padding: 12px 28px;
+  min-width: 260px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+

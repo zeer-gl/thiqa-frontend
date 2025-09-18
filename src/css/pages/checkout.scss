@@ -1,0 +1,593 @@
+@import "../utilities";
+
+.payment-page {
+    background-color: #FAF8F4;
+    overflow-x: hidden;
+    width: 100%;
+    
+    .breadcrumb-container {
+        margin-bottom: 2rem;
+        
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            
+            .breadcrumb-item {
+                display: flex;
+                align-items: center;
+                
+                .breadcrumb-text {
+                    font-size: $font-size-small;
+                    color: $gray-text-color;
+                    text-decoration: none;
+                    transition: color 0.2s ease;
+                    
+                    &.active {
+                        color: #1F2937;
+                        border-bottom: 2px solid #3B82F6;
+                        padding-bottom: 2px;
+                    }
+                }
+            }
+            
+            .breadcrumb-separator {
+                .arrow {
+                    color: $light-gray-text-color;
+                    font-size: $font-size-medium;
+                    font-weight: 300;
+                }
+            }
+        }
+    }
+    
+    .shipping-address-form {
+        background: $white-color;
+        border-radius: $border-radius-large;
+        // padding: 2rem;
+        // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        
+        .form-title {
+            font-size: $font-size-xxl;
+            font-weight: $font-weight-semibold;
+            color: $secondary-color;
+            margin-bottom: 34px !important;
+        }
+        
+        .shipping-form {
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-control {
+                border: 1px solid $light-border-color;
+                border-radius: $border-radius-medium;
+                padding: $padding-small;
+                font-size: $font-size-small;
+                // color: #0F172A;
+                background-color: $white-color;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                
+                &::placeholder {
+                    color: $light-gray-text-color;
+                }
+                
+                &:focus {
+                    outline: none !important;
+                    border: none !important;
+                }
+            }
+            
+            select.form-control {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+                background-position: right 12px center;
+                background-repeat: no-repeat;
+                background-size: 16px;
+                padding-right: 40px;
+                appearance: none;
+            }
+        }
+    }
+    
+    .payment-form {
+
+        .payment-methods {
+            .payment-method-option {
+                border: 1px solid $border-color;
+                border-radius: $border-radius-medium;
+                padding: $padding-small;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+               
+                
+                .form-check-input {
+                    margin-right: 0.75rem;
+                }
+                
+                .form-check-label {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    width: 100%;
+                    cursor: pointer;
+                    margin: 0;
+                    
+                    .method-text {
+                        font-size: $font-size-medium;
+                        font-weight: $font-weight-medium;
+                        color: $secondary-color;
+                        margin-right: 10px !important;
+                    }
+                    
+                    .method-logo {
+                        height: 24px;
+                        width: auto;
+                    }
+                }
+            }
+
+            .payment-method-option-two {
+                border: 1px solid $border-color;
+                border-radius: $border-radius-medium;
+                padding: $padding-small;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content:end !important;
+               
+                
+                .form-check-input {
+                    margin-right: 0.75rem;
+                }
+                
+                .form-check-label {
+                    display: flex;
+                    align-items: center;
+                    justify-content: end !important;
+                    width: 100%;
+                    cursor: pointer;
+                    margin: 0;
+                    
+                    .method-text {
+                        font-size: $font-size-medium;
+                        font-weight: $font-weight-medium;
+                        color: $secondary-color;
+                        margin-right: 10px !important;
+                    }
+                    
+                    .method-logo {
+                        height: 24px;
+                        width: auto;
+                        margin-right: 10px !important;
+                    }
+                }
+            }
+        }
+        
+        .bank-card-details {
+            .form-title {
+                font-size: $font-size-xl;
+                font-weight: $font-weight-semibold;
+                color: $secondary-color;
+                margin-bottom: 1.5rem;
+            }
+            
+            .card-form {
+                .form-group {
+                    margin-bottom: 1rem;
+                }
+                
+                .form-control {
+                    border: 1px solid $light-border-color;
+                    border-radius: $border-radius-medium;
+                    padding: $padding-small;
+                    font-size: $font-size-small;
+                    color: $secondary-color;
+                    background-color: transparent;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+         
+                    
+                    &::placeholder {
+                        color: #9CA3AF;
+                    }
+                }
+            }
+        }
+    }
+    
+    .order-summary-card {
+        .order-details-title {
+            font-size: $font-size-xl;
+            font-weight: $font-weight-normal;
+            color: $secondary-color;
+            line-height: $line-height-medium;
+            letter-spacing: 0%;
+            margin-bottom: 24px !important;
+        }
+
+        .subtotal-price {
+            font-size: $font-size-medium;
+            font-weight: $font-weight-normal;
+            color: $secondary-color;
+            line-height: $line-height-medium;
+            letter-spacing: 0%;
+        }
+
+        .subtotal-title {
+            font-size: $font-size-medium;
+            font-weight: $font-weight-normal;
+            color: $secondary-color;
+            line-height: $line-height-medium;
+            letter-spacing: 0%;
+        }
+
+        .total-title {
+            font-size: $font-size-xl;
+            font-weight: $font-weight-normal;
+            color: $secondary-color;
+            line-height: $line-height-xl;
+            letter-spacing: 0%;
+        }
+
+        .total-price {
+            font-size: $font-size-xl;
+            font-weight: $font-weight-medium;
+            color: $secondary-color;
+            line-height: $line-height-xl;
+            letter-spacing: 0%;
+        }
+        
+        .pay-now-button {
+            background-color: $primary-color;
+            border-radius: $border-radius-medium;
+            padding: $padding-medium;
+            font-size: $font-size-medium;
+            font-weight: $font-weight-semibold;
+            color: $white-color;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+        
+        .promo-code-section {
+            input {
+                width: 155px;
+                height: 32px;
+                border: 1px solid #CBD5E1;
+                border-radius: 4px;
+            }
+        }
+    }
+}
+
+// Payment Success Modal Styles
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.payment-success-modal {
+    background: white;
+    border-radius: 4px;
+    padding: 32px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    
+    .success-header {
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+        
+        .success-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #0F172A;
+            margin-bottom: 10px !important;
+            font-weight: 400;
+        }
+        
+        .success-message {
+            font-size: 16px;
+            color: #525252;
+            line-height: 24px;
+            
+            .email-highlight {
+                color: #525252;
+                font-weight: 400;
+                font-size: 16px;
+                text-align: center;
+            }
+        }
+    }
+    
+    .payment-summary {
+
+        .summary-total {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0 !important;
+
+            .summary-label {
+                font-size: 14px;
+                color: #525252;
+                line-height: 22px;
+                font-weight: 400;
+            }
+
+            .summary-value {
+                font-size: 32px;
+                color: #171717;
+                line-height: 40px;
+                font-weight: 400;
+            }
+            
+        }
+
+        .summary-total {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0 !important;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0px !important;
+
+             
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: #525252;
+            line-height: 22px;
+            font-weight: 400;
+        }
+        
+        .summary-value {
+            font-size: 16px;
+            color: #171717;
+            line-height: 24px;
+            font-weight: 400;
+        }
+            
+        }
+     
+    }
+    
+    .order-details {
+        margin-bottom: 16px !important;
+        .order-title {
+            font-size: 18px;
+            line-height: 26px;
+            font-weight: 400;
+            color: #171717;
+            margin-bottom: 16px !important;
+           
+        }
+        
+        .order-item {
+            .product-info {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                
+                .product-image {
+                    width: 90px;
+                    height: 96px;
+                    object-fit: cover;
+                }
+                
+                .product-details {
+                    flex: 1;
+                    
+                    .product-name {
+                        font-size: 18px;
+                        line-height: 26px;
+                        font-weight: 400;
+                        color: #0F172A;
+                        margin-bottom: 4px !important;
+                    }
+                    
+                    .product-price {
+                        font-size: 18px;
+                        line-height: 26px;
+                        font-weight: 600;
+                        color: black;
+
+                        span {
+                            font-size: 18px;
+                            line-height: 26px;
+                            font-weight: 400;
+                            color: #0F172A;
+                            margin-left: 10px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    .financial-breakdown {
+        border-bottom: 1px solid #E5E7EB;
+        padding-bottom: 1rem;
+        
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px !important;
+            
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+        
+        .breakdown-label {
+            font-size: 18px;
+            line-height: 26px;
+            font-weight: 400;
+            color: #475569;
+        }
+
+        .breakdown-value {
+            font-size: 18px;
+            line-height: 26px;
+            font-weight: 400;
+            color: #475569;
+        }
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        
+        .download-btn {
+            flex: 1;
+        }
+        
+        .home-btn {
+            flex: 1;
+            background: white;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            
+            &:hover {
+                background: #F9FAFB;
+                border-color: #9CA3AF;
+            }
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 991.98px) {
+    .payment-page {
+        .order-summary-card {
+            position: static;
+            margin-bottom: 2rem;
+        }
+        
+        .shipping-address-form {
+            margin-bottom: 2rem;
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .payment-page {
+        padding: 1rem 0;
+        
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .shipping-address-form {
+            padding: 1.5rem;
+            
+            .form-title {
+                font-size: 20px;
+                margin-bottom: 1rem;
+            }
+            
+            .shipping-form {
+                .form-control {
+                    padding: 10px 12px;
+                    font-size: 14px;
+                }
+            }
+        }
+        
+        .order-summary-card {
+            padding: 0 15px;
+            
+            .pay-now-button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    .payment-page {
+        .shipping-address-form {
+            padding: 1rem;
+            
+            .form-title {
+                font-size: 18px;
+            }
+        }
+    }
+    
+    .payment-success-modal {
+        padding: 1.5rem;
+        margin: 0.5rem;
+        
+        .success-header {
+            .success-icon {
+                width: 60px;
+                height: 60px;
+                
+                i {
+                    font-size: 1.5rem;
+                }
+            }
+            
+            .success-title {
+                font-size: 1.25rem;
+            }
+            
+            .success-message {
+                font-size: 0.8rem;
+            }
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+    }
+}

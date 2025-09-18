@@ -1,0 +1,182 @@
+import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
+import "../css/components/service-card.scss";
+import SearchIcon from '@mui/icons-material/Search';
+import { FaHeart, FaRegHeart, FaChevronDown, FaChevronUp } from "react-icons/fa"; // Solid and Regular heart
+import ContactCustomerForm from './ContactCustomerForm';
+
+const ServiceCard = ({ 
+    title = "Project Price requests", 
+    subtitle = "Application customer project price requests",
+    searchPlaceholder = "Search"
+}) => {
+    const { t } = useTranslation();
+    const [liked, setLiked] = useState(false);
+    const [selectedFilter, setSelectedFilter] = useState('all');
+    const [expandedCards, setExpandedCards] = useState({});
+    const [showContactForm, setShowContactForm] = useState(false);
+    const [selectedProject, setSelectedProject] = useState(null);
+
+    // Sample data for projects - keeping your exact design
+    const projects = [
+        {
+            id: 1,
+            clientName: "Saad Al-Obaidi",
+            projectName: "Mila Construction Project",
+            status: "open",
+            date: "12.08.2024",
+            description: "Villa construction project",
+            clientImage: "/public/images/home/customer-profile.png"
+        },
+        {
+            id: 2,
+            clientName: "Ahmed Hassan",
+            projectName: "Office Building Project",
+            status: "inProgress",
+            date: "15.08.2024",
+            description: "Commercial office building construction",
+            clientImage: "/public/images/home/customer-profile.png"
+        },
+        {
+            id: 3,
+            clientName: "Fatima Al-Rashid",
+            projectName: "Residential Complex",
+            status: "open",
+            date: "18.08.2024",
+            description: "Multi-story residential complex",
+            clientImage: "/public/images/home/customer-profile.png"
+        }
+    ];
+
+    const toggleLike = () => {
+        setLiked(!liked);
+    };
+
+    const handleFilterClick = (filter) => {
+        setSelectedFilter(filter);
+    };
+
+    const toggleExpansion = (cardId) => {
+        setExpandedCards(prev => ({
+            ...prev,
+            [cardId]: !prev[cardId]
+        }));
+    };
+
+    const handleContactCustomer = (project) => {
+        setSelectedProject(project);
+        setShowContactForm(true);
+    };
+
+    const handleBackToServiceCard = () => {
+        setShowContactForm(false);
+        setSelectedProject(null);
+    };
+
+    return (
+        <>
+            {!showContactForm ? (
+                <div className="service-card">
+      <div className="main-container">
+        <div className="service-card-content">
+            <div className="service-card-header">
+                <div className="service-card-header-left">
+                    <p className="service-card-header-left-title">Project Price requests</p>
+                    <p className="service-card-header-left-subtitle">Application customer project price requests</p>
+                </div>
+                <div className="service-card-header-right">
+                   
+                        <input type="text" placeholder="Search" 
+                        className="service-card-header-right-input"/>
+                        <SearchIcon className="service-card-header-right-icon"/>
+                   
+                
+                </div>
+            </div>
+        </div>
+      <div className="service-card-content-bottom">
+      <button 
+                         className={`filter-tag ${selectedFilter === 'open' ? 'active' : ''}`}
+                       
+                     >
+                         <div className="status-dot open"></div>
+                         {t('projectPriceRequest.status.open', 'مفتوح')}
+                     </button>
+                     <button 
+                         className={`filter-tag ${selectedFilter === 'inProgress' ? 'active' : ''}`}
+                     
+                     >
+                         <div className="status-dot in-progress"></div>
+                         {t('projectPriceRequest.status.inProgress', 'في طور الإنجاز')}
+                     </button>
+      </div>
+      {/* Map through projects - keeping your exact design */}
+      {projects.map((project) => (
+        <div key={project.id}>
+          <div className="main-profile" onClick={() => toggleExpansion(project.id)} style={{cursor: 'pointer'}}>
+                        <div className="image-container">
+                          <div style={{width: '50px', height: '50px'}}>
+                            <img src={project.clientImage} 
+                            alt="Customer Profile"
+                            
+                            style={{width: '100%', height: '100%', objectFit: 'cover',borderRadius:"50%"}}/>
+                          </div>
+                            <div className="content-image">
+                                <p className="ar-heading-bold">{project.clientName}</p>
+                                <p className="ar-subheading-bold">{project.projectName}</p>
+                            </div>
+
+                        </div>
+                        <div className="content-container">
+                        <button 
+                             className={`filter-tag ${project.status === 'open' ? 'active' : ''}`}
+                      
+                         >
+                             <div className={`status-dot ${project.status}`}></div>
+                             {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') : 'Complete Construction'}
+                         </button>
+                         <button 
+                             className={`filter-tag ${selectedFilter === 'inProgress' ? 'active' : ''}`}
+                         
+                         >
+                             <div className=" "></div>
+                         Complete Construction
+                         </button>
+                         {/* Accordion Arrow */}
+                     
+                        </div>
+                    </div>
+          {/* Accordion Content */}
+          {expandedCards[project.id] && (
+            <>
+              <div className="card-detail">
+                <p className="card-detail-heading">Congratulations </p>
+                <p className="card-detail-subheading"><b>{project.clientName}</b> has agreed to the price offer </p>
+                <p className="card-detail-button"><b>Start Project</b></p>
+              </div>
+              <div className="button-container">
+                <button className="btn-primary">
+                  Start Project
+                </button>
+                <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
+                  Contact Customer
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+      </div>
+      </div>
+            ) : (
+                <ContactCustomerForm 
+                    project={selectedProject} 
+                    onBack={handleBackToServiceCard}
+                    formType="contactCustomer"
+                />
+            )}
+        </>
+    );
+};
+
+export default ServiceCard;

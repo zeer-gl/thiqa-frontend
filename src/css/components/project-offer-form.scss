@@ -1,0 +1,514 @@
+.project-offer-form {
+  background-color: transparent;
+  min-height: 100vh;
+
+  font-family: 'Arial', sans-serif;
+  
+  // RTL support for Arabic
+  &[dir="rtl"] {
+    direction: rtl;
+  }
+  
+  // LTR support for English
+  &[dir="ltr"] {
+    direction: ltr;
+  }
+
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 12px;
+    padding: 30px;
+ 
+  }
+
+  // Search Section
+  .search-section {
+    margin-bottom: 30px;
+
+    .search-input-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      max-width: 300px;
+
+      .search-icon {
+        position: absolute;
+        right: 12px;
+        font-size: 16px;
+        color: #000000 !important;
+        z-index: 1;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 40px 12px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: transparent;
+
+        &:focus {
+          outline: none;
+          border-color: #21395D;
+        }
+
+        &::placeholder {
+          color:#21395D;
+          font-weight: 400;
+          opacity: 50%;
+        }
+      }
+    }
+  }
+
+  // Title Section
+  .title-section {
+    text-align: right;
+    margin-bottom: 40px;
+
+    .main-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #21395D;
+      margin-bottom: 10px;
+      font-family: 'Fira Sans', sans-serif;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  // Project Offer Form
+  .project-offer-form {
+    .form-group {
+      margin-bottom: 25px;
+
+      .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .form-input {
+          width: 100%;
+          padding: 16px 50px 16px 16px;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          font-size: 16px;
+          background-color: transparent;
+          transition: border-color 0.3s ease;
+          margin-top: 60px;
+
+          &:focus {
+            outline: none;
+            border-color: #21395D;
+          }
+
+          &::placeholder {
+            color: #21395D;
+            opacity: 50%;
+          }
+        }
+
+        .calendar-icon {
+          position: absolute;
+          left: 16px;
+          top: 75px;
+          font-size: 18px;
+          color: #000000 !important;
+        }
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: transparent;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #21395D;
+        }
+
+        &::placeholder {
+          color: #21395D;
+          font-weight: 400;
+          opacity: 50%;
+        }
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: transparent;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #21395D;
+        }
+
+        &::placeholder {
+          color: #21395D;
+          font-weight: 400;
+          opacity: 50%;
+        }
+      }
+
+      // File Upload Styling
+      .file-upload-container {
+        .file-input {
+          display: none;
+        }
+
+        .file-upload-label {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 16px;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          background-color: white;
+          cursor: pointer;
+          transition: border-color 0.3s ease;
+          background-color: transparent;
+
+          &:hover {
+            border-color: #21395D;
+          }
+
+          .file-placeholder {
+            color: #21395D;
+            font-size: 16px;
+            opacity: 50%;
+          }
+
+          .upload-icon {
+            font-size: 18px;
+            color: #666;
+          }
+        }
+      }
+    }
+
+    // Submit Section
+    .submit-section {
+      text-align: center;
+      margin: 40px 0;
+      width: 100%;
+
+      .btn-submit {
+        background-color: #21395D;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 16px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+
+
+        &:hover {
+          background-color: #1a2f4a;
+        }
+
+        &:active {
+          transform: translateY(1px);
+        }
+      }
+    }
+
+    // Footer Links
+    .footer-links {
+      text-align: center;
+      margin-top: 30px;
+
+      .footer-link {
+        color: #21395D;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #1a2f4a;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    padding: 15px;
+
+    .form-container {
+      padding: 20px;
+    }
+
+    // Hide back button on small screens
+    .service-card-header {
+      .service-card-header-left {
+        .btn {
+          display: none !important;
+          visibility: hidden !important;
+        }
+      }
+    }
+
+    .title-section {
+      .main-title {
+        font-size: 24px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+    }
+
+    .search-section {
+      .search-input-container {
+        max-width: 100%;
+      }
+    }
+
+    .project-offer-form {
+      .form-group {
+        .form-input,
+        .form-textarea {
+          font-size: 14px;
+          padding: 14px;
+        }
+
+        .input-with-icon {
+          .form-input {
+            padding: 14px 45px 14px 14px;
+          }
+
+          .calendar-icon {
+            left: 14px;
+            font-size: 16px;
+          }
+        }
+      }
+
+      .submit-section {
+        .btn-submit {
+          width: 100%;
+          padding: 14px 20px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  // Calendar Modal Styles
+  .calendar-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+  }
+
+  .calendar-modal {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 320px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+
+    .calendar-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e0e0e0;
+
+      .calendar-month-year {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .month-year-text {
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        .dropdown-arrow {
+          font-size: 12px;
+          color: #666;
+          cursor: pointer;
+        }
+      }
+
+      .calendar-navigation {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .nav-arrow {
+          background: none;
+          border: none;
+          font-size: 12px;
+          color: #666;
+          cursor: pointer;
+          padding: 2px;
+          line-height: 1;
+
+          &:hover {
+            color: #333;
+          }
+        }
+      }
+    }
+
+    .calendar-body {
+      padding: 16px 20px;
+
+      .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0;
+        margin-bottom: 8px;
+
+        .weekday {
+          text-align: center;
+          font-size: 12px;
+          font-weight: 500;
+          color: #666;
+          padding: 8px 0;
+        }
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0;
+
+        .calendar-day {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          cursor: pointer;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          color: #333;
+
+          &.other-month {
+            color: #ccc;
+          }
+
+          &.selected {
+            background-color: #007bff;
+            color: white;
+            font-weight: 500;
+          }
+
+          &.hovered {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #1976d2;
+          }
+
+          &:hover:not(.selected) {
+            background-color: #f5f5f5;
+          }
+        }
+      }
+    }
+
+    .calendar-footer {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-top: 1px solid #e0e0e0;
+
+      .calendar-btn {
+        background: none;
+        border: none;
+        color: #007bff;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #f0f8ff;
+        }
+
+        &.clear-btn {
+          color: #007bff;
+        }
+
+        &.today-btn {
+          color: #007bff;
+        }
+      }
+    }
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  // RTL Support for Calendar Modal
+  &[dir="rtl"] {
+    .calendar-modal {
+      .calendar-modal-header {
+        .calendar-close-btn {
+          margin-left: auto;
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  // Extra small screens (mobile phones)
+  @media (max-width: 576px) {
+    .service-card-header {
+      .service-card-header-left {
+        .btn {
+          font-size: 0.8rem !important;
+          padding: 0.25rem 0.6rem !important;
+          margin-bottom: 0.4rem !important;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "profile": {
+    "likedServices": {
+      "noLikedServices": "لا توجد خدمات مفضلة بعد",
+      "noLikedServicesDescription": "ابدأ بإعجاب الخدمات لرؤيتها هنا",
+      "browseServices": "تصفح الخدمات"
+    },
+    "favorites": {
+      "noFavorites": "لا توجد منتجات مفضلة بعد",
+      "noFavoritesDescription": "ابدأ بإضافة المنتجات إلى مفضلتك لرؤيتها هنا",
+      "browseProducts": "تصفح المنتجات"
+    },
+    "orders": {
+      "noOrders": "لا توجد طلبات بعد",
+      "noOrdersDescription": "ستظهر سجل طلباتك هنا بمجرد إجراء أول عملية شراء",
+      "startShopping": "ابدأ التسوق"
+    },
+    "addresses": {
+      "noAddresses": "لا توجد عناوين بعد",
+      "noAddressesDescription": "أضف عنوانك الأول للبدء",
+      "addNewAddress": "إضافة عنوان جديد",
+      "editAddress": "تعديل العنوان",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "setAsDefault": "تعيين كافتراضي",
+      "saveChanges": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "name": "الاسم",
+      "city": "المدينة",
+      "area": "المنطقة",
+      "block": "القطعة",
+      "street": "الشارع",
+      "building": "المبنى",
+      "floorApartment": "الطابق/الشقة",
+      "namePlaceholder": "أدخل اسمك",
+      "cityPlaceholder": "أدخل المدينة",
+      "areaPlaceholder": "أدخل المنطقة",
+      "blockPlaceholder": "أدخل رقم القطعة",
+      "streetPlaceholder": "أدخل اسم الشارع",
+      "buildingPlaceholder": "أدخل رقم المبنى",
+      "floorApartmentPlaceholder": "أدخل الطابق والشقة",
+      "createSuccess": "تم إنشاء العنوان بنجاح",
+      "createError": "فشل في إنشاء العنوان",
+      "updateSuccess": "تم تحديث العنوان بنجاح",
+      "updateError": "فشل في تحديث العنوان",
+      "deleteSuccess": "تم حذف العنوان بنجاح",
+      "defaultUpdatedSuccess": "تم تحديث العنوان الافتراضي بنجاح",
+      "defaultUpdateError": "فشل في تعيين العنوان الافتراضي",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+      "invalidLatitude": "يجب أن يكون خط العرض بين -90 و 90",
+      "invalidLongitude": "يجب أن يكون خط الطول بين -180 و 180",
+      "saveError": "فشل في حفظ العنوان"
+    },
+    "notifications": {
+      "markAllAsRead": "تعيين الكل كمقروء",
+      "refresh": "تحديث",
+      "unreadNotifications": "إشعارات غير مقروءة",
+      "noNotifications": "لا توجد إشعارات بعد",
+      "noNotificationsDescription": "ليس لديك أي إشعارات في الوقت الحالي",
+      "allMarkedAsRead": "تم تعيين جميع الإشعارات كمقروءة",
+      "showing": "عرض",
+      "of": "من",
+      "totalNotifications": "إشعارات"
+    },
+    "sidebar": {
+      "likedServices": "الخدمات المفضلة",
+      "favorites": "المفضلة",
+      "myOrders": "طلباتي",
+      "myAddresses": "عنواني",
+      "notifications": "الاشعارات",
+      "personalProfile": "الملف الشخصي",
+      "logout": "تسجيل الخروج"
+    },
+    "content": {
+      "nameLabel": "الاسم",
+      "emailLabel": "البريد الإلكتروني",
+      "phoneNumberLabel": "رقم الهاتف",
+      "editProfileButton": "تعديل الملف الشخصي",
+      "changePasswordButton": "تغيير كلمة المرور"
+    },
+    "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح!"
+  }
+}

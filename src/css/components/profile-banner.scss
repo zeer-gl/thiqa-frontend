@@ -1,0 +1,187 @@
+.profile-banner {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    .profile-banner-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        height: 60px;
+    }
+
+    .location-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .location-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .location-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+    }
+
+    .location-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .city {
+        font-size: 12px;
+        color: #ffffff;
+        opacity: 0.8;
+        font-weight: 400;
+    }
+
+    .country {
+        font-size: 16px;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .divider {
+        width: 1px;
+        height: 40px;
+        background-color: #ffffff;
+        opacity: 0.3;
+    }
+
+    .profile-section {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .greeting-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .greeting {
+        font-size: 12px;
+        color: #ffffff;
+        opacity: 0.8;
+        font-weight: 400;
+    }
+
+    .name {
+        font-size: 16px;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .profile-image {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        overflow: hidden;
+    
+        flex-shrink: 0;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+// RTL Support
+[dir="rtl"] {
+    .profile-banner {
+    
+
+        .location-info {
+            flex-direction: row-reverse;
+        }
+
+        .profile-section {
+            flex-direction: row-reverse; // Reverse profile section so image appears on far right
+        }
+
+        .location-text {
+            text-align: right;
+        }
+
+        .greeting-text {
+            text-align: right;
+        }
+    }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .profile-banner {
+        min-width: 240px;
+        padding: 12px 16px;
+
+        .profile-banner-content {
+            height: 50px;
+            gap: 16px;
+        }
+
+        .city, .greeting {
+            font-size: 11px;
+        }
+
+        .country, .name {
+            font-size: 14px;
+        }
+
+        .profile-image {
+            width: 40px;
+            height: 40px;
+        }
+
+        .divider {
+            height: 32px;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-banner {
+        min-width: 200px;
+        padding: 10px 12px;
+
+        .profile-banner-content {
+            height: 45px;
+            gap: 12px;
+        }
+
+        .city, .greeting {
+            font-size: 10px;
+        }
+
+        .country, .name {
+            font-size: 12px;
+        }
+
+        .profile-image {
+            width: 36px;
+            height: 36px;
+        }
+
+        .divider {
+            height: 28px;
+        }
+    }
+}

@@ -1,0 +1,365 @@
+@import "../utilities";
+
+.service-request-page {
+    min-height: 100vh;
+
+    // Header Section
+    .header-section {
+        background-color: $lightCream;
+        padding: 2rem 0;
+      
+
+        // Left Section - Page Title
+        .page-title {
+            .main-title {
+                font-size: $font-size-xxl;
+                font-weight: $font-weight-semibold;
+                color: $primary-color;
+                margin-bottom: 0.25rem;
+                line-height: $line-height-xxl;
+                text-align: left;
+            }
+
+            .subtitle {
+                font-size: $font-size-medium;
+                color: $gray-text-color;
+                margin: 0;
+                line-height: $line-height-medium;
+                text-align: left;
+            }
+        }
+
+        // Middle Section - Search Bar
+        .search-section {
+            .search-bar {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                i {
+                    position: absolute;
+                    right: 12px; // LTR icon position (right side)
+                    color: $gray-text-color;
+                    font-size: $font-size-medium;
+                    z-index: 2;
+                }
+
+                input {
+                    width: 100%;
+                    height: 44px;
+                    padding: $padding-small;
+                    padding-right: 40px; // LTR padding for icon (right side)
+                    border: 1px solid $border-color;
+                    border-radius: $border-radius-medium;
+                    font-size: $font-size-medium;
+                    background-color: $white-color;
+                    color: $secondary-color;
+                    text-align: left; // LTR text alignment
+
+                    &::placeholder {
+                        color: $light-gray-text-color;
+                    }
+
+                    &:focus {
+                        outline: none;
+                        border-color: $primary-color;
+                    }
+                }
+            }
+        }
+
+        // Right Section - Create Request Button
+        .create-request-section {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            .create-request-btn {
+                width: 100%;
+                max-width: fit-content;
+                height: 45px;
+                padding: 10px;
+                border: 1px solid #21395D;
+                border-radius: 10px;
+                font-size: 13px;
+                color: $primary-color;
+                cursor: pointer;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                background-color: transparent;
+                transition: all 0.3s ease;
+
+
+                .custom-icon {
+                    position: relative;
+                    width: 16px;
+                    height: 16px;
+                    background-color: #21395D;
+                    border-radius: 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .document-lines {
+                        position: absolute;
+                        left: 2px;
+                        top: 2px;
+                        width: 8px;
+                        height: 12px;
+
+                        .line {
+                            background-color: white;
+                            height: 1px;
+                            margin-bottom: 1px;
+                            border-radius: 1px;
+
+                            &.line-1 {
+                                width: 6px;
+                            }
+
+                            &.line-2 {
+                                width: 8px;
+                            }
+
+                            &.line-3 {
+                                width: 4px;
+                            }
+                        }
+                    }
+
+                    .plus-sign {
+                        position: absolute;
+                        right: 1px;
+                        bottom: 1px;
+                        color: white;
+                        font-size: 8px;
+                        font-weight: bold;
+                        line-height: 1;
+                    }
+                }
+
+                span {
+                    font-weight: 400;
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+
+    // Main Content
+    .main-content {
+        padding: 0 2rem 2rem;
+
+        .content-wrapper {
+            padding: 2.5rem;
+            background-color: $white-color;
+            border-radius: $border-radius-large;
+
+            // Form Header
+            .form-header {
+                margin-bottom: 2rem;
+
+                .form-title {
+                    font-size: $font-size-xxl;
+                    font-weight: $font-weight-semibold;
+                    color: $primary-color;
+                    margin-bottom: 0.75rem;
+                    line-height: $line-height-xxl;
+                }
+
+                .form-subtitle {
+                    font-size: $font-size-medium;
+                    color: $light-text-color;
+                    margin-bottom: 1.5rem;
+                    line-height: $line-height-medium;
+                }
+            }
+
+            // Project Offers List
+            .project-offers-list {
+                .offer-item {
+                   
+                    padding: 15px;
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    border: 1px solid #e9ecef;
+                    position: relative;
+
+
+                    .offer-actions {
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                        gap: 0.5rem;
+
+                        .offer-date {
+                            font-size: $font-size-small;
+                            color: $light-gray-text-color;
+                            font-weight: $font-weight-medium;
+                            margin-bottom: 0.5rem;
+                        }
+
+                        .vertical-separator {
+                            width: 1px;
+                            height: 32px;
+                            background-color: #EEE7DB;
+                        }
+
+                        .action-buttons {
+                            display: flex;
+                            gap: 0.5rem;
+
+                            .action-btn {
+                                border: 1px solid #e9ecef;
+                                border-radius: 6px;
+                                font-size:10px;
+                                font-weight: $font-weight-medium;
+                                cursor: pointer;
+
+                                &.cancel-btn {
+                                    background-color: #f8f9fa;
+                                    color: #21395D;
+                                    border: 1px solid #EEE7DB;
+                                    border-radius: 10px;
+                                    padding: 13px 15px;
+                                    width: 53px;
+                                    height: 33px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+
+                                   
+                                }
+
+                                &.view-btn {
+                                    background-color:#FFFFFF;
+                                    color: #21395D;
+                                    border: 1px solid #EEE7DB;
+                                    border-radius: 10px;
+                                    padding: 13px 15px;
+                                    width: 53px;
+                                    height: 33px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Mobile Responsive
+@media (max-width: 768px) {
+    .service-request-page {
+        .header-section {
+            padding: 1rem 0;
+
+            .page-title {
+                .main-title {
+                    font-size: $font-size-xl;
+                    line-height: $line-height-xl;
+                }
+
+                .subtitle {
+                    font-size: $font-size-small;
+                    line-height: $line-height-small;
+                }
+            }
+
+            .create-request-section {
+                .create-request-btn {
+                    font-size: $font-size-small;
+                    padding: 10px 16px;
+                }
+            }
+        }
+
+        .main-content {
+            padding: 0 1rem 1rem;
+
+            .content-wrapper {
+                padding: 1.5rem;
+
+                .form-header {
+                    margin-bottom: 2rem;
+
+                    .form-title {
+                        font-size: $font-size-xl;
+                        line-height: $line-height-xl;
+                    }
+
+                    .form-subtitle {
+                        font-size: $font-size-small;
+                        line-height: $line-height-small;
+                    }
+                }
+
+                .project-offers-list {
+                    .offer-item {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 1rem;
+
+                        .offer-content {
+                            width: 100%;
+
+                            .offer-text {
+                                font-size: $font-size-small;
+                            }
+                        }
+
+                        .offer-actions {
+                            width: 100%;
+                            flex-direction: row;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            .offer-date {
+                                font-size: $font-size-small;
+                                margin-bottom: 0;
+                            }
+
+                            .action-buttons {
+                                flex-direction: row;
+                                gap: 0.75rem;
+
+                                .action-btn {
+                                    padding: 0.4rem 0.8rem;
+                                    font-size: $font-size-small;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .service-request-page {
+        .header-section {
+            .create-request-section {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                
+                .create-request-btn {
+                    width: 100%;
+                    max-width: fit-content !important;
+                    margin: 10px 12px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: flex-start !important;
+                }
+            }
+        }
+    }
+}

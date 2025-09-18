@@ -1,0 +1,733 @@
+@import "../utilities";
+@import "../../../node_modules/@fortawesome/fontawesome-free/css/all.css";
+
+
+// Dev One - Zain //
+body {
+  direction: ltr;
+  text-align: left;
+}
+.main-content{
+  background-color: $lightCream;
+  position: relative;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  
+  img {
+    height: auto;
+    max-height: 40px;
+    width: auto;
+    
+    @media (max-width: 768px) {
+      max-height: 32px;
+    }
+    
+    @media (max-width: 576px) {
+      max-height: 28px;
+    }
+  }
+}
+
+.navbar {
+  background-color: $navy;
+  height: 108px;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    height: auto;
+    padding: 15px 20px;
+  }
+  
+  @media (max-width: 576px) {
+    padding: 12px 15px;
+  }
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+  font-size: 18px;
+  font-weight: 400;
+  color: white;
+}
+
+.page-container {
+  min-height: 80vh;
+  padding: 2rem 0;
+}
+
+.register-btn-nav {
+  background-color: $cream !important;
+  color: $navy !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  border-radius: 10px !important;
+}
+
+.nav-icons-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E5E5E5;
+}
+
+.language-switcher {
+  .btn {
+    margin-left: 0.5rem;
+
+    &.active {
+      background-color: #007bff;
+      color: white;
+    }
+  }
+}
+
+
+.content-section {
+  padding: 3rem 0;
+}
+
+.navbar-wrapper {
+  .nav-link {
+    color: black !important;
+  }
+}
+
+.thiqa-footer {
+  background-color: $navy;
+  padding: 50px;
+  z-index: 1;
+  position: relative;
+  //position: absolute;
+  //bottom: 0;
+  //right: 0;
+  //left: 0;
+  
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+    
+    .container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    padding: 25px 15px;
+    
+    .container {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+}
+
+.custom-navbar {
+  justify-content: space-between;
+  margin: 40px auto;
+   max-width: fit-content;
+  height: unset;
+  width: 100%;
+  background-color: #FAFBFC;
+  border-radius: 50px;
+  padding: 10px 20px !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.splitter {
+  height: 1px;
+  width: 100%;
+  background-color: #EDEDED;
+}
+
+.nav-container {
+  direction: rtl;
+}
+
+.nav-item {
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+}
+
+.nav-item.active {
+  background-color: #EEE7DB;
+}
+
+.footer-socials {
+  img {
+    max-width: 20px;
+  }
+}
+
+.custom-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  color: #1e2b50;
+  cursor: pointer;
+  gap: 14px;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.custom-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid $navy;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.checked {
+  background-color: transparent;
+}
+
+.checkmark {
+  color: #1e2b50;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.checkbox-label {
+  user-select: none;
+}
+.ev-submit-btn {
+  background-color: $navy !important;
+  color: white !important;
+  border-radius: 6px !important;
+  font-weight: 400;
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 66px;
+  font-size: 18px;
+  border: 1px solid $navy !important;
+  justify-content: center;
+
+}
+// Enhanced responsive navbar styling
+@media (max-width: 1400px) {
+  .navbar-nav .nav-link {
+    font-size: 15px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .navbar-nav .nav-link {
+    font-size: 14px !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  .register-btn-nav {
+    font-size: 14px !important;
+    height: 44px !important;
+    padding: 0 16px !important;
+  }
+  
+  .nav-icons-container {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 992px) {
+  .navbar {
+    height: auto !important;
+    padding: 15px 0 !important;
+  }
+  
+  .navbar-collapse {
+    padding: 1rem 0;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar-nav {
+    margin-bottom: 1rem !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    
+    .nav-item {
+      width: 100%;
+      text-align: center;
+      
+      .nav-link {
+        padding: 0.75rem 1rem !important;
+        font-size: 16px !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+  }
+  
+  .register-btn-nav {
+    width: 100% !important;
+    justify-content: center;
+    margin-bottom: 1rem;
+    height: 48px !important;
+    font-size: 16px !important;
+  }
+  
+  .nav-icons-container {
+    width: 48px;
+    height: 48px;
+    margin: 0 0.5rem;
+  }
+  
+  .language-switcher {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-navbar {
+    border-radius: 15px;
+  }
+  
+  .navbar .container-fluid {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .navbar-brand img {
+    max-height: 32px;
+  }
+  
+  .navbar-nav .nav-link {
+    font-size: 15px !important;
+    padding: 0.6rem 1rem !important;
+  }
+  
+  .register-btn-nav {
+    height: 46px !important;
+    font-size: 15px !important;
+    padding: 0 20px !important;
+  }
+  
+  .nav-icons-container {
+    width: 46px;
+    height: 46px;
+    
+    img {
+      max-width: 20px;
+      max-height: 20px;
+    }
+  }
+  
+  // Profile dropdown adjustments
+  .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: 150px !important;
+    margin-top: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background-color: #21395D !important;
+    backdrop-filter: blur(10px);
+    z-index: 1000 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    
+    .dropdown-item {
+      padding: 0.75rem 1rem !important;
+      text-align: left !important;
+      color: white !important;
+      display: block !important;
+      width: 100% !important;
+      border: none !important;
+      background: none !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      text-decoration: none !important;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+      }
+      
+      &:focus {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        outline: none !important;
+      }
+      
+      &:active {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar .container-fluid {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .navbar-brand img {
+    max-height: 28px;
+  }
+  
+  .navbar-nav .nav-link {
+    font-size: 14px !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  .register-btn-nav {
+    height: 44px !important;
+    font-size: 14px !important;
+    padding: 0 16px !important;
+    
+    img {
+      max-width: 16px;
+      max-height: 16px;
+    }
+  }
+  
+  .nav-icons-container {
+    width: 44px;
+    height: 44px;
+    margin: 0 0.25rem;
+    
+    img {
+      max-width: 18px;
+      max-height: 18px;
+    }
+  }
+  
+  .navbar-toggler {
+    padding: 4px 6px !important;
+    
+    .navbar-toggler-icon {
+      width: 1em;
+      height: 1em;
+    }
+  }
+  
+  // Enhanced mobile dropdown styling
+  .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: 140px !important;
+    max-width: 200px !important;
+    margin-top: 0.25rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 6px !important;
+    background-color: #21395D !important;
+    backdrop-filter: blur(10px) !important;
+    z-index: 1050 !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+    
+    .dropdown-item {
+      padding: 0.6rem 0.8rem !important;
+      text-align: left !important;
+      color: white !important;
+      display: block !important;
+      width: 100% !important;
+      border: none !important;
+      background: none !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      text-decoration: none !important;
+      line-height: 1.4 !important;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+      }
+      
+      &:focus {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+        outline: none !important;
+      }
+      
+      &:active {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+        color: white !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 0 !important;
+  }
+  
+  .navbar-brand img {
+    max-height: 26px;
+  }
+  
+  .navbar-nav .nav-link {
+    font-size: 13px !important;
+    padding: 0.4rem 0.5rem !important;
+  }
+  
+  .register-btn-nav {
+    height: 42px !important;
+    font-size: 13px !important;
+    padding: 0 12px !important;
+    
+    img {
+      max-width: 14px;
+      max-height: 14px;
+    }
+  }
+  
+  .nav-icons-container {
+    width: 42px;
+    height: 42px;
+    
+    img {
+      max-width: 16px;
+      max-height: 16px;
+    }
+  }
+}
+
+// Profile banner responsive adjustments
+@media (max-width: 992px) {
+  .profile-banner-container {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-banner-container {
+    .profile-info {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.5rem;
+    }
+  }
+}
+
+// Language switcher responsive adjustments
+@media (max-width: 992px) {
+  .language-switcher {
+    .btn {
+      font-size: 14px;
+      padding: 0.5rem 1rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .language-switcher {
+    .btn {
+      font-size: 13px;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+}
+
+// Enhanced navbar wrapper styling for better responsive control
+.navbar-actions-container {
+  // Desktop - horizontal layout
+  @media (min-width: 992px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  // Mobile - vertical stack
+  @media (max-width: 991px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+}
+
+.register-btn-wrapper {
+  // Desktop
+  @media (min-width: 992px) {
+    width: auto;
+  }
+  
+  // Mobile
+  @media (max-width: 991px) {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+.nav-icons-wrapper {
+  // Desktop
+  @media (min-width: 992px) {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  
+  // Mobile
+  @media (max-width: 991px) {
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+}
+
+.language-switcher-wrapper {
+  // Desktop
+  @media (min-width: 992px) {
+    justify-content: flex-start;
+  }
+  
+  // Mobile
+  @media (max-width: 991px) {
+    justify-content: center;
+    width: 100%;
+    margin-top: 1rem;
+  }
+}
+
+// Additional responsive improvements for navbar collapse
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background-color: rgba(33, 57, 93, 0.95);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+  }
+  
+  .navbar-nav {
+    .nav-item {
+      .nav-link {
+        border-radius: 6px;
+        margin-bottom: 0.25rem;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.15);
+          transform: translateX(2px);
+        }
+      }
+    }
+  }
+}
+
+// Smooth transitions for all navbar elements
+.navbar-nav .nav-link,
+.register-btn-nav,
+.nav-icons-container,
+.language-switcher .btn {
+  transition: all 0.3s ease;
+}
+
+// Focus states for accessibility
+.navbar-nav .nav-link:focus,
+.register-btn-nav:focus,
+.nav-icons-container:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+// Global dropdown menu styling to ensure visibility
+.dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  
+  .dropdown-item {
+    color: white !important;
+    background-color: transparent !important;
+    
+    &:hover,
+    &:focus,
+    &:active {
+      color: white !important;
+      background-color: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+}
+
+// Desktop-specific dropdown styling
+@media (min-width: 992px) {
+  .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: 160px !important;
+    margin-top: 0.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    background-color: #21395D !important;
+    backdrop-filter: blur(10px) !important;
+    z-index: 1000 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    
+    .dropdown-item {
+      padding: 0.75rem 1rem !important;
+      text-align: left !important;
+      color: white !important;
+      display: block !important;
+      width: 100% !important;
+      border: none !important;
+      background: none !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      text-decoration: none !important;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+      }
+      
+      &:focus {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        outline: none !important;
+      }
+      
+      &:active {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+      }
+    }
+  }
+}
+// Dev Two - Usama //

@@ -1,0 +1,1397 @@
+{
+  "nav": {
+    "home": "Home",
+    "offers": "Project Offers",
+    "products": "Product List",
+    "about": "About Platform",
+    "serviceProviders": "Service Providers",
+    "language": "Language",
+    "registerAsServiceProvider": "Register as Service Provider",
+    "langEn": "English",
+    "langAr": "Arabic",
+    "profile": "Profile",
+    "logout": "Logout",
+    "contact": "Contact Us"
+  },
+  "pages": {
+    "home": {
+      "title": "Welcome to Our Website",
+      "description": "This is the home page with English content",
+      "heroSection": {
+        "title": "Construction and construction services",
+        "subtitle": "Request the service you need and we will take care of sending it. Now request the service you need and we will take care of it",
+        "ctaButton": "Order now",
+        "upgradePackage": "Upgrade Package"
+      },
+      "upgradeSection": {
+        "title": "Upgrade Your Plan",
+        "subtitle": "Get access to all features and start receiving project requests"
+      },
+      "serviceManagement": {
+        "title": "My Services",
+        "addService": "Add Service",
+        "editService": "Edit Service",
+        "deleteService": "Delete Service",
+        "noServices": "No services yet",
+        "noServicesDesc": "Start by adding your first service",
+        "addFirstService": "Add Your First Service"
+      },
+      "featureSection": {
+        "customerSupport": {
+          "title": "Customer Support",
+          "description": "Our customer support team is available to assist customers with any questions or concerns they may have."
+        },
+        "securePayment": {
+          "title": "Secure payment",
+          "description": "We offer a secure payment process that protects our customers' personal and financial information."
+        },
+        "freeReturns": {
+          "title": "Free returns",
+          "description": "Our customers can return or exchange their purchases without any hassle."
+        }
+      },
+      "productSection": {
+        "title": "Product List",
+        "tabs": {
+          "building": "Building",
+          "electricity": "Electricity",
+          "plumbing": "Plumbing",
+          "joinery": "Joinery",
+          "dyeing": "Dyeing"
+        },
+        "buttons": {
+          "mostInteractive": "Most Interactive",
+          "nearby": "Nearby"
+        }
+      },
+      "servicesSection": {
+        "title": "Service providers",
+        "buttons": {
+          "mostInteractive": "Most Interactive",
+          "nearby": "Nearby",
+          "seeAll": "See All"
+        },
+        "serviceProvider": {
+          "companyName": "Kuwaiti company",
+          "description": "Construction and investment",
+          "rating": "5.0",
+          "category": "Construction"
+        }
+      },
+      "aboutSection": {
+        "title": "About the platform",
+        "description": "Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design."
+      },
+      "customerSection": {
+        "subtitle": "Customer reviews __",
+        "title": "What our customers say",
+        "testimonial": {
+          "text": "I recently shopped at Ckart and it was a wonderful experience! The selection is amazing, catering to a variety of tastes, and I found unique pieces that added a beautiful touch to my home. I recently shopped at Ckart and it was a wonderful experience! The selection is amazing, catering to a variety of tastes, and I found unique pieces that added a beautiful touch to my home.",
+          "customerName": "Reem Ahmed",
+          "customerType": "New buyer"
+        }
+      },
+      "productCard": {
+        "title": "Modern ceiling lamps",
+        "company": "Engek Company",
+        "currency": "KWD"
+      }
+    },
+    "offers": {
+      "title": "Project Offers",
+      "description": "Explore our amazing project offers"
+    },
+    "products": {
+      "title": "Product List",
+      "description": "Browse through our product catalog"
+    },
+    "about": {
+      "title": "About Us",
+      "description": "Learn more about our company and mission"
+    },
+    "detail-page": {
+      "breadcrumb": {
+        "home": "Home"
+      },
+      "section1": {
+        "productTitle": "Modern Ceiling Lights",
+        "companyName": "Engek Company",
+        "favorite": "Favorite",
+        "addToFavorites": "Add to Favorites",
+        "removeFromFavorites": "Remove from Favorites",
+        "processing": "Processing...",
+        "loginToLike": "Login to add to favorites",
+        "reviews": "reviews",
+        "sold": "sold",
+        "currency": "Kuwaiti Dinar",
+        "addToCart": "Add to Cart",
+        "scrollUp": "Scroll up",
+        "scrollDown": "Scroll down"
+      },
+      "section2": {
+        "description": "Modern ceiling lights are considered one of the most important elements of contemporary design. These elegant fixtures not only provide essential illumination but also serve as stunning focal points that enhance the overall aesthetic of any space. Crafted with premium materials and innovative technology, our modern ceiling lamps combine functionality with sophisticated style. Modern ceiling lights are considered one of the most important elements of contemporary design. These elegant fixtures not only provide essential illumination but also serve as stunning focal points that enhance the overall aesthetic of any space. Crafted with premium materials and innovative technology, our modern ceiling lamps combine functionality with sophisticated style.",
+        "features": {
+          "ledTechnology": "LED technology for energy efficiency",
+          "dimmableFunction": "Dimmable functionality",
+          "modernDesign": "Modern minimalist design",
+          "easyInstallation": "Easy installation",
+          "warranty": "3-year warranty",
+          "multipleFinishes": "Available in multiple finishes"
+        },
+        "specifications": {
+          "power": "Power",
+          "colorTemperature": "Color Temperature",
+          "colorTempValue": "3000K-6500K adjustable",
+          "material": "Material",
+          "materialValue": "Aluminum and glass",
+          "dimensions": "Dimensions",
+          "voltage": "Voltage",
+          "certification": "Certification"
+        }
+      },
+      "section3": {
+        "tabs": {
+          "description": "Product Description",
+          "reviews": "Reviews",
+          "evaluation": "Product Evaluation"
+        },
+        "reviewsContent": {
+          "review1": {
+            "customerName": "Mazen Rahmi",
+            "date": "Mar 28, 2024",
+            "title": "Electric lamp",
+            "text": "The product is very wonderful. I thank the company for this high-class dealing with us. I hope that we will deal with it many times in the future."
+          },
+          "review2": {
+            "customerName": "Mazen Rahmi",
+            "date": "Mar 28, 2024",
+            "title": "Electric lamp",
+            "text": "The product is very wonderful. I thank the company for this high-class dealing with us. I hope that we will deal with it many times in the future."
+          }
+        },
+        "evaluationForm": {
+          "email": "Email",
+          "name": "Name",
+          "message": "Message",
+          "send": "Send",
+          "emailPlaceholder": "Email",
+          "namePlaceholder": "Name",
+          "messagePlaceholder": "Leave your review message",
+          "overallRating": "Overall Rating",
+          "efficiencyRating": "Efficiency Rating",
+          "priceRating": "Price Rating",
+          "deliveryRating": "Delivery Rating",
+          "submitting": "Submitting...",
+          "loginRequired": "Please login to submit a review",
+          "reviewSubmitted": "Review submitted successfully!",
+          "outOfStock": "Out of Stock",
+          "onlyLeftInStock": "Only {{quantity}} left in stock",
+          "inStock": "In Stock ({{quantity}} available)",
+          "fillRequiredFields": "Please fill all required fields and select all ratings",
+          "alreadyReviewed": "You have already reviewed this product",
+          "submitFailed": "Failed to submit review. Please try again.",
+          "fieldRequired": "Please fill in this field",
+          "emailRequired": "Please enter your email",
+          "nameRequired": "Please enter your name",
+          "messageRequired": "Please enter your message",
+          "unableToLoadProduct": "Unable to load product",
+          "failedToLoadReviews": "Failed to load reviews",
+          "thisProductOutOfStock": "This product is currently out of stock",
+          "onlyItemsAvailable": "Only {{quantity}} items available in stock",
+          "anonymous": "Anonymous",
+          "noCommentProvided": "No comment provided.",
+          "noReviewsYet": "No reviews yet. Be the first to review this product!",
+          "approved": "Approved",
+          "pending": "Pending",
+          "rejected": "Rejected"
+        }
+      }
+    },
+    "service-detail": {
+        "home": "Home",
+        "modern-ceiling-lamps": "Modern Ceiling Lamps",
+        "contractor-name": "About the contractor",
+        "location": "Al Farwaniyah",
+        "about": "About",
+        "about-text": "Modern ceiling lights are considered one of the most important elements of contemporary design. Modern lights are among the most important features of contemporary design. Modern ceiling lights are key components of modern design. They are regarded as essential elements in contemporary interiors.",
+        "all-projects": "All Projects",
+        "request-service": "Request Service",
+        "completed-projects": "Projects I participated in completing",
+        "no-completed-projects": "No completed projects available",
+        "project-title": "Villa Construction Project",
+        "full-construction": "Total Construction",
+        "general-electricity": "General Electricity",
+        "view-project": "View Project",
+        "favorites": "Favorites"
+      },
+    "contractorView": {
+      "locationSection": {
+        "title": "Al Farwaniyah"
+      },
+      "aboutSection": {
+        "title": "About the Contractor",
+        "description": "Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design. Modern ceiling lights are considered one of the most important elements of contemporary design."
+      },
+      "projectsSection": {
+        "title": "Projects I participated in completing"
+      }
+    },
+    "serviceRequestView": {
+      "basicServices": {
+        "title": "Basic Services",
+        "subtitle": "Order the service you need and we will take care of sending it now",
+        "services": {
+          "water": "Water",
+          "sand": "Sand",
+          "bricks": "Bricks",
+          "cement": "Cement",
+          "iron": "Iron"
+        }
+      },
+      "projects": {
+        "villaConstruction": "Villa Construction Project",
+        "fullConstruction": "Full Construction",
+        "sandSupply": "Sand Supply Project",
+        "bulkDelivery": "Bulk Delivery",
+        "brickSupply": "Brick Supply Project",
+        "constructionMaterials": "Construction Materials",
+        "cementSupply": "Cement Supply Project",
+        "bulkCement": "Bulk Cement",
+        "ironSupply": "Iron Supply Project",
+        "constructionSteel": "Construction Steel"
+      },
+      "offers": "{{count}} Offers",
+      "company": "Company A",
+      "select": "Select"
+    }
+  },
+
+  "orderDetails": {
+    "pageTitle": "Order Details",
+    "orderDetails": "Order Details",
+    "orderCreated": "Order Created",
+    "orderSubmitted": "Order Submitted",
+    "orderSummary": "Order Summary",
+    "productName": "Modern Ceiling Lights",
+    "completed": "Completed",
+    "free": "Free",
+    "totalAmount": "Subtotal",
+    "shipping": "Shipping",
+    "discount": "Discount",
+    "discountAmount": "Discount Amount",
+    "total": "Total",
+    "downloadInvoice": "Download Invoice",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "error": "Error Loading Order",
+    "notFound": "Order Not Found",
+    "notFoundMessage": "The order you are looking for could not be found.",
+    "orderDate": "Order Date",
+    "payNow": "Pay Now",
+    "status": {
+      "processing": "Processing",
+      "cancelled": "Cancelled",
+      "delivered": "Delivered",
+      "shipped": "Shipped",
+      "pending": "Pending",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    }
+  },
+
+  "payment": {
+    "home": "Home",
+    "cart": "Cart",
+    "pay-now": "Pay Now",
+    "total": "Total",
+    "discount": "Discount",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "modern-ceiling-lights": "Modern Ceiling Lights",
+    "add-favorites": "Add Favorites",
+    "quantity": "Quantity",
+    "kwd": "KWD",
+    "off": "OFF",
+    "remove-favorites": "Remove from Favorites",
+    "processing": "Processing...",
+    "emptyCart": "Your cart is empty",
+    "addItemsToCart": "Add some items to your cart to continue shopping",
+    "continueShopping": "Continue Shopping",
+    "modal": {
+      "removeItemTitle": "Remove Item from Cart",
+      "removeItemConfirmation": "Are you sure you want to remove \"{{productName}}\" from your cart?",
+      "removeItemWarning": "This action cannot be undone.",
+      "removeItemButton": "Remove Item",
+      "thisProduct": "this product"
+    },
+    "messages": {
+      "itemRemovedSuccess": "{{productName}} removed from cart successfully!",
+      "loginRequiredFavorites": "Please login to add products to favorites",
+      "loginRequiredCheckout": "Please login to proceed to checkout",
+      "addedToFavorites": "Added to favorites!",
+      "removedFromFavorites": "Removed from favorites!",
+      "failedToUpdateFavorites": "Failed to update favorite status"
+    }
+  },
+
+  "order-summary": {
+    "order-details": "Order Details",
+    "subtotal": "Subtotal",
+    "shipping-fees": "Shipping Fees",
+    "promo-code": "Promo Code",
+    "code": "Code",
+    "discount": "Discount",
+    "total": "Total",
+    "pay-now": "Pay Now",
+    "checkout": "Checkout",
+    "processing": "Processing...",
+    "kwd": "KWD",
+    "items": "items"
+  },
+
+  "checkout": {
+    "home": "Home",
+    "cart": "Cart",
+    "delivery-address": "Delivery Address",
+    "select-address": "Select Address",
+    "no-addresses": "No addresses found. Please add an address to continue.",
+    "add-address": "Add Address",
+    "payment-method": "Payment Method",
+    "paypal": "PayPal",
+    "applepay": "Apple Pay",
+    "bank-card-details": "Bank Card Details",
+    "cardholder-name": "Cardholder Name",
+    "card-number": "Card Number",
+    "expiration-date": "Expiration Date",
+    "cvv": "CVV",
+    "postal-code": "Postal Code",
+    "messages": {
+      "orderPlacedSuccess": "Order placed successfully!",
+      "selectDeliveryAddress": "Please select a delivery address",
+      "cartEmpty": "Your cart is empty",
+      "userDataNotFound": "User data not found. Please try logging in again.",
+      "invalidUserData": "Invalid user data. Please try logging in again.",
+      "userIdNotFound": "User ID not found in user data. Please try logging in again.",
+      "failedToPlaceOrder": "Failed to place order. Please try again."
+    }
+  },
+  "payment-success-modal": {
+    "payment-successful": "Payment Successful",
+    "payment-successful-message": "Payment successful! Thank you for your order—an order confirmation has been sent to",
+    "email-highlight": "customer@gmail.com",
+    "total-payment": "Total Payment",
+    "transaction-date": "Transaction Date",
+    "reference-number": "Reference Number",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping-cost": "Shipping Cost",
+    "total": "Total",
+    "home": "Home",
+    "download-invoice": "Download Invoice",
+    "items": "items",
+    "kwd": "KWD",
+    "your-order": "Your Order",
+    "modern-ceiling-lights": "Modern Ceiling Lights",
+    "product-price": "Product Price",
+    "free": "Free"
+  },
+
+  "paymentSuccess": {
+    "title": "Payment confirmed successfully",
+    "subtitle": "We will deliver your order as soon as possible",
+    "home": "Home"
+  },
+
+  "price-request-success": {
+    "title": "Price request added successfully",
+    "subtitle": "You will be notified when a new quote is available",
+    "go-to-list": "Requests for quotations"
+  },
+
+  "fatorahCallback": {
+    "successTitle": "Payment Successful!",
+    "failureTitle": "Payment Failed",
+    "successMessage": "Your payment has been processed successfully. Thank you for your purchase!",
+    "failureMessage": "Unfortunately, your payment could not be processed. Please try again or contact support.",
+    "redirectMessage": "Redirecting to home page in {{count}} seconds...",
+    "goHome": "Go to Home"
+  },
+
+  "order-request": {
+   "price-quote-request": "Price Quote Request",
+   "your-special-price-offers": "Your Special Price Offers",
+   "create-new-quote-request": "Create New Quote Request",
+   "createQuoteRequest": "Create Quote Request",
+   "view-quote-request": "View Quote Request",
+   "enter-the-necessary-information-for-the-price-request": "Enter the necessary information for the price request",
+   "create-price-quote-request": "View Quote Request",
+   "water-liter-price-0.2-kuwaiti-dinar": "Water liter price <bold>0.2</bold> Kuwaiti Dinar",
+   "liter": "Liter",
+   "project-type": "Project Type",
+   "upload-project-design": "Upload Project Design",
+   "area": "Area",
+   "request-date": "Request Date",
+   "request-description": "Request Description",
+   "send-request": "Send Request",
+   "the-total": "The total",
+   "kwd": "KWD",
+   "search": "Search",
+   "address": "Address",
+   "address-required": "Address is required",
+   "address-min-length": "Address must be at least 5 characters",
+   "project-type-required": "Project type is required",
+   "area-required": "Area is required",
+   "area-number": "Area must be a number",
+   "date-required": "Date is required",
+   "date-future": "Date cannot be in the past",
+   "description-required": "Description is required",
+   "description-min-length": "Description must be at least 10 characters",
+   "file-required": "File is required",
+   "form-submitted-successfully": "Form submitted successfully!",
+   "title": "Title",
+   "title-required": "Title is required",
+   "title-min-length": "Title must be at least 5 characters",
+   "budget": "Budget",
+   "budget-required": "Budget is required",
+   "budget-number": "Budget must be a number",
+   "project-name": "Project Name",
+   "project-name-required": "Project name is required",
+   "price": "Price",
+   "price-required": "Price is required",
+   "price-number": "Price must be a number",
+   "file-type-error": "Only images or PDF files are allowed",
+   "file-size-error": "File size must be 3MB or less"
+  },
+
+  "service-request": {
+    "project-offers": "Project Offers",
+    "your-special-price-offers": "Your Special Price Offers",
+    "create-new-quote-request": "Create New Quote Request",
+    "create-price-quote-request": "Create Price Quote Request",
+    "cancel": "Cancel",
+    "view": "View",
+    "Ayman Aziz": "Ayman Aziz",
+    "sent-a-new-offer-regarding-a": "sent a new offer regarding a",
+    "villa-construction-project": "Villa Construction Project",
+    "enter-the-necessary-information-for-the-price-request": "Enter the necessary information for the price request",
+    "search": "Search"
+
+  },
+
+      "basic-services-request": {
+      "title": "Service Request",
+      "your-special-offers": "Your Special Offers",
+      "create-new-price-offer-request": "Create New Price Offer Request",
+      "search": "Search...",
+      "basic-services": "Basic Services",
+      "request-service-description": "Request the service you need and we will send it now",
+      "title-required": "Title is required",
+      "description-required": "Description is required",
+      "description-min-length": "Description must be at least 10 characters",
+      "budget-required": "Budget is required",
+      "deadline-required": "Deadline is required",
+      "address-required": "Address is required",
+      "type-required": "Service type is required",
+      "project-name-required": "Project name is required",
+      "price-required": "Price is required",
+      "send-request": "Send Request",
+      "request-failed": "Request failed. Please try again.",
+      "water": "Water",
+      "sand": "Sand",
+      "bricks": "Bricks",
+      "cement": "Cement",
+      "iron": "Iron",
+      "liter": "liter",
+      "cubic-meter": "cubic meter",
+      "piece": "piece",
+      "bag": "bag",
+      "ton": "ton",
+      "price-per-unit": "Price per {{unit}} of {{service}}: {{price}} KWD",
+      "address": "Address",
+      "number-of-litres": "Number of Litres",
+      "quantity": "Quantity",
+      "request-date": "Request Date",
+      "request-description": "Request Description",
+      "notes": "Notes",
+      "sending": "Sending...",
+      "total": "Total",
+      "kwd": "KWD",
+      "address-min-length": "Address must be at least 5 characters",
+   "number-of-litres-required": "Number of litres is required",
+      "quantity-required": "Quantity is required",
+      "quantity-positive": "Quantity must be positive",
+      "date-required": "Date is required",
+      "date-future": "Date cannot be in the past",
+      "notes-max-length": "Notes cannot exceed 500 characters",
+      "request-sent-successfully": "Request sent successfully!"
+  },
+
+  "service-list": {
+    "title": "Service Providers",
+    "subtitle": "Find the best service providers in your area",
+    "categories": "Categories",
+    "all-categories": "All Categories",
+    "building": "Building",
+    "design": "Design",
+    "electrical": "Electrical",
+    "plumbing": "Plumbing",
+    "carpentry": "Carpentry",
+    "painting": "Painting",
+    "create-request": "Create Request",
+    "search-placeholder": "Search service providers...",
+    "request-service": "Request Service",
+    "service-providers": "Service Providers",
+    "find-the-best-service-providers": "Find the best service providers in your area",
+    "all-services": "All Services",
+    "company-1-name": "Advanced Building Company",
+    "company-1-service": "Construction and Building Services",
+    "company-2-name": "Creative Design Foundation",
+    "company-2-service": "Interior and Exterior Design",
+    "company-3-name": "Modern Electrical Company",
+    "company-3-service": "Electrical Installation and Maintenance",
+    "company-4-name": "Specialized Plumbing Company",
+    "company-4-service": "Plumbing and Drainage Services",
+    "company-5-name": "Luxury Carpentry Company",
+    "company-5-service": "Carpentry and Decoration Works",
+    "company-6-name": "Excellence Painting Company",
+    "company-6-service": "Painting and Finishing",
+    "company-7-name": "Premium Construction Co.",
+    "company-7-service": "High-End Construction Services",
+    "company-8-name": "Creative Design Studio",
+    "company-8-service": "Modern Design Solutions",
+    "company-9-name": "Power Systems Ltd.",
+    "company-9-service": "Advanced Electrical Systems",
+    "company-10-name": "Water Solutions Pro",
+    "company-10-service": "Professional Plumbing Services",
+    "company-11-name": "Master Woodworks",
+    "company-11-service": "Custom Carpentry & Furniture",
+    "company-12-name": "Color Perfect Co.",
+    "company-12-service": "Professional Painting Services",
+    "company-13-name": "Build Right Construction",
+    "company-13-service": "Quality Building Solutions",
+    "company-14-name": "Design Hub Studio",
+    "company-14-service": "Interior & Exterior Design",
+    "company-15-name": "Electro Solutions",
+    "company-15-service": "Complete Electrical Services",
+    "company-16-name": "Plumb Perfect",
+    "company-16-service": "Expert Plumbing & Maintenance",
+    "company-17-name": "Wood Craft Masters",
+    "company-17-service": "Fine Carpentry & Joinery",
+    "company-18-name": "Paint Masters Pro",
+    "company-18-service": "Premium Painting & Finishing"
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
+  },
+  "project-offers": {
+    "offers": "offers",
+    "project-title": "Villa construction project",
+    "project-category": "Total construction",
+    "project-offers-count": "5 offers",
+    "page-title": "Project Offers",
+    "your-special-price-offers": "Your Special Price Offers",
+    "create-new-quote-request": "Create New Quote Request",
+    "search": "Search...",
+    "1-offer": "1 Offer",
+    "2-offer": "2 Offer",
+    "3-offer": "3 Offer",
+    "view-quote": "View Quote",
+    "call": "Call",
+    "accept": "Accept",
+    "accepting": "Accepting...",
+    "proposal-accepted": "Proposal accepted successfully!",
+    "accept-error": "Failed to accept proposal. Please try again.",
+    "project-started": "Project started successfully!",
+    "start-error": "Failed to start project. Please try again.",
+    "noOffers": "No project offers found",
+    "price": "Price",
+    "duration": "Duration",
+    "professional": "Professional",
+    "noPhoneNumber": "No phone number available"
+  },
+
+  "request-quote": {
+    "open": "Open",
+    "page-title": "Requests for quotations",
+    "your-special-price-offers": "Your Special Price Offers",
+    "create-new-quote-request": "Create New Quote Request",
+    "search": "Search...",
+    "no-quotes": "No quotes found"
+  },
+
+  "footer": {
+    "home": "Home",
+    "products": "Product List",
+    "privacy": "Privacy Policy",
+    "about": "About Platform",
+    "serviceProviders": "Service Providers",
+    "copyright": "© 2024 My Company. All rights reserved.",
+    "allRightsReserved": "All rights reserved in 2025",
+    "laws": "Laws",
+    "politicsAndPrivacy": "Politics and Privacy"
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Log in to continue",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot your password?",
+      "loginButton": "Login",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Create your account now",
+      "visitorLogin": "Login as Visitor",
+      "loginAsServiceProvider": "Login as Service Provider"
+    },
+    "signup": {
+      "title": "Create an account",
+      "subtitle": "Sign up to continue",
+      "fullName": "Full Name",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "createAccount": "Create an Account",
+      "alreadyHaveAccount": "Already have an account?",
+      "loginLink": "Log in here",
+      "orLoginVia": "or Login via",
+      "google": "Google",
+      "apple": "Apple",
+      "terms": "Terms of use",
+      "and": "and",
+      "privacy": "Privacy Policy",
+      "otp": {
+        "title": "Enter the code",
+        "description": "Enter the code you received on your mobile phone to verify your account",
+        "submit": "Submit",
+        "resend": "Resend Code",
+        "timerPrefix": "Code expires in:"
+      },
+      "registrationSuccess": "Registration successful! Please verify your phone number.",
+      "verificationSuccess": "Phone verification successful! Welcome!",
+      "otpResent": "OTP code resent successfully!",
+      "otpSent": "OTP sent to your phone number.",
+      "otpSendFailed": "Failed to send OTP. Please try again.",
+      "invalidOtp": "Invalid OTP code. Please try again.",
+      "verifyOtpFailed": "Failed to verify OTP. Please try again.",
+      "registerAsServiceProvider": "Register as a Service Provider"
+    },
+    "signupsp": {
+      "title": "Service Provider Registration",
+      "subtitle": "I have an account on the application. Login",
+      "name": "Full Name",
+      "phoneNo": "Phone Number",
+      "email": "Email Address",
+      "password": "Password",
+      "workTitle": "Job Title/Work Address",
+      "selectSpecializations": "Select specializations...",
+      "experience": "Years of Experience",
+      "bio": "CV/Resume/Biography",
+      "resumePlaceholder": "Please select resume",
+      "location": "Location",
+      "multiSelectHint": "Click to select multiple specializations",
+      "creating": "Creating Account...",
+      "createAccount": "Create Account",
+      "orLoginVia": "Or login via",
+      "google": "Google",
+      "apple": "Apple",
+      "terms": "Terms of use",
+      "and": "and",
+      "privacy": "Privacy Policy",
+      "registerAsCustomer": "Register as a Customer",
+      "validation": {
+        "nameRequired": "Name is required",
+        "phoneRequired": "Phone number is required",
+        "emailRequired": "Valid email is required",
+        "emailInvalid": "Please enter a valid email",
+        "passwordRequired": "Password is required",
+        "passwordLength": "Password must be at least 6 characters",
+        "workTitleRequired": "Work title is required",
+        "specializationRequired": "Please select at least one specialization",
+        "experienceRequired": "Valid experience years is required",
+        "bioLength": "Bio must be at least 10 characters",
+        "locationRequired": "Please select your location on the map"
+      },
+      "specializations": {
+        "construction": "Construction",
+        "electrical": "Electrical",
+        "plumbing": "Plumbing",
+        "hvac": "HVAC",
+        "cleaning": "Cleaning",
+        "landscaping": "Landscaping",
+        "painting": "Painting",
+        "carpentry": "Carpentry"
+      },
+      "loadingSpecializations": "Loading specializations...",
+      "noSpecializationsAvailable": "No specializations available",
+      "usingDefaultSpecializations": "Using default specializations - API response format issue",
+      "usingDefaultSpecializationsConnection": "Using default specializations - API connection issue",
+      "registrationSuccess": "Professional registration successful!",
+      "registrationFailed": "Registration failed. Please try again.",
+      "googleRegistrationSuccess": "Google registration successful",
+      "googleConfigMissing": "Google configuration missing",
+      "googleRegistrationFailed": "Google registration failed",
+      "otp": {
+        "title": "Enter OTP",
+        "description": "Enter the code sent to your phone to verify your account.",
+        "submit": "Submit",
+        "resend": "Resend Code",
+        "timerPrefix": "Time left:",
+        "completeOtpRequired": "Please enter the complete OTP code."
+      },
+      "emailAlreadyExists": "Email already exists. Please use a different email.",
+      "phoneAlreadyExists": "Phone number already exists. Please use a different phone number.",
+      "emailOrPhoneExists": "Email or phone number already exists. Please use different credentials."
+    },
+    "loginsp": {
+      "title": "Service Provider Registration",
+      "subtitle": "Create your service provider account",
+      "fullName": "Full Name",
+      "phone": "Phone Number",
+      "email": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "login": "Login",
+      "createAccount": "Create Account",
+      "orLoginVia": "Or login via",
+      "google": "Google",
+      "apple": "Apple",
+      "terms": "Terms",
+      "and": "and",
+      "privacy": "Privacy Policy",
+      "otp": {
+        "title": "Enter OTP",
+        "description": "Enter the code sent to your phone to verify your account.",
+        "submit": "Submit",
+        "resend": "Resend Code",
+        "timerPrefix": "Time left:"
+      },
+      "registerAsSeeker": "Register as Service Seeker",
+      "registerAsCustomer": "Register as a Customer",
+      "loginAsProvider": "Login as Service Provider",
+      "loginAsCustomer": "Login as Customer"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email to reset your password",
+      "email": "Email",
+      "submitButton": "Send Reset Link",
+      "backToLogin": "Back to Login"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "submitButton": "Reset Password",
+      "backToLogin": "Back to Login"
+    }
+  },
+  "profile": {
+    "headerTitle": "Personal Profile",
+    "sidebar": {
+      "personalProfile": "Personal Profile",
+      "notifications": "Notifications",
+      "myAddresses": "My Addresses",
+      "myOrders": "My Orders",
+      "paymentMethod": "Payment Method",
+      "service": "Service",
+      "favorites": "Favorites",
+      "likedServices": "Liked Services"
+    },
+    "content": {
+      "nameLabel": "Name",
+      "nameValue": "Ahmed Mohamed",
+      "emailLabel": "Email Address",
+      "emailValue": "uiuxocean@gmail.com",
+      "phoneNumberLabel": "Phone Number",
+      "phoneNumberValue": "+91 95744 68870",
+      "editProfileButton": "Edit Profile",
+      "changePasswordButton": "Change Password",
+      "logout": "Logout"
+    },
+    "addresses": {
+      "addNewAddress": "Add New Address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "editAddress": "Edit Address",
+      "name": "Address Name",
+      "city": "City",
+      "area": "Area",
+      "block": "Block",
+      "street": "Street Number",
+      "building": "Building",
+      "floorApartment": "Floor/Apartment",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "setAsDefault": "Set as Default",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "noAddresses": "No addresses yet",
+      "noAddressesDescription": "Add your first address to get started",
+      "namePlaceholder": "Enter address name",
+      "cityPlaceholder": "Enter city",
+      "areaPlaceholder": "Enter area",
+      "blockPlaceholder": "Enter block",
+      "streetPlaceholder": "Enter street number",
+      "buildingPlaceholder": "Enter building name",
+      "floorApartmentPlaceholder": "Enter floor/apartment",
+      "latitudePlaceholder": "Enter latitude",
+      "longitudePlaceholder": "Enter longitude",
+      "selectLocation": "Select Location on Map",
+      "searchLocation": "Search Location",
+      "searchPlaceholder": "Type address to search...",
+      "selectedLocation": "Selected Location",
+      "mapLoadError": "Failed to load map",
+      "searchNotAvailable": "Search functionality will be available once the map loads. You can still click on the map to select a location.",
+      "defaultUpdatedSuccess": "Default address updated successfully",
+      "defaultUpdateError": "Failed to set default address",
+      "createSuccess": "Address created successfully",
+      "createError": "Failed to create address",
+      "updateSuccess": "Address updated successfully",
+      "updateError": "Failed to update address",
+      "deleteSuccess": "Address deleted successfully",
+      "fillRequiredFields": "Please fill in all required fields",
+      "invalidLatitude": "Latitude must be between -90 and 90",
+      "invalidLongitude": "Longitude must be between -180 and 180",
+      "saveError": "Failed to save address"
+    },
+    "paymentMethods": {
+      "title": "Payment Options",
+      "addNewPaymentMethod": "Add Payment Method",
+      "editPaymentMethod": "Edit Payment Method",
+      "cardNumber": "Card Number",
+      "cardholderName": "Cardholder Name",
+      "cardCode": "CVV",
+      "cvv": "CVV",
+      "expirationDate": "Expiration Date",
+      "expirationPlaceholder": "MM/YY",
+      "enterCardNumber": "Enter your card number",
+      "enterCardholderName": "Enter cardholder name",
+      "enterCVV": "Enter CVV code",
+      "monthYear": "Month / Year",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "masterCard": "Master Card",
+      "visaCard": "Visa Card",
+      "scanCard": "Scan Card",
+      "saveForRenewals": "Save payment information for future renewals",
+      "confirmPayment": "Confirm Payment",
+      "paymentSuccess": "Payment method added successfully!",
+      "errors": {
+        "invalidCardNumber": "Enter a valid card number",
+        "invalidExpiry": "Enter a valid expiry in MM/YY",
+        "expiredCard": "This card is expired",
+        "invalidCVV": "Enter a valid CVV (3-4 digits)",
+        "requiredCardholderName": "Cardholder name is required"
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "rateOrder": "Rate the Order",
+      "orderDetails": "Order Details",
+      "orderAgain": "Order Again",
+      "completed": "Completed",
+      "productName": "Product",
+      "currentPrice": "25 K.D.",
+      "originalPrice": "40 K.D.",
+      "orderDate": "Order Date",
+      "payNow": "Pay Now",
+      "noOrders": "No orders yet",
+      "noOrdersDescription": "You haven't placed any orders yet. Start shopping to see your orders here.",
+      "startShopping": "Start Shopping",
+      "status": {
+        "processing": "Processing",
+        "cancelled": "Cancelled",
+        "delivered": "Delivered",
+        "shipped": "Shipped"
+      },
+      "payment": {
+        "pending": "Pending",
+        "paid": "Paid",
+        "unpaid": "Unpaid",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded",
+        "processing": "Processing"
+      }
+    },
+    "cards": {
+      "modernCeilingLights": {
+        "title": "Modern Ceiling Lights",
+        "company": "Engek Company",
+        "code": "Code: 001"
+      },
+      "luxuryLamps": {
+        "title": "Luxury Lamps",
+        "company": "Lighting Company",
+        "code": "Code: 002"
+      },
+      "pendantLighting": {
+        "title": "Pendant Lighting",
+        "company": "Enara Company",
+        "code": "Code: 003"
+      }
+    },
+    "likedServices": {
+      "noLikedServices": "No liked services yet",
+      "noLikedServicesDescription": "Start liking services to see them here",
+      "browseServices": "Browse Services"
+    },
+    "favorites": {
+      "noFavorites": "No favorite products yet",
+      "noFavoritesDescription": "Start adding products to your favorites to see them here.",
+      "browseProducts": "Browse Products"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "content": "Notifications content will go here",
+      "totalNotifications": "notifications",
+      "markAllAsRead": "Mark All as Read",
+      "allMarkedAsRead": "All notifications marked as read",
+      "refresh": "Refresh",
+      "unreadNotifications": "Unread Notifications",
+      "noNotifications": "No notifications yet",
+      "noNotificationsDesc": "You don't have any notifications at the moment.",
+      "noNotificationsDescription": "You don't have any notifications at the moment.",
+      "showing": "Showing",
+      "of": "of",
+      "delete": "Delete",
+      "deleted": "Notification deleted successfully",
+      "defaultTitle": "Notification",
+      "noMessage": "No message available",
+      "noDate": "No date available",
+      "categories": {
+        "order_update": "Order Update",
+        "payment": "Payment",
+        "promotion": "Promotion",
+        "system": "System",
+        "general": "General"
+      }
+    }
+  },
+  "profileSP": {
+    "headerTitle": "Service Provider Profile",
+    "sidebar": {
+      "myProfile": "My Profile",
+      "packages": "Packages",
+      "payments": "Payments",
+      "projectPriceRequest": "Project Price Request",
+      "personalProfile": "Personal Profile",
+      "notifications": "Notifications",
+      "myAddresses": "My Addresses",
+      "myProjects": "My Projects",
+      "paymentMethod": "Payment Method",
+      "myServices": "My Services",
+      "favorites": "Favorites"
+    },
+    "content": {
+      "nameLabel": "Name",
+      "nameValue": "Ahmed Mazen",
+      "professionLabel": "Profession",
+      "professionValue": "uiuxocean@gmail.com",
+      "emailLabel": "Email",
+      "emailValue": "+91 95744 68870",
+      "phoneNumberLabel": "Phone Number",
+      "phoneNumberValue": "Ahmed Mohamed",
+      "currentMembership": "Current Membership",
+      "freeMembership": "Free",
+      "upgradeButton": "Upgrade",
+      "suggestedServices": "Suggested Services",
+      "editProfileButton": "Edit Profile",
+      "changePasswordButton": "Change Password",
+      "addNewProject": "Add a new project"
+    },
+    "suggestedServices": {
+      "lampRepair": "Repair or install lamp",
+      "electricalRepair": "Repair circuit or electrical contact",
+      "editIcon": "Edit"
+    },
+    "paymentMethods": {
+      "title": "Payment Options",
+      "addNewPaymentMethod": "Add Payment Method",
+      "editPaymentMethod": "Edit Payment Method",
+      "cardNumber": "Card Number",
+      "cardholderName": "Cardholder Name",
+      "cardCode": "CVV",
+      "cvv": "CVV",
+      "expirationDate": "Expiration Date",
+      "expirationPlaceholder": "MM/YY",
+      "enterCardNumber": "Enter your card number",
+      "enterCardholderName": "Enter cardholder name",
+      "enterCVV": "Enter CVV code",
+      "monthYear": "Month / Year",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "masterCard": "Master Card",
+      "visaCard": "Visa Card",
+      "scanCard": "Scan Card",
+      "saveForRenewals": "Save payment information for future renewals",
+      "confirmPayment": "Confirm Payment",
+      "paymentSuccess": "Payment method added successfully!",
+      "errors": {
+        "invalidCardNumber": "Enter a valid card number",
+        "invalidExpiry": "Enter a valid expiry in MM/YY",
+        "expiredCard": "This card is expired",
+        "invalidCVV": "Enter a valid CVV",
+        "requiredCardholderName": "Cardholder name is required"
+      }
+    },
+    "projects": {
+      "title": "My Projects",
+      "projectName": "Modern Villa Construction",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "clientName": "John Smith",
+      "amount": "25,000 KWD",
+      "noProjects": "No projects completed yet",
+      "noProjectsDesc": "Your completed projects will appear here",
+      "participatedProjects": "Projects you participated in completing"
+    },
+    "pricingPackages": {
+      "title": "Choose Your Package",
+      "safetyPackage": "Safety Package",
+      "confidencePackage": "Confidence Package",
+      "premiumPackage": "Premium Package",
+      "enterprisePackage": "Enterprise Package",
+      "monthly": "monthly",
+      "priceOffer": "Ability to raise price offers",
+      "contactClient": "Contact the client",
+      "prioritySupport": "24/7 Priority Support",
+      "advancedAnalytics": "Advanced Analytics Dashboard",
+      "customBranding": "Custom Branding Options",
+      "dedicatedManager": "Dedicated Account Manager",
+      "selectPackage": "Select Package"
+    },
+    "profileUpdatedSuccessfully": "Profile updated successfully!"
+  },
+  "common": {
+    "sending": "Sending...",
+    "submitting": "Submitting...",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "total": "Total",
+    "kwd": "KWD",
+    "rememberMe": "Remember me",
+    "loading": "Loading...",
+    "userNotFound": "User not found",
+    "back": "Back",
+    "search": "Search...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "title": "Project Title",
+    "description": "Project Description",
+    "budget": "Budget Amount",
+    "deadline": "Project Deadline",
+    "projectDesign": "Upload Project Design",
+    "address": "Project Address",
+    "projectName": "Project Name",
+    "price": "Expected Price",
+    "delete": "Delete",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "failedToLoad": "Failed to load",
+    "failedToUpdate": "Failed to update",
+    "failedToCreate": "Failed to create",
+    "failedToDelete": "Failed to delete",
+    "operationFailed": "Operation failed",
+    "notAvailable": "N/A",
+    "fillRequiredFields": "Please fill in all required fields",
+    "fillRequiredFieldsAndRatings": "Please fill all required fields and select all ratings",
+    "selectCategory": "Please select a category",
+    "requestSubmittedSuccessfully": "Request submitted successfully",
+    "somethingWentWrong": "Something went wrong",
+    "more": "more",
+    "retry": "Retry"
+  },
+  "product-showcase": {
+    "project-offers": "Project Offers",
+    "your-special-offers": "Your Special Offers",
+    "create-new-price-offer-request": "Create New Price Quote Request",
+    "search": "Search...",
+    "about-platform": "About Platform",
+    "about-description": "Our platform provides comprehensive solutions for all your construction and renovation needs. We connect you with trusted contractors and suppliers.",
+    "about-description-2": "With our extensive network of professionals, you can find everything from basic materials to complete project management services.",
+    "about-description-3": "Get competitive quotes, track your projects, and ensure quality workmanship with our integrated platform.",
+    "commercial": "Commercial",
+    "modifications": "Modifications",
+    "electricity": "Electricity",
+    "construction": "Construction",
+    "rechargeable-desk-lamp": "Rechargeable Desk Lamp",
+    "modern-ceiling-lamps": "Modern Ceiling Lamps",
+    "wooden-flooring": "Wooden Flooring",
+    "kitchen-water-faucet": "Kitchen Water Faucet",
+    "bathroom-mirror": "Bathroom Mirror",
+    "wallpaper": "Wallpaper"
+  },
+  "contact": {
+    "contact-us": "Contact Us",
+    "your-special-prices": "Your Special Prices",
+    "create-new-price-quote-request": "Create New Price Quote Request",
+    "search": "Search...",
+    "contact-subtitle": "Contact us for help and guidance",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send-message": "Send Message",
+    "call-us": "Call Us",
+    "chat-whatsapp": "Chat via WhatsApp",
+    "email-us": "Email Us",
+    "name-required": "Name is required",
+    "email-required": "Email is required",
+    "email-invalid": "Please enter a valid email",
+    "message-required": "Message is required",
+    "cityscape-placeholder": "Modern Cityscape"
+  },
+  "faq": {
+    "headerTitle": "Personal Profile",
+    "q1": {
+      "question": "How to log in",
+      "answer": "You can log in by clicking the log in button at the top of the page and entering your credentials."
+    },
+    "q2": {
+      "question": "Account Settings",
+      "answer": "You can access your account settings by clicking on your profile and selecting Settings from the drop-down menu."
+    },
+    "q3": {
+      "question": "Add new content",
+      "answer": "To add new content, go to the control panel, choose the type of content you want to add, and fill out the required form."
+    },
+    "q4": {
+      "question": "How to contact support",
+      "answer": "You can contact the support team through the contact form or via email available on the Contact Us page."
+    }
+  },
+    "projectPriceRequest": {
+      "title": "Project Price Requests",
+      "subtitle": "Project price requests for application clients",
+      "searchPlaceholder": "Search...",
+      "status": {
+        "open": "Open",
+        "inProgress": "In Progress",
+        "completeConstruction": "Complete Construction"
+      },
+      "viewPrice": "View Price",
+      "downloadDesign": "Download Project Design",
+      "priceOffer": "Price Offer",
+      "description": "Order Description",
+      "address": "Address",
+      "area": "Area",
+      "fullConstruction": "Full Construction",
+      "saadAlObaidi": "Saad Al-Obaidi",
+      "addressText": "Da'bal Al-Khuza'i Street, Al-Jahra, Kuwait",
+      "descriptionText": "Three-story villa construction project, construction phase. Three-story villa construction project, construction phase. Three-story villa construction project, construction phase. Three-story villa construction project, construction phase.",
+      "projects": {
+        "project1": {
+          "clientName": "Saad Al-Obaidi",
+          "projectName": "Villa Construction Project",
+          "description": "Villa construction project"
+        },
+        "project2": {
+          "clientName": "Ahmed Hassan",
+          "projectName": "Office Building Project",
+          "description": "Commercial office building construction"
+        },
+        "project3": {
+          "clientName": "Fatima Al-Rashid",
+          "projectName": "Residential Complex",
+          "description": "Multi-story residential complex"
+        }
+      },
+      "villaConstruction": "Villa Construction Project",
+      "congratulations": "Congratulations!",
+      "agreedToOffer": " agreed to the price offer regarding project",
+      "contactClient": "Contact Client",
+      "startProject": "Start Project"
+    },
+  "contactCustomer": {
+    "search": "Search....",
+    "title": "Submit Project Offer",
+    "subtitle": "Submit Project Offer: Villa Construction",
+    "projectDuration": "Project Completion Duration",
+    "price": "KWD Price",
+    "uploadFile": "Upload Project Completion File",
+    "notes": "Add Note",
+    "submitOffer": "Submit Offer",
+    "termsAndPrivacy": "Terms of Use & Privacy Policy"
+  },
+  "projectRequest": {
+    "search": "Search in projects...",
+    "title": "New Project Request",
+    "subtitle": "Create a new project request",
+    "projectDuration": "Expected Project Duration",
+    "budget": "Expected Budget",
+    "uploadFile": "Upload Project Files",
+    "notes": "Project Description",
+    "submitRequest": "Submit Request",
+    "termsAndPrivacy": "Terms of Use & Privacy Policy"
+  },
+  "personalProfile": {
+    "header": {
+      "title": "Personal Profile"
+    },
+    "menuItems": {
+      "howToLogin": "How to Log In",
+      "loginContent": "You can log in using your email and password. Make sure to enter the data correctly.",
+      "accountSettings": "Account Settings",
+      "accountSettingsContent": "You can modify your account settings through this page. Update your personal information and privacy settings.",
+      "addNewContent": "Add New Content",
+      "addContentContent": "You can add new content to your account. Upload files or enter the required texts.",
+      "howToContactSupport": "How to Contact Support",
+      "contactSupportContent": "You can contact the support team via email or phone. We are available to help you 24/7."
+    }
+  },
+  "serviceCard": {
+    "title": "Project Price requests",
+    "subtitle": "Application customer project price requests",
+    "searchPlaceholder": "Search",
+    "projects": {
+      "project1": {
+        "clientName": "Saad Al-Obaidi",
+        "projectName": "Mila Construction Project",
+        "description": "Villa construction project"
+      },
+      "project2": {
+        "clientName": "Ahmed Hassan",
+        "projectName": "Office Building Project",
+        "description": "Commercial office building construction"
+      },
+      "project3": {
+        "clientName": "Fatima Al-Rashid",
+        "projectName": "Residential Complex",
+        "description": "Multi-story residential complex"
+      }
+    },
+    "loadingProjectRequests": "Loading project requests...",
+    "errors": {
+      "loginRequired": "Please login to view project requests",
+      "loadFailed": "Failed to load project requests",
+      "professionalAuthRequired": "Professional authentication required. Please login as a service provider.",
+      "accessDeniedSP": "Access denied. Only service providers can submit proposals. Current role: {{role}}",
+      "projectIdMissing": "Project ID (demandId) is missing",
+      "professionalIdMissing": "Professional ID is missing",
+      "unauthorizedSubmit": "You are not authorized to submit a proposal for this project.",
+      "projectNotFound": "Project not found. Please refresh the page and try again.",
+      "alreadySubmitted": "You have already submitted a proposal for this project.",
+      "submitFailed": "Failed to submit proposal. Please try again.",
+      "downloadFailed": "Failed to download project file",
+      "customerAuthRequired": "Customer authentication required. Please login as a customer.",
+      "accessDeniedCustomer": "Access denied. Only customers can accept proposals. Current role: {{role}}",
+      "demandIdMissing": "Demand ID is missing",
+      "noProposalsFound": "No professional or vendor ID found. No proposals available for this project.",
+      "multipleProposalTypes": "Multiple proposal types found. Please contact support.",
+      "unauthorizedAccept": "You are not authorized to accept this proposal.",
+      "proposalNotFound": "Proposal or project not found. Please refresh the page and try again.",
+      "alreadyAccepted": "This proposal has already been accepted.",
+      "missingParameters": "Missing required parameters. Please ensure the project has valid proposals and try again.",
+      "invalidProposalData": "Invalid proposal data. Please contact support.",
+      "acceptFailed": "Failed to accept proposal. Please try again."
+    },
+    "success": {
+      "proposalSubmitted": "Proposal submitted successfully!",
+      "proposalAccepted": "Proposal accepted successfully!"
+    },
+    "buttons": {
+      "submitProposal": "Submit Proposal",
+      "submitting": "Submitting...",
+      "priceQuote": "Price Quote",
+      "projectCompletionFile": "Project Completion File",
+      "allProjects": "All Projects"
+    }
+  },
+  "otpModal": {
+    "title": "Enter Code",
+    "subtitle": "Enter the code sent to your mobile phone to reset your password",
+    "submitButton": "Enter Code",
+    "enterAllDigits": "Please enter all 4 digits."
+  },
+  "pageTitles": {
+    "home": "Home",
+    "offers": "Project Offers",
+    "products": "Products",
+    "about": "About Us"
+  },
+  "fatorahSuccess": {
+    "successTitle": "Payment Successful!",
+    "failureTitle": "Payment Failed",
+    "successMessage": "Your payment has been processed successfully.",
+    "failureMessage": "There was an issue processing your payment.",
+    "redirectMessage": "Redirecting to home page in {{count}} seconds...",
+    "goHome": "Go to Home"
+  },
+  "fatorahError": {
+    "errorTitle": "Payment Failed",
+    "errorMessage": "We couldn't process your payment",
+    "errorDetailsTitle": "Payment Processing Error",
+    "errorDetailsText": "Your payment could not be completed. Please try again or contact support if the issue persists.",
+    "redirectMessage": "Redirecting to home page in {{count}} seconds...",
+    "goHome": "Go to Home"
+  },
+  "No products available in this category": "No products available in this category",
+  "projectDetails": {
+    "title": "Project Details",
+    "description": "Description",
+    "address": "Address",
+    "projectType": "Project Type",
+    "budget": "Budget",
+    "status": "Status",
+    "acceptedBy": "Accepted by"
+  },
+  "paymentMethods": {
+    "loading": "Loading payment methods...",
+    "loginRequired": "Please login to view payment methods",
+    "noPlanSelected": "No plan selected",
+    "fetchFailed": "Failed to fetch payment methods",
+    "loadFailed": "Failed to load payment methods",
+    "selectPaymentMethod": "Please select a payment method",
+    "loginRequiredForPayment": "Please login to proceed with payment",
+    "initiateFailed": "Failed to initiate payment",
+    "initiateFailedInvalid": "Payment initiation failed - invalid response",
+    "initiateFailedRetry": "Payment initiation failed. Please try again.",
+    "networkError": "Network error. Please check your internet connection and try again.",
+    "sessionExpired": "Session expired. Please login again and try.",
+    "accessDenied": "Access denied. Please contact support.",
+    "serverError": "Server error. Please try again later or contact support.",
+    "title": "Choose Payment Method",
+    "serviceCharge": "Service Charge",
+    "embeddedSupported": "Embedded Supported",
+    "noMethodsAvailable": "No payment methods available",
+    "contactSupport": "Please contact support for more information",
+    "redirectingToPayment": "Redirecting to Payment...",
+    "proceedToPayment": "Proceed to Payment",
+    "paymentFailed": "Payment Failed",
+    "networkIssue": "Network connection issue detected.",
+    "paymentNotProcessed": "Payment could not be processed.",
+    "retry": "Retry",
+    "attemptsLeft": "attempts left",
+    "tryDifferentMethod": "Try Different Method",
+    "maxRetryReached": "Maximum retry attempts reached. Please contact support or try a different payment method."
+  },
+  "pricingPackages": {
+    "loginRequired": "Please login to view subscription plans",
+    "fetchFailed": "Failed to fetch subscription plans",
+    "loadFailed": "Failed to load subscription plans",
+    "subscriptionActivated": "Subscription activated successfully!",
+    "loading": "Loading subscription plans...",
+    "currentPlan": "Current Plan",
+    "noFeaturesListed": "No features listed",
+    "noPlansAvailable": "No subscription plans available",
+    "contactSupport": "Please contact support for more information",
+    "selectPlan": "Select Plan"
+  },
+  "Favourite": "Favorite",
+  "Unfavourite": "Unfavorite"
+}

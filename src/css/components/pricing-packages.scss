@@ -1,0 +1,235 @@
+@import "../utilities";
+.pricing-packages-container {
+
+  .container-fluid {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .package-card {
+    background-color: $lightCream;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.current-plan {
+      border-color: #28a745;
+      background-color: #f8fff9;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+    }
+
+    &.selected {
+      border-color: #21395D;
+      box-shadow: 0 4px 12px rgba(33, 57, 93, 0.2);
+    }
+  }
+
+  .package-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    position: relative;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .package-price {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    .price-amount {
+      font-weight: 700;
+    }
+
+    .price-currency {
+      font-weight: 600;
+    }
+
+    .price-period {
+      font-weight: 500;
+      color: #7f8c8d;
+    }
+  }
+
+  .package-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    text-align: center;
+    word-break: break-word;
+    position: relative;
+
+    .current-plan-badge {
+      display: inline-block;
+      background-color: #28a745;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 8px;
+      font-weight: 500;
+    }
+  }
+
+  .radio-button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #EEE7DB;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    flex-shrink: 0;
+
+    .radio-inner {
+      width: 12px;
+      height: 12px;
+      background-color: #EEE7DB;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    &.selected {
+      border-color: #EEE7DB;
+      background-color: white;
+
+      .radio-inner {
+        background-color: #21395D;
+      }
+    }
+  }
+
+  .package-features {
+    margin-top: 1rem;
+  }
+
+  .feature-item {
+    font-size: 0.95rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    padding-right: 1rem;
+    position: relative;
+
+    &:before {
+      content: "■";
+      position: absolute;
+      right: 0;
+      color: #2c3e50;
+      font-size: 7px;
+      top: 5px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .package-action {
+    .btn {
+      background-color: #21395D;
+      border-color: #21395D;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #1a2f4a;
+        border-color: #1a2f4a;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(33, 57, 93, 0.3);
+      }
+    }
+  }
+}
+
+// RTL support for Arabic
+[dir="rtl"] .pricing-packages-container {
+
+
+  .package-header {
+    flex-direction: row;
+  }
+
+  .package-title {
+    text-align: right;
+  }
+
+  .feature-item {
+    padding-right: 1rem;
+    padding-left: 0;
+
+    &:before {
+      right: 0;
+      left: auto;
+    }
+  }
+}
+
+// LTR support for English
+[dir="ltr"] .pricing-packages-container {
+
+  .package-title {
+    text-align: left;
+  }
+
+  .feature-item {
+    padding-right: 0;
+    padding-left: 1rem;
+
+    &:before {
+      right: auto;
+      left: 0;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .pricing-packages-container {
+    padding: 1rem;
+
+    .package-header {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .package-price {
+      justify-content: center;
+    }
+
+    .package-title {
+      margin: 0;
+    }
+
+    .divider {
+      display: none;
+    }
+  }
+}
+
+// Wider layouts: ensure two cards per row nicely spaced
+@media (min-width: 992px) {
+  .pricing-packages-container .row {
+    row-gap: 24px;
+  }
+}

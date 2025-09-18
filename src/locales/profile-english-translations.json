@@ -1,0 +1,41 @@
+{
+  "profile": {
+    "likedServices": {
+      "noLikedServices": "No liked services yet",
+      "noLikedServicesDescription": "Start liking services to see them here",
+      "browseServices": "Browse Services",
+      "viewService": "View Service",
+      "noDescription": "No description available",
+      "generalService": "General Service"
+    },
+    "favorites": {
+      "noFavorites": "No favorite products yet",
+      "noFavoritesDescription": "Start adding products to your favorites to see them here",
+      "browseProducts": "Browse Products"
+    },
+    "orders": {
+      "noOrders": "No orders yet",
+      "noOrdersDescription": "Your order history will appear here once you make your first purchase",
+      "startShopping": "Start Shopping"
+    },
+    "addresses": {
+      "noAddresses": "No addresses yet",
+      "noAddressesDescription": "Add your first address to get started"
+    },
+    "notifications": {
+      "markAllAsRead": "Mark All as Read",
+      "refresh": "Refresh",
+      "unreadNotifications": "Unread Notifications",
+      "noNotifications": "No notifications yet",
+      "noNotificationsDescription": "You don't have any notifications at the moment"
+    },
+    "sidebar": {
+      "likedServices": "Liked Services",
+      "favorites": "Favorites",
+      "myOrders": "My Orders",
+      "myAddresses": "My Addresses",
+      "notifications": "Notifications",
+      "personalProfile": "Personal Profile"
+    }
+  }
+}

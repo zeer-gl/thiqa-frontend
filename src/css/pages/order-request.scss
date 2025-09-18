@@ -1,0 +1,313 @@
+@import "../utilities";
+
+.order-request-page {
+    min-height: 100vh;
+
+    // Header Section
+    .header-section {
+        background-color: $lightCream;
+        padding: 2rem 0;
+
+        // Right Section - Page Title
+        .page-title {
+            .main-title {
+                font-size: $font-size-xxl;
+                font-weight: $font-weight-semibold;
+                color: $primary-color;
+                margin-bottom: 0.25rem;
+                line-height: $line-height-xxl;
+            }
+
+            .subtitle {
+                font-size: $font-size-medium;
+                color: $gray-text-color;
+                margin: 0;
+                line-height: $line-height-medium;
+            }
+        }
+
+        // Middle Section - Create Request Input
+        .create-request-section {
+             display: flex;
+             justify-content: end;
+             align-self: center;
+            .create-request-btn {
+                width: 100%;
+                max-width: fit-content;
+                height: 45px;
+                padding: 10px;
+                border: 1px solid #21395D;
+                border-radius: 10px;
+                font-size: 13px;
+                color: $primary-color;
+                cursor: pointer;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+
+                .custom-icon {
+                    position: relative;
+                    width: 16px;
+                    height: 16px;
+                    background-color: #21395D;
+                    border-radius: 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .document-lines {
+                        position: absolute;
+                        left: 2px;
+                        top: 2px;
+                        width: 8px;
+                        height: 12px;
+
+                        .line {
+                            background-color: white;
+                            height: 1px;
+                            margin-bottom: 1px;
+                            border-radius: 1px;
+
+                            &.line-1 {
+                                width: 6px;
+                            }
+
+                            &.line-2 {
+                                width: 8px;
+                            }
+
+                            &.line-3 {
+                                width: 4px;
+                            }
+                        }
+                    }
+
+                    .plus-sign {
+                        position: absolute;
+                        right: 1px;
+                        bottom: 1px;
+                        color: white;
+                        font-size: 8px;
+                        font-weight: bold;
+                        line-height: 1;
+                    }
+                }
+
+                span {
+                    font-weight: 400;
+                    margin-left: 5px;
+                }
+            }
+        }
+
+        // Left Section - Search Bar
+        .search-section {
+            .search-bar {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                i {
+                    position: absolute;
+                    color: $gray-text-color;
+                    font-size: $font-size-medium;
+                    z-index: 2;
+                }
+
+                input {
+                    width: 100%;
+                    height: 44px;
+                    padding: $padding-small;
+                    border: 1px solid $border-color;
+                    border-radius: $border-radius-medium;
+                    font-size: $font-size-medium;
+                    background-color: $white-color;
+                    color: $secondary-color;
+
+                    &::placeholder {
+                        color: $light-gray-text-color;
+                    }
+
+                    &:focus {
+                        outline: none;
+                        border-color: $primary-color;
+                    }
+                }
+            }
+        }
+    }
+
+    // Main Content
+    .main-content {
+        padding: 0 2rem 2rem;
+
+        .content-wrapper {
+            padding: 2.5rem;
+          background-color: white;
+     
+
+            // Form Header
+            .form-header {
+                margin-bottom: 1rem;
+
+                .form-title {
+                    font-size: $font-size-xxl;
+                    font-weight: $font-weight-semibold;
+                    color: $primary-color;
+                    margin-bottom: 0.75rem;
+                    line-height: $line-height-xxl;
+                }
+
+                .form-subtitle {
+                    font-size: $font-size-medium;
+                    color: $light-text-color;
+                    margin-bottom: 1.5rem;
+                    line-height: $line-height-medium;
+                }
+
+                .water-price-note {
+                    span {
+                        font-size: $font-size-small;
+                        color: $gray-text-color;
+                        background-color: rgba($gray-text-color, 0.1);
+                        border-radius: $border-radius-medium;
+                        gap: 10px;
+                        margin: 20px 0 !important;
+                    }
+                }
+            }
+
+            // Form Fields - Now handled by request-form.scss
+
+            // Total Section - Now handled by request-form.scss
+        }
+    }
+}
+
+
+    .order-request-page {
+
+        // Header Section
+        .header-section {
+            // Right Section - Page Title
+            .page-title {
+                .main-title {
+                    text-align: left;
+                }
+
+                .subtitle {
+                    text-align: left;
+                }
+            }
+
+            // Middle Section - Create Request Input
+            .create-request-section {
+                .create-request-input {
+                    input {
+                        padding-right: 40px; // LTR padding for icon (right side)
+                        text-align: left; // LTR text alignment
+                    }
+
+                    i {
+                        right: 12px; // LTR icon position (right side)
+                    }
+                }
+            }
+
+            // Left Section - Search Bar
+            .search-section {
+                .search-bar {
+                    i {
+                        right: 12px; // LTR icon position (right side)
+                    }
+
+                    input {
+                        padding-right: 40px; // LTR padding (right side)
+                        text-align: left; // LTR text alignment
+                    }
+                }
+            }
+        }
+
+        // Main Content
+        .main-content {
+            .content-wrapper {
+                // Form styles now handled by request-form.scss
+            }
+        }
+    }
+
+
+// Mobile Responsive
+@media (max-width: 768px) {
+    .order-request-page {
+        .header-section {
+            padding: 1rem 0;
+
+            .page-title {
+                .main-title {
+                    font-size: $font-size-xl;
+                    line-height: $line-height-xl;
+                }
+
+                .subtitle {
+                    font-size: $font-size-small;
+                    line-height: $line-height-small;
+                }
+            }
+
+            .create-request-section {
+                .create-request-input {
+                    input {
+                        font-size: $font-size-small;
+                        padding: 10px 16px;
+                        padding-right: 40px; // RTL padding
+                    }
+                }
+            }
+        }
+
+        .main-content {
+            padding: 0 1rem 1rem;
+
+            .content-wrapper {
+                padding: 1.5rem;
+
+                .form-header {
+                    margin-bottom: 2rem;
+
+                    .form-title {
+                        font-size: $font-size-xl;
+                        line-height: $line-height-xl;
+                    }
+
+                    .form-subtitle {
+                        font-size: $font-size-small;
+                        line-height: $line-height-small;
+                    }
+                }
+
+                // Form styles now handled by request-form.scss
+            }
+        }
+    }
+}
+
+
+@media(max-width:576px) {
+    .create-request-section {
+        display: flex;
+        justify-content: start;
+        align-self: center;
+       .create-request-btn {
+           width: 100%;
+           max-width: fit-content !important;
+           margin:10px 12px !important;
+           display: flex !important;
+           align-items: center !important;
+           justify-content: start !important;
+       }
+   }
+}

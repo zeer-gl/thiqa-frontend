@@ -1,0 +1,480 @@
+@import "../utilities";
+
+// Page Header Component Styling
+.header-section {
+    padding: 2rem 0;
+
+    // When search is hidden, apply justify-between to the row
+    &.no-search .row {
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-title {
+        .main-title {
+            font-size: $font-size-xxl;
+            font-weight: $font-weight-semibold;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: $font-size-medium;
+            color: $gray-text-color;
+            margin-bottom: 0;
+            text-wrap: nowrap;
+        }
+    }
+
+    // Middle Section - Create Request Input
+    .create-request-section {
+        display: flex;
+        justify-content: end;
+        align-self: center;
+
+        .create-request-btn {
+            width: 100%;
+            max-width: fit-content;
+            height: 45px;
+            padding: 10px;
+            border: 1px solid #21395D;
+            border-radius: 10px;
+            font-size: 13px;
+            color: $primary-color;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: transparent;
+            transition: all 0.3s ease;
+
+            .custom-icon {
+                position: relative;
+                width: 16px;
+                height: 16px;
+                background-color: #21395D;
+                border-radius: 2px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+
+                .document-lines {
+                    position: absolute;
+                    left: 2px;
+                    top: 2px;
+                    width: 8px;
+                    height: 12px;
+
+                    .line {
+                        background-color: white;
+                        height: 1px;
+                        margin-bottom: 1px;
+                        border-radius: 1px;
+                        transition: background-color 0.3s ease;
+
+                        &.line-1 {
+                            width: 6px;
+                        }
+
+                        &.line-2 {
+                            width: 8px;
+                        }
+
+                        &.line-3 {
+                            width: 4px;
+                        }
+                    }
+                }
+
+                .plus-sign {
+                    position: absolute;
+                    right: 1px;
+                    bottom: 1px;
+                    color: white;
+                    font-size: 8px;
+                    font-weight: bold;
+                    line-height: 1;
+                    transition: color 0.3s ease;
+                }
+            }
+
+            span {
+                font-weight: 400;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    // Search Section
+    .search-section {
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            i {
+                position: absolute;
+                color: $gray-text-color;
+                font-size: $font-size-medium;
+                z-index: 2;
+                right: 12px; // LTR position
+                left: auto;
+            }
+
+            input {
+                width: 100%;
+                height: 44px;
+                padding: $padding-small;
+                padding-right: 40px; // Space for icon in LTR
+                border: 1px solid $border-color;
+                border-radius: $border-radius-medium;
+                font-size: $font-size-medium;
+                background-color: $white-color;
+                color: $secondary-color;
+                text-align: left; // LTR text alignment
+
+                &::placeholder {
+                    color: $light-gray-text-color;
+                }
+
+                &:focus {
+                    outline: none;
+                    border-color: $primary-color;
+                    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+                }
+            }
+        }
+    }
+}
+
+// RTL Support
+[dir="rtl"] {
+    .header-section {
+        .search-section {
+            .search-bar {
+                i {
+                    right: auto;
+                    left: 12px; // RTL position
+                }
+
+                input {
+                    padding-right: $padding-small;
+                    padding-left: 40px; // Space for icon in RTL
+                    text-align: right; // RTL text alignment
+                }
+            }
+        }
+
+        .create-request-section {
+            justify-content: end; // RTL alignment
+        }
+    }
+}
+
+// Enhanced Responsive Design - Maintain design until 350px, then responsive
+
+// Large Desktop - maintain original design
+@media (min-width: 1200px) {
+    .header-section {
+        padding: 2rem 0;
+        
+        .page-title {
+            .main-title {
+                font-size: $font-size-xxl;
+            }
+            
+            .subtitle {
+                font-size: $font-size-medium;
+            }
+        }
+        
+        .create-request-btn {
+            font-size: 13px;
+            height: 45px;
+        }
+        
+        .search-bar {
+            input {
+                font-size: $font-size-medium;
+                height: 44px;
+            }
+        }
+    }
+}
+
+// Desktop - maintain design with slight text adjustments
+@media (max-width: 1199px) {
+    .header-section {
+        padding: 1.75rem 0;
+        
+        .page-title {
+            .main-title {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 15px;
+            }
+        }
+        
+        .create-request-btn {
+            font-size: 12px;
+            height: 42px;
+        }
+        
+        .search-bar {
+            input {
+                font-size: 15px;
+                height: 42px;
+            }
+        }
+    }
+}
+
+// Tablet - maintain design with text adjustments
+@media (max-width: 991px) {
+    .header-section {
+        padding: 1.5rem 0;
+        
+        .page-title {
+            .main-title {
+                font-size: 26px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+        
+        .create-request-btn {
+            font-size: 11px;
+            height: 40px;
+        }
+        
+        .search-bar {
+            input {
+                font-size: 14px;
+                height: 40px;
+            }
+        }
+    }
+}
+
+// Mobile - maintain design with smaller text
+@media (max-width: 767px) {
+    .header-section {
+        padding: 1.25rem 0;
+        
+        .page-title {
+            .main-title {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 13px;
+            }
+        }
+        
+        .create-request-btn {
+            font-size: 10px;
+            height: 38px;
+        }
+        
+        .search-bar {
+            input {
+                font-size: 13px;
+                height: 38px;
+            }
+        }
+    }
+}
+
+// Small Mobile - maintain design with minimal text
+@media (max-width: 576px) {
+    .header-section {
+        padding: 1rem 0;
+        
+        .page-title {
+            .main-title {
+                font-size: 22px;
+            }
+            
+            .subtitle {
+                font-size: 12px;
+            }
+        }
+        
+        .create-request-btn {
+            font-size: 9px;
+            height: 36px;
+        }
+        
+        .search-bar {
+            input {
+                font-size: 12px;
+                height: 36px;
+            }
+        }
+    }
+}
+
+// Below 350px - Responsive layout changes
+@media (max-width: 350px) {
+    .header-section {
+        padding: 0.75rem 0;
+        
+        .container {
+            padding: 0 10px;
+        }
+        
+        .row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .col-md-4 {
+            width: 100%;
+            padding: 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 0.75rem;
+            
+            .main-title {
+                font-size: 20px;
+                margin-bottom: 0.25rem;
+            }
+            
+            .subtitle {
+                font-size: 11px;
+            }
+        }
+        
+        .create-request-section {
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            
+            .create-request-btn {
+                width: 100%;
+                max-width: 280px;
+                font-size: 9px;
+                height: 34px;
+                padding: 8px;
+                
+                .custom-icon {
+                    width: 14px;
+                    height: 14px;
+                    
+                    .document-lines {
+                        width: 7px;
+                        height: 10px;
+                        
+                        .line {
+                            &.line-1 {
+                                width: 5px;
+                            }
+                            
+                            &.line-2 {
+                                width: 7px;
+                            }
+                            
+                            &.line-3 {
+                                width: 3px;
+                            }
+                        }
+                    }
+                    
+                    .plus-sign {
+                        font-size: 7px;
+                    }
+                }
+            }
+        }
+        
+        .search-section {
+            .search-bar {
+                i {
+                    right: 6px;
+                    font-size: 12px;
+                }
+                
+                input {
+                    font-size: 11px;
+                    height: 34px;
+                    padding-right: 28px;
+                }
+            }
+        }
+    }
+    
+    // RTL adjustments for small screens
+    [dir="rtl"] {
+        .header-section {
+            .search-section {
+                .search-bar {
+                    i {
+                        right: auto;
+                        left: 6px;
+                    }
+                    
+                    input {
+                        padding-right: 12px;
+                        padding-left: 28px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// RTL Support for all breakpoints
+[dir="rtl"] {
+    .header-section {
+        .search-section {
+            .search-bar {
+                i {
+                    right: auto;
+                    left: 12px;
+                }
+
+                input {
+                    padding-right: $padding-small;
+                    padding-left: 40px;
+                    text-align: right;
+                }
+            }
+        }
+
+        .create-request-section {
+            justify-content: end;
+        }
+    }
+    
+    // RTL Mobile adjustments
+    @media (max-width: 767px) {
+        .header-section {
+            .search-section {
+                .search-bar {
+                    i {
+                        right: auto;
+                        left: 8px;
+                    }
+
+                    input {
+                        padding-right: $padding-small;
+                        padding-left: 32px;
+                    }
+                }
+            }
+        }
+    }
+} 
+@media screen and (max-width: 900px) {
+    .subtitle{
+        padding-top: 20px;
+    }
+    
+}

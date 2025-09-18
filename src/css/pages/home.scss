@@ -1,0 +1,811 @@
+@import "../utilities";
+
+//*{
+//  border: 1px solid red !important;
+//}
+.hero-section {
+  padding: 50px 0 0 0;
+  background-color: $navy;
+}
+
+.hero-img-overlay {
+  width: 455px;
+  height: 692px;
+  background-color: $cream;
+  border-radius: 10px;
+  position: absolute;
+  z-index: 0;
+  top: -35px;
+  right: 140px;
+}
+
+.hero-img {
+  width: 455px;
+  height: 692px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.hero-content {
+  color: white;
+
+  h2 {
+    font-size: 38px;
+    font-weight: 800;
+  }
+
+  h4 {
+    font-weight: 400;
+    font-size: 22px;
+    padding: 20px 0;
+    color: #FFFFFF;
+    line-height: 35px;
+  }
+}
+
+.hero-btn {
+  background-color: $cream !important;
+  border-radius: 100px !important;
+  font-size: 21px !important;
+  font-weight: 600 !important;
+  padding: 10px 20px !important; 
+}
+
+.hero-pattern-container {
+  overflow: hidden;
+
+  img {
+    position: relative;
+    bottom: -120px;
+  }
+}
+
+.feature-section {
+  position: relative;
+  padding: 35px 0;
+  background-color: $cream;
+}
+
+.hero-dark-pattern-container {
+  position: absolute;
+  bottom: 0;
+}
+
+.product-section {
+  padding: 35px 0 0 0;
+  background-color: $lightCream;
+}
+
+.product-list-tabs {
+  .nav-link {
+    color: $navy !important;
+    white-space: nowrap;
+  }
+
+  .nav-link.active {
+    background-color: $navy !important;
+    border-radius: 4px !important;
+    color: white !important;
+  }
+}
+
+.mi-btn {
+  font-size: 10px !important;
+  border: 1px solid #21395D33 !important;
+  border-radius: 6px !important;
+  color: #21395D !important;
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+
+  img {
+    max-width: 8px;
+  }
+}
+
+.nearby-btn {
+  font-size: 10px !important;
+  border: 1px solid #21395D33 !important;
+  border-radius: 6px !important;
+  color: $cream !important;
+  display: flex !important;
+  align-items: center;
+  background-color: $navy !important;
+  gap: 5px;
+
+  img {
+    max-width: 8px;
+  }
+}
+
+.modern-ceiling-card {
+  $card-width: 100%;
+  $card-height: 400px;
+
+  margin: auto;
+
+  width: $card-width;
+  height: $card-height;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  background: {
+    image: url('/public/images/home/product-card-bg.png');
+    size: cover;
+    position: center;
+    repeat: no-repeat;
+  }
+
+  .price-container {
+    border: 1px solid #E5E5E5;
+    border-radius: 100px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 127px;
+  }
+
+  .dotted-circle {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: white;
+    margin-bottom: 0;
+  }
+
+  .card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 15px;
+    color: white;
+
+    // Gradient overlay
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(238, 231, 219, 0) 37%, rgba(238, 231, 219, 0.6980392157) 50%, #EEE7DB 100%);
+      z-index: 0;
+    }
+
+    // Text elements
+    * {
+      position: relative;
+      z-index: 1;
+      color: $navy;
+    }
+
+    .card-title {
+      font-weight: bold;
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-price {
+      font-size: 1rem;
+    }
+
+    .card-company {
+      text-align: left;
+      font-size: 0.9rem;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+}
+
+.about-section {
+  position: relative;
+  overflow: hidden;
+  padding: 45px 0;
+  background-color: $navy;
+
+  .mockup-mobile {
+    text-align: center;
+
+    img {
+      max-height: 500px;
+    }
+  }
+
+  .hero-pattern-container {
+    img {
+      position: absolute;
+      bottom: -100px;
+    }
+  }
+}
+
+.customer-section {
+  color: $navy;
+  padding: 45px 0;
+  background-color: $cream;
+
+  .main-img {
+    text-align: center;
+
+    img {
+      max-height: 450px;
+    }
+  }
+}
+
+.customer-profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+  }
+}
+
+.quote {
+  text-align: end;
+  margin: 30px 0;
+
+  img {
+    transform: scaleX(-1);
+  }
+}
+
+.service-provider-card {
+  .top-img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .ratings {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: $navy;
+    font-size: 12px;
+
+    span {
+      font-weight: 600;
+    }
+  }
+}
+
+.services-section {
+  padding: 45px 0;
+}
+
+.evaluation-form {
+  max-width: 70%;
+
+  input.form-control {
+    height: 50px;
+  }
+
+  .form-control {
+    border: 1px solid #001C4126;
+    background-color: transparent;
+  }
+}
+
+.side-pattern {
+  position: absolute;
+  transform: translateY(-50%) scaleX(-1);
+  top: 50%;
+  left: -15px;
+  z-index:0;
+}
+
+/* From Uiverse.io by nhfiz */
+/* Multiple Toggle Switch by Abu Shafiyya */
+
+fieldset {
+  border: 0;
+  display: flex;
+  margin: 0 10px !important;
+}
+
+/* Hide default radio */
+.radio input[type="radio"] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+  opacity: 0;
+  z-index: -1;
+}
+
+/* Customizing label */
+.radio label {
+  position: relative;
+  padding: 5px 20px 5px 25px;
+  cursor: pointer;
+  border-radius: 20px;
+  color: $cream;
+  margin: 0px 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.radio label, .radio label::before {
+  -webkit-transition: .25s all ease;
+  transition: .25s all ease;
+}
+
+.radio label::before {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  content: " ";
+  position: absolute;
+  top: 30%;
+  left: 0;
+  width: 1em;
+  height: 1em;
+  border: 2px solid $cream;
+}
+
+.radio input[type="radio"] + label::before {
+  border-radius: 1em;
+}
+
+
+/* Checked toggle */
+.radio input[type="radio"]:checked + label {
+  background: #EEE7DB !important;
+  color: $navy;
+  z-index: 1;
+}
+
+.radio input[type="radio"]:checked + label {
+  padding: 5px 20px 5px 20px;
+}
+
+.radio input[type="radio"]:checked + label::before {
+  top: 0px;
+  width: 100%;
+  height: 2em;
+  z-index: -1;
+}
+
+.radio:hover input[type="radio"]:checked + label {
+  -webkit-box-shadow: #2195f338 0px 0px 0px 25px;
+  box-shadow: #2195f338 0px 0px 0px 25px;
+}
+
+.thiqa-footer .navbar-nav.nav-container {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 991px) {
+  .navbar {
+    height: auto !important;
+  }
+  .navbar-collapse {
+    padding: 1rem 0;
+  }
+
+  .navbar-nav {
+    margin-bottom: 1rem !important;
+  }
+
+  .register-btn-nav {
+    width: 100% !important;
+    justify-content: center;
+  }
+
+  .nav-icons-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .radio {
+    justify-content: center !important;
+  }
+}
+@media (max-width: 992px) {
+  .hero-content{
+    text-align: center;
+  }
+  .hero-img{
+    width: 300px;
+    object-fit: cover;
+    height: 400px;
+  }
+  .hero-img-overlay{
+    width: 300px;
+    top: -25px;
+    right: 170px;
+    height: 400px;
+  }
+}
+@media (max-width: 768px) {
+  .thiqa-footer .navbar-nav.nav-container {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  .thiqa-footer .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+  }
+  .thiqa-footer .d-flex.align-items-center.justify-content-between.mt-3 {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    text-align: center;
+  }
+  .thiqa-footer .footer-socials {
+    justify-content: center !important;
+    width: 100%;
+  }
+  .thiqa-footer .d-flex.gap-4.align-items-center {
+    justify-content: center !important;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .thiqa-footer .text-white {
+    width: 100%;
+    text-align: center;
+    word-break: break-word;
+  }
+  
+  .thiqa-footer .custom-navbar {
+    padding: 10px 15px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .thiqa-footer .custom-navbar {
+    padding: 8px 12px !important;
+  }
+  
+  .product-list-tabs {
+    justify-content: space-between !important;
+    .nav-item {
+      margin-bottom: 8px;
+    }
+    
+    .nav-link {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  }
+  
+  .mi-btn, .nearby-btn {
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+  }
+  
+  .carousel-indicators{
+    bottom: -25px;
+  }
+  
+  .hero-img-overlay{
+    display: none;
+  }
+  
+  .evaluation-form{
+    max-width: 100%;
+  }
+}
+
+// Professional pagination styling
+.pagination-arrow-btn {
+  background: transparent;
+  border: 2px solid #e0e0e0;
+  color: #666;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover:not(:disabled) {
+    border-color: #007bff;
+    color: #007bff;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  i {
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+
+.pagination-info {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  min-width: 80px;
+  text-align: center;
+}
+
+// Avatar fallback styling
+.avatar-fallback {
+  border-radius: 0 !important; // Remove rounded corners to match image style
+  object-fit: cover;
+  
+  &:hover {
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+  }
+}
+
+// Most Interactive button active state
+.mi-btn {
+  &.active {
+    background-color: #007bff !important;
+    color: white !important;
+    border-color: #007bff !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    
+    &:hover {
+      background-color: #0056b3 !important;
+      border-color: #0056b3 !important;
+    }
+  }
+}
+
+// Nearby button active state
+.nearby-btn {
+  &.active {
+    background-color: #28a745 !important;
+    color: white !important;
+    border-color: #28a745 !important;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    
+    &:hover {
+      background-color: #1e7e34 !important;
+      border-color: #1e7e34 !important;
+    }
+  }
+}
+
+// Responsive button section styling
+.services-section {
+  .d-flex.align-items-center.justify-content-between {
+    // Desktop and tablet - maintain horizontal layout
+    @media (min-width: 992px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    
+    // Tablet and smaller - stack vertically
+    @media (max-width: 991px) {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 20px;
+      
+      h2 {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0;
+      }
+      
+      .d-flex.align-items-center.gap-2 {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px !important;
+      }
+    }
+    
+    // Mobile - optimize button layout
+    @media (max-width: 768px) {
+      .d-flex.align-items-center.gap-2 {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px !important;
+        
+        // First row: See All and filter buttons
+        > *:not(.d-flex) {
+          margin-bottom: 10px;
+        }
+        
+        // Pagination arrows row
+        .d-flex.align-items-center.gap-2.ms-3 {
+          margin-left: 0 !important;
+          margin-top: 10px;
+        }
+      }
+    }
+    
+    // Small mobile - further optimization
+    @media (max-width: 576px) {
+      .d-flex.align-items-center.gap-2 {
+        gap: 12px !important;
+        
+        // Stack buttons vertically on very small screens
+        flex-direction: column;
+        align-items: center;
+        
+        // Button group for See All and filters
+        > *:not(.d-flex) {
+          width: 100%;
+          max-width: 200px;
+          margin-bottom: 8px;
+        }
+      }
+    }
+  }
+}
+
+// Enhanced button responsive styling
+.mi-btn, .nearby-btn {
+  // Base responsive styles
+  white-space: nowrap;
+  min-width: fit-content;
+  
+  // Tablet adjustments
+  @media (max-width: 991px) {
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+    
+    img {
+      max-width: 10px;
+    }
+  }
+  
+  // Mobile adjustments
+  @media (max-width: 768px) {
+    font-size: 12px !important;
+    padding: 10px 15px !important;
+    width: 100%;
+    justify-content: center;
+    
+    img {
+      max-width: 12px;
+    }
+  }
+  
+  // Small mobile
+  @media (max-width: 576px) {
+    font-size: 11px !important;
+    padding: 8px 12px !important;
+    
+    img {
+      max-width: 10px;
+    }
+  }
+}
+
+// Pagination arrows responsive styling
+.pagination-arrow-btn {
+  // Tablet
+  @media (max-width: 991px) {
+    width: 40px;
+    height: 40px;
+    
+    i {
+      font-size: 14px;
+    }
+  }
+  
+  // Mobile
+  @media (max-width: 768px) {
+    width: 35px;
+    height: 35px;
+    
+    i {
+      font-size: 12px;
+    }
+  }
+  
+  // Small mobile
+  @media (max-width: 576px) {
+    width: 32px;
+    height: 32px;
+    
+    i {
+      font-size: 11px;
+    }
+  }
+}
+
+// Button container responsive adjustments
+.services-section .d-flex.align-items-center.gap-2 {
+  // Ensure proper spacing and alignment
+  @media (max-width: 768px) {
+    .d-flex.align-items-center.gap-2.ms-3 {
+      justify-content: center;
+      margin-top: 15px;
+    }
+  }
+}
+
+// Enhanced responsive styling for button groups
+.services-buttons-container {
+  // Desktop - horizontal layout
+  @media (min-width: 992px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  // Tablet - wrap buttons
+  @media (max-width: 991px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  // Mobile - stack vertically
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    
+    .main-buttons-group {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+    
+    .pagination-buttons-group {
+      margin-left: 0 !important;
+      margin-top: 10px;
+    }
+  }
+  
+  // Small mobile - optimize spacing
+  @media (max-width: 576px) {
+    gap: 12px;
+    
+    .main-buttons-group {
+      gap: 8px;
+    }
+  }
+}
+
+.main-buttons-group {
+  // Desktop and tablet - horizontal
+  @media (min-width: 769px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  // Mobile - vertical stack
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+}
+
+.pagination-buttons-group {
+  // Ensure proper spacing
+  @media (max-width: 768px) {
+    margin-left: 0 !important;
+    justify-content: center;
+  }
+}

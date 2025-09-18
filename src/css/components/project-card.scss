@@ -1,0 +1,161 @@
+// Removed .projects-grid as we're now using Bootstrap grid
+
+.project-card {
+    margin-bottom: 1rem;
+    width: 100%;
+    height: 100%;
+    
+    .project-image {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 8px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .project-avatar-fallback {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0 !important;
+            color: #666 !important;
+            font-size: 2rem !important;
+            font-weight: bold;
+        }
+    }
+
+    .project-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+
+        .project-title {
+            color: #21395D;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .project-categories {
+            color: #21395D;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .btn-project-detail {
+            border: 1px solid #21395D33;
+            border-radius: 5px;
+            color: #21395D;
+            font-size: 10px;
+            font-weight: 400;
+            padding: 5px 10px;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+
+            .project-title {
+                color: #21395D;
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0;
+                font-family: 'FF Shamel Family Sans One Bold', sans-serif;
+                line-height: 1.3;
+            }
+
+            .project-date {
+                color: #6c757d;
+                font-size: 11px;
+                font-family: 'FF Shamel Family Sans One Book', sans-serif;
+            }
+        }
+
+        .project-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .project-categories {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.15rem;
+
+                .category-tag {
+                    background: #f8f9fa;
+                    color: #21395D;
+                    padding: 2px 6px;
+                    border-radius: 8px;
+                    font-size: 10px;
+                    font-weight: 500;
+                    font-family: 'FF Shamel Family Sans One Book', sans-serif;
+                    border: 1px solid #dee2e6;
+                }
+            }
+
+            .project-rating {
+                display: flex;
+                align-items: center;
+                gap: 0.15rem;
+
+                .rating-value {
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #21395D;
+                    font-family: 'FF Shamel Family Sans One Bold', sans-serif;
+                }
+
+                .stars {
+                    img {
+                        width: 12px;
+                        height: 12px;
+                    }
+                }
+            }
+        }
+    }
+} 
+
+.project-details {
+  margin-bottom: 10px;
+  
+  .detail-tag {
+    display: inline-block;
+    background: #f8f9fa;
+    color: #6c757d;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 8px;
+    margin-bottom: 4px;
+    border: 1px solid #e9ecef;
+  }
+}
+
+// Projects grid for multiple project cards
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+  
+  // Limit to 2 columns on large screens
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+  }
+  
+  // Single column on medium screens
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+  }
+} 

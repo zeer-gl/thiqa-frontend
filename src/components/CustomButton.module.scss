@@ -1,0 +1,32 @@
+@import "../css/utilities";
+
+.customButton {
+    background-color: $primary-color;
+    border-radius: $border-radius-medium;
+    padding: $padding-medium;
+    font-size: $font-size-medium;
+    font-weight: $font-weight-semibold;
+    color: $white-color;
+    border: none;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+.primary {
+    background-color: $primary-color;
+}
+
+.secondary {
+    background-color: $gray-text-color;
+}
+
+.small {
+    padding: $padding-small;
+    font-size: $font-size-small;
+}
+
+.large {
+    padding: 16px 32px;
+    font-size: $font-size-large;
+} 

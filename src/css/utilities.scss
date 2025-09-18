@@ -1,0 +1,141 @@
+// Dev One - Zain //
+
+$navy: #21395D;
+$cream: #EEE7DB;
+$lightCream: #EEE7DB4F;
+
+@for $i from 12 through 50 {
+  .fs-#{$i} {
+    font-size: #{$i}px !important;
+  }
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0 !important;
+}
+
+.max-100 {
+  max-width: 100%;
+}
+
+.navy {
+  color: $navy;
+}
+
+.cream {
+  color: $cream;
+}
+
+.outlined-btn {
+  border: 1px solid #21395D !important;
+  border-radius: 6px !important;
+  padding: 6px 15px !important;
+  font-weight: 500 !important;
+  color: #21395D !important;
+
+}
+input.form-control{
+  &:focus{
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+}
+.navbar-toggler{
+  border: none !important;
+  
+  .navbar-toggler-icon{
+    filter: brightness(100);
+  }
+  
+  &:focus{
+    box-shadow: none !important;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 8px 6px;
+    
+    .navbar-toggler-icon {
+      width: 1.2em;
+      height: 1.2em;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    padding: 6px 4px;
+    
+    .navbar-toggler-icon {
+      width: 1em;
+      height: 1em;
+    }
+  }
+}
+
+
+// Dev Two - Usama //
+
+// Common CSS Variables
+$primary-color: #21395D;
+$secondary-color: #0F172A;
+$text-color: #171717;
+$light-text-color: #525252;
+$gray-text-color: #6B7280;
+$light-gray-text-color: #9CA3AF;
+$border-color: #E5E7EB;
+$light-border-color: #E5E5E5;
+$background-color: #f8f9fa;
+$white-color: #FFFFFF;
+
+// Font sizes
+$font-size-small: 14px;
+$font-size-medium: 16px;
+$font-size-large: 18px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+$font-size-xxxl: 32px;
+
+// Font weights
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+
+// Line heights
+$line-height-small: 22px;
+$line-height-medium: 24px;
+$line-height-large: 26px;
+$line-height-xl: 28px;
+$line-height-xxl: 32px;
+$line-height-xxxl: 40px;
+
+// Border radius
+$border-radius-small: 4px;
+$border-radius-medium: 8px;
+$border-radius-large: 12px;
+
+// Padding
+$padding-small: 12px 16px;
+$padding-medium: 12px 24px;
+
+// Global Button Styles
+.btn {
+  &.btn-primary {
+    background-color: #21395D !important;
+    border-color: #21395D !important;
+    color: white !important;
+    
+    &:hover {
+      background-color: darken(#21395D, 10%) !important;
+      border-color: darken(#21395D, 10%) !important;
+    }
+    
+    &:focus {
+      background-color: #21395D !important;
+      border-color: #21395D !important;
+      box-shadow: 0 0 0 0.2rem rgba(33, 57, 93, 0.25) !important;
+    }
+    
+    &:active {
+      background-color: darken(#21395D, 15%) !important;
+      border-color: darken(#21395D, 15%) !important;
+    }
+  }
+}

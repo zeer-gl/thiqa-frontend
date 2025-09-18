@@ -1,0 +1,313 @@
+.contact-customer-form {
+  background-color: #f5f5f0;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  
+  // RTL support for Arabic
+  &[dir="rtl"] {
+    direction: rtl;
+  }
+  
+  // LTR support for English
+  &[dir="ltr"] {
+    direction: ltr;
+  }
+
+  .form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 12px;
+    padding: 30px;
+ 
+  }
+
+  // Search Section
+  .search-section {
+    margin-bottom: 30px;
+
+    .search-input-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      max-width: 300px;
+
+      .search-icon {
+        position: absolute;
+        right: 12px;
+        font-size: 16px;
+        color: #000000 !important;
+        z-index: 1;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 40px 12px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: transparent;
+
+        &:focus {
+          outline: none;
+          border-color: #21395D;
+        }
+
+        &::placeholder {
+          color:#21395D;
+          font-weight: 400;
+          opacity: 50%;
+        }
+      }
+    }
+  }
+
+  // Title Section
+  .title-section {
+    text-align: right;
+    margin-bottom: 40px;
+
+    .main-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #21395D;
+      margin-bottom: 10px;
+      font-family: 'Fira Sans', sans-serif;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  // Project Offer Form
+  .project-offer-form {
+    .form-group {
+    
+
+      .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .form-input {
+          width: 100%;
+          padding: 16px 50px 16px 16px;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          font-size: 16px;
+          background-color: transparent;
+          transition: border-color 0.3s ease;
+          margin-top: 60px;
+
+          &:focus {
+            outline: none;
+            border-color: #21395D;
+          }
+
+          &::placeholder {
+            color: #21395D;
+            opacity: 50%;
+          }
+        }
+
+        .calendar-icon {
+          position: absolute;
+          left: 16px;
+          top: 75px;
+          font-size: 14px;
+        
+        }
+        .icon-apply{
+          color: #000000 !important;
+          opacity: 50% !important;
+        }
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: transparent;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #21395D;
+        }
+
+        &::placeholder {
+          color: #21395D;
+          font-weight: 400;
+          opacity: 50%;
+        }
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: transparent;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #21395D;
+        }
+
+        &::placeholder {
+          color: #21395D;
+          font-weight: 400;
+          opacity: 50%;
+        }
+      }
+
+      // File Upload Styling
+      .file-upload-container {
+        .file-input {
+          display: none;
+        }
+
+        .file-upload-label {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 16px;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          background-color: white;
+          cursor: pointer;
+          transition: border-color 0.3s ease;
+          background-color: transparent;
+
+          &:hover {
+            border-color: #21395D;
+          }
+
+          .file-placeholder {
+            color: #21395D;
+            font-size: 16px;
+            opacity: 50%;
+          }
+
+          .upload-icon {
+            font-size: 18px;
+            color: #666;
+          }
+        }
+      }
+    }
+
+    // Submit Section
+    .submit-section {
+      text-align: center;
+      margin: 40px 0;
+      width: 100%;
+
+      .btn-submit {
+        background-color: #21395D;
+        color: Beige;
+        border: none;
+        border-radius: 10px;
+        padding: 16px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+
+
+        &:hover {
+          background-color: #1a2f4a;
+        }
+
+        &:active {
+          transform: translateY(1px);
+        }
+      }
+    }
+
+    // Footer Links
+    .footer-links {
+      text-align: center;
+      margin-top: 30px;
+
+      .footer-link {
+        color: #21395D;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #1a2f4a;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    padding: 15px;
+
+    .form-container {
+      padding: 20px;
+    }
+
+    .title-section {
+      .main-title {
+        font-size: 24px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+    }
+
+    .search-section {
+      .search-input-container {
+        max-width: 100%;
+      }
+    }
+
+    .project-offer-form {
+      .form-group {
+        .form-input,
+        .form-textarea {
+          font-size: 14px;
+          padding: 14px;
+        }
+
+        .input-with-icon {
+          .form-input {
+            padding: 14px 45px 14px 14px;
+          }
+
+          .calendar-icon {
+            left: 14px;
+            font-size: 16px;
+          }
+        }
+      }
+
+      .submit-section {
+        .btn-submit {
+          width: 100%;
+          padding: 14px 20px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

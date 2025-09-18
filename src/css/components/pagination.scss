@@ -1,0 +1,244 @@
+@import "../utilities";
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 1rem;
+
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background-color: #000000;
+            color: $white-color;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+
+
+
+            .btn-text {
+                font-weight: 600;
+            }
+        }
+
+        .page-numbers {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            .page-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border: 1px solid #000000;
+                background-color: $white-color;
+                color: #6c757d;
+                border-radius: 50%;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+
+                &.active {
+                    background-color: #21395D;
+                    color: $white-color;
+                    border-color: #21395D;
+                    font-weight: 600;
+                }
+            }
+
+            .page-ellipsis {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                color: #6c757d;
+                font-size: 14px;
+                font-weight: 500;
+            }
+        }
+    }
+}
+
+// RTL Support
+[dir="rtl"] {
+    .pagination-container {
+        .pagination {
+            /* Keep overall order the same (Previous on the left, Next on the right) */
+            flex-direction: row;
+        }
+    }
+}
+
+// LTR Support
+[dir="ltr"] {
+    .pagination-container {
+        .pagination {
+            .pagination-btn {
+                &.prev-btn {
+                    flex-direction: row;
+                }
+
+                &.next-btn {
+                    flex-direction: row;
+                }
+            }
+        }
+    }
+}
+
+// Text size adjustments only - design remains identical
+@media (max-width: 1199px) {
+    .pagination-container {
+        .pagination {
+            .pagination-btn {
+                font-size: 13px;
+            }
+
+            .page-numbers {
+                .page-btn {
+                    font-size: 13px;
+                }
+
+                .page-ellipsis {
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .pagination-container {
+        .pagination {
+            .pagination-btn {
+                font-size: 12px;
+            }
+
+            .page-numbers {
+                .page-btn {
+                    font-size: 12px;
+                }
+
+                .page-ellipsis {
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .pagination-container {
+        .pagination {
+            .pagination-btn {
+                font-size: 11px;
+            }
+
+            .page-numbers {
+                .page-btn {
+                    font-size: 11px;
+                }
+
+                .page-ellipsis {
+                    font-size: 11px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-container {
+        .pagination {
+            .pagination-btn {
+                font-size: 10px;
+            }
+
+            .page-numbers {
+                .page-btn {
+                    font-size: 10px;
+                }
+
+                .page-ellipsis {
+                    font-size: 10px;
+                }
+            }
+        }
+    }
+} 
+
+// Sidebar pagination styling
+.sidebar-pagination {
+  margin-top: 20px;
+  
+  .pagination {
+    justify-content: center;
+    gap: 10px;
+    
+    .pagination-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #e0e0e0;
+      background: white;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      
+      &:hover:not(.disabled) {
+        border-color: #007bff;
+        color: #007bff;
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+      }
+      
+      &.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        border-color: #ccc;
+        color: #ccc;
+        
+        &:hover {
+          transform: none;
+          box-shadow: none;
+        }
+      }
+      
+      i {
+        font-size: 14px;
+        font-weight: bold;
+      }
+    }
+    
+    .prev-btn {
+      .fa-chevron-left {
+        margin-right: 2px;
+      }
+    }
+    
+    .next-btn {
+      .fa-chevron-right {
+        margin-left: 2px;
+      }
+    }
+  }
+} 

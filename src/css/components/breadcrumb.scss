@@ -1,0 +1,66 @@
+@import "../utilities";
+
+.breadcrumb-container {
+    margin-bottom: 1.5rem;
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+
+            .breadcrumb-text {
+                color: #6c757d;
+                font-size: 14px;
+                font-weight: 500;
+                transition: color 0.3s ease;
+                font-family: 'FF Shamel Family Sans One Book', sans-serif;
+
+                &:hover {
+                    color: #21395D;
+                }
+            }
+
+            a {
+                color: #6c757d;
+                text-decoration: none;
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: #21395D;
+                }
+            }
+        }
+
+        .breadcrumb-separator {
+            margin: 0 0.5rem;
+            display: flex;
+            align-items: center;
+
+            .arrow {
+                color: #6c757d;
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+// RTL Support
+[dir="rtl"] {
+    .breadcrumb-container {
+        .breadcrumb {
+            .breadcrumb-separator {
+                .arrow {
+                    transform: scaleX(-1);
+                }
+            }
+        }
+    }
+} 

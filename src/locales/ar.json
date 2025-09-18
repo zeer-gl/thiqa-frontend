@@ -1,0 +1,1398 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "offers": "عروض المشاريع",
+    "products": "قائمة المنتجات",
+    "about": "عن المنصة",
+    "serviceProviders": "مقدمو الخدمات",
+    "language": "اللغة",
+    "registerAsServiceProvider": "التسجيل كمقدم خدمات",
+    "langEn": "الإنجليزية",
+    "langAr": "العربية",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "contact": "اتصل بنا"
+  },
+  "pages": {
+    "home": {
+      "title": "مرحباً بكم في موقعنا",
+      "description": "هذه هي الصفحة الرئيسية بالمحتوى العربي",
+      "heroSection": {
+        "title": "خدمات الإنشاء و والبناء",
+        "subtitle": "اطلب الخدمة اللتي تحتاجها و سنتكفل بإرسالها الأن اطلب الخدمة اللتي تحتاجها و سنتكفل ب",
+        "ctaButton": "انشاء طلب عرض سعر",
+        "upgradePackage": "ترقية الباقة"
+      },
+      "upgradeSection": {
+        "title": "قم بترقية خطتك",
+        "subtitle": "احصل على الوصول لجميع الميزات وابدأ في تلقي طلبات المشاريع"
+      },
+      "serviceManagement": {
+        "title": "خدماتي",
+        "addService": "إضافة خدمة",
+        "editService": "تعديل الخدمة",
+        "deleteService": "حذف الخدمة",
+        "noServices": "لا توجد خدمات بعد",
+        "noServicesDesc": "ابدأ بإضافة خدمتك الأولى",
+        "addFirstService": "أضف خدمتك الأولى"
+      },
+      "featureSection": {
+        "customerSupport": {
+          "title": "دعم العملاء",
+          "description": "فريق دعم العملاء لدينا متاح لمساعدة العملاء في أي أسئلة أو استفسارات قد تكون لديهم."
+        },
+        "securePayment": {
+          "title": "دفع آمن",
+          "description": "نقدم عملية دفع آمنة تحمي المعلومات الشخصية والمالية لعملائنا."
+        },
+        "freeReturns": {
+          "title": "إرجاع مجاني",
+          "description": "يمكن لعملائنا إرجاع أو استبدال مشترياتهم دون أي عناء."
+        }
+      },
+      "productSection": {
+        "title": "قائمة المنتجات",
+        "tabs": {
+          "building": "البناء",
+          "electricity": "الكهرباء",
+          "plumbing": "السباكة",
+          "joinery": "النجارة",
+          "dyeing": "الصباغة"
+        },
+        "buttons": {
+          "mostInteractive": "الأكثر تفاعلاً",
+          "nearby": "القريب"
+        }
+      },
+      "servicesSection": {
+        "title": "مزودو الخدمات",
+        "buttons": {
+          "mostInteractive": "الأكثر تفاعلاً",
+          "nearby": "القريب",
+          "seeAll": "عرض الكل"
+        },
+        "serviceProvider": {
+          "companyName": "شركة كويتية",
+          "description": "البناء والاستثمار",
+          "rating": "5.0",
+          "category": "البناء"
+        }
+      },
+      "aboutSection": {
+        "title": "عن المنصة",
+        "description": "تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرنة من أهم عناصر التصميم المعاصر."
+      },
+      "customerSection": {
+        "subtitle": "مراجعات العملاء __",
+        "title": "ماذا يقول عملاؤنا",
+        "testimonial": {
+          "text": "تسوقت مؤخراً في Ckart وكانت تجربة رائعة! الاختيار مذهل، يلبي مجموعة متنوعة من الأذواق، ووجدت قطعاً فريدة أضافت لمسة جميلة لمنزلي. تسوقت مؤخراً في Ckart وكانت تجربة رائعة! الاختيار مذهل، يلبي مجموعة متنوعة من الأذواق، ووجدت قطعاً فريدة أضافت لمسة جميلة لمنزلي.",
+          "customerName": "ريم أحمد",
+          "customerType": "مشتري جديد"
+        }
+      },
+      "productCard": {
+        "title": "مصابيح سقف مودرن",
+        "company": "شركة إنك",
+        "currency": "د.ك"
+      }
+    },
+    "offers": {
+      "title": "عروض المشاريع",
+      "description": "استكشف عروض مشاريعنا المذهلة"
+    },
+    "products": {
+      "title": "قائمة المنتجات",
+      "description": "تصفح كتالوج منتجاتنا"
+    },
+    "about": {
+      "title": "حولنا",
+      "description": "تعرف أكثر على شركتنا ورسالتنا"
+    },
+    "detail-page": {
+      "breadcrumb": {
+        "home": "الرئيسية"
+      },
+      "section1": {
+        "productTitle": "مصابيح سقف مودرن",
+        "companyName": "شركة إنك",
+        "favorite": "المفضلة",
+        "addToFavorites": "أضف إلى المفضلة",
+        "removeFromFavorites": "إزالة من المفضلة",
+        "processing": "جاري المعالجة...",
+        "loginToLike": "تسجيل الدخول لإضافة إلى المفضلة",
+        "reviews": "تقييم",
+        "sold": "مبيعة",
+        "currency": "دينار كويتي",
+        "addToCart": "أضف السلة",
+        "scrollUp": "تمرير لأعلى",
+        "scrollDown": "تمرير لأسفل"
+      },
+      "section2": {
+        "description": "تعتبر مصابيح سقف مودرن من أهم عناصر التصميم المعاصرة. هذه التركيبات الأنيقة لا توفر الإضاءة الأساسية فحسب، بل تعمل أيضًا كنقاط محورية مذهلة تعزز الجمالية العامة لأي مساحة. مصنوعة من مواد عالية الجودة وتقنية مبتكرة، تجمع مصابيح السقف المودرنة لدينا بين الوظائف والأناقة المتطورة. تعتبر مصابيح سقف مودرن من أهم عناصر التصميم المعاصرة. هذه التركيبات الأنيقة لا توفر الإضاءة الأساسية فحسب، بل تعمل أيضًا كنقاط محورية مذهلة تعزز الجمالية العامة لأي مساحة. مصنوعة من مواد عالية الجودة وتقنية مبتكرة، تجمع مصابيح السقف المودرنة لدينا بين الوظائف والأناقة المتطورة.",
+        "features": {
+          "ledTechnology": "تقنية LED لكفاءة الطاقة",
+          "dimmableFunction": "وظيفة قابلة للتعتيم",
+          "modernDesign": "تصميم مودرن بسيط",
+          "easyInstallation": "سهولة التركيب",
+          "warranty": "ضمان 3 سنوات",
+          "multipleFinishes": "متوفر بلمسات متعددة"
+        },
+        "specifications": {
+          "power": "القوة",
+          "colorTemperature": "درجة حرارة اللون",
+          "colorTempValue": "قابلة للتعديل 3000K-6500K",
+          "material": "المادة",
+          "materialValue": "ألمنيوم وزجاج",
+          "dimensions": "الأبعاد",
+          "voltage": "الجهد",
+          "certification": "الشهادة"
+        }
+      },
+      "section3": {
+        "tabs": {
+          "description": "وصف المنتج",
+          "reviews": "المراجعات",
+          "evaluation": "تقييم المنتج"
+        },
+        "reviewsContent": {
+          "review1": {
+            "customerName": "مازن رحمي",
+            "date": "28 مارس 2024",
+            "title": "مصباح كهربائي",
+            "text": "المنتج رائع جداً. أشكر الشركة على هذا التعامل الراقي معنا. أتمنى أن نتعامل معها مرات كثيرة في المستقبل."
+          },
+          "review2": {
+            "customerName": "مازن رحمي",
+            "date": "28 مارس 2024",
+            "title": "مصباح كهربائي",
+            "text": "المنتج رائع جداً. أشكر الشركة على هذا التعامل الراقي معنا. أتمنى أن نتعامل معها مرات كثيرة في المستقبل."
+          }
+        },
+        "evaluationForm": {
+          "email": "البريد الإلكتروني",
+          "name": "الاسم",
+          "message": "الرسالة",
+          "send": "إرسال",
+          "emailPlaceholder": "البريد الإلكتروني",
+          "namePlaceholder": "الاسم",
+          "messagePlaceholder": "اترك رسالة التقييمك",
+          "overallRating": "التقييم العام",
+          "efficiencyRating": "تقييم الكفاءة",
+          "priceRating": "تقييم السعر",
+          "deliveryRating": "تقييم التوصيل",
+          "submitting": "جاري الإرسال...",
+          "loginRequired": "يرجى تسجيل الدخول لإرسال تقييم",
+          "reviewSubmitted": "تم إرسال التقييم بنجاح!",
+          "outOfStock": "نفد المخزون",
+          "onlyLeftInStock": "بقي {{quantity}} فقط في المخزون",
+          "inStock": "متوفر في المخزون ({{quantity}} متاح)",
+          "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة وتحديد جميع التقييمات",
+          "alreadyReviewed": "لقد قمت بتقييم هذا المنتج من قبل",
+          "submitFailed": "فشل في إرسال التقييم. يرجى المحاولة مرة أخرى.",
+          "fieldRequired": "يرجى ملء هذا الحقل",
+          "emailRequired": "يرجى إدخال البريد الإلكتروني",
+          "nameRequired": "يرجى إدخال الاسم",
+          "messageRequired": "يرجى إدخال الرسالة",
+          "unableToLoadProduct": "غير قادر على تحميل المنتج",
+          "failedToLoadReviews": "فشل في تحميل المراجعات",
+          "thisProductOutOfStock": "هذا المنتج غير متوفر حالياً",
+          "onlyItemsAvailable": "متوفر {{quantity}} عنصر فقط في المخزون",
+          "anonymous": "مجهول",
+          "noCommentProvided": "لم يتم تقديم تعليق.",
+          "noReviewsYet": "لا توجد تقييمات بعد. كن أول من يقيم هذا المنتج!",
+          "approved": "موافق عليه",
+          "pending": "في الانتظار",
+          "rejected": "مرفوض"
+        }
+      }
+    },
+    "service-detail": {
+        "home": "الرئيسية",
+        "modern-ceiling-lamps": "مصابيح سقف مودرن",
+        "contractor-name": "المقاول",
+        "location": "الفروانية",
+        "about": "حول",
+        "about-text": "تعتبر مصابيح سقف مودرن من أهم عناصر التصميم المعاصرة. فهي توفر الإضاءة الوظيفية والجاذبية الجمالية، مما يعزز الجو العام لأي مساحة. تضمن خبرتنا في حلول الإضاءة الحديثة أن كل مشروع يلبي أعلى معايير الجودة والتميز في التصميم.",
+        "all-projects": "جميع المشاريع",
+        "request-service": "أطلب خدمة",
+        "completed-projects": "المشاريع التي شاركت في إنجازها",
+        "no-completed-projects": "لا توجد مشاريع مكتملة متاحة",
+        "project-title": "مشروع بناء فيلا",
+        "full-construction": "بناء كلي",
+        "general-electricity": "كهرباء عامة",
+        "view-project": "عرض المشروع",
+        "favorites": "المفضلة"
+    },
+    "contractorView": {
+      "locationSection": {
+        "title": "الفروانية"
+      },
+      "aboutSection": {
+        "title": "عن المقاول",
+        "description": "تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر. تعتبر مصابيح السقف المودرن من أهم عناصر التصميم المعاصر."
+      },
+      "projectsSection": {
+        "title": "المشاريع التي شاركت في إنجازها"
+      }
+    },
+    "serviceRequestView": {
+      "basicServices": {
+        "title": "الخدمات الأساسية",
+        "subtitle": "اطلب الخدمة التي تحتاجها وسنتولى إرسالها الآن",
+        "services": {
+          "water": "ماء",
+          "sand": "رمل",
+          "bricks": "طوب",
+          "cement": "أسمنت",
+          "iron": "حديد"
+        }
+      },
+      "projects": {
+        "villaConstruction": "مشروع بناء فيلا",
+        "fullConstruction": "بناء كامل",
+        "sandSupply": "مشروع توريد الرمل",
+        "bulkDelivery": "توصيل بالجملة",
+        "brickSupply": "مشروع توريد الطوب",
+        "constructionMaterials": "مواد البناء",
+        "cementSupply": "مشروع توريد الأسمنت",
+        "bulkCement": "أسمنت بالجملة",
+        "ironSupply": "مشروع توريد الحديد",
+        "constructionSteel": "حديد البناء"
+      },
+      "offers": "{{count}} عروض",
+      "company": "شركة أ",
+      "select": "اختر"
+    }
+  },
+
+  "orderDetails": {
+    "pageTitle": "تفاصيل الطلب",
+    "orderDetails": "تفاصيل الطلب",
+    "orderCreated": "تم إنشاء الطلب",
+    "orderSubmitted": "تم تقديم الطلب",
+    "orderSummary": "ملخص الطلب",
+    "productName": "مصابيح سقف مودرن",
+    "completed": "مكتمل",
+    "free": "مجاني",
+    "totalAmount": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "discount": "الخصم",
+    "discountAmount": "قيمة الخصم",
+    "total": "الإجمالي",
+    "downloadInvoice": "تحميل الفاتورة",
+    "subtotal": "المجموع الفرعي",
+    "tax": "الضريبة",
+    "error": "خطأ في تحميل الطلب",
+    "notFound": "الطلب غير موجود",
+    "notFoundMessage": "الطلب الذي تبحث عنه غير موجود.",
+    "orderDate": "تاريخ الطلب",
+    "payNow": "ادفع الآن",
+    "status": {
+      "processing": "قيد المعالجة",
+      "cancelled": "ملغي",
+      "delivered": "تم التسليم",
+      "shipped": "تم الشحن",
+      "pending": "في الانتظار",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "failed": "فشل الدفع",
+      "refunded": "مسترد"
+    }
+  },
+  "payment": {
+    "home": "الرئيسية",
+    "cart": "السلة",
+    "modern-ceiling-lights": "مصابيح سقف مودرن",
+    "quantity": "الكمية",
+    "kwd": "د.ك",
+    "off": "خصم",
+    "add-favorites": "أضف إلى المفضلة",
+    "remove-favorites": "إزالة من المفضلة",
+    "processing": "جاري المعالجة...",
+    "emptyCart": "سلة التسوق فارغة",
+    "addItemsToCart": "أضف بعض العناصر إلى سلة التسوق للمتابعة",
+    "continueShopping": "متابعة التسوق",
+    "modal": {
+      "removeItemTitle": "إزالة العنصر من السلة",
+      "removeItemConfirmation": "هل أنت متأكد من أنك تريد إزالة \"{{productName}}\" من سلة التسوق؟",
+      "removeItemWarning": "لا يمكن التراجع عن هذا الإجراء.",
+      "removeItemButton": "إزالة العنصر",
+      "thisProduct": "هذا المنتج"
+    },
+    "messages": {
+      "itemRemovedSuccess": "تم إزالة {{productName}} من السلة بنجاح!",
+      "loginRequiredFavorites": "يرجى تسجيل الدخول لإضافة المنتجات إلى المفضلة",
+      "loginRequiredCheckout": "يرجى تسجيل الدخول للمتابعة إلى الدفع",
+      "addedToFavorites": "تمت الإضافة إلى المفضلة!",
+      "removedFromFavorites": "تمت الإزالة من المفضلة!",
+      "failedToUpdateFavorites": "فشل في تحديث حالة المفضلة"
+    }
+  },
+  "order-summary": {
+    "order-details": "تفاصيل الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shipping-fees": "رسوم الشحن",
+    "promo-code": "رمز الكود",
+    "code": "الكود",
+    "discount": "الخصم",
+    "total": "المجموع",
+    "pay-now": "ادفع الآن",
+    "checkout": "الدفع",
+    "processing": "جاري المعالجة...",
+    "kwd": "د.ك",
+    "items": "عناصر"
+  },
+  "checkout": {
+    "home": "الرئيسية",
+    "cart": "السلة",
+    "delivery-address": "عنوان التسليم",
+    "select-address": "اختر العنوان",
+    "no-addresses": "لم يتم العثور على عناوين. يرجى إضافة عنوان للمتابعة.",
+    "add-address": "إضافة عنوان",
+    "payment-method": "طريقة الدفع",
+    "paypal": "باي بال",
+    "applepay": "آبل باي",
+    "bank-card-details": "تفاصيل البطاقة البنكية",
+    "cardholder-name": "اسم صاحب البطاقة",
+    "card-number": "رقم البطاقة",
+    "expiration-date": "تاريخ انتهاء البطاقة",
+    "cvv": "CVV",
+    "postal-code": "الرمز البريدي",
+    "messages": {
+      "orderPlacedSuccess": "تم وضع الطلب بنجاح!",
+      "selectDeliveryAddress": "يرجى اختيار عنوان التسليم",
+      "cartEmpty": "سلة التسوق فارغة",
+      "userDataNotFound": "لم يتم العثور على بيانات المستخدم. يرجى المحاولة مرة أخرى بعد تسجيل الدخول.",
+      "invalidUserData": "بيانات المستخدم غير صحيحة. يرجى المحاولة مرة أخرى بعد تسجيل الدخول.",
+      "userIdNotFound": "لم يتم العثور على معرف المستخدم في بيانات المستخدم. يرجى المحاولة مرة أخرى بعد تسجيل الدخول.",
+      "failedToPlaceOrder": "فشل في وضع الطلب. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "payment-success-modal": {
+    "payment-successful": "الدفع بنجاح",
+    "payment-successful-message": "الدفع بنجاح! شكرا لطلبك، تم إرسال تأكيد الطلب إلى",
+    "email-highlight": "customer@gmail.com",
+    "total-payment": "إجمالي الدفع",
+    "transaction-date": "تاريخ المعاملة",
+    "reference-number": "رقم المرجع",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "shipping-cost": "تكلفة الشحن",
+    "total": "إجمالي",
+    "home": "الرئيسية",
+    "download-invoice": "تحميل الفاتورة",
+    "items": "عناصر",
+    "kwd": "د.ك",
+    "your-order": "طلبك",
+    "modern-ceiling-lights": "مصابيح سقف مودرن",
+    "product-price": "سعر المنتج",
+    "free": "مجانا"
+  },
+
+  "paymentSuccess": {
+    "title": "تم تأكيد الدفع بنجاح",
+    "subtitle": "سوف يصلك طلبك في أقرب وقت ممكن",
+    "home": "الصفحة الرئيسية"
+  },
+
+  "price-request-success": {
+    "title": "تم إضافة طلب السعر بنجاح",
+    "subtitle": "سيتم إخطاركم في حالة عرض سعر جديد",
+    "go-to-list": "لائحة طلبات السعر"
+  },
+
+  "fatorahCallback": {
+    "successTitle": "تم الدفع بنجاح!",
+    "failureTitle": "فشل في الدفع",
+    "successMessage": "تم معالجة دفعتك بنجاح. شكراً لك على الشراء!",
+    "failureMessage": "للأسف، لم يتم معالجة دفعتك. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.",
+    "redirectMessage": "سيتم التوجه إلى الصفحة الرئيسية خلال {{count}} ثوانٍ...",
+    "goHome": "الذهاب للصفحة الرئيسية"
+  },
+  "order-request": {
+    "price-quote-request": "طلب عرض سعر",
+    "your-special-price-offers": "عروض سعر خاصة",
+    "create-new-quote-request": "إنشاء طلب عرض سعر جديد",
+    "createQuoteRequest": "إنشاء طلب عرض سعر",
+    "view-quote-request": "عرض طلبات العروض",
+    "enter-the-necessary-information-for-the-price-request": "أدخل المعلومات اللازمة لطلب السعر",
+    "create-price-quote-request": "عرض طلبات العروض",
+    "water-liter-price-0.2-kuwaiti-dinar": "سعر اللتر من الماء <bold>0.2</bold> دينار كويتي",
+    "liter": "لتر",
+    "project-type": "نوع المشروع",
+    "upload-project-design": "رفع تصميم المشروع",
+    "area": "المساحة",
+    "request-date": "تاريخ الطلب",
+    "request-description": "وصف الطلب",
+    "send-request": "إرسال الطلب",
+    "the-total": "المجموع",
+    "kwd": "د.ك",
+    "search": "بحث",
+   "address": "العنوان",
+   "address-required": "العنوان مطلوب",
+   "address-min-length": "يجب أن يكون العنوان 5 أحرف على الأقل",
+   "project-type-required": "نوع المشروع مطلوب",
+   "area-required": "المساحة مطلوبة",
+   "area-number": "يجب أن تكون المساحة رقماً",
+   "date-required": "التاريخ مطلوب",
+   "date-future": "لا يمكن أن يكون التاريخ في الماضي",
+   "description-required": "الوصف مطلوب",
+   "description-min-length": "يجب أن يكون الوصف 10 أحرف على الأقل",
+   "file-required": "الملف مطلوب",
+   "form-submitted-successfully": "تم إرسال النموذج بنجاح!",
+   "title": "العنوان",
+   "title-required": "العنوان مطلوب",
+   "title-min-length": "يجب أن يكون العنوان 5 أحرف على الأقل",
+   "budget": "الميزانية",
+   "budget-required": "الميزانية مطلوبة",
+   "budget-number": "يجب أن تكون الميزانية رقماً",
+   "project-name": "اسم المشروع",
+   "project-name-required": "اسم المشروع مطلوب",
+   "price": "السعر",
+   "price-required": "السعر مطلوب",
+   "price-number": "يجب أن يكون السعر رقماً",
+   "file-type-error": "يُسمح فقط بملفات الصور أو PDF",
+   "file-size-error": "يجب أن يكون حجم الملف 3 ميجابايت أو أقل"
+  },
+  "service-request": {
+    "project-offers": "عروض المشاريع",
+    "your-special-price-offers": "عروض سعر خاصة",
+    "create-new-quote-request": "إنشاء طلب عرض سعر جديد",
+    "create-price-quote-request": "إنشاء طلب عرض سعر",
+    "cancel": "إلغاء",
+    "view": "عرض",
+    "Ayman Aziz": "أيمن عزيز",
+    "sent-a-new-offer-regarding-a": "أرسل عرض جديد بخصوص",
+    "villa-construction-project": "مشروع بناء منزل",
+    "enter-the-necessary-information-for-the-price-request": "أدخل المعلومات اللازمة لطلب السعر",
+    "search": "بحث"
+  },
+
+  "basic-services-request": {
+    "title": "طلب خدمة",
+    "your-special-offers": "عروض الأسعار الخاصة بك",
+    "create-new-price-offer-request": "إنشاء طلب عرض سعر جديد",
+    "search": "البحث...",
+    "basic-services": "خدمات أساسية",
+    "request-service-description": "اطلب الخدمة اللتي تحتاجها و سنتكفل بإرسالها الآن",
+    "title-required": "العنوان مطلوب",
+    "description-required": "الوصف مطلوب",
+    "description-min-length": "يجب أن يكون الوصف 10 أحرف على الأقل",
+    "budget-required": "الميزانية مطلوبة",
+    "deadline-required": "الموعد النهائي مطلوب",
+    "address-required": "العنوان مطلوب",
+    "type-required": "نوع الخدمة مطلوب",
+    "project-name-required": "اسم المشروع مطلوب",
+    "price-required": "السعر مطلوب",
+    "send-request": "إرسال الطلب",
+    "request-failed": "فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.",
+    "water": "ماء",
+    "sand": "رمل",
+    "bricks": "طوب",
+    "cement": "أسمنت",
+    "iron": "حديد",
+    "liter": "لتر",
+    "cubic-meter": "متر مكعب",
+    "piece": "قطعة",
+    "bag": "كيس",
+    "ton": "طن",
+    "price-per-unit": "سعر {{unit}} {{service}} {{price}} دينار كويتي",
+    "address": "العنوان",
+    "number-of-litres": "عدد اللترات",
+    "quantity": "الكمية",
+    "request-date": "تاريخ الطلب",
+    "request-description": "وصف الطلب",
+    "notes": "ملحوظات",
+    "sending": "جاري الإرسال...",
+    "total": "المجموع",
+    "kwd": "د.ك",
+    "address-min-length": "يجب أن يكون العنوان 5 أحرف على الأقل",
+    "number-of-litres-required": "عدد اللترات مطلوب",
+    "quantity-required": "الكمية مطلوبة",
+    "quantity-positive": "يجب أن تكون الكمية موجبة",
+    "date-required": "التاريخ مطلوب",
+    "date-future": "لا يمكن أن يكون التاريخ في الماضي",
+    "notes-max-length": "لا يمكن أن تتجاوز الملاحظات 500 حرف",
+    "request-sent-successfully": "تم إرسال الطلب بنجاح!"
+  },
+
+  "service-list": {
+    "title": "مقدمي الخدمات",
+    "subtitle": "ابحث عن أفضل مقدمي الخدمات في منطقتك",
+    "categories": "الفئات",
+    "all-categories": "جميع الفئات",
+    "building": "بناء",
+    "design": "تصميم",
+    "electrical": "كهرباء",
+    "plumbing": "سباكة",
+    "carpentry": "نجارة",
+    "painting": "دهان",
+    "create-request": "إنشاء طلب",
+    "search-placeholder": "البحث عن مقدمي الخدمات...",
+    "request-service": "طلب الخدمة",
+    "service-providers": "مقدمي الخدمات",
+    "find-the-best-service-providers": "ابحث عن أفضل مقدمي الخدمات في منطقتك",
+    "all-services": "جميع الخدمات",
+    "company-1-name": "شركة البناء المتقدمة",
+    "company-1-service": "خدمات البناء والتشييد",
+    "company-2-name": "مؤسسة التصميم الإبداعي",
+    "company-2-service": "تصميم داخلي وخارجي",
+    "company-3-name": "شركة الكهرباء الحديثة",
+    "company-3-service": "تركيب وصيانة الكهرباء",
+    "company-4-name": "مؤسسة السباكة المتخصصة",
+    "company-4-service": "خدمات السباكة والصرف",
+    "company-5-name": "شركة النجارة الفاخرة",
+    "company-5-service": "أعمال النجارة والديكور",
+    "company-6-name": "مؤسسة الدهان المتميزة",
+    "company-6-service": "دهان وتشطيبات",
+    "company-7-name": "شركة البناء المتميزة",
+    "company-7-service": "خدمات البناء عالية الجودة",
+    "company-8-name": "استوديو التصميم الإبداعي",
+    "company-8-service": "حلول التصميم الحديثة",
+    "company-9-name": "أنظمة الطاقة المحدودة",
+    "company-9-service": "أنظمة كهربائية متقدمة",
+    "company-10-name": "حلول المياه المحترفة",
+    "company-10-service": "خدمات السباكة الاحترافية",
+    "company-11-name": "أساتذة الأعمال الخشبية",
+    "company-11-service": "النجارة والأثاث المخصص",
+    "company-12-name": "شركة الألوان المثالية",
+    "company-12-service": "خدمات الدهان الاحترافية",
+    "company-13-name": "البناء الصحيح",
+    "company-13-service": "حلول البناء عالية الجودة",
+    "company-14-name": "استوديو مركز التصميم",
+    "company-14-service": "التصميم الداخلي والخارجي",
+    "company-15-name": "حلول الكهرباء",
+    "company-15-service": "خدمات كهربائية شاملة",
+    "company-16-name": "السباكة المثالية",
+    "company-16-service": "السباكة والصيانة المتخصصة",
+    "company-17-name": "أساتذة الحرف الخشبية",
+    "company-17-service": "النجارة والتركيبات الدقيقة",
+    "company-18-name": "أساتذة الدهان المحترفون",
+    "company-18-service": "الدهان والتشطيبات المتميزة"
+  },
+
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "page": "صفحة",
+    "of": "من"
+  },
+  "project-offers": {
+    "offers": "عروض",
+    "project-title": "مشروع بناء فيلا",
+    "project-category": "بناء كلي",
+    "project-offers-count": "5 عروض",
+    "page-title": "عروض المشاريع",
+    "your-special-price-offers": "عروض الأسعار الخاصة بك",
+    "create-new-quote-request": "إنشاء طلب عرض سعر جديد",
+    "search": "البحث...",
+    "1-offer": "1 عرض",
+    "2-offer": "2 عرض",
+    "3-offer": "3 عرض",
+    "view-quote": "عرض السعر",
+    "call": "اتصال",
+    "accept": "قبول",
+    "accepting": "جاري القبول...",
+    "proposal-accepted": "تم قبول العرض بنجاح!",
+    "accept-error": "فشل في قبول العرض. يرجى المحاولة مرة أخرى.",
+    "project-started": "تم بدء المشروع بنجاح!",
+    "start-error": "فشل في بدء المشروع. يرجى المحاولة مرة أخرى.",
+    "noOffers": "لم يتم العثور على عروض مشاريع",
+    "price": "السعر",
+    "duration": "المدة",
+    "professional": "محترف",
+    "noPhoneNumber": "رقم الهاتف غير متوفر"
+  },
+
+  "request-quote": {
+    "open": "مفتوح",
+    "page-title": "طلبات عروض الأسعار",
+    "your-special-price-offers": "عروض الأسعار الخاصة بك",
+    "create-new-quote-request": "إنشاء طلب عرض سعر جديد",
+    "search": "البحث...",
+    "no-quotes": "لم يتم العثور على عروض أسعار"
+  },
+
+  "footer": {
+    "home": "الرئيسية",
+    "products": "قائمة المنتجات",
+    "privacy": "سياسة الخصوصية",
+    "about": "عن المنصة",
+    "serviceProviders": "مقدمو الخدمات",
+    "copyright": "© 2024 شركتي. جميع الحقوق محفوظة.",
+    "allRightsReserved": "جميع الحقوق محفوظة في 2025",
+    "laws": "القوانين",
+    "politicsAndPrivacy": "السياسة والخصوصية"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "سجل الدخول للمتابعة",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "rememberMe": "تذكرني",
+      "forgotPassword": "هل نسيت كلمة المرور؟",
+      "loginButton": "تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "signupLink": "أنشئ حسابك الآن",
+      "visitorLogin": "الدخول كزائر",
+      "loginAsServiceProvider": "تسجيل الدخول كمقدم خدمة"
+    },
+    "signup": {
+      "title": "إنشاء حساب",
+      "subtitle": "سجل للمتابعة",
+      "fullName": "الاسم الكامل",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "createAccount": "إنشاء حساب",
+      "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+      "loginLink": "سجل الدخول هنا",
+      "orLoginVia": "أو سجل الدخول عبر",
+      "google": "غوغل",
+      "apple": "آبل",
+      "terms": "شروط الاستخدام",
+      "and": "و",
+      "privacy": "سياسة الخصوصية",
+      "otp": {
+        "title": "أدخل الرمز",
+        "description": "أدخل الرمز الذي تلقيته على هاتفك المحمول للتحقق من حسابك",
+        "submit": "إرسال",
+        "resend": "إعادة إرسال الرمز",
+        "timerPrefix": "ينتهي الرمز خلال:"
+      },
+      "registrationSuccess": "تم التسجيل بنجاح! يرجى التحقق من رقم هاتفك.",
+      "verificationSuccess": "تم التحقق من الهاتف بنجاح! مرحباً بك!",
+      "otpResent": "تم إعادة إرسال رمز التحقق بنجاح!",
+      "otpSent": "تم إرسال رمز التحقق إلى رقم هاتفك.",
+      "otpSendFailed": "فشل في إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+      "invalidOtp": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
+      "verifyOtpFailed": "فشل في التحقق من رمز التحقق. يرجى المحاولة مرة أخرى.",
+      "registerAsServiceProvider": "التسجيل كمقدم خدمات"
+    },
+    "signupsp": {
+      "title": "تسجيل مقدم الخدمة",
+      "subtitle": "لدي حساب على التطبيق. تسجيل الدخول",
+      "name": "الاسم الكامل",
+      "phoneNo": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "workTitle": "عنوان العمل",
+      "selectSpecializations": "اختر التخصصات...",
+      "experience": "سنوات الخبرة",
+      "bio": "السيرة الذاتية",
+      "resumePlaceholder": "يرجى اختيار السيرة الذاتية",
+      "location": "الموقع",
+      "multiSelectHint": "انقر لاختيار عدة تخصصات",
+      "creating": "جاري إنشاء الحساب...",
+      "createAccount": "إنشاء حساب",
+      "orLoginVia": "أو تسجيل الدخول عن طريق",
+      "google": "غوغل",
+      "apple": "آبل",
+      "terms": "شروط الاستخدام",
+      "and": "و",
+      "privacy": "سياسة الخصوصية",
+      "registerAsCustomer": "التسجيل كعميل",
+      "validation": {
+        "nameRequired": "الاسم مطلوب",
+        "phoneRequired": "رقم الهاتف مطلوب",
+        "emailRequired": "البريد الإلكتروني الصحيح مطلوب",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+        "passwordRequired": "كلمة المرور مطلوبة",
+        "passwordLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+        "workTitleRequired": "المسمى الوظيفي مطلوب",
+        "specializationRequired": "يرجى اختيار تخصص واحد على الأقل",
+        "experienceRequired": "سنوات الخبرة الصحيحة مطلوبة",
+        "bioLength": "يجب أن تكون السيرة الذاتية 10 أحرف على الأقل",
+        "locationRequired": "يرجى اختيار موقعك على الخريطة"
+      },
+      "specializations": {
+        "construction": "البناء",
+        "electrical": "الكهرباء",
+        "plumbing": "السباكة",
+        "hvac": "التدفئة والتهوية",
+        "cleaning": "التنظيف",
+        "landscaping": "تنسيق الحدائق",
+        "painting": "الدهان",
+        "carpentry": "النجارة"
+      },
+      "loadingSpecializations": "جاري تحميل التخصصات...",
+      "noSpecializationsAvailable": "لا توجد تخصصات متاحة",
+      "usingDefaultSpecializations": "استخدام التخصصات الافتراضية - مشكلة في تنسيق استجابة API",
+      "usingDefaultSpecializationsConnection": "استخدام التخصصات الافتراضية - مشكلة في الاتصال بـ API",
+      "registrationSuccess": "تم تسجيل المحترف بنجاح!",
+      "registrationFailed": "فشل في التسجيل. يرجى المحاولة مرة أخرى.",
+      "googleRegistrationSuccess": "تم التسجيل عبر غوغل بنجاح",
+      "googleConfigMissing": "إعدادات غوغل مفقودة",
+      "googleRegistrationFailed": "فشل في التسجيل عبر غوغل",
+      "otp": {
+        "title": "أدخل رمز التحقق",
+        "description": "أدخل الرمز المرسل إلى هاتفك للتحقق من حسابك.",
+        "submit": "إرسال",
+        "resend": "إعادة إرسال الرمز",
+        "timerPrefix": "الوقت المتبقي:",
+        "completeOtpRequired": "يرجى إدخال رمز التحقق كاملاً."
+      },
+      "emailAlreadyExists": "البريد الإلكتروني موجود بالفعل. يرجى استخدام بريد إلكتروني مختلف.",
+      "phoneAlreadyExists": "رقم الهاتف موجود بالفعل. يرجى استخدام رقم هاتف مختلف.",
+      "emailOrPhoneExists": "البريد الإلكتروني أو رقم الهاتف موجود بالفعل. يرجى استخدام بيانات اعتماد مختلفة."
+    },
+    "loginsp": {
+      "title": "تسجيل مقدم الخدمة",
+      "subtitle": "أنشئ حساب مقدم الخدمة الخاص بك",
+      "fullName": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "email": "الايميل",
+      "password": "الرمز السري",
+      "confirmPassword": "تأكيد الرمز السري",
+      "login": "تسجيل الدخول",
+      "createAccount": "إنشاء حساب",
+      "orLoginVia": "أو سجل الدخول عبر",
+      "google": "غوغل",
+      "apple": "آبل",
+      "terms": "الشروط",
+      "and": "و",
+      "privacy": "سياسة الخصوصية",
+      "otp": {
+        "title": "أدخل رمز التحقق",
+        "description": "أدخل الرمز المرسل إلى هاتفك للتحقق من حسابك.",
+        "submit": "إرسال",
+        "resend": "إعادة إرسال الرمز",
+        "timerPrefix": "الوقت المتبقي:"
+      },
+      "registerAsSeeker": "التسجيل كباحث عن خدمات",
+      "registerAsCustomer": "التسجيل كعميل",
+      "loginAsProvider": "تسجيل الدخول كمقدم خدمة",
+      "loginAsCustomer": "تسجيل الدخول كعميل"
+    },
+    "forgotPassword": {
+      "title": "نسيت كلمة المرور",
+      "subtitle": "أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور",
+      "email": "البريد الإلكتروني",
+      "submitButton": "إرسال رابط إعادة التعيين",
+      "backToLogin": "العودة لتسجيل الدخول"
+    },
+    "resetPassword": {
+      "title": "إعادة تعيين كلمة المرور",
+      "subtitle": "أدخل كلمة المرور الجديدة",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "submitButton": "إعادة تعيين كلمة المرور",
+      "backToLogin": "العودة لتسجيل الدخول"
+    }
+  },
+  "profile": {
+    "headerTitle": "الملف الشخصي",
+    "sidebar": {
+      "personalProfile": "الملف الشخصي",
+      "notifications": "الاشعارات",
+      "myAddresses": "عنواني",
+      "myOrders": "طلباتي",
+      "paymentMethod": "طريقة الدفع",
+      "service": "الخدمة",
+      "favorites": "المفضلة",
+      "likedServices": "الخدمات المفضلة"
+    },
+    "content": {
+      "nameLabel": "الاسم",
+      "nameValue": "احمد محمد",
+      "emailLabel": "البريد الالكتروني",
+      "emailValue": "uiuxocean@gmail.com",
+      "phoneNumberLabel": "رقم التلفون",
+      "phoneNumberValue": "+91 95744 68870",
+      "editProfileButton": "تعديل الملف",
+      "changePasswordButton": "تغيير كلمة المرور",
+      "logout": "تسجيل الخروج"
+    },
+    "addresses": {
+      "addNewAddress": "أضافة عنوان جديد",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "editAddress": "تعديل العنوان",
+      "name": "اسم العنوان",
+      "city": "المدينة",
+      "area": "المنطقة",
+      "block": "القطعة",
+      "street": "رقم الشارع",
+      "building": "المبنى",
+      "floorApartment": "الطابق/الشقة",
+      "latitude": "خط العرض",
+      "longitude": "خط الطول",
+      "setAsDefault": "تعيين كافتراضي",
+      "cancel": "الغاء الطلب",
+      "saveChanges": "حفظ التغييرات",
+      "noAddresses": "لا توجد عناوين بعد",
+      "noAddressesDescription": "أضف عنوانك الأول للبدء",
+      "namePlaceholder": "أدخل اسم العنوان",
+      "cityPlaceholder": "أدخل المدينة",
+      "areaPlaceholder": "أدخل المنطقة",
+      "blockPlaceholder": "أدخل القطعة",
+      "streetPlaceholder": "أدخل رقم الشارع",
+      "buildingPlaceholder": "أدخل اسم المبنى",
+      "floorApartmentPlaceholder": "أدخل الطابق/الشقة",
+      "latitudePlaceholder": "أدخل خط العرض",
+      "longitudePlaceholder": "أدخل خط الطول",
+      "selectLocation": "اختر الموقع على الخريطة",
+      "searchLocation": "البحث عن الموقع",
+      "searchPlaceholder": "اكتب العنوان للبحث...",
+      "selectedLocation": "الموقع المحدد",
+      "mapLoadError": "فشل في تحميل الخريطة",
+      "searchNotAvailable": "ستكون وظيفة البحث متاحة بمجرد تحميل الخريطة. يمكنك النقر على الخريطة لتحديد موقع.",
+      "defaultUpdatedSuccess": "تم تحديث العنوان الافتراضي بنجاح",
+      "defaultUpdateError": "فشل في تعيين العنوان الافتراضي",
+      "createSuccess": "تم إنشاء العنوان بنجاح",
+      "createError": "فشل في إنشاء العنوان",
+      "updateSuccess": "تم تحديث العنوان بنجاح",
+      "updateError": "فشل في تحديث العنوان",
+      "deleteSuccess": "تم حذف العنوان بنجاح",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+      "invalidLatitude": "يجب أن يكون خط العرض بين -90 و 90",
+      "invalidLongitude": "يجب أن يكون خط الطول بين -180 و 180",
+      "saveError": "فشل في حفظ العنوان"
+    },
+    "paymentMethods": {
+      "title": "خيارات الدفع",
+      "addNewPaymentMethod": "أضف طريقة دفع",
+      "editPaymentMethod": "تعديل طريقة الدفع",
+      "cardNumber": "رقم البطاقة",
+      "cardholderName": "اسم صاحب البطاقة",
+      "cardCode": "CVV",
+      "cvv": "رمز البطاقة",
+      "expirationDate": "تاريخ انتهاء الصلاحية",
+      "expirationPlaceholder": "شهر/سنة",
+      "enterCardNumber": "أدخل رقم بطاقتك",
+      "enterCardholderName": "أدخل اسم حامل البطاقة",
+      "enterCVV": "أدخل رمز CVV",
+      "monthYear": "شهر / سنة",
+      "saveChanges": "حفظ التغييرات",
+      "cancel": "الغاء",
+      "delete": "حذف",
+      "masterCard": "ماستر كارد",
+      "visaCard": "فيزا كارد",
+      "scanCard": "مسح البطاقة",
+      "saveForRenewals": "احفظ معلومات الدفع للتجديدات المستقبلية",
+      "confirmPayment": "تأكيد الدفع",
+      "errors": {
+        "invalidCardNumber": "أدخل رقم بطاقة صالح",
+        "invalidExpiry": "أدخل صلاحية صحيحة بالشهر/السنة",
+        "expiredCard": "هذه البطاقة منتهية الصلاحية",
+        "invalidCVV": "أدخل CVV صالح (3-4 أرقام)",
+        "requiredCardholderName": "اسم حامل البطاقة مطلوب"
+      }
+    },
+    "orders": {
+      "title": "طلباتي",
+      "rateOrder": "تقييم الطلب",
+      "orderDetails": "تفاصيل الطلب",
+      "orderAgain": "اطلب مرة اخرى",
+      "completed": "مكتمل",
+      "productName": "منتج",
+      "currentPrice": "25 د.ك",
+      "originalPrice": "40 د.ك",
+      "orderDate": "تاريخ الطلب",
+      "payNow": "ادفع الآن",
+      "noOrders": "لا توجد طلبات بعد",
+      "noOrdersDescription": "لم تضع أي طلبات بعد. ابدأ التسوق لرؤية طلباتك هنا.",
+      "startShopping": "ابدأ التسوق",
+      "status": {
+        "processing": "قيد المعالجة",
+        "cancelled": "ملغي",
+        "delivered": "تم التسليم",
+        "shipped": "تم الشحن"
+      },
+      "payment": {
+        "pending": "في الانتظار",
+        "paid": "مدفوع",
+        "unpaid": "غير مدفوع",
+        "failed": "فشل الدفع",
+        "cancelled": "ملغي",
+        "refunded": "مسترد",
+        "processing": "قيد المعالجة"
+      }
+    },
+    "cards": {
+      "modernCeilingLights": {
+        "title": "مصابيح سقف مودرن",
+        "company": "شركة انجيك",
+        "code": "رمز: 001"
+      },
+      "luxuryLamps": {
+        "title": "مصابيح فاخرة",
+        "company": "شركة الإضاءة",
+        "code": "رمز: 002"
+      },
+      "pendantLighting": {
+        "title": "إضاءة معلقة",
+        "company": "شركة إنارة",
+        "code": "رمز: 003"
+      }
+    },
+    "favorites": {
+      "noFavorites": "لا توجد منتجات مفضلة بعد",
+      "noFavoritesDescription": "ابدأ بإضافة المنتجات إلى مفضلتك لرؤيتها هنا.",
+      "browseProducts": "تصفح المنتجات"
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "content": "محتوى الإشعارات سيظهر هنا",
+      "totalNotifications": "إشعارات",
+      "markAllAsRead": "تعيين الكل كمقروء",
+      "allMarkedAsRead": "تم تعيين جميع الإشعارات كمقروءة",
+      "refresh": "تحديث",
+      "unreadNotifications": "إشعارات غير مقروءة",
+      "noNotifications": "لا توجد إشعارات بعد",
+      "noNotificationsDescription": "ليس لديك أي إشعارات في الوقت الحالي.",
+      "showing": "عرض",
+      "of": "من",
+      "categories": {
+        "order_update": "تحديث الطلب",
+        "payment": "الدفع",
+        "promotion": "العروض الترويجية",
+        "system": "النظام",
+        "general": "عام"
+      }
+    }
+  },
+  "profileSP": {
+    "headerTitle": "ملف مقدم الخدمة",
+    "sidebar": {
+      "myProfile": "ملفي الشخصي",
+      "packages": "الباقات",
+      "payments": "المدفوعات",
+      "projectPriceRequest": "طلب سعر المشروع",
+      "personalProfile": "الملف الشخصي",
+      "notifications": "الاشعارات",
+      "myAddresses": "عنواني",
+      "myProjects": "مشاريعي",
+      "paymentMethod": "طريقة الدفع",
+      "myServices": "خدماتي",
+      "favorites": "المفضلة"
+    },
+    "content": {
+      "nameLabel": "الاسم",
+      "nameValue": "أحمد مازن",
+      "professionLabel": "المهنة",
+      "professionValue": "uiuxocean@gmail.com",
+      "emailLabel": "الايميل",
+      "emailValue": "+91 95744 68870",
+      "phoneNumberLabel": "رقم الهاتف",
+      "phoneNumberValue": "احمد محمد",
+      "currentMembership": "العضوية الحالية",
+      "freeMembership": "مجاني",
+      "upgradeButton": "ترقية",
+      "suggestedServices": "الخدمات المقترحة",
+      "editProfileButton": "تعديل الملف",
+      "changePasswordButton": "تغيير كلمة المرور",
+      "addNewProject": "أضف مشروعًا جديدًا"
+    },
+    "suggestedServices": {
+      "lampRepair": "تصليح أو تركيب مصباح",
+      "electricalRepair": "إصلاح دارة أو تماس كهربائي",
+      "editIcon": "تعديل"
+    },
+    "paymentMethods": {
+      "title": "خيارات الدفع",
+      "addNewPaymentMethod": "أضف طريقة دفع",
+      "editPaymentMethod": "تعديل طريقة الدفع",
+      "cardNumber": "رقم البطاقة",
+      "cardholderName": "اسم صاحب البطاقة",
+      "cardCode": "CVV",
+      "cvv": "رمز البطاقة",
+      "expirationDate": "تاريخ انتهاء الصلاحية",
+      "expirationPlaceholder": "شهر/سنة",
+      "enterCardNumber": "أدخل رقم بطاقتك",
+      "enterCardholderName": "أدخل اسم حامل البطاقة",
+      "enterCVV": "أدخل رمز CVV",
+      "monthYear": "شهر / سنة",
+      "saveChanges": "حفظ التغييرات",
+      "cancel": "الغاء",
+      "delete": "حذف",
+      "masterCard": "ماستر كارد",
+      "visaCard": "فيزا كارد",
+      "scanCard": "مسح البطاقة",
+      "saveForRenewals": "احفظ معلومات الدفع للتجديدات المستقبلية",
+      "confirmPayment": "تأكيد الدفع",
+      "paymentSuccess": "تم إضافة طريقة الدفع بنجاح!",
+      "brandSelected": "تم اختيار قسم العلامة التجارية",
+      "paymentSelected": "تم اختيار قسم الدفع",
+      "errors": {
+        "invalidCardNumber": "أدخل رقم بطاقة صالح",
+        "invalidExpiry": "أدخل صلاحية صحيحة بالشهر/السنة",
+        "expiredCard": "هذه البطاقة منتهية الصلاحية",
+        "invalidCVV": "أدخل CVV صالح (3-4 أرقام)",
+        "requiredCardholderName": "اسم حامل البطاقة مطلوب"
+      }
+    },
+    "projects": {
+      "title": "مشاريعي",
+      "projectName": "بناء فيلا حديثة",
+      "completed": "مكتمل",
+      "inProgress": "قيد التنفيذ",
+      "clientName": "جون سميث",
+      "amount": "25,000 د.ك",
+      "noProjects": "لم تكتمل أي مشاريع بعد",
+      "noProjectsDesc": "ستظهر مشاريعك المكتملة هنا",
+      "participatedProjects": "المشاريع التي شاركت في إنجازها"
+    },
+    "pricingPackages": {
+      "title": "اختر باقاتك",
+      "safetyPackage": "باقة الامان",
+      "confidencePackage": "باقة الثقة",
+      "premiumPackage": "الباقة المميزة",
+      "enterprisePackage": "باقة المؤسسات",
+      "monthly": "شهريا",
+      "priceOffer": "امكانية رفع عروض للسعر",
+      "contactClient": "الاتصال بالعميل",
+      "prioritySupport": "دعم فني مميز على مدار الساعة",
+      "advancedAnalytics": "لوحة تحليلات متقدمة",
+      "customBranding": "خيارات علامة تجارية مخصصة",
+      "dedicatedManager": "مدير حساب مخصص",
+      "selectPackage": "اختر الباقة"
+    },
+    "services": {
+      "modernCeilingLights": {
+        "title": "مصابيح سقف مودرن",
+        "company": "شركة انجيك",
+        "code": "رمز: 001"
+      },
+      "luxuryLamps": {
+        "title": "مصابيح فاخرة",
+        "company": "شركة الإضاءة",
+        "code": "رمز: 002"
+      },
+      "pendantLighting": {
+        "title": "إضاءة معلقة",
+        "company": "شركة إنارة",
+        "code": "رمز: 003"
+      }
+    },
+    "likedServices": {
+      "noLikedServices": "لا توجد خدمات مفضلة بعد",
+      "noLikedServicesDescription": "ابدأ بإعجاب الخدمات لرؤيتها هنا",
+      "browseServices": "تصفح الخدمات"
+    },
+    "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح!"
+  },
+  "common": {
+    "sending": "جاري الإرسال...",
+    "submitting": "جاري الإرسال...",
+    "saving": "جاري الحفظ...",
+    "saveChanges": "حفظ التغييرات",
+    "total": "المجموع",
+    "kwd": "د.ك",
+    "rememberMe": "تذكرني",
+    "loading": "جاري التحميل...",
+    "userNotFound": "المستخدم غير موجود",
+    "back": "رجوع",
+    "search": "البحث...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "edit": "تعديل",
+    "title": "عنوان المشروع",
+    "description": "وصف المشروع",
+    "budget": "مبلغ الميزانية",
+    "deadline": "الموعد النهائي للمشروع",
+    "projectDesign": "رفع تصميم المشروع",
+    "address": "عنوان المشروع",
+    "projectName": "اسم المشروع",
+    "price": "السعر المتوقع",
+    "delete": "حذف",
+    "add": "إضافة",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "failedToLoad": "فشل في التحميل",
+    "failedToUpdate": "فشل في التحديث",
+    "failedToCreate": "فشل في الإنشاء",
+    "failedToDelete": "فشل في الحذف",
+    "operationFailed": "فشلت العملية",
+    "notAvailable": "غير متوفر",
+    "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+    "fillRequiredFieldsAndRatings": "يرجى ملء جميع الحقول المطلوبة وتحديد جميع التقييمات",
+    "selectCategory": "يرجى اختيار فئة",
+    "requestSubmittedSuccessfully": "تم إرسال الطلب بنجاح",
+    "somethingWentWrong": "حدث خطأ ما",
+    "more": "المزيد",
+    "retry": "إعادة المحاولة"
+  },
+  "product-showcase": {
+    "project-offers": "عروض المشاريع",
+    "your-special-offers": "عروضك الخاصة",
+    "create-new-price-offer-request": "إنشاء طلب عرض سعر جديد",
+    "search": "البحث...",
+    "about-platform": "عن المنصة",
+    "about-description": "توفر منصتنا حلولاً شاملة لجميع احتياجات البناء والتجديد. نربطك بمقاولين وموردين موثوقين.",
+    "about-description-2": "مع شبكتنا الواسعة من المحترفين، يمكنك العثور على كل شيء من المواد الأساسية إلى خدمات إدارة المشاريع الكاملة.",
+    "about-description-3": "احصل على عروض أسعار تنافسية، وتتبع مشاريعك، وضمن جودة العمل مع منصتنا المتكاملة.",
+    "commercial": "تجاري",
+    "modifications": "تعديلات",
+    "electricity": "كهرباء",
+    "construction": "بناء",
+    "rechargeable-desk-lamp": "مصباح مكتب قابل للشحن",
+    "modern-ceiling-lamps": "مصابيح سقف حديثة",
+    "wooden-flooring": "أرضية خشبية",
+    "kitchen-water-faucet": "صنبور مياه المطبخ",
+    "bathroom-mirror": "مرآة الحمام",
+    "wallpaper": "ورق جدران"
+  },
+  "contact": {
+    "contact-us": "اتصل بنا",
+    "your-special-prices": "أسعارك الخاصة",
+    "create-new-price-quote-request": "إنشاء طلب عرض سعر جديد",
+    "search": "البحث...",
+    "contact-subtitle": "تواصل معنا للحصول على المساعدة والإرشادات",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "message": "الرسالة",
+    "send-message": "إرسال الرسالة",
+    "call-us": "اتصل بنا",
+    "chat-whatsapp": "الدردشة عبر الواتساب",
+    "email-us": "راسلنا عبر البريد الإلكتروني",
+    "name-required": "الاسم مطلوب",
+    "email-required": "البريد الإلكتروني مطلوب",
+    "email-invalid": "يرجى إدخال بريد إلكتروني صحيح",
+    "message-required": "الرسالة مطلوبة",
+    "cityscape-placeholder": "منظر المدينة الحديثة"
+  },
+  "faq": {
+    "headerTitle": "الملف الشخصي",
+    "q1": {
+      "question": "كيف يمكنني تسجيل الدخول؟",
+      "answer": "يمكنك تسجيل الدخول بالنقر على زر تسجيل الدخول في أعلى الصفحة وإدخال بيانات الاعتماد الخاصة بك."
+    },
+    "q2": {
+      "question": "إعدادات الحساب",
+      "answer": "يمكنك الوصول إلى إعدادات حسابك من خلال النقر على ملفك الشخصي واختيار الإعدادات من القائمة المنسدلة."
+    },
+    "q3": {
+      "question": "إضافة محتوى جديد",
+      "answer": "لإضافة محتوى جديد، انتقل إلى لوحة التحكم، واختر نوع المحتوى الذي ترغب في إضافته، ثم املأ النموذج المطلوب."
+    },
+    "q4": {
+      "question": "كيف أتواصل مع الدعم؟",
+      "answer": "يمكنك التواصل مع فريق الدعم من خلال نموذج التواصل أو عبر البريد الإلكتروني المتوفر في صفحة اتصل بنا."
+    }
+  },
+    "projectPriceRequest": {
+      "title": "طلبات أسعار المشاريع",
+      "subtitle": "طلبات أسعار المشاريع الخاصة بعملاء التطبيق",
+      "searchPlaceholder": "البحث...",
+      "status": {
+        "open": "مفتوح",
+        "inProgress": "في طور الإنجاز",
+        "completeConstruction": "بناء كلي"
+      },
+      "viewPrice": "عرض السعر",
+      "downloadDesign": "تحميل تصميم المشروع",
+      "priceOffer": "عرض السعر",
+      "description": "وصف الطلب",
+      "startProject": "بدأ المشروع",
+      "address": "العنوان",
+      "area": "المساحة",
+      "fullConstruction": "بناء كلي",
+      "saadAlObaidi": "سعد العبيدي",
+      "addressText": "شارع دعبل الخزاعي، الجهراء، الكويت",
+      "descriptionText": "مشروع بناء فيلا من ثلاث طوابق مرحلة البناء مشروع بناء فيلا من ثلاث طوابق مرحلة البناء مشروع بناء فيلا من ثلاث طوابق مرحلة البناء مشروع بناء فيلا من ثلاث طوابق مرحلة البناء.",
+      "projects": {
+        "project1": {
+          "clientName": "سعد العبيدي",
+          "projectName": "مشروع بناء فيلا",
+          "description": "مشروع بناء فيلا"
+        },
+        "project2": {
+          "clientName": "أحمد حسن",
+          "projectName": "مشروع مبنى مكتبي",
+          "description": "بناء مبنى مكتبي تجاري"
+        },
+        "project3": {
+          "clientName": "فاطمة الراشد",
+          "projectName": "مجمع سكني",
+          "description": "مجمع سكني متعدد الطوابق"
+        }
+      },
+      "villaConstruction": "مشروع بناء فيلا",
+      "congratulations": "مبروك!",
+      "agreedToOffer": " وافق على عرض السعر بخصوص مشروع",
+      "contactClient": "الاتصال بالعميل"
+    },
+  "contactCustomer": {
+    "search": "البحث....",
+    "title": "إيداع عرض للمشروع",
+    "subtitle": "إيداع عرض للمشروع : بناء فيلا",
+    "projectDuration": "مدة إنجاز المشروع",
+    "price": "د.ك السعر",
+    "uploadFile": "تحميل ملف إنجاز المشروع",
+    "notes": "أضف ملاحظة",
+    "submitOffer": "إيداع العرض",
+    "termsAndPrivacy": "شروط الاستخدام و سياسة الخصوصية"
+  },
+  "projectRequest": {
+    "search": "البحث في المشاريع...",
+    "title": "طلب مشروع جديد",
+    "subtitle": "إنشاء طلب مشروع جديد",
+    "projectDuration": "المدة المتوقعة للمشروع",
+    "budget": "الميزانية المتوقعة",
+    "uploadFile": "تحميل ملفات المشروع",
+    "notes": "وصف المشروع",
+    "submitRequest": "إرسال الطلب",
+    "termsAndPrivacy": "شروط الاستخدام و سياسة الخصوصية"
+  },
+  "personalProfile": {
+    "header": {
+      "title": "الملف الشخصي"
+    },
+    "menuItems": {
+      "howToLogin": "كيفية تسجيل الدخول",
+      "loginContent": "يمكنك تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور الخاصة بك. تأكد من إدخال البيانات بشكل صحيح.",
+      "accountSettings": "إعدادات الحساب",
+      "accountSettingsContent": "يمكنك تعديل إعدادات حسابك من خلال هذه الصفحة. قم بتحديث معلوماتك الشخصية وإعدادات الخصوصية.",
+      "addNewContent": "إضافة محتوى جديد",
+      "addContentContent": "يمكنك إضافة محتوى جديد إلى حسابك. قم بتحميل الملفات أو إدخال النصوص المطلوبة.",
+      "howToContactSupport": "كيفية التواصل مع الدعم",
+      "contactSupportContent": "يمكنك التواصل مع فريق الدعم من خلال البريد الإلكتروني أو الهاتف. نحن متاحون لمساعدتك على مدار الساعة."
+    }
+  },
+  "serviceCard": {
+    "title": "طلبات أسعار المشاريع",
+    "subtitle": "طلبات أسعار المشاريع الخاصة بعملاء التطبيق",
+    "searchPlaceholder": "البحث",
+    "projects": {
+      "project1": {
+        "clientName": "سعد العبيدي",
+        "projectName": "مشروع بناء ميلا",
+        "description": "مشروع بناء فيلا"
+      },
+      "project2": {
+        "clientName": "أحمد حسن",
+        "projectName": "مشروع مبنى مكتبي",
+        "description": "بناء مبنى مكتبي تجاري"
+      },
+      "project3": {
+        "clientName": "فاطمة الراشد",
+        "projectName": "مجمع سكني",
+        "description": "مجمع سكني متعدد الطوابق"
+      }
+    },
+    "loadingProjectRequests": "جاري تحميل طلبات المشاريع...",
+    "errors": {
+      "loginRequired": "يرجى تسجيل الدخول لعرض طلبات المشاريع",
+      "loadFailed": "فشل في تحميل طلبات المشاريع",
+      "professionalAuthRequired": "مطلوب تسجيل دخول مقدم الخدمة. يرجى تسجيل الدخول كمقدم خدمات.",
+      "accessDeniedSP": "تم رفض الوصول. يمكن لمقدمي الخدمات فقط إرسال العروض. الدور الحالي: {{role}}",
+      "projectIdMissing": "معرف المشروع (demandId) مفقود",
+      "professionalIdMissing": "معرف مقدم الخدمة مفقود",
+      "unauthorizedSubmit": "غير مخول لك لإرسال عرض لهذا المشروع.",
+      "projectNotFound": "المشروع غير موجود. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+      "alreadySubmitted": "لقد أرسلت عرضاً لهذا المشروع بالفعل.",
+      "submitFailed": "فشل في إرسال العرض. يرجى المحاولة مرة أخرى.",
+      "downloadFailed": "فشل في تحميل ملف المشروع",
+      "customerAuthRequired": "مطلوب تسجيل دخول العميل. يرجى تسجيل الدخول كعميل.",
+      "accessDeniedCustomer": "تم رفض الوصول. يمكن للعملاء فقط قبول العروض. الدور الحالي: {{role}}",
+      "demandIdMissing": "معرف الطلب مفقود",
+      "noProposalsFound": "لم يتم العثور على معرف مقدم الخدمة أو البائع. لا توجد عروض متاحة لهذا المشروع.",
+      "multipleProposalTypes": "تم العثور على أنواع عروض متعددة. يرجى الاتصال بالدعم.",
+      "unauthorizedAccept": "غير مخول لك لقبول هذا العرض.",
+      "proposalNotFound": "العرض أو المشروع غير موجود. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+      "alreadyAccepted": "تم قبول هذا العرض بالفعل.",
+      "missingParameters": "معاملات مطلوبة مفقودة. يرجى التأكد من أن المشروع يحتوي على عروض صالحة والمحاولة مرة أخرى.",
+      "invalidProposalData": "بيانات العرض غير صالحة. يرجى الاتصال بالدعم.",
+      "acceptFailed": "فشل في قبول العرض. يرجى المحاولة مرة أخرى."
+    },
+    "success": {
+      "proposalSubmitted": "تم إرسال العرض بنجاح!",
+      "proposalAccepted": "تم قبول العرض بنجاح!"
+    },
+    "buttons": {
+      "submitProposal": "إرسال العرض",
+      "submitting": "جاري الإرسال...",
+      "priceQuote": "عرض السعر",
+      "projectCompletionFile": "ملف إنجاز المشروع",
+      "allProjects": "جميع المشاريع"
+    }
+  },
+  "otpModal": {
+    "title": "أدخل الرمز",
+    "subtitle": "أدخل الرمز الذي وصلك على هاتفك المحمول لإعادة تعيين كلمة المرور",
+    "submitButton": "أدخل الرمز",
+    "enterAllDigits": "يرجى إدخال جميع الأرقام الأربعة."
+  },
+  "pageTitles": {
+    "home": "الرئيسية",
+    "offers": "عروض المشاريع",
+    "products": "المنتجات",
+    "about": "من نحن"
+  },
+  "fatorahSuccess": {
+    "successTitle": "تم الدفع بنجاح!",
+    "failureTitle": "فشل في الدفع",
+    "successMessage": "تم معالجة دفعتك بنجاح.",
+    "failureMessage": "حدث خطأ في معالجة دفعتك.",
+    "redirectMessage": "سيتم التوجيه إلى الصفحة الرئيسية خلال {{count}} ثوانٍ...",
+    "goHome": "الذهاب للرئيسية"
+  },
+  "fatorahError": {
+    "errorTitle": "فشل في الدفع",
+    "errorMessage": "لم نتمكن من معالجة دفعتك",
+    "errorDetailsTitle": "خطأ في معالجة الدفع",
+    "errorDetailsText": "لم يتم إكمال دفعتك. يرجى المحاولة مرة أخرى أو الاتصال بالدعم إذا استمرت المشكلة.",
+    "redirectMessage": "سيتم التوجيه إلى الصفحة الرئيسية خلال {{count}} ثوانٍ...",
+    "goHome": "الذهاب للرئيسية"
+  },
+  "No products available in this category": "لا توجد منتجات متاحة في هذه الفئة",
+  "projectDetails": {
+    "title": "تفاصيل المشروع",
+    "description": "الوصف",
+    "address": "العنوان",
+    "projectType": "نوع المشروع",
+    "budget": "الميزانية",
+    "status": "الحالة",
+    "acceptedBy": "مقبول من قبل"
+  },
+  "paymentMethods": {
+    "loading": "جاري تحميل طرق الدفع...",
+    "loginRequired": "يرجى تسجيل الدخول لعرض طرق الدفع",
+    "noPlanSelected": "لم يتم اختيار خطة",
+    "fetchFailed": "فشل في جلب طرق الدفع",
+    "loadFailed": "فشل في تحميل طرق الدفع",
+    "selectPaymentMethod": "يرجى اختيار طريقة دفع",
+    "loginRequiredForPayment": "يرجى تسجيل الدخول للمتابعة مع الدفع",
+    "initiateFailed": "فشل في بدء الدفع",
+    "initiateFailedInvalid": "فشل في بدء الدفع - استجابة غير صحيحة",
+    "initiateFailedRetry": "فشل في بدء الدفع. يرجى المحاولة مرة أخرى.",
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.",
+    "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى والمحاولة.",
+    "accessDenied": "تم رفض الوصول. يرجى الاتصال بالدعم.",
+    "serverError": "خطأ في الخادم. يرجى المحاولة لاحقاً أو الاتصال بالدعم.",
+    "title": "اختر طريقة الدفع",
+    "serviceCharge": "رسوم الخدمة",
+    "embeddedSupported": "مدعوم مدمج",
+    "noMethodsAvailable": "لا توجد طرق دفع متاحة",
+    "contactSupport": "يرجى الاتصال بالدعم لمزيد من المعلومات",
+    "redirectingToPayment": "جاري التوجيه للدفع...",
+    "proceedToPayment": "المتابعة للدفع",
+    "paymentFailed": "فشل الدفع",
+    "networkIssue": "تم اكتشاف مشكلة في الاتصال بالشبكة.",
+    "paymentNotProcessed": "لا يمكن معالجة الدفع.",
+    "retry": "إعادة المحاولة",
+    "attemptsLeft": "محاولات متبقية",
+    "tryDifferentMethod": "جرب طريقة مختلفة",
+    "maxRetryReached": "تم الوصول للحد الأقصى من المحاولات. يرجى الاتصال بالدعم أو تجربة طريقة دفع مختلفة."
+  },
+  "pricingPackages": {
+    "loginRequired": "يرجى تسجيل الدخول لعرض خطط الاشتراك",
+    "fetchFailed": "فشل في جلب خطط الاشتراك",
+    "loadFailed": "فشل في تحميل خطط الاشتراك",
+    "subscriptionActivated": "تم تفعيل الاشتراك بنجاح!",
+    "loading": "جاري تحميل خطط الاشتراك...",
+    "currentPlan": "الخطة الحالية",
+    "noFeaturesListed": "لا توجد ميزات مدرجة",
+    "noPlansAvailable": "لا توجد خطط اشتراك متاحة",
+    "contactSupport": "يرجى الاتصال بالدعم لمزيد من المعلومات",
+    "selectPlan": "اختر الخطة"
+  },
+  "Favourite": "مفضل",
+  "Unfavourite": "غير مفضل"
+}

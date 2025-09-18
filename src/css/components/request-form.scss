@@ -1,0 +1,409 @@
+@import "../utilities";
+
+// Request Form Component Styles
+.request-form {
+    .form-group {
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            .input-icon {
+                position: absolute;
+                color: $gray-text-color;
+                font-size: $font-size-medium;
+                z-index: 2;
+                right: 12px; // LTR icon position (right side)
+                left: auto; // Reset RTL position
+                cursor: pointer;
+                transition: color 0.3s ease;
+                
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+
+            // Hide input icon when form control has error
+            .form-control.is-invalid ~ .input-icon,
+            .form-control.is-invalid + .input-icon {
+                display: none;
+            }
+
+            .unit-label {
+                position: absolute;
+                color: $gray-text-color;
+                font-size: $font-size-small;
+                padding: 2px 6px;
+                border-radius: $border-radius-small;
+                z-index: 2;
+            }
+
+            .form-control {
+                border: 1px solid #21395D33;
+                border-radius: 10px;
+                font-size: $font-size-medium;
+                background-color: $white-color;
+                color: $secondary-color;
+                height: 44px;
+
+                &::placeholder {
+                    color: $light-gray-text-color;
+                }
+
+                &:focus {
+                    outline: none;
+                    border-color: $primary-color;
+                    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+                }
+
+                &.is-invalid {
+                    border-color: #dc3545;
+                    background-image: none !important; // remove Bootstrap's error icon
+                    background-repeat: initial !important;
+                    background-position: initial !important;
+                    background-size: auto !important;
+                    box-shadow: none;
+                    padding-right: 12px; // keep normal padding without space for icon
+                }
+            }
+
+            .description-textarea {
+                min-height: 120px;
+                resize: vertical;
+
+                &.is-invalid {
+                    border-color: #dc3545;
+                    background-image: none !important; // ensure no error icon in textarea
+                    box-shadow: none;
+                }
+            }
+
+            // File input styling - Hide the blue "Choose File" button and "No file chosen" text
+            input[type="file"] {
+                &::file-selector-button {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                }
+                
+                &::-webkit-file-upload-button {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                }
+                
+                &::-moz-file-upload-button {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                }
+                
+                // Hide "No file chosen" text
+                &::before {
+                    content: "" !important;
+                    display: none !important;
+                }
+                
+                // Alternative method to hide the text
+                color: transparent !important;
+                
+                // Hide the file name display
+                &::-webkit-file-selector-button {
+                    display: none !important;
+                }
+            }
+            
+            // Date input styling - Hide browser default icon
+            input[type="date"] {
+                &::-webkit-calendar-picker-indicator {
+                    display: none !important;
+                }
+                
+                &::-webkit-inner-spin-button {
+                    display: none !important;
+                }
+                
+                &::-webkit-clear-button {
+                    display: none !important;
+                }
+            }
+            
+            // File placeholder styling
+            .file-placeholder {
+                position: absolute;
+                top: 50%;
+                left: 15px; // Position after the icon
+                transform: translateY(-50%);
+                color: $light-gray-text-color;
+                font-size: $font-size-medium;
+                pointer-events: none;
+                z-index: 1;
+            }
+            
+            // Selected file info styling
+            .selected-file-info {
+                position: absolute;
+                top: 50%;
+                left: 15px; // Position after the icon
+                transform: translateY(-50%);
+                color: $primary-color;
+                font-size: $font-size-medium;
+                font-weight: $font-weight-medium;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 4px;
+                
+                .file-name {
+                    color: $secondary-color;
+                }
+                
+                .file-size {
+                    color: $gray-text-color;
+                    font-size: $font-size-small;
+                    font-weight: $font-weight-normal;
+                }
+            }
+            
+            // File size error styling
+            .file-size-error {
+                color: #dc3545;
+                font-size: $font-size-small;
+                margin-top: 0.3rem;
+                margin-bottom: 0;
+                padding-left: 0;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                line-height: 1.2;
+                font-weight: 500;
+                
+                i {
+                    font-size: $font-size-small;
+                    color: #dc3545;
+                }
+            }
+        }
+
+        .error-message {
+            color: #dc3545 !important;
+            font-size: $font-size-small;
+            margin-top: 0.3rem;
+            margin-bottom: 0;
+            padding-left: 0;
+            display: block;
+            position: relative;
+            line-height: 1.2;
+            font-weight: 500;
+            
+            &::before {
+                display: none;
+            }
+        }
+    }
+
+    // Form Actions
+    .form-actions {
+        margin-top: 2rem;
+
+        .submit-btn {
+            background-color: $primary-color;
+            color: $white-color;
+            border: none;
+            border-radius: $border-radius-medium;
+            padding: 12px 20px;
+            font-size: $font-size-large;
+            font-weight: $font-weight-semibold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+    }
+}
+
+// LTR Support (Default for English)
+html[dir="ltr"] {
+    .request-form {
+        .form-group {
+            .input-wrapper {
+                .input-icon {
+                    right: 12px; // LTR icon position (right side)
+                    left: auto; // Reset RTL position
+                }
+
+                .unit-label {
+                    right: 12px; // LTR unit label position (right side)
+                    left: auto; // Reset RTL position
+                }
+
+                .form-control {
+                    padding-left: 12px; // LTR padding for text (left side)
+                    padding-right: 40px; // LTR padding for icon (right side)
+                    text-align: left; // LTR text alignment
+                }
+
+                .description-textarea {
+                    padding-left: 12px; // LTR padding
+                    padding-right: 12px; // LTR padding
+                    text-align: left; // LTR text alignment
+                }
+
+                // File input styling for LTR
+                input[type="file"] {
+                    padding-left: 12px; // LTR padding for text (left side)
+                    padding-right: 40px; // LTR padding for icon (right side)
+                }
+
+                // File placeholder styling for LTR
+                .file-placeholder {
+                    left: 15px; // LTR position after the icon (left side)
+                    right: auto; // Reset RTL position
+                    text-align: left;
+                }
+                
+                // Selected file info styling for LTR
+                .selected-file-info {
+                    left: 15px; // LTR position after the icon (left side)
+                    right: auto; // Reset RTL position
+                    text-align: left;
+                    
+                    .file-name {
+                        margin-right: 0;
+                        margin-left: 8px;
+                    }
+                }
+                
+                // File size error styling for LTR
+                .file-size-error {
+                    text-align: left;
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+            }
+        } 
+    }
+}
+
+// RTL Support (For Arabic)
+html[dir="rtl"] {
+    .request-form {
+        .form-group {
+            .input-wrapper {
+                .input-icon {
+                    left: 12px; // RTL icon position (left side)
+                    right: auto; // Reset LTR position
+                }
+
+                .unit-label {
+                    left: 12px; // RTL unit label position (left side)
+                    right: auto; // Reset LTR position
+                }
+
+                .form-control {
+                    padding-left: 40px; // RTL padding for icon (left side)
+                    padding-right: 12px; // RTL padding for text (right side)
+                    text-align: right; // RTL text alignment
+                }
+
+                .description-textarea {
+                    padding-left: 12px; // RTL padding
+                    padding-right: 12px; // RTL padding
+                    text-align: right; // RTL text alignment
+                }
+
+                // File input styling for RTL
+                input[type="file"] {
+                    padding-left: 12px; // RTL padding for text (left side)
+                    padding-right: 40px; // RTL padding for icon (right side)
+                }
+
+                // File placeholder styling for RTL
+                .file-placeholder {
+                    left: auto; // Reset LTR position
+                    right: 15px; // RTL position after the icon (right side)
+                    text-align: right;
+                }
+                
+                // Selected file info styling for RTL
+                .selected-file-info {
+                    left: auto; // Reset LTR position
+                    right: 7px; // RTL position after the icon (right side)
+                    text-align: right;
+                    
+                    .file-name {
+                        margin-left: 0;
+                        margin-right: 8px;
+                    }
+                }
+                
+                // File size error styling for RTL
+                .file-size-error {
+                    text-align: right;
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+            }
+        }
+
+       
+    }
+}
+// Mobile Responsive
+@media (max-width: 768px) {
+    // LTR Mobile
+    html[dir="ltr"] {
+        .request-form {
+            .form-group {
+                .input-wrapper {
+                    .form-control {
+                        padding: 10px 16px;
+                        padding-left: 12px; // LTR padding for text
+                        padding-right: 40px; // LTR padding for icon
+                        font-size: $font-size-small;
+                    }
+
+                    .description-textarea {
+                        min-height: 100px;
+                    }
+                }
+            }
+        }
+    }
+
+    // RTL Mobile
+    html[dir="rtl"] {
+        .request-form {
+            .form-group {
+                .input-wrapper {
+                    .form-control {
+                        padding: 10px 16px;
+                        padding-left: 40px; // RTL padding for icon
+                        padding-right: 12px; // RTL padding for text
+                        font-size: $font-size-small;
+                    }
+
+                    .description-textarea {
+                        min-height: 100px;
+                    }
+                }
+            }
+        }
+    }
+
+    // Common mobile styles
+    .request-form {
+        .form-actions {
+            .submit-btn {
+                font-size: $font-size-medium;
+                padding: 12px 20px;
+            }
+        }   
+    }
+}
+

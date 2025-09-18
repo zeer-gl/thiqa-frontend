@@ -1,0 +1,373 @@
+@import "../utilities";
+
+.service-list-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    .main-content {
+        padding: 2rem 0 4rem 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .service-providers-section {
+            .providers-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+
+                .provider-card-link {
+                    text-decoration: none;
+                    color: inherit;
+                    display: block;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        text-decoration: none;
+                        color: inherit;
+                    }
+
+                    .provider-card {
+                        cursor: pointer;
+                    }
+                }
+
+                .provider-card {
+
+                    .card-image-section {
+                        position: relative;
+                        height: 200px;
+                        overflow: hidden;
+
+                        .provider-image {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            border-radius: 10px 10px 0px 0px;
+                        }
+
+                        .favorite-btn {
+                            position: absolute;
+                            top: 12px;
+                            left: 12px;
+                            color: #6c757d;
+                            font-size: 16px;
+                            cursor: pointer;
+
+                            padding: 8px;
+                            border-radius: 50%;
+                            width: 36px;
+                            height: 36px;
+                            border: none;
+                            outline: none;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                    }
+
+                    .card-info-section {
+                        padding: 0px 4px 0px 4px;
+                        display: flex;
+                        background-color: #EEE7DBB2;
+                        align-items: center;
+                        justify-content: space-between;
+                        min-height: 60px;
+                        border-radius: 0px 0px 10px 10px;
+
+                        .rating-section {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+
+                            .stars {
+                                display: flex;
+                                gap: 2px;
+                                
+                                i {
+                                    font-size: 14px;
+                                    transition: all 0.2s ease;
+                                }
+                            }
+
+                            .rating-value {
+                                font-weight: 700;
+                                color: #21395D;
+                                font-size: 16px;
+                                font-family: 'FF Shamel Family Sans One Bold', sans-serif;
+                                background: #f1f5f9;
+                                padding: 2px 6px;
+                                border-radius: 4px;
+                                border: 1px solid #e2e8f0;
+                            }
+                        }
+
+                        .company-info {
+                            flex: 1;
+
+                            .company-name {
+                                font-size: 12px;
+                                font-weight: 400;
+                                color: #21395D;
+                                padding-right: 5px;
+                            }
+
+                            .company-slogan {
+                                font-size: 10px;
+                                color: #21395D;
+                                margin: 0;
+                                font-family: 'FF Shamel Family Sans One Book', sans-serif;
+                            }
+                        }
+
+                        .company-logo {
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: $white-color;
+                            font-size: 18px;
+                        }
+                    }
+
+                    .category-button-section {
+                
+                        .category-btn {
+                            width: 100%;
+                            max-width: fit-content;
+                            border:1px solid #21395D33;
+                            padding: 5px 10px;
+                            border-radius: 5px;
+                            background-color: #FFFFFF;
+                            color: #21395D;
+                            font-size: 10px;
+                            font-weight: 400;
+                            cursor: pointer;
+
+                        }
+                    }
+                }
+            }
+        }
+
+        .sidebar-section {
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+
+            .sidebar-title {
+                font-size: $font-size-large;
+                font-weight: $font-weight-semibold;
+                color: $primary-color;
+                margin-bottom: 1.5rem;
+                text-align: left; // LTR default
+            }
+
+            .service-categories {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 20px;
+
+                .category-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px 16px;
+                    background-color: $white-color;
+                    border: 1px solid #e9ecef;
+                    border-radius: 8px;
+                    color: #21395D;
+                    font-size: 14px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    text-align: left;
+                    width: 100%;
+                    font-family: 'FF Shamel Family Sans One Book', sans-serif;
+
+                    i {
+                        font-size: 16px;
+                        color: #6c757d;
+                        width: 20px;
+                        text-align: center;
+                    }
+
+                    &.active {
+                        background-color: #EEE7DB;
+                        color: #21395D;
+                        font-weight: 600;
+                        outline: none;
+                        border: none;
+
+                        i {
+                            color: #21395D;
+                        }
+                    }
+                }
+            }
+
+            .decorative-elements {
+                position: relative;
+                height: 200px;
+                margin-top: 2rem;
+
+                .circle {
+                    position: absolute;
+                    top: 20px;
+                    left: 20px; // LTR position
+                    width: 60px;
+                    height: 60px;
+                    border: 2px solid #e9ecef;
+                    border-radius: 50%;
+                }
+
+                .rings {
+                    position: absolute;
+                    bottom: 40px;
+                    right: 20px; // LTR position
+                    width: 80px;
+                    height: 80px;
+                    border: 2px solid #e9ecef;
+                    border-radius: 50%;
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: 10px;
+                        left: 10px;
+                        width: 60px;
+                        height: 60px;
+                        border: 2px solid #e9ecef;
+                        border-radius: 50%;
+                    }
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: 20px;
+                        left: 20px;
+                        width: 40px;
+                        height: 40px;
+                        border: 2px solid #e9ecef;
+                        border-radius: 50%;
+                    }
+                }
+
+                .partial-circle {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 40px; // LTR position
+                    width: 40px;
+                    height: 40px;
+                    border: 2px solid #e9ecef;
+                    border-radius: 50%;
+                    border-top: none;
+                    border-right: none;
+                }
+            }
+        }
+    }
+}
+
+// RTL Support
+[dir="rtl"] {
+    .service-list-page {
+        .main-content {
+            .sidebar-section {
+                .sidebar-title {
+                    text-align: right;
+                }
+
+                .service-categories {
+                    .category-item {
+                        flex-direction: row;
+                        text-align: right;
+                    }
+                }
+
+                .decorative-elements {
+                    .circle {
+                        left: auto;
+                        right: 20px; // RTL position
+                    }
+
+                    .rings {
+                        right: auto;
+                        left: 20px; // RTL position
+                    }
+
+                    .partial-circle {
+                        left: auto;
+                        right: 40px; // RTL position
+                    }
+                }
+            }
+        }
+    }
+}
+
+// LTR Support
+[dir="ltr"] {
+    .service-list-page {
+        .main-content {
+            .sidebar-section {
+                .sidebar-title {
+                    text-align: left;
+                }
+
+                .service-categories {
+                    .category-item {
+                        flex-direction: row;
+                        text-align: left;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Mobile Responsive
+@media (max-width: 768px) {
+    .service-list-page {
+        .main-content {
+            padding: 1rem 0;
+
+            .service-providers-section {
+                .providers-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                }
+            }
+
+            .sidebar-section {
+                margin-top: 2rem;
+                position: static;
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .service-list-page {
+        .main-content {
+            .service-providers-section {
+                .providers-grid {
+                    .provider-card {
+                        .card-body {
+                            .provider-info {
+                                .provider-name {
+                                    font-size: $font-size-medium;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

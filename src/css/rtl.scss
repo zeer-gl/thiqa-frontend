@@ -1,0 +1,620 @@
+$ar-font-normal: 'FF-Shamel-Book';
+$ar-font-bold: 'FF-Shamel-Bold';
+
+
+@font-face {
+  font-family: $ar-font-normal;
+  src: url('/src/assets/fonts/FF-Shamel-Family-Sans-One-Book.ttf');
+}
+
+@font-face {
+  font-family: $ar-font-bold;
+  src: url('/src/assets/fonts/FF-Shamel-Family-Sans-One-Bold.ttf');
+}
+
+
+html[dir="rtl"] {
+
+  // Dev One - Zain //
+
+  body {
+    text-align: right;
+    direction: rtl;
+    font-family: $ar-font-normal !important;
+  }
+
+  // Arabic bold font for headings only in RTL
+  .ar-heading-bold {
+    font-family: $ar-font-bold !important;
+  }
+
+  .navbar-nav {
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+  .language-switcher .btn {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+
+  .nearby-btn,
+  .mi-btn {
+    flex-direction: row-reverse;
+  }
+
+  .quote {
+    img {
+      transform: scaleX(1);
+    }
+
+  }
+
+  .product-detail-page .product-info .quantity-section .quantity-controls .quantity-display {
+    padding: 15px 10px 10px 10px !important;
+  }
+
+  .product-detail-page .product-info .quantity-section .quantity-controls .quantity-btn {
+    padding: 15px 10px 10px 10px !important;
+  }
+
+  .breadcrumb-section {
+    .breadcrumb {
+      .breadcrumb-item+.breadcrumb-item::before {
+        content: "<";
+      }
+    }
+  }
+
+  .product-images {
+
+    .thumbnail-container {
+      order: 2;
+
+      .scroll-arrows {
+        right: auto;
+        left: -10px;
+      }
+    }
+
+    .main-image {
+      order: 1;
+    }
+  }
+
+  .quantity-section {
+    .quantity-label {
+      text-align: right;
+    }
+  }
+
+  .favorite-section {
+    .favorite-btn {
+      flex-direction: row-reverse;
+    }
+  }
+
+  .action-buttons {
+    .add-to-cart-btn {
+      flex-direction: row-reverse;
+    }
+  }
+
+  .side-pattern {
+    position: absolute;
+    transform: translateY(-50%) scaleX(1);
+    top: 50%;
+    right: -15px;
+    z-index: 0;
+  }
+
+  .product-detail-page .breadcrumb-section .breadcrumb {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .ev-submit-btn {
+    img {
+      transform: rotate(180deg);
+    }
+  }
+
+  .login-form-container input[type=email] {
+    background-position: 98% center;
+  }
+
+  .login-form-container input[type=password] {
+    background-position: 98% center;
+  }
+
+  .ev-submit-btn img {
+    transform: rotate(0deg);
+  }
+
+  .login-form-container input#fname {
+    background-position: 98% center;
+  }
+
+  // Dev Two - Usama //
+
+
+  .action-icons {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
+
+  // Order Request Page RTL Styles
+  .order-request-page {
+
+    // Header Section
+    .header-section {
+
+      // Right Section - Page Title
+      .page-title {
+        .main-title {
+          text-align: right;
+        }
+
+        .subtitle {
+          text-align: right;
+        }
+      }
+
+      // Middle Section - Create Request Input
+      .create-request-section {
+        .create-request-btn {
+          text-align: center;
+
+          span {
+            margin-right: 5px; // RTL margin for icon spacing
+            margin-left: 0; // Reset LTR margin
+          }
+        }
+      }
+
+      // Left Section - Search Bar
+      .search-section {
+        .search-bar {
+          i {
+            left: 12px; // RTL icon position (left side)
+            right: auto; // Reset RTL position
+          }
+
+          input {
+            padding-left: 40px; // RTL padding (left side for icon)
+            padding-right: 12px; // RTL padding for text
+            text-align: right; // RTL text alignment
+          }
+        }
+      }
+    }
+
+    // Main Content
+    .main-content {
+      .content-wrapper {
+
+        // Form Fields
+        .request-form {
+          .form-group {
+            .input-wrapper {
+              .input-icon {
+                left: 12px; // RTL icon position (left side)
+                right: auto; // Reset LTR position
+                cursor: pointer;
+                transition: color 0.3s ease;
+
+                .form-control {
+                  padding-left: 40px; // RTL padding for icon (left side)
+                  padding-right: 12px; // RTL padding for text
+                  text-align: right; // RTL text alignment
+                }
+
+                .description-textarea {
+                  padding-left: 12px; // RTL padding (left side)
+                  padding-right: 12px; // RTL padding (right side)
+                  text-align: right; // RTL text alignment
+                }
+
+                // File input styling - Hide the blue "Choose File" button and "No file chosen" text
+                input[type="file"] {
+                  padding-left: 12px; // RTL padding for text (left side)
+                  padding-right: 40px; // RTL padding for icon (right side)
+
+                  // File input icon positioning for RTL
+                  &+.input-icon {
+                    left: 12px; // Reset LTR position
+                    right: auto; // RTL icon position (right side)
+                  }
+
+                  &::file-selector-button {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                  }
+
+                  &::-webkit-file-upload-button {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                  }
+
+                  &::-moz-file-upload-button {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                  }
+
+                  // Hide "No file chosen" text
+                  &::before {
+                    content: "" !important;
+                    display: none !important;
+                  }
+
+                  // Alternative method to hide the text
+                  color: transparent !important;
+
+                  // Hide the file name display
+                  &::-webkit-file-selector-button {
+                    display: none !important;
+                  }
+                }
+
+                // Date input styling - Hide browser default icon for RTL
+                input[type="date"] {
+                  &::-webkit-calendar-picker-indicator {
+                    display: none !important;
+                  }
+
+                  &::-webkit-inner-spin-button {
+                    display: none !important;
+                  }
+
+                  &::-webkit-clear-button {
+                    display: none !important;
+                  }
+                }
+
+                // File placeholder styling for RTL
+                .file-placeholder {
+                  left: auto; // Reset LTR position
+                  right: 15px; // RTL position after the icon (right side)
+                  text-align: right;
+                }
+
+                // Selected file info styling for RTL
+                .selected-file-info {
+                  left: auto; // Reset LTR position
+                  right: 7px; // RTL position after the icon (right side)
+                  text-align: right;
+
+                  .file-name {
+                    margin-left: 0;
+                    margin-right: 8px;
+                  }
+                }
+
+                // Total Section
+                .total-section {
+                  .total-amount {
+
+                    // Vertical separator line - RTL position
+                    &::before {
+                      right: 50%; // RTL position
+                      left: auto; // Reset LTR position
+                    }
+
+                    .total-label {
+                      margin-left: 20px; // RTL margin
+                      margin-right: 0; // Reset LTR margin
+
+                      span {
+                        text-align: right; // RTL text alignment
+                      }
+                    }
+
+                    .total-value {
+                      flex-direction: row-reverse; // RTL order
+
+                      .currency {
+                        text-align: right; // RTL text alignment
+                      }
+                    }
+                  }
+                }
+              }
+
+              &:hover {
+                color: #21395D;
+              }
+            }
+
+            // Calendar icon specific positioning for RTL
+            .fas.fa-calendar.input-icon {
+              left: 12px; // RTL icon position (left side)
+              right: auto; // Reset LTR position
+            }
+
+            .unit-label {
+              left: 12px; // RTL unit label position (left side)
+              right: auto; // Reset LTR position
+            }
+
+            .form-control {
+              padding-left: 40px; // RTL padding for icon (left side)
+              padding-right: 12px; // RTL padding for text
+              text-align: right; // RTL text alignment
+            }
+
+            .description-textarea {
+              padding-left: 12px; // RTL padding (left side)
+              padding-right: 12px; // RTL padding (right side)
+              text-align: right; // RTL text alignment
+            }
+
+            // File input styling - Hide the blue "Choose File" button and "No file chosen" text
+            input[type="file"] {
+              padding-left: 12px; // RTL padding for text (left side)
+              padding-right: 40px; // RTL padding for icon (right side)
+
+              // File input icon positioning for RTL
+              &+.input-icon {
+                left: auto; // Reset LTR position
+                right: 12px; // RTL icon position (right side)
+              }
+
+              &::file-selector-button {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                width: 0 !important;
+                height: 0 !important;
+              }
+
+              &::-webkit-file-upload-button {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                width: 0 !important;
+                height: 0 !important;
+              }
+
+              &::-moz-file-upload-button {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                width: 0 !important;
+                height: 0 !important;
+              }
+
+              // Hide "No file chosen" text
+              &::before {
+                content: "" !important;
+                display: none !important;
+              }
+
+              // Alternative method to hide the text
+              color: transparent !important;
+
+              // Hide the file name display
+              &::-webkit-file-selector-button {
+                display: none !important;
+              }
+            }
+
+            // Date input styling - Hide browser default icon for RTL
+            input[type="date"] {
+              &::-webkit-calendar-picker-indicator {
+                display: none !important;
+              }
+
+              &::-webkit-inner-spin-button {
+                display: none !important;
+              }
+
+              &::-webkit-clear-button {
+                display: none !important;
+              }
+            }
+
+            // File placeholder styling for RTL
+            .file-placeholder {
+              left: auto; // Reset LTR position
+              right: 15px; // RTL position after the icon (right side)
+              text-align: right;
+            }
+
+            // Selected file info styling for RTL
+            .selected-file-info {
+              left: auto; // Reset LTR position
+              right: 7px; // RTL position after the icon (right side)
+              text-align: right;
+
+              .file-name {
+                margin-left: 0;
+                margin-right: 8px;
+              }
+            }
+
+            // Total Section
+            .total-section {
+              .total-amount {
+
+                // Vertical separator line - RTL position
+                &::before {
+                  right: 50%; // RTL position
+                  left: auto; // Reset LTR position
+                }
+
+                .total-label {
+                  margin-left: 20px; // RTL margin
+                  margin-right: 0; // Reset LTR margin
+
+                  span {
+                    text-align: right; // RTL text alignment
+                  }
+                }
+
+                .total-value {
+                  flex-direction: row-reverse; // RTL order
+
+                  .currency {
+                    text-align: right; // RTL text alignment
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  // Service Request Page RTL Styles
+  .service-request-page {
+
+    // Header Section
+    .header-section {
+
+      // Right Section - Page Title
+      .page-title {
+        .main-title {
+          text-align: right;
+        }
+
+        .subtitle {
+          text-align: right;
+        }
+      }
+
+      // Middle Section - Create Request Input
+      .create-request-section {
+        .create-request-btn {
+          text-align: center;
+
+          span {
+            margin-right: 5px; // RTL margin for icon spacing
+            margin-left: 0; // Reset LTR margin
+          }
+        }
+      }
+
+      // Left Section - Search Bar
+      .search-section {
+        .search-bar {
+          i {
+            left: 12px; // RTL icon position (left side)
+            right: auto; // Reset RTL position
+          }
+
+          input {
+            padding-left: 40px; // RTL padding (left side for icon)
+            padding-right: 12px; // RTL padding for text
+            text-align: right; // RTL text alignment
+          }
+        }
+      }
+    }
+  }
+
+  // Contact Page RTL Styles
+  .contact-page {
+    .main-content {
+      .contact-form-section {
+        .contact-content {
+          .contact-title {
+            text-align: right;
+          }
+
+          .contact-subtitle {
+            text-align: right;
+          }
+
+          .contact-buttons {
+            .contact-btn {
+              flex-direction: row-reverse;
+
+              i {
+                margin-left: 0.75rem;
+                margin-right: 0;
+                order: 2;
+              }
+
+              span {
+                order: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Service Detail Page RTL Styles
+  .service-detail-page {
+    .contractor-profile-card {
+      .profile-header {
+        .avatar-container {
+          .contractor-name {
+            &::before {
+              left: auto;
+              right: -6px;
+            }
+          }
+        }
+
+        .location {
+          i {
+            margin-left: 0.25rem;
+            margin-right: 0;
+          }
+        }
+      }
+    }
+
+    .projects-section {
+      .projects-grid {
+        .project-card {
+          .project-image {
+            .project-date-overlay {
+              right: auto;
+              left: 12px;
+            }
+          }
+
+          .project-info {
+            flex-direction: row-reverse;
+
+            .project-title {
+              text-align: right;
+            }
+
+            .project-categories {
+              flex-direction: row-reverse;
+
+              .category-tag {
+                text-align: right;
+              }
+            }
+
+            .project-rating {
+              flex-direction: row-reverse;
+
+              .rating-value {
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+}
