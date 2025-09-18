@@ -1,1 +1,1 @@
-export const BaseUrl='http://ec2-3-29-98-111.me-central-1.compute.amazonaws.com';
+export const BaseUrl='https://thiqa.greelogix.com';
