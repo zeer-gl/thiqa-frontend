@@ -829,11 +829,11 @@ function Signup() {
                       </Link>
                     </div>
                     <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
-                      <a href="#" className="text-decoration-none fw-semibold">
+                      <a href="#" className="text-decoration-none fw-semibold d-flex align-items-center justify-content-center">
                         {t("auth.signup.terms")}
                       </a>
-                      <p>{t("auth.signup.and")}</p>
-                      <a href="#" className="text-decoration-none fw-semibold">
+                      <p className="mb-0 d-flex align-items-center justify-content-center">{t("auth.signup.and")}</p>
+                      <a href="#" className="text-decoration-none fw-semibold d-flex align-items-center justify-content-center">
                         {t("auth.signup.privacy")}
                       </a>
                     </div>

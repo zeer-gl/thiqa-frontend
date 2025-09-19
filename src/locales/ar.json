@@ -11,7 +11,8 @@
     "langAr": "العربية",
     "profile": "الملف الشخصي",
     "logout": "تسجيل الخروج",
-    "contact": "اتصل بنا"
+    "contact": "اتصل بنا",
+    "cart": "السلة"
   },
   "pages": {
     "home": {
@@ -31,10 +32,21 @@
         "title": "خدماتي",
         "addService": "إضافة خدمة",
         "editService": "تعديل الخدمة",
+        "updateService": "تحديث الخدمة",
         "deleteService": "حذف الخدمة",
         "noServices": "لا توجد خدمات بعد",
         "noServicesDesc": "ابدأ بإضافة خدمتك الأولى",
-        "addFirstService": "أضف خدمتك الأولى"
+        "addFirstService": "أضف خدمتك الأولى",
+        "serviceNameEn": "اسم الخدمة (الإنجليزية)",
+        "serviceNameAr": "اسم الخدمة (العربية)",
+        "price": "السعر",
+        "unit": "الوحدة",
+        "deliveryTime": "وقت التسليم",
+        "serviceCreated": "تم إنشاء الخدمة بنجاح!",
+        "serviceUpdated": "تم تحديث الخدمة بنجاح!",
+        "serviceDeleted": "تم حذف الخدمة بنجاح!",
+        "serviceError": "خطأ",
+        "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذه الخدمة؟"
       },
       "featureSection": {
         "customerSupport": {
@@ -125,6 +137,8 @@
         "sold": "مبيعة",
         "currency": "دينار كويتي",
         "addToCart": "أضف السلة",
+        "addedToCart": "تم إضافة المنتج إلى السلة بنجاح!",
+        "addToCartError": "فشل في إضافة المنتج إلى السلة",
         "scrollUp": "تمرير لأعلى",
         "scrollDown": "تمرير لأسفل"
       },
@@ -318,7 +332,9 @@
       "removeItemConfirmation": "هل أنت متأكد من أنك تريد إزالة \"{{productName}}\" من سلة التسوق؟",
       "removeItemWarning": "لا يمكن التراجع عن هذا الإجراء.",
       "removeItemButton": "إزالة العنصر",
-      "thisProduct": "هذا المنتج"
+      "thisProduct": "هذا المنتج",
+      "simpleDeleteTitle": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟",
+      "removeButton": "حذف"
     },
     "messages": {
       "itemRemovedSuccess": "تم إزالة {{productName}} من السلة بنجاح!",
@@ -1183,6 +1199,7 @@
       "status": {
         "open": "مفتوح",
         "inProgress": "في طور الإنجاز",
+        "accepted": "مقبول",
         "completeConstruction": "بناء كلي"
       },
       "viewPrice": "عرض السعر",
@@ -1191,6 +1208,14 @@
       "description": "وصف الطلب",
       "startProject": "بدأ المشروع",
       "address": "العنوان",
+      "errors": {
+        "noDesignFile": "لا يوجد ملف تصميم متاح",
+        "fileSizeLarge": "حجم الملف كبير. الملف أكبر من 1 ميجابايت.",
+        "downloadFailed": "فشل في تحميل ملف التصميم"
+      },
+      "success": {
+        "downloadStarted": "تم بدء التحميل بنجاح"
+      },
       "area": "المساحة",
       "fullConstruction": "بناء كلي",
       "saadAlObaidi": "سعد العبيدي",
@@ -1299,18 +1324,23 @@
       "alreadyAccepted": "تم قبول هذا العرض بالفعل.",
       "missingParameters": "معاملات مطلوبة مفقودة. يرجى التأكد من أن المشروع يحتوي على عروض صالحة والمحاولة مرة أخرى.",
       "invalidProposalData": "بيانات العرض غير صالحة. يرجى الاتصال بالدعم.",
-      "acceptFailed": "فشل في قبول العرض. يرجى المحاولة مرة أخرى."
+      "acceptFailed": "فشل في قبول العرض. يرجى المحاولة مرة أخرى.",
+      "startProjectFailed": "فشل في بدء المشروع. يرجى المحاولة مرة أخرى.",
+      "projectAlreadyStarted": "تم بدء المشروع بالفعل."
     },
     "success": {
-      "proposalSubmitted": "تم إرسال العرض بنجاح!",
-      "proposalAccepted": "تم قبول العرض بنجاح!"
+      "proposalAccepted": "تم قبول العرض بنجاح!",
+      "projectStarted": "تم بدء المشروع بنجاح!"
     },
     "buttons": {
       "submitProposal": "إرسال العرض",
       "submitting": "جاري الإرسال...",
       "priceQuote": "عرض السعر",
       "projectCompletionFile": "ملف إنجاز المشروع",
-      "allProjects": "جميع المشاريع"
+      "allProjects": "جميع المشاريع",
+      "accepted": "مقبول",
+      "startProject": "بدء المشروع",
+      "starting": "جاري البدء..."
     }
   },
   "otpModal": {
@@ -1379,7 +1409,13 @@
     "retry": "إعادة المحاولة",
     "attemptsLeft": "محاولات متبقية",
     "tryDifferentMethod": "جرب طريقة مختلفة",
-    "maxRetryReached": "تم الوصول للحد الأقصى من المحاولات. يرجى الاتصال بالدعم أو تجربة طريقة دفع مختلفة."
+    "maxRetryReached": "تم الوصول للحد الأقصى من المحاولات. يرجى الاتصال بالدعم أو تجربة طريقة دفع مختلفة.",
+    "codSuccess": "تم تفعيل الاشتراك بنجاح! سيتم تحصيل الدفع عند التسليم.",
+    "processingCOD": "جاري معالجة طلب الدفع عند الاستلام...",
+    "confirmCOD": "تأكيد طلب الدفع عند الاستلام",
+    "mobileRequired": "رقم الهاتف المحمول مطلوب للدفع. يرجى تحديث ملفك الشخصي برقم هاتف صحيح.",
+    "mobileTooLong": "رقم الهاتف المحمول طويل جداً. الحد الأقصى المسموح هو 11 رقماً.",
+    "mobileTooShort": "رقم الهاتف المحمول قصير جداً. يرجى تقديم رقم هاتف صحيح."
   },
   "pricingPackages": {
     "loginRequired": "يرجى تسجيل الدخول لعرض خطط الاشتراك",
@@ -1391,8 +1427,49 @@
     "noFeaturesListed": "لا توجد ميزات مدرجة",
     "noPlansAvailable": "لا توجد خطط اشتراك متاحة",
     "contactSupport": "يرجى الاتصال بالدعم لمزيد من المعلومات",
-    "selectPlan": "اختر الخطة"
+    "selectPlan": "اختر الخطة",
+    "selectPlanCOD": "اختر الخطة (الدفع عند الاستلام)",
+    "codSuccess": "تم تفعيل الاشتراك بنجاح! سيتم تحصيل الدفع عند التسليم.",
+    "processingCOD": "جاري معالجة اشتراك الدفع عند الاستلام...",
+    "codFailed": "فشل في معالجة اشتراك الدفع عند الاستلام. يرجى المحاولة مرة أخرى.",
+    "mobileRequired": "رقم الهاتف المحمول مطلوب للاشتراك. يرجى تحديث ملفك الشخصي برقم هاتف صحيح.",
+    "mobileTooLong": "رقم الهاتف المحمول طويل جداً. الحد الأقصى المسموح هو 11 رقماً.",
+    "mobileTooShort": "رقم الهاتف المحمول قصير جداً. يرجى تقديم رقم هاتف صحيح.",
+    "networkError": "خطأ في الشبكة. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.",
+    "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى والمحاولة."
   },
   "Favourite": "مفضل",
-  "Unfavourite": "غير مفضل"
+  "Unfavourite": "غير مفضل",
+  "projectOfferForm": {
+    "errors": {
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+      "durationRequired": "المدة مطلوبة",
+      "priceRequired": "السعر مطلوب",
+      "projectInfoMissing": "معلومات المشروع مفقودة أو غير صحيحة",
+      "professionalAccountNotFound": "حساب المحترف غير موجود. يرجى تسجيل الدخول مرة أخرى.",
+      "invalidProfessionalIdFormat": "تنسيق معرف المحترف غير صحيح. يرجى تسجيل الدخول مرة أخرى.",
+      "loginToSubmitProposal": "يرجى تسجيل الدخول لإرسال العرض",
+      "invalidProjectIdFormat": "تنسيق معرف المشروع غير صحيح. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+      "invalidIdFormat": "تنسيق المعرف غير صحيح. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
+      "badRequest": "طلب غير صحيح: {{message}}",
+      "unauthorized": "غير مخول: يرجى تسجيل الدخول مرة أخرى",
+      "forbidden": "ممنوع: ليس لديك صلاحية لتنفيذ هذا الإجراء",
+      "notFound": "غير موجود: لم يتم العثور على المورد المطلوب",
+      "serverError": "خطأ في الخادم: يرجى المحاولة مرة أخرى لاحقاً",
+      "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+      "requestError": "خطأ في الطلب: {{message}}",
+      "submitFailed": "فشل في إرسال العرض. يرجى المحاولة مرة أخرى.",
+      "invalidDataFormat": "تنسيق البيانات غير صحيح",
+      "proposalAlreadySubmitted": "لقد قمت بإرسال عرض لهذا الطلب مسبقاً."
+    },
+    "success": {
+      "proposalSubmitted": "تم إرسال عرضك بنجاح!",
+      "testMessage": "رسالة اختبار"
+    },
+    "calendar": {
+      "clear": "مسح",
+      "today": "اليوم",
+      "selectAnyDate": "يمكنك اختيار أي تاريخ (ماضي أو مستقبل)"
+    }
+  }
 }

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAlert } from '../context/AlertContext';
+import { useUser } from '../context/Profile';
+import { useSPProfile } from '../context/SPProfileContext';
 import { BaseUrl } from '../assets/BaseUrl';
 import '../css/components/payment-methods.scss';
 
 const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
     const { t, i18n } = useTranslation();
     const { showAlert } = useAlert();
+    const { fetchUserProfile } = useUser();
+    const { refreshSPProfile } = useSPProfile();
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
@@ -111,23 +115,14 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
             });
             showAlert(t('paymentMethods.loadFailed', 'Failed to load payment methods: ' + error.message), 'error');
             
-            // Set fallback payment methods for testing
+            // Set COD as the only payment method
             setPaymentMethods([
                 {
-                    paymentMethodId: 'knet',
-                    paymentMethodEn: 'KNET',
-                    paymentMethodAr: 'كي نت',
-                    imageUrl: '/public/images/payment/knet.png',
+                    paymentMethodId: 'cod',
+                    paymentMethodEn: 'Cash on Delivery',
+                    paymentMethodAr: 'الدفع عند الاستلام',
+                    imageUrl: '/public/images/payment/cod.png',
                     serviceCharge: 0,
-                    currencyIso: 'KWD',
-                    isEmbeddedSupported: true
-                },
-                {
-                    paymentMethodId: 'visa',
-                    paymentMethodEn: 'Visa',
-                    paymentMethodAr: 'فيزا',
-                    imageUrl: '/public/images/payment/visa.png',
-                    serviceCharge: 0.5,
                     currencyIso: 'KWD',
                     isEmbeddedSupported: false
                 }
@@ -240,7 +235,87 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
                 return;
             }
 
-            // Prepare request body
+            // Check if COD payment method is selected
+            if (selectedPaymentMethod.paymentMethodId === 'cod') {
+                // Handle COD payment - no external payment gateway needed
+                console.log('=== COD PAYMENT PROCESSING ===');
+                console.log('Processing COD payment for plan:', selectedPlan);
+                
+                // Prepare request body for COD
+                const requestBody = {
+                    planId: selectedPlan.id,
+                    paymentMethodId: 'cod',
+                    paymentMethod: 'Cash on Delivery',
+                    CustomerMobile: customerMobile,
+                    paymentStatus: 'pending' // COD payments are initially pending
+                };
+
+                console.log('=== COD PAYMENT REQUEST ===');
+                console.log('Request URL:', `${BaseUrl}/professional/subscription/purchase`);
+                console.log('Request Body:', requestBody);
+
+                // Call existing subscription purchase API with COD payment method
+                const response = await fetch(`${BaseUrl}/professional/subscription/purchase`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                console.log('COD Response Status:', response.status);
+                const responseText = await response.text();
+                console.log('COD Raw Response:', responseText);
+
+                if (!response.ok) {
+                    // Check if it's an HTML error page
+                    if (responseText.includes('<!DOCTYPE html>') || responseText.includes('<html')) {
+                        throw new Error('Server endpoint not found. Please contact support to enable COD payments.');
+                    }
+                    throw new Error(`COD payment failed: ${responseText}`);
+                }
+
+                const data = JSON.parse(responseText);
+                console.log('COD Payment Response:', data);
+
+                if (data.success) {
+                    showAlert(t('paymentMethods.codSuccess', 'Subscription activated successfully! Payment will be collected on delivery.'), 'success');
+                    
+                    // Refresh user profile to update hasActiveSubscription status
+                    setTimeout(async () => {
+                        try {
+                            console.log('Refreshing user profile after successful COD payment...');
+                            await fetchUserProfile();
+                            await refreshSPProfile();
+                            console.log('User profile refreshed successfully');
+                        } catch (error) {
+                            console.error('Error refreshing user profile:', error);
+                        }
+                    }, 1000);
+                    
+                    // Call success callback
+                    if (onPaymentSuccess) {
+                        onPaymentSuccess(selectedPlan, selectedPaymentMethod);
+                    }
+                    
+                    // Navigate back or to success page
+                    setTimeout(() => {
+                        if (onBack) {
+                            onBack();
+                        }
+                    }, 2000);
+                } else if (data.paymentUrl) {
+                    // If the API returns a payment URL (for online payment), show error for COD
+                    throw new Error('COD payment method not supported by backend. Please contact support.');
+                } else {
+                    throw new Error(data.message || 'COD payment failed');
+                }
+                
+                return; // Exit early for COD
+            }
+
+            // Original Fatora payment logic (kept for fallback)
             const requestBody = {
                 planId: selectedPlan.id,
                 paymentMethodId: selectedPaymentMethod.paymentMethodId,
@@ -672,11 +747,17 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
                                     {processing ? (
                                         <>
                                             <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                                            {t('paymentMethods.redirectingToPayment', 'Redirecting to Payment...')}
+                                            {selectedPaymentMethod?.paymentMethodId === 'cod' ? 
+                                                t('paymentMethods.processingCOD', 'Processing COD Order...') :
+                                                t('paymentMethods.redirectingToPayment', 'Redirecting to Payment...')
+                                            }
                                         </>
                                     ) : (
                                         <>
-                                            {t('paymentMethods.proceedToPayment', 'Proceed to Payment')}
+                                            {selectedPaymentMethod?.paymentMethodId === 'cod' ? 
+                                                t('paymentMethods.confirmCOD', 'Confirm COD Order') :
+                                                t('paymentMethods.proceedToPayment', 'Proceed to Payment')
+                                            }
                                             <i className="fas fa-arrow-right ms-2"></i>
                                         </>
                                     )}

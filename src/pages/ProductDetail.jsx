@@ -20,6 +20,7 @@ import SidePattern from '/public/images/side-pattern.svg';
 import ArrowRight from '/public/images/arrow-right.svg';
 import {BaseUrl} from '../assets/BaseUrl';
 import {useLikes} from '../context/LikesContext';
+import {useCart} from '../context/CartContext';
 // Import the product image
 import ProductImage from '../assets/payment/modern-ceiling-lights.svg';
 import {useAlert} from '../context/AlertContext';
@@ -29,6 +30,7 @@ const ProductDetail = () => {
     const {id} = useParams();
     const navigate = useNavigate();
     const {likedProducts, toggleProductLike} = useLikes();
+    const {addToCart} = useCart();
     const {showAlert} = useAlert();
     
     // Check if current product is liked
@@ -353,33 +355,23 @@ const ProductDetail = () => {
             const cartItem = { 
                 ...products, 
                 quantity,
-              
                 selectedImageIndex,
+                liked: isProductLiked,
                 // Add any other state you want to preserve
             };
             
-            // Get existing cart or initialize empty array
-            const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-            
-            // Check if product already exists in cart
-            const existingItemIndex = existingCart.findIndex(item => item._id === products._id);
-            
-            if (existingItemIndex >= 0) {
-                // Update quantity if product already in cart
-                existingCart[existingItemIndex].quantity = quantity;
-                existingCart[existingItemIndex].liked = isProductLiked; // Update like status from context
-            } else {
-                // Add new item to cart
-                existingCart.push(cartItem);
-            }
-            
-            // Save updated cart to localStorage
-            localStorage.setItem('cart', JSON.stringify(existingCart));
+            // Use CartContext to add item
+            addToCart(cartItem, quantity);
             
             // Also save to productdetail for backward compatibility
+            const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
             localStorage.setItem('productdetail', JSON.stringify(existingCart));
+            
+            // Show success message
+            showAlert(t('pages.detail-page.section1.addedToCart'), 'success');
         } catch (e) {
             console.error('Error adding to cart:', e);
+            showAlert(t('pages.detail-page.section1.addToCartError'), 'error');
         }
         navigate('/payment');
     };
@@ -773,13 +765,13 @@ const ProductDetail = () => {
                                                 )}
 
                                                 {/* Approval Status */}
-                                                <div className="mt-2">
+                                                {/* <div className="mt-2">
                                                     <span className={`badge ${review.approvalStatus === 'approved' ? 'bg-success' : review.approvalStatus === 'pending' ? 'bg-warning' : 'bg-danger'}`}>
                                                         {review.approvalStatus === 'approved' ? t('pages.detail-page.section3.evaluationForm.approved') : 
                                                          review.approvalStatus === 'pending' ? t('pages.detail-page.section3.evaluationForm.pending') : 
                                                          t('pages.detail-page.section3.evaluationForm.rejected')}
                                                     </span>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         ))}
                                     </div>

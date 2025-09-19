@@ -57,6 +57,9 @@ function SignupSP() {
     const [timer, setTimer] = useState(59);
     const [generatedOTP, setGeneratedOTP] = useState(null);
     const [timerInterval, setTimerInterval] = useState(null);
+    const [phoneError, setPhoneError] = useState('');
+    const [phoneValid, setPhoneValid] = useState(false);
+    
     
     const otpRefs = useRef([]);
 
@@ -110,46 +113,98 @@ function SignupSP() {
         return isValid;
     };
 
-    // Validation functions
-    const validateForm = () => {
-        let isValid = true;
-        let errorMessage = '';
-        
-        if (!name.trim()) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.nameRequired', 'Name is required');
-        } else if (!phoneNo.trim()) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.phoneRequired', 'Phone number is required');
-        } else if (!email.trim() || !validateEmail(email)) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.emailRequired', 'Valid email is required');
-        } else if (!password || password.length < 6) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.passwordLength', 'Password must be at least 6 characters');
-        } else if (!workTitle.trim()) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.workTitleRequired', 'Work title is required');
-        } else if (selectedSpecializations.length === 0) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.specializationRequired', 'Please select at least one specialization');
-        } else if (!experience || isNaN(experience) || parseInt(experience) < 0) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.experienceRequired', 'Valid experience years is required');
-        } else if (!bio.trim() || bio.trim().length < 10) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.bioLength', 'Bio must be at least 10 characters');
-        } else if (!latitude || !longitude) {
-            isValid = false;
-            errorMessage = t('auth.signupsp.validation.locationRequired', 'Please select your location on the map');
-        }
-        
-        if (!isValid) {
-            showAlert(errorMessage, 'error');
-        }
-        
-        return isValid;
-    };
+ // ... existing code ...
+
+
+// ... existing code until validation functions ...
+
+// Add phone validation functions after validateEmail function (around line 156)
+const validatePhone = (val) => {
+  // Kuwait phone number validation
+  // Kuwait phone numbers can be:
+  // - 8 digits starting with 5, 6, or 9 (mobile numbers)
+  // - 7 digits starting with 2 (landline numbers)
+  // - With or without country code +965
+  
+  // Remove any spaces, dashes, or parentheses
+  const cleanNumber = val.replace(/[\s\-\(\)]/g, '');
+  
+  // Check if it starts with +965 (Kuwait country code)
+  if (cleanNumber.startsWith('+965')) {
+    const numberWithoutCountryCode = cleanNumber.substring(4);
+    return validateKuwaitNumber(numberWithoutCountryCode);
+  }
+  
+  // Check if it starts with 965 (without +)
+  if (cleanNumber.startsWith('965')) {
+    const numberWithoutCountryCode = cleanNumber.substring(3);
+    return validateKuwaitNumber(numberWithoutCountryCode);
+  }
+  
+  // Check if it's just the local number
+  return validateKuwaitNumber(cleanNumber);
+};
+
+const validateKuwaitNumber = (number) => {
+  // Kuwait mobile numbers: 8 digits starting with 5, 6, or 9
+  const mobilePattern = /^[569]\d{7}$/;
+  
+  // Kuwait landline numbers: 7 digits starting with 2
+  const landlinePattern = /^2\d{6}$/;
+  
+  return mobilePattern.test(number) || landlinePattern.test(number);
+};
+
+// Update validateForm function to include phone validation (around line 114)
+const validateForm = () => {
+  let isValid = true;
+  let errorMessage = '';
+  
+  if (!name.trim()) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.nameRequired', 'Name is required');
+  } else if (!phoneNo.trim()) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.phoneRequired', 'Phone number is required');
+  } else if (!validatePhone(phoneNo)) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.phoneFormat', 'Please enter a valid Kuwait phone number');
+  } else if (!email.trim() || !validateEmail(email)) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.emailRequired', 'Valid email is required');
+  } else if (!password || password.length < 6) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.passwordLength', 'Password must be at least 6 characters');
+  } else if (!workTitle.trim()) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.workTitleRequired', 'Work title is required');
+  } else if (selectedSpecializations.length === 0) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.specializationRequired', 'Please select at least one specialization');
+  } else if (!experience || isNaN(experience) || parseInt(experience) < 0) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.experienceRequired', 'Valid experience years is required');
+  } else if (!bio.trim() || bio.trim().length < 10) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.bioLength', 'Bio must be at least 10 characters');
+  } else if (!latitude || !longitude) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.locationRequired', 'Please select your location on the map');
+  }
+  
+  if (!isValid) {
+    showAlert(errorMessage, 'error');
+  }
+  
+  return isValid;
+};
+
+// ... existing code until phone input section (around line 657) ...
+
+{/* Phone Number */}
+
+
+// ... rest of the form ...
 
     const validateEmail = (val) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
@@ -656,26 +711,55 @@ function SignupSP() {
 
                                         {/* Phone Number */}
                                         <div className="form-group mb-3">
-                                            <div className="position-relative">
-                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`} style={{ zIndex: 10 }}>
-                                                    <img src={PhoneIcon} alt="Phone" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} />
-                                                </div>
-                                                <input 
-                                                    type="tel" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'}`}
-                                                    id="phoneNo"
-                                                    placeholder={t('auth.signupsp.phoneNo')} 
-                                                    value={phoneNo}
-                                                    onChange={(e) => setPhoneNo(e.target.value)}
-                                                    required
-                                                    style={{ 
-                                                        height: '50px',
-                                                        paddingLeft: i18n.dir() === 'rtl' ? '12px' : '50px',
-                                                        paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px'
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
+  <div className="position-relative">
+    <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`} style={{ zIndex: 10 }}>
+      <img src={PhoneIcon} alt="Phone" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} />
+    </div>
+    <input 
+      type="tel" 
+      className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${
+        formSubmitted && !phoneNo ? 'is-invalid' : 
+        phoneNo && phoneValid ? 'is-valid' : 
+        phoneNo && !phoneValid ? 'is-invalid' : ''
+      }`}
+      id="phoneNo"
+      placeholder={t("auth.signupsp.Phone", "Kuwait Phone (e.g., 51234567)")}
+      value={phoneNo}
+      onChange={(e) => { 
+        const value = e.target.value;
+        setPhoneNo(value);
+        
+        // Real-time validation
+        if (value.trim() === '') {
+          setPhoneError('');
+          setPhoneValid(false);
+        } else if (validatePhone(value)) {
+          setPhoneError('');
+          setPhoneValid(true);
+        } else {
+          setPhoneError('Please enter a valid Kuwait phone number');
+          setPhoneValid(false);
+        }
+      }}
+      required
+      style={{ 
+        height: '50px',
+        paddingLeft: i18n.dir() === 'rtl' ? '12px' : '50px',
+        paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px'
+      }}
+    />
+  </div>
+  {
+    phoneError &&(
+      <div className=" alert-danger text-danger">
+      {phoneError}
+      </div>
+    )
+  }
+  
+  {formSubmitted && !phoneNo && <div className="text-danger mt-1">{t('Phone number is required')}</div>}
+  {formSubmitted && phoneNo && !validatePhone(phoneNo) && <div className="text-danger mt-1">{t('Please enter a valid Kuwait phone number (e.g., 51234567, +96551234567)')}</div>}
+</div>
 
                                         {/* Email */}
                                         <div className="form-group mb-3">

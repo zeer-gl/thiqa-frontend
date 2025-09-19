@@ -11,7 +11,7 @@ export const AlertProvider = ({ children }) => {
     // Auto-dismiss after 3 seconds
     setTimeout(() => {
       setAlert(null);
-    }, 2000);
+    }, 10000);
   };
 
   return (

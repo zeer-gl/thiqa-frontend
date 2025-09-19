@@ -355,25 +355,25 @@ const ProjectOfferForm = ({
         
         // Validate required fields
         if (!formData.projectDuration || !formData.price || !formData.notes) {
-            showAlert(t('common.fillRequiredFields', 'Please fill in all required fields'), 'error');
+            showAlert(t('projectOfferForm.errors.fillRequiredFields'), 'error');
             return;
         }
         
         // Additional validation for duration and price
         if (!formData.projectDuration.trim()) {
-            showAlert('Duration is required', 'error');
+            showAlert(t('projectOfferForm.errors.durationRequired'), 'error');
             return;
         }
         
         if (!formData.price.trim()) {
-            showAlert('Price is required', 'error');
+            showAlert(t('projectOfferForm.errors.priceRequired'), 'error');
             return;
         }
 
         // Validate demand quote ID - prioritize explicit prop, then project object
         finalDemandQuoteId = demandQuoteId || project?._id || project?.id;
         if (!finalDemandQuoteId) {
-            showAlert('Project information is missing or invalid', 'error');
+            showAlert(t('projectOfferForm.errors.projectInfoMissing'), 'error');
             return;
         }
         
@@ -426,7 +426,7 @@ const ProjectOfferForm = ({
                         console.error('❌ Professional ID not found in backend:', verifyResponse.status);
                         const errorData = await verifyResponse.json().catch(() => ({}));
                         console.error('Backend error:', errorData);
-                        showAlert('Professional account not found. Please login again.', 'error');
+                        showAlert(t('projectOfferForm.errors.professionalAccountNotFound'), 'error');
                         return;
                     }
                 } catch (verifyError) {
@@ -442,13 +442,13 @@ const ProjectOfferForm = ({
                 // Ensure it's a valid ObjectId format
                 if (!/^[0-9a-fA-F]{24}$/.test(professionalId)) {
                     console.error('❌ Professional ID is not a valid ObjectId format:', professionalId);
-                    showAlert('Invalid professional ID format. Please login again.', 'error');
+                    showAlert(t('projectOfferForm.errors.invalidProfessionalIdFormat'), 'error');
                     return;
                 }
             }
             
             if (!token || !professionalId) {
-                showAlert('Please login to submit proposal', 'error');
+                showAlert(t('projectOfferForm.errors.loginToSubmitProposal'), 'error');
                 return;
             }
 
@@ -461,7 +461,7 @@ const ProjectOfferForm = ({
             }
             
             if (!finalDemandQuoteId) {
-                showAlert('Project information is missing or invalid', 'error');
+                showAlert(t('projectOfferForm.errors.projectInfoMissing'), 'error');
                 return;
             }
 
@@ -479,7 +479,7 @@ const ProjectOfferForm = ({
             // Validate demand quote ID format
             if (!/^[0-9a-fA-F]{24}$/.test(finalDemandQuoteId)) {
                 console.error('❌ Demand Quote ID is not a valid ObjectId format:', finalDemandQuoteId);
-                showAlert('Invalid project ID format. Please refresh the page and try again.', 'error');
+                showAlert(t('projectOfferForm.errors.invalidProjectIdFormat'), 'error');
                 return;
             }
 
@@ -510,7 +510,7 @@ const ProjectOfferForm = ({
             
             if (!/^[0-9a-fA-F]{24}$/.test(professionalId)) {
                 console.error('❌ Professional ID is not a valid ObjectId format:', professionalId);
-                showAlert('Invalid professional ID format', 'error');
+                showAlert(t('projectOfferForm.errors.invalidProfessionalIdFormat'), 'error');
                     return;
             }
             
@@ -554,7 +554,16 @@ const ProjectOfferForm = ({
             console.log('Proposal submitted successfully:', response.data);
             
             if (response.data.success) {
-                showAlert('Proposal submitted successfully!', 'success');
+                const successMessage = t('projectOfferForm.success.proposalSubmitted');
+                const testMessage = t('projectOfferForm.success.testMessage');
+                console.log('Translation result:', successMessage);
+                console.log('Test message:', testMessage);
+                console.log('Current language:', i18n.language);
+                console.log('Available languages:', i18n.languages);
+                
+                // Fallback translation if needed
+                const finalMessage = successMessage || (i18n.language === 'ar' ? 'تم إرسال عرضك بنجاح!' : 'Your proposal has been submitted successfully!');
+                showAlert(finalMessage, 'success');
                 // Reset form
                 setFormData({
                     projectDuration: '',
@@ -568,7 +577,7 @@ const ProjectOfferForm = ({
                 }
             } else {
                 console.error('API Error Response:', response.data);
-                showAlert(response.data.message || 'Failed to submit proposal', 'error');
+                showAlert(response.data.message || t('projectOfferForm.errors.submitFailed'), 'error');
             }
 
         } catch (error) {
@@ -578,7 +587,7 @@ const ProjectOfferForm = ({
             console.error('Error response:', error.response);
             console.error('Error request:', error.request);
             
-            let errorMessage = 'Failed to submit proposal. Please try again.';
+            let errorMessage = t('projectOfferForm.errors.submitFailed');
             
             if (error.response) {
                 // Server responded with error status
@@ -594,27 +603,30 @@ const ProjectOfferForm = ({
                         console.error('❌ ObjectId validation failed on backend');
                         console.error('Professional ID being sent:', professionalId);
                         console.error('Demand Quote ID being sent:', finalDemandQuoteId);
-                        errorMessage = 'Invalid ID format. Please refresh the page and try again.';
+                        errorMessage = t('projectOfferForm.errors.invalidIdFormat');
+                    } else if (error.response.data?.message?.includes('already submitted a proposal')) {
+                        console.error('❌ Proposal already submitted for this demand');
+                        errorMessage = t('projectOfferForm.errors.proposalAlreadySubmitted');
                     } else {
-                    errorMessage = `Bad Request: ${error.response.data?.message || 'Invalid data format'}`;
+                    errorMessage = t('projectOfferForm.errors.badRequest', { message: error.response.data?.message || t('projectOfferForm.errors.invalidDataFormat') });
                     }
                 } else if (error.response.status === 401) {
-                    errorMessage = 'Unauthorized: Please login again';
+                    errorMessage = t('projectOfferForm.errors.unauthorized');
                 } else if (error.response.status === 403) {
-                    errorMessage = 'Forbidden: You do not have permission to perform this action';
+                    errorMessage = t('projectOfferForm.errors.forbidden');
                 } else if (error.response.status === 404) {
-                    errorMessage = 'Not Found: The requested resource was not found';
+                    errorMessage = t('projectOfferForm.errors.notFound');
                 } else if (error.response.status === 500) {
-                    errorMessage = 'Server Error: Please try again later';
+                    errorMessage = t('projectOfferForm.errors.serverError');
                 }
             } else if (error.request) {
                 // Network error
                 console.error('Network error - no response received');
-                errorMessage = 'Network error. Please check your connection.';
+                errorMessage = t('projectOfferForm.errors.networkError');
             } else {
                 // Something else happened
                 console.error('Request setup error:', error.message);
-                errorMessage = `Request error: ${error.message}`;
+                errorMessage = t('projectOfferForm.errors.requestError', { message: error.message });
             }
             
             showAlert(errorMessage, 'error');
@@ -870,15 +882,15 @@ const ProjectOfferForm = ({
                         <div className="calendar-footer">
                             <div className="calendar-note">
                                 <small style={{color: '#666', fontSize: '12px'}}>
-                                    You can select any date (past or future)
+                                    {t('projectOfferForm.calendar.selectAnyDate')}
                                 </small>
                             </div>
                             <div className="calendar-buttons">
                             <button className="calendar-btn clear-btn" onClick={clearDate}>
-                                Clear
+                                {t('projectOfferForm.calendar.clear')}
                             </button>
                             <button className="calendar-btn today-btn" onClick={goToToday}>
-                                Today
+                                {t('projectOfferForm.calendar.today')}
                             </button>
                             </div>
                         </div>

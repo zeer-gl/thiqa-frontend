@@ -217,7 +217,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                         </div>
                                     </div>
                                     <div className="offer-actions">
-                                        <button 
+                                        {/* <button 
                                             className="btn-quote"
                                             onClick={() => navigate('/request-quote/create', { 
                                                 state: { 
@@ -227,7 +227,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             })}
                                         >
                                             <span>{t('project-offers.view-quote')}</span>
-                                        </button>
+                                        </button> */}
                                         {!acceptedProposals.has(offer._id || offer.id) && (
                                         <button 
                                             className="btn-call"

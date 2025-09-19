@@ -364,9 +364,9 @@ function LoginSP() {
                                         {/* Email Field */}
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
-                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                {/* <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
                                                     <img src={EmailIcon} alt="Email" style={{ width: '20px', height: '20px' }} />
-                                                </div>
+                                                </div> */}
                                                 <input 
                                                     type="email" 
                                                     className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
@@ -388,9 +388,9 @@ function LoginSP() {
                                         {/* Password Field */}
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
-                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                {/* <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
                                                     <img src={PersonIcon} alt="Password" style={{ width: '20px', height: '20px' }} />
-                                                </div>
+                                                </div> */}
                                                 <input 
                                                     type={showPassword ? "text" : "password"} 
                                                     className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}

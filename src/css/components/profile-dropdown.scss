@@ -1,0 +1,179 @@
+// Profile Dropdown Styling
+.profile-dropdown-container {
+  position: relative;
+  cursor: pointer;
+  
+  .profile-dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: 160px !important;
+    max-width: 200px !important;
+    margin-top: 0px !important; // Remove gap to prevent hover break
+    padding: 4px 0 0 0 !important; // Small top padding for visual connection
+    background-color: #21395D !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    z-index: 1050 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    
+    .profile-dropdown-item {
+      color: white !important;
+      padding: 0.75rem 1rem !important;
+      display: block !important;
+      width: 100% !important;
+      text-decoration: none !important;
+      border: none !important;
+      background: transparent !important;
+      text-align: left !important;
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      transition: all 0.2s ease !important;
+      cursor: pointer !important;
+      
+      &:hover,
+      &:focus {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        text-decoration: none !important;
+      }
+      
+      &:active {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+      }
+    }
+    
+    // Add border between items
+    .profile-dropdown-item:not(:last-child) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    // Remove border from last item
+    .profile-dropdown-item:last-child {
+      border-bottom: none !important;
+      border-radius: 0 0 8px 8px !important;
+    }
+    
+    // First item styling
+    .profile-dropdown-item:first-child {
+      border-radius: 8px 8px 0 0 !important;
+    }
+  }
+}
+
+// Mobile and tablet responsive adjustments
+@media (max-width: 768px) {
+  .profile-dropdown-container {
+    .profile-dropdown-menu {
+      min-width: 140px !important;
+      max-width: 180px !important;
+      margin-top: 0px !important; // Remove gap for mobile too
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+      
+      .profile-dropdown-item {
+        padding: 0.6rem 0.8rem !important;
+        font-size: 13px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-dropdown-container {
+    .profile-dropdown-menu {
+      min-width: 120px !important;
+      max-width: 160px !important;
+      margin-top: 0px !important; // Remove gap for small screens
+      right: -10px !important; // Adjust position for small screens
+      
+      .profile-dropdown-item {
+        padding: 0.5rem 0.7rem !important;
+        font-size: 12px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-dropdown-container {
+    .profile-dropdown-menu {
+      min-width: 110px !important;
+      max-width: 150px !important;
+      margin-top: 0px !important; // Remove gap for very small screens
+      right: -15px !important; // Further adjust for very small screens
+      
+      .profile-dropdown-item {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 11px !important;
+      }
+    }
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .profile-dropdown-container {
+    .profile-dropdown-menu {
+      right: auto !important;
+      left: 0 !important;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .profile-dropdown-container {
+      .profile-dropdown-menu {
+        left: -10px !important;
+        right: auto !important;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .profile-dropdown-container {
+      .profile-dropdown-menu {
+        left: -15px !important;
+        right: auto !important;
+      }
+    }
+  }
+}
+
+// Ensure dropdown is always visible and properly styled
+.profile-dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+
+// Animation for smooth dropdown appearance
+.profile-dropdown-menu {
+  transform: translateY(-10px);
+  opacity: 0;
+  transition: all 0.2s ease;
+  
+  &.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Focus states for accessibility
+.profile-dropdown-item:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5) !important;
+  outline-offset: -2px !important;
+}
+
+// Prevent text selection on dropdown items
+.profile-dropdown-item {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}

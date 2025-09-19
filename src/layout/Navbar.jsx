@@ -9,6 +9,7 @@ import LanguageSwitcher from '../components/LanguageSwitcher.jsx';
 import ProfileBanner from '../components/ProfileBanner.jsx';
 import { useUser } from '../context/Profile.jsx';
 import { useSPProfile } from '../context/SPProfileContext.jsx';
+import { useCart } from '../context/CartContext.jsx';
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
@@ -27,6 +28,8 @@ const Navbar = () => {
         loadingSpProfile, 
         refreshSPProfile 
     } = useSPProfile();
+    
+    const { cartCount } = useCart();
     
     const changeLanguage = (lng) => {
         i18n.changeLanguage(lng);
@@ -53,12 +56,12 @@ const Navbar = () => {
             } else {
                 // For regular users, use regular profile context
                 if (!userProfile && !loadingProfile) {
-                    try {
-                        fetchUserProfile();
-                    } catch (error) {
-                        console.warn('Failed to fetch user profile in Navbar:', error);
-                    }
-                }
+            try {
+                fetchUserProfile();
+            } catch (error) {
+                console.warn('Failed to fetch user profile in Navbar:', error);
+            }
+        }
             }
         }
     }, [isLoggedIn, userProfile, loadingProfile, spProfile, loadingSpProfile, isServiceProvider, checkLoginStatus, fetchUserProfile, refreshSPProfile]);
@@ -71,14 +74,22 @@ const Navbar = () => {
             }
         };
 
+        const handleEscapeKey = (event) => {
+            if (event.key === 'Escape' && showProfileMenu) {
+                setShowProfileMenu(false);
+            }
+        };
+
         if (showProfileMenu) {
             document.addEventListener('mousedown', handleClickOutside);
             document.addEventListener('touchstart', handleClickOutside);
+            document.addEventListener('keydown', handleEscapeKey);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
             document.removeEventListener('touchstart', handleClickOutside);
+            document.removeEventListener('keydown', handleEscapeKey);
         };
     }, [showProfileMenu]);
 
@@ -111,11 +122,23 @@ const Navbar = () => {
                 {isLoggedIn ? (
                     <div 
                         ref={dropdownRef}
-                        onMouseEnter={() => setShowProfileMenu(true)}
-                        onMouseLeave={() => setShowProfileMenu(false)}
+                        className="profile-dropdown-container"
+                        onMouseEnter={() => {
+                            // Only show on hover for desktop, not mobile
+                            if (window.innerWidth > 768) {
+                                setShowProfileMenu(true);
+                            }
+                        }}
+                        onMouseLeave={() => {
+                            // Only hide on hover for desktop, not mobile
+                            if (window.innerWidth > 768) {
+                                setShowProfileMenu(false);
+                            }
+                        }}
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
+                            // Toggle dropdown on click (works for both desktop and mobile)
                             setShowProfileMenu(!showProfileMenu);
                         }}
                         style={{ position: 'relative', cursor: 'pointer' }}
@@ -127,19 +150,37 @@ const Navbar = () => {
                         />
                         {showProfileMenu && (
                             <div 
-                                className="dropdown-menu show" 
+                                className="dropdown-menu show profile-dropdown-menu" 
+                                onMouseEnter={() => {
+                                    // Keep dropdown open when hovering over it
+                                    if (window.innerWidth > 768) {
+                                        setShowProfileMenu(true);
+                                    }
+                                }}
+                                onMouseLeave={() => {
+                                    // Hide dropdown when leaving it
+                                    if (window.innerWidth > 768) {
+                                        setShowProfileMenu(false);
+                                    }
+                                }}
                                 style={{ 
                                     position: 'absolute', 
                                     top: '100%', 
                                     right: 0, 
-                                    zIndex: 1000,
+                                    zIndex: 1050,
                                     display: 'block',
                                     opacity: 1,
-                                    visibility: 'visible'
+                                    visibility: 'visible',
+                                    minWidth: '160px',
+                                    backgroundColor: '#21395D',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                                    backdropFilter: 'blur(10px)'
                                 }}
                             >
                                 <Link 
-                                    className="dropdown-item" 
+                                    className="dropdown-item profile-dropdown-item" 
                                     to={isServiceProvider ? "/profile-sp" : "/profile"} 
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -153,17 +194,47 @@ const Navbar = () => {
                                         // Navigate programmatically
                                         window.location.href = isServiceProvider ? "/profile-sp" : "/profile";
                                     }}
+                                    style={{
+                                        color: 'white',
+                                        padding: '0.75rem 1rem',
+                                        display: 'block',
+                                        textDecoration: 'none',
+                                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                                        transition: 'background-color 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor = 'transparent';
+                                    }}
                                 >
                                     {t('nav.profile', 'Profile')}
                                 </Link>
                                 <button 
-                                    className="dropdown-item" 
+                                    className="dropdown-item profile-dropdown-item" 
                                     onClick={(e) => { 
                                         e.preventDefault();
                                         e.stopPropagation();
                                         setShowProfileMenu(false);
                                         localStorage.clear(); 
                                         window.location.href = isServiceProvider ? '/login-sp' : '/login'; 
+                                    }}
+                                    style={{
+                                        color: 'white',
+                                        padding: '0.75rem 1rem',
+                                        display: 'block',
+                                        width: '100%',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        textAlign: 'left',
+                                        transition: 'background-color 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor = 'transparent';
                                     }}
                                 >
                                     {t('nav.logout', 'Logout')}
@@ -208,9 +279,9 @@ const Navbar = () => {
                             </>
                         )}
                         {!isServiceProvider && (
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/product-showcase">{t('nav.about')}</Link>
-                            </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/product-showcase">{t('nav.about')}</Link>
+                        </li>
                         )}
                     </ul>
                     
@@ -225,8 +296,44 @@ const Navbar = () => {
                         )}
                         
                         <div className='nav-icons-wrapper d-flex align-items-center gap-2 justify-content-center'>
-                         
-                           
+                            {!isServiceProvider && isLoggedIn && (
+                                <Link 
+                                    to="/payment" 
+                                    className="cart-icon-wrapper position-relative"
+                                    style={{ 
+                                        textDecoration: 'none',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}
+                                >
+                                    <img 
+                                        src={Cart} 
+                                        alt={t('nav.cart', 'Cart')} 
+                                        style={{ 
+                                            width: '24px', 
+                                            height: '24px',
+                                            filter: 'brightness(0) saturate(100%) invert(100%)'
+                                        }} 
+                                    />
+                                    {cartCount > 0 && (
+                                        <span 
+                                            className="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            style={{
+                                                fontSize: '10px',
+                                                minWidth: '18px',
+                                                height: '18px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: '2px 6px'
+                                            }}
+                                        >
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </Link>
+                            )}
                         </div>
                     </div>
                     

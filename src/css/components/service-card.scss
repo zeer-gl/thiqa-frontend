@@ -172,6 +172,10 @@
         &.in-progress {
             background: #FFC107;
         }
+
+        &.accepted {
+            background: #28a745;
+        }
     }
 }
 

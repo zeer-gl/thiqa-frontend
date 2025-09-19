@@ -569,6 +569,13 @@ const ServiceCard = ({
                  
                   </>
                 )}
+                {
+                    project?.status==='open' && project?.proposals[0]?.status==='accepted' && (
+                        <button className="btn-primary" onClick={() => handleStartProject(project)}>
+                            {t('serviceCard.buttons.startProject', 'Start Project')}
+                        </button>
+                    )
+                }
               </div>
             </>
           )}

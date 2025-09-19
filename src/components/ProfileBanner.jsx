@@ -79,7 +79,7 @@ const ProfileBanner = ({ isServiceProvider = false ,userProfile}) => {
       }}
     />
   ) : (
-    <Avatar>
+    <Avatar style={{width:"100%",height:"100%"}}>
       {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
     </Avatar>
   )}

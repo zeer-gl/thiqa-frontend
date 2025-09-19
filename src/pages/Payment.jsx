@@ -13,6 +13,7 @@ import removeIcon from '../assets/payment/remove.svg';
 import SidePattern from "../../public/images/side-pattern.svg";
 import {useAlert} from '../context/AlertContext';
 import {useLikes} from '../context/LikesContext';
+import {useCart} from '../context/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
@@ -23,9 +24,7 @@ const Payment = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { likedProducts, toggleProductLike ,fetchLikedProducts,setLikedProducts} = useLikes();
-    
-    // State for cart items
-    const [cartItems, setCartItems] = useState([]);
+    const { cartItems, updateQuantity, removeFromCart } = useCart();
     const { showAlert } = useAlert(); // Use the hook
     
     // State for confirmation modal
@@ -33,24 +32,7 @@ const Payment = () => {
     const [itemToDelete, setItemToDelete] = useState(null);
 
     
-    // Load cart data from localStorage on component mount
-    useEffect(() => {
-        const loadCartData = () => {
-            try {
-                const cartData = localStorage.getItem('cart');
-                if (cartData) {
-                    const parsedCart = JSON.parse(cartData);
-                    // Only load cart items, like status comes from API context
-                    setCartItems(Array.isArray(parsedCart) ? parsedCart : []);
-                }
-            } catch (error) {
-                console.error('Error loading cart data:', error);
-                setCartItems([]);
-            }
-        };
-        
-        loadCartData();
-    }, []);
+    // Cart data is now managed by CartContext, no need to load manually
 
     // Handle escape key to close modal
     useEffect(() => {
@@ -74,19 +56,11 @@ const Payment = () => {
 
     // Function to handle quantity changes
     const handleQuantityChange = (productId, change) => {
-        setCartItems(prevItems => {
-            const updatedItems = prevItems.map(item => {
-                if (item._id === productId) {
-                    const newQuantity = Math.max(1, (item.quantity || 1) + change);
-                    return { ...item, quantity: newQuantity };
-                }
-                return item;
-            });
-            
-            // Save updated cart to localStorage (only quantity changes)
-            localStorage.setItem('cart', JSON.stringify(updatedItems));
-            return updatedItems;
-        });
+        const item = cartItems.find(item => item._id === productId);
+        if (item) {
+            const newQuantity = Math.max(1, (item.quantity || 1) + change);
+            updateQuantity(productId, newQuantity);
+        }
     };
 
     // Function to show delete confirmation modal
@@ -99,13 +73,7 @@ const Payment = () => {
     // Function to confirm and remove item from cart
     const handleConfirmDelete = () => {
         if (itemToDelete) {
-            setCartItems(prevItems => {
-                const updatedItems = prevItems.filter(item => item._id !== itemToDelete._id);
-                
-                // Save updated cart to localStorage (only cart items, not like status)
-                localStorage.setItem('cart', JSON.stringify(updatedItems));
-                return updatedItems;
-            });
+            removeFromCart(itemToDelete._id);
             
             // Show success message
             showAlert(t('payment.messages.itemRemovedSuccess', { productName: itemToDelete.name_en || t('payment.messages.thisProduct') }), 'success');
@@ -296,44 +264,27 @@ const Payment = () => {
                 )}
             </div>
             
-            {/* Beautiful Delete Confirmation Modal */}
+            {/* Simple Delete Confirmation Modal */}
             {showDeleteModal && (
                 <div className="delete-confirmation-overlay" onClick={handleCancelDelete}>
                     <div className="delete-confirmation-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-content">
-                            <div className="modal-header">
-                                <div className="warning-icon">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
-                                </div>
-                                <h4 className="modal-title">{t('payment.modal.removeItemTitle')}</h4>
+                            <div className="modal-body text-center">
+                                <h5 className="mb-3">{t('payment.modal.simpleDeleteTitle', 'Are you sure you want to delete this item?')}</h5>
                             </div>
                             
-                            <div className="modal-body">
-                                <p className="confirmation-text">
-                                    {t('payment.modal.removeItemConfirmation', { productName: itemToDelete?.name_en || t('payment.modal.thisProduct') })}
-                                </p>
-                                <p className="confirmation-subtext">
-                                    {t('payment.modal.removeItemWarning')}
-                                </p>
-                            </div>
-                            
-                            <div className="modal-footer">
+                            <div className="modal-footer justify-content-center">
                                 <button 
-                                    className="btn btn-cancel" 
+                                    className="btn btn-secondary me-3" 
                                     onClick={handleCancelDelete}
                                 >
                                     {t('common.cancel', 'Cancel')}
                                 </button>
                                 <button 
-                                    className="btn btn-delete" 
+                                    className="btn btn-danger" 
                                     onClick={handleConfirmDelete}
                                 >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3 6H5H21M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </svg>
-                                    {t('payment.modal.removeItemButton')}
+                                    {t('payment.modal.removeButton', 'Remove')}
                                 </button>
                             </div>
                         </div>

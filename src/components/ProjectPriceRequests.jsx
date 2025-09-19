@@ -102,9 +102,47 @@ const ProjectPriceRequests = ({ onBack, selectedProject }) => {
         // Handle view price action
     };
 
-    const handleDownloadDesign = (project) => {
-        console.log('Download design for project:', project);
-        // Handle download design action
+    const handleDownloadDesign = async (project) => {
+        try {
+            console.log('Download design for project:', project);
+            
+            // Check if project has a design file
+            const designUrl = project.projectDesign;
+            if (!designUrl) {
+                showAlert(t('projectPriceRequest.errors.noDesignFile', 'No design file available'), 'warning');
+                return;
+            }
+
+            // Check file size before downloading
+            const response = await fetch(designUrl, { method: 'HEAD' });
+            const contentLength = response.headers.get('content-length');
+            
+            if (contentLength) {
+                const fileSizeInMB = parseInt(contentLength) / (1024 * 1024);
+                
+                if (fileSizeInMB > 1) {
+                    showAlert(t('projectPriceRequest.errors.fileSizeLarge', 'File size is large. The file is greater than 1MB.'), 'error');
+                    return;
+                }
+            }
+
+            // If file size is acceptable, proceed with download
+            const link = document.createElement('a');
+            link.href = designUrl;
+            link.download = `project-design-${project.projectName || project.id || 'design'}.pdf`;
+            link.target = '_blank';
+            
+            // Append to body, click, and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert(t('projectPriceRequest.success.downloadStarted', 'Download started successfully'), 'success');
+            
+        } catch (error) {
+            console.error('Error downloading design file:', error);
+            showAlert(t('projectPriceRequest.errors.downloadFailed', 'Failed to download design file'), 'error');
+        }
     };
 
     // Use API data if available, otherwise fallback to sample data

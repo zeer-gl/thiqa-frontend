@@ -11,7 +11,8 @@
     "langAr": "Arabic",
     "profile": "Profile",
     "logout": "Logout",
-    "contact": "Contact Us"
+    "contact": "Contact Us",
+    "cart": "Cart"
   },
   "pages": {
     "home": {
@@ -31,10 +32,21 @@
         "title": "My Services",
         "addService": "Add Service",
         "editService": "Edit Service",
+        "updateService": "Update Service",
         "deleteService": "Delete Service",
         "noServices": "No services yet",
         "noServicesDesc": "Start by adding your first service",
-        "addFirstService": "Add Your First Service"
+        "addFirstService": "Add Your First Service",
+        "serviceNameEn": "Service Name (English)",
+        "serviceNameAr": "Service Name (Arabic)",
+        "price": "Price",
+        "unit": "Unit",
+        "deliveryTime": "Delivery Time",
+        "serviceCreated": "Service created successfully!",
+        "serviceUpdated": "Service updated successfully!",
+        "serviceDeleted": "Service deleted successfully!",
+        "serviceError": "Error",
+        "confirmDelete": "Are you sure you want to delete this service?"
       },
       "featureSection": {
         "customerSupport": {
@@ -125,6 +137,8 @@
         "sold": "sold",
         "currency": "Kuwaiti Dinar",
         "addToCart": "Add to Cart",
+        "addedToCart": "Product added to cart successfully!",
+        "addToCartError": "Failed to add product to cart",
         "scrollUp": "Scroll up",
         "scrollDown": "Scroll down"
       },
@@ -324,7 +338,9 @@
       "removeItemConfirmation": "Are you sure you want to remove \"{{productName}}\" from your cart?",
       "removeItemWarning": "This action cannot be undone.",
       "removeItemButton": "Remove Item",
-      "thisProduct": "this product"
+      "thisProduct": "this product",
+      "simpleDeleteTitle": "Are you sure you want to delete this item?",
+      "removeButton": "Remove"
     },
     "messages": {
       "itemRemovedSuccess": "{{productName}} removed from cart successfully!",
@@ -1182,6 +1198,7 @@
       "status": {
         "open": "Open",
         "inProgress": "In Progress",
+        "accepted": "Accepted",
         "completeConstruction": "Complete Construction"
       },
       "viewPrice": "View Price",
@@ -1189,6 +1206,14 @@
       "priceOffer": "Price Offer",
       "description": "Order Description",
       "address": "Address",
+      "errors": {
+        "noDesignFile": "No design file available",
+        "fileSizeLarge": "File size is large. The file is greater than 1MB.",
+        "downloadFailed": "Failed to download design file"
+      },
+      "success": {
+        "downloadStarted": "Download started successfully"
+      },
       "area": "Area",
       "fullConstruction": "Full Construction",
       "saadAlObaidi": "Saad Al-Obaidi",
@@ -1298,18 +1323,23 @@
       "alreadyAccepted": "This proposal has already been accepted.",
       "missingParameters": "Missing required parameters. Please ensure the project has valid proposals and try again.",
       "invalidProposalData": "Invalid proposal data. Please contact support.",
-      "acceptFailed": "Failed to accept proposal. Please try again."
+      "acceptFailed": "Failed to accept proposal. Please try again.",
+      "startProjectFailed": "Failed to start project. Please try again.",
+      "projectAlreadyStarted": "Project has already been started."
     },
     "success": {
-      "proposalSubmitted": "Proposal submitted successfully!",
-      "proposalAccepted": "Proposal accepted successfully!"
+      "proposalAccepted": "Proposal accepted successfully!",
+      "projectStarted": "Project started successfully!"
     },
     "buttons": {
       "submitProposal": "Submit Proposal",
       "submitting": "Submitting...",
       "priceQuote": "Price Quote",
       "projectCompletionFile": "Project Completion File",
-      "allProjects": "All Projects"
+      "allProjects": "All Projects",
+      "accepted": "Accepted",
+      "startProject": "Start Project",
+      "starting": "Starting..."
     }
   },
   "otpModal": {
@@ -1378,7 +1408,13 @@
     "retry": "Retry",
     "attemptsLeft": "attempts left",
     "tryDifferentMethod": "Try Different Method",
-    "maxRetryReached": "Maximum retry attempts reached. Please contact support or try a different payment method."
+    "maxRetryReached": "Maximum retry attempts reached. Please contact support or try a different payment method.",
+    "codSuccess": "Subscription activated successfully! Payment will be collected on delivery.",
+    "processingCOD": "Processing COD Order...",
+    "confirmCOD": "Confirm COD Order",
+    "mobileRequired": "Mobile number is required for payment. Please update your profile with a valid mobile number.",
+    "mobileTooLong": "Mobile number is too long. Maximum allowed is 11 digits.",
+    "mobileTooShort": "Mobile number is too short. Please provide a valid mobile number."
   },
   "pricingPackages": {
     "loginRequired": "Please login to view subscription plans",
@@ -1390,8 +1426,49 @@
     "noFeaturesListed": "No features listed",
     "noPlansAvailable": "No subscription plans available",
     "contactSupport": "Please contact support for more information",
-    "selectPlan": "Select Plan"
+    "selectPlan": "Select Plan",
+    "selectPlanCOD": "Select Plan (COD)",
+    "codSuccess": "Subscription activated successfully! Payment will be collected on delivery.",
+    "processingCOD": "Processing COD subscription...",
+    "codFailed": "Failed to process COD subscription. Please try again.",
+    "mobileRequired": "Mobile number is required for subscription. Please update your profile with a valid mobile number.",
+    "mobileTooLong": "Mobile number is too long. Maximum allowed is 11 digits.",
+    "mobileTooShort": "Mobile number is too short. Please provide a valid mobile number.",
+    "networkError": "Network error. Please check your internet connection and try again.",
+    "sessionExpired": "Session expired. Please login again and try."
   },
   "Favourite": "Favorite",
-  "Unfavourite": "Unfavorite"
+  "Unfavourite": "Unfavorite",
+  "projectOfferForm": {
+    "errors": {
+      "fillRequiredFields": "Please fill in all required fields",
+      "durationRequired": "Duration is required",
+      "priceRequired": "Price is required",
+      "projectInfoMissing": "Project information is missing or invalid",
+      "professionalAccountNotFound": "Professional account not found. Please login again.",
+      "invalidProfessionalIdFormat": "Invalid professional ID format. Please login again.",
+      "loginToSubmitProposal": "Please login to submit proposal",
+      "invalidProjectIdFormat": "Invalid project ID format. Please refresh the page and try again.",
+      "invalidIdFormat": "Invalid ID format. Please refresh the page and try again.",
+      "badRequest": "Bad Request: {{message}}",
+      "unauthorized": "Unauthorized: Please login again",
+      "forbidden": "Forbidden: You do not have permission to perform this action",
+      "notFound": "Not Found: The requested resource was not found",
+      "serverError": "Server Error: Please try again later",
+      "networkError": "Network error. Please check your connection.",
+      "requestError": "Request error: {{message}}",
+      "submitFailed": "Failed to submit proposal. Please try again.",
+      "invalidDataFormat": "Invalid data format",
+      "proposalAlreadySubmitted": "You have already submitted a proposal for this demand."
+    },
+    "success": {
+      "proposalSubmitted": "Your proposal has been submitted successfully!",
+      "testMessage": "Test message"
+    },
+    "calendar": {
+      "clear": "Clear",
+      "today": "Today",
+      "selectAnyDate": "You can select any date (past or future)"
+    }
+  }
 }

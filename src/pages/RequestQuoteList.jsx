@@ -386,7 +386,7 @@ const RequestQuoteList = () => {
                         <div className="rq-right">
                             <div className="rq-texts">
                                 <h3 className="ar-heading-bold">{project.projectName || project.title}</h3>
-                                <p>{project.typeOfProject || project.subtitle}</p>
+                                <p>{project.description || project.subtitle}</p>
                             </div>
                             <div className="rq-actions">
                          
@@ -415,7 +415,7 @@ const RequestQuoteList = () => {
                                                     {!acceptedProposals.has(offer._id || offer.id) && (
                                                         <>
                                                         
-                                                        <button 
+                                                        {/* <button 
                                             className="btn-quote"
                                             onClick={() => navigate('/request-quote/create', { 
                                                 state: { 
@@ -425,7 +425,7 @@ const RequestQuoteList = () => {
                                             })}
                                         >
                                             <span>{t('project-offers.view-quote')}</span>
-                                        </button>
+                                        </button> */}
                                         <button 
                                                             className="btn-accept"
                                                             onClick={() => handleAcceptProposal(offer._id || offer.id, project)}

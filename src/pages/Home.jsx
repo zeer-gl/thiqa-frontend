@@ -1,5 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {useEffect, useState} from "react";
+import axios from 'axios';
+import { useAlert } from '../context/AlertContext';
 import '../css/pages/home.scss';
 import ProductCard from '../components/ProductCard';
 import HeroImg from '/public/images/home/hero-img.png';
@@ -50,7 +52,7 @@ const Home = () => {
     const [likedStates, setLikedStates] = useState({});
     const navigate=useNavigate();
     const { likedProfessionals, toggleProfessionalLike } = useLikes();
-    const { isServiceProvider, userProfile } = useUser();
+    const { isServiceProvider, userProfile, fetchUserProfile } = useUser();
     
     // Service management state
     const [services, setServices] = useState([]);
@@ -58,6 +60,8 @@ const Home = () => {
     const [servicesError, setServicesError] = useState(null);
     const [showServiceModal, setShowServiceModal] = useState(false);
     const [editingService, setEditingService] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [serviceToDelete, setServiceToDelete] = useState(null);
     const [serviceForm, setServiceForm] = useState({
         name: '',
         nameEn: '',
@@ -112,31 +116,78 @@ const Home = () => {
                 throw new Error('Professional ID not found');
             }
             
-            const response = await fetch(`${BaseUrl}/professional/getAllServices/${professionalId}`, {
-                method: 'GET',
+            const response = await axios.get(`${BaseUrl}/professional/${professionalId}/services`, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch services: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Services API Response:', data);
+            console.log('Services API Response:', response.data);
             
-            if (data.success && Array.isArray(data.services)) {
-                setServices(data.services);
+            if (response.data && response.data.services) {
+                setServices(response.data.services);
+                console.log('✅ Services fetched successfully:', response.data.services);
+                
+                // Debug: Log service IDs and structure
+                response.data.services.forEach((service, index) => {
+                    console.log(`🔍 Service ${index + 1}:`, {
+                        _id: service._id,
+                        name: service.name,
+                        nameEn: service.nameEn,
+                        nameAr: service.nameAr,
+                        admin: service.admin,
+                        hasAdmin: !!service.admin
+                    });
+                });
             } else {
                 setServices([]);
+                console.warn('⚠️ No services data in response');
             }
         } catch (error) {
-            setServicesError(error.message);
-            console.error('Error fetching services:', error);
+            setServicesError(error.response?.data?.message || error.message || 'Failed to fetch services');
+            console.error('❌ Error fetching services:', error);
         } finally {
             setLoadingServices(false);
+        }
+    };
+
+    // Get single service by ID
+    const getSingleService = async (serviceId) => {
+        try {
+            const token = localStorage.getItem('token-sp');
+            if (!token) {
+                throw new Error('Please login again');
+            }
+
+            console.log('🔍 Get Single Service Debug:', {
+                serviceId,
+                token: token ? 'Present' : 'Missing',
+                url: `${BaseUrl}/professional/getSingleService/${serviceId}`
+            });
+
+            const response = await axios.get(`${BaseUrl}/professional/getSingleService/${serviceId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('✅ Get Single Service API Response:', response.data);
+            
+            if (response.data && response.data.success) {
+                return { success: true, data: response.data.service };
+            } else {
+                throw new Error(response.data?.message || 'Failed to get service details');
+            }
+        } catch (error) {
+            console.error('❌ Error getting single service:', error);
+            console.error('❌ Error details:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw new Error(error.response?.data?.message || error.message || 'Failed to get service details');
         }
     };
 
@@ -176,34 +227,36 @@ const Home = () => {
             formData.append('deliveryTime', serviceData.deliveryTime);
             
             if (serviceData.image) {
-                formData.append('image', serviceData.image);
+                formData.append('serviceImages', serviceData.image);
             }
 
-            const response = await fetch(`${BaseUrl}/professional/add-service/${professionalId}`, {
-                method: 'POST',
+            // Debug: Log all form data fields being sent
+            console.log('🔍 Create Service - FormData fields being sent to API:');
+            const formDataEntries = [];
+            for (let [key, value] of formData.entries()) {
+                formDataEntries.push({ key, value: value instanceof File ? `File: ${value.name}` : value });
+            }
+            console.table(formDataEntries);
+
+            const response = await axios.post(`${BaseUrl}/professional/add-service/${professionalId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                },
-                body: formData
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to create service: ${response.status}`);
-            }
+            console.log('Create Service API Response:', response.data);
 
-            const data = await response.json();
-            console.log('Create Service API Response:', data);
-            
-            if (data.success) {
+            if (response.data && response.data.success) {
                 // Refresh services list
                 await fetchServices();
-                return { success: true, data: data.service };
+                return { success: true, data: response.data.service };
             } else {
-                throw new Error(data.message || 'Failed to create service');
+                throw new Error(response.data?.message || 'Failed to create service');
             }
         } catch (error) {
-            console.error('Error creating service:', error);
-            throw error;
+            console.error('❌ Error creating service:', error);
+            throw new Error(error.response?.data?.message || error.message || 'Failed to create service');
         }
     };
 
@@ -214,6 +267,12 @@ const Home = () => {
                 throw new Error('Please login again');
             }
 
+            console.log('🔍 Update Service Debug:', {
+                serviceId,
+                serviceData,
+                token: token ? 'Present' : 'Missing'
+            });
+
             const formData = new FormData();
             formData.append('name', serviceData.name);
             formData.append('nameEn', serviceData.nameEn);
@@ -223,34 +282,46 @@ const Home = () => {
             formData.append('deliveryTime', serviceData.deliveryTime);
             
             if (serviceData.image) {
-                formData.append('image', serviceData.image);
+                formData.append('serviceImages', serviceData.image);
             }
 
-            const response = await fetch(`${BaseUrl}/professional/update-service/${serviceId}`, {
-                method: 'PUT',
+            console.log('🔍 FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}:`, value);
+            }
+            
+            // Debug: Log all form data fields being sent
+            console.log('🔍 All FormData fields being sent to API:');
+            const formDataEntries = [];
+            for (let [key, value] of formData.entries()) {
+                formDataEntries.push({ key, value: value instanceof File ? `File: ${value.name}` : value });
+            }
+            console.table(formDataEntries);
+
+            const response = await axios.put(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                },
-                body: formData
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to update service: ${response.status}`);
-            }
+            console.log('✅ Update Service API Response:', response.data);
 
-            const data = await response.json();
-            console.log('Update Service API Response:', data);
-            
-            if (data.success) {
+            if (response.data && response.data.success) {
                 // Refresh services list
                 await fetchServices();
-                return { success: true, data: data.service };
+                return { success: true, data: response.data.service };
             } else {
-                throw new Error(data.message || 'Failed to update service');
+                throw new Error(response.data?.message || 'Failed to update service');
             }
         } catch (error) {
-            console.error('Error updating service:', error);
-            throw error;
+            console.error('❌ Error updating service:', error);
+            console.error('❌ Error details:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw new Error(error.response?.data?.message || error.message || 'Failed to update service');
         }
     };
 
@@ -261,31 +332,36 @@ const Home = () => {
                 throw new Error('Please login again');
             }
 
-            const response = await fetch(`${BaseUrl}/professional/delete-service/${serviceId}`, {
-                method: 'DELETE',
+            console.log('🔍 Delete Service Debug:', {
+                serviceId,
+                token: token ? 'Present' : 'Missing',
+                url: `${BaseUrl}/professional/delete-service/${serviceId}`
+            });
+
+            const response = await axios.delete(`${BaseUrl}/professional/delete-service/${serviceId}`, {
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to delete service: ${response.status}`);
-            }
+            console.log('✅ Delete Service API Response:', response.data);
 
-            const data = await response.json();
-            console.log('Delete Service API Response:', data);
-            
-            if (data.success) {
+            if (response.data && response.data.success) {
                 // Refresh services list
                 await fetchServices();
                 return { success: true };
             } else {
-                throw new Error(data.message || 'Failed to delete service');
+                throw new Error(response.data?.message || 'Failed to delete service');
             }
         } catch (error) {
-            console.error('Error deleting service:', error);
-            throw error;
+            console.error('❌ Error deleting service:', error);
+            console.error('❌ Error details:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status
+            });
+            throw new Error(error.response?.data?.message || error.message || 'Failed to delete service');
         }
     };
 
@@ -295,10 +371,10 @@ const Home = () => {
         try {
             if (editingService) {
                 await updateService(editingService._id, serviceForm);
-                alert('Service updated successfully!');
+                showAlert(t('pages.home.serviceManagement.serviceUpdated', 'Service updated successfully!'), 'success');
             } else {
                 await createService(serviceForm);
-                alert('Service created successfully!');
+                showAlert(t('pages.home.serviceManagement.serviceCreated', 'Service created successfully!'), 'success');
             }
             
             // Reset form and close modal
@@ -314,33 +390,59 @@ const Home = () => {
             setEditingService(null);
             setShowServiceModal(false);
         } catch (error) {
-            alert(`Error: ${error.message}`);
+            showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + `: ${error.message}`, 'error');
         }
     };
 
-    const handleEditService = (service) => {
-        setEditingService(service);
+    const handleEditService = async (service) => {
+        try {
+            // Fetch fresh service data from API
+            const serviceResponse = await getSingleService(service._id);
+            
+            if (serviceResponse.success) {
+                const freshService = serviceResponse.data;
+                setEditingService(freshService);
         setServiceForm({
-            name: service.name || '',
-            nameEn: service.nameEn || '',
-            nameAr: service.nameAr || '',
-            price: service.price || '',
-            unit: service.unit || '',
-            deliveryTime: service.deliveryTime || '',
+                    name: freshService.name || '',
+                    nameEn: freshService.nameEn || '',
+                    nameAr: freshService.nameAr || '',
+                    price: freshService.price || '',
+                    unit: freshService.unit || '',
+                    deliveryTime: freshService.deliveryTime || '',
             image: null
         });
         setShowServiceModal(true);
+            } else {
+                showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + ': Failed to load service details', 'error');
+            }
+        } catch (error) {
+            console.error('Error loading service for editing:', error);
+            showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + `: ${error.message}`, 'error');
+        }
     };
 
-    const handleDeleteService = async (serviceId) => {
-        if (window.confirm('Are you sure you want to delete this service?')) {
-            try {
-                await deleteService(serviceId);
-                alert('Service deleted successfully!');
+    const handleDeleteService = (service) => {
+        setServiceToDelete(service);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDeleteService = async () => {
+        if (!serviceToDelete) return;
+        
+        try {
+            await deleteService(serviceToDelete._id);
+            showAlert(t('pages.home.serviceManagement.serviceDeleted', 'Service deleted successfully!'), 'success');
             } catch (error) {
-                alert(`Error: ${error.message}`);
-            }
+            showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + `: ${error.message}`, 'error');
+        } finally {
+            setShowDeleteModal(false);
+            setServiceToDelete(null);
         }
+    };
+
+    const cancelDeleteService = () => {
+        setShowDeleteModal(false);
+        setServiceToDelete(null);
     };
 
     // Mock product data
@@ -390,6 +492,56 @@ const Home = () => {
             fetchServices();
         }
     }, [isServiceProvider, userProfile?.hasActiveSubscription]);
+
+    // Refresh profile data when component mounts (useful after subscription changes)
+    useEffect(() => {
+        if (isServiceProvider) {
+            // Only refresh once on mount, not repeatedly
+            const timer = setTimeout(async () => {
+                try {
+                    console.log('🔄 Refreshing profile data on Home page mount...');
+                    await fetchUserProfile();
+                    console.log('✅ Profile data refreshed successfully');
+                } catch (error) {
+                    console.error('❌ Error refreshing profile data:', error);
+                }
+            }, 1000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [isServiceProvider]); // Removed fetchUserProfile from dependencies to prevent repeated calls
+
+    // Manual refresh function for debugging
+    const handleManualRefresh = async () => {
+        try {
+            console.log('🔄 Manual profile refresh triggered...');
+            
+            // Clear any cached profile data
+            setUserProfile(null);
+            
+            // Force refresh profile data
+            await fetchUserProfile();
+            
+            // Also check localStorage for subscription status
+            const spUserData = localStorage.getItem('spUserData');
+            if (spUserData) {
+                try {
+                    const spData = JSON.parse(spUserData);
+                    console.log('📋 Current localStorage spUserData:', {
+                        hasActiveSubscription: spData.hasActiveSubscription,
+                        subscriptionStatus: spData.subscriptionStatus,
+                        name: spData.name
+                    });
+                } catch (error) {
+                    console.error('Error parsing localStorage spUserData:', error);
+                }
+            }
+            
+            console.log('✅ Manual profile refresh completed');
+        } catch (error) {
+            console.error('❌ Error in manual profile refresh:', error);
+        }
+    };
     useEffect(() => {
         fetchProfessionals();
     }, []);
@@ -664,6 +816,32 @@ const Home = () => {
      
     // Check if service provider has no active subscription
     const shouldShowUpgradeOnly = isServiceProvider && !userProfile?.hasActiveSubscription;
+    
+    // Debug: Service provider section visibility
+    console.log('🔍 Service Provider Section Debug:', {
+        isServiceProvider,
+        hasActiveSubscription: userProfile?.hasActiveSubscription,
+        shouldShowUpgradeOnly,
+        willShowServiceSection: isServiceProvider && userProfile?.hasActiveSubscription,
+        userProfile: userProfile ? {
+            name: userProfile.name,
+            hasActiveSubscription: userProfile.hasActiveSubscription,
+            subscriptionStatus: userProfile.subscriptionStatus
+        } : null
+    });
+    
+    // Debug logging for subscription status
+    console.log('🔍 Home Page Debug:', {
+        isServiceProvider,
+        userProfile: userProfile ? {
+            name: userProfile.name,
+            hasActiveSubscription: userProfile.hasActiveSubscription,
+            subscriptionStatus: userProfile.subscriptionStatus,
+            hasActiveSubscription: userProfile.hasActiveSubscription
+        } : null,
+        shouldShowUpgradeOnly,
+        timestamp: new Date().toISOString()
+    });
 
     return (
         <div>
@@ -680,11 +858,20 @@ const Home = () => {
                                     <h4 className="ar-heading-bold" style={{color: '#FFFFFF'}}>
                                         {t('pages.home.upgradeSection.subtitle', 'Get access to all features and start receiving project requests')}
                                     </h4>
+                                    <div className="d-flex flex-column gap-3 align-items-center">
                                     <Link to={'/profile-sp?tab=packages'}>
                                         <button className='btn hero-btn'>
                                             {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
                                         </button>
                                     </Link>
+                                        <button 
+                                            className='btn btn-outline-light btn-sm'
+                                            onClick={handleManualRefresh}
+                                            style={{ fontSize: '12px', padding: '5px 10px' }}
+                                        >
+                                            🔄 Refresh Profile (Debug)
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -694,13 +881,58 @@ const Home = () => {
                 // Show full content for customers and service providers with active subscription
                 <>
                     {/* Service Management Section for Service Providers with Active Subscription */}
+                  
+
+                    <section className="hero-section">
+                <div className="container">
+                    <div className="row align-items-center g-4">
+                        <div className="col-lg-6 col-md-12">
+                            <div className='position-relative text-center'>
+                                <div className='hero-img-overlay'></div>
+                                <img className='max-100 hero-img' src={HeroImg} alt=""/>
+                            </div>
+                        </div>
+                        <div className="col-lg-6 col-md-12">
+                            <div className='hero-content'>
+                                <h2 className="ar-heading-bold" style={{color: '#FFFFFF'}}>
+                                    {t('pages.home.heroSection.title')}
+                                </h2>
+                                <h4 className="ar-heading-bold" style={{color: '#FFFFFF'}}>
+                                    {t('pages.home.heroSection.subtitle')}
+                                </h4>
+                                {isServiceProvider ? (
+                                    // Show upgrade package button for service providers with no active subscription
+                                    (!userProfile?.hasActiveSubscription && (
+                                        <Link to={'/profile-sp?tab=packages'}>
+                                            <button className='btn hero-btn'>
+                                                {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
+                                            </button>
+                                        </Link>
+                                    ))
+                                ) : (
+                                    // Show regular button for customers
+                                    <Link to={'/products'}>
+                                        <button className='btn hero-btn'>
+                                            {t('pages.home.heroSection.ctaButton')}
+                                        </button>
+                                    </Link>
+                                )}
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='hero-pattern-container'>
+                    <img className='w-100' src={HeroPattern} alt=""/>
+                </div>
+            </section>
                     {isServiceProvider && userProfile?.hasActiveSubscription && (
                         <section className="service-management-section py-5" style={{backgroundColor: '#f8f9fa'}}>
                             <div className="container">
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="d-flex justify-content-between align-items-center mb-4">
-                                            <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2>
+                                            {/* <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2> */}
                                             <button 
                                                 className="btn btn-primary"
                                                 onClick={() => setShowServiceModal(true)}
@@ -756,7 +988,7 @@ const Home = () => {
                                                                         </button>
                                                                         <button 
                                                                             className="btn btn-outline-danger btn-sm"
-                                                                            onClick={() => handleDeleteService(service._id)}
+                                                                            onClick={() => handleDeleteService(service)}
                                                                         >
                                                                             <i className="fas fa-trash me-1"></i>
                                                                             Delete
@@ -769,10 +1001,10 @@ const Home = () => {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <div className="text-center py-5">
+                                            <div className="d-flex flex-column align-items-center justify-content-center text-center py-5" style={{minHeight: '300px'}}>
                                                 <i className="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                                <h5 className="text-muted">No services yet</h5>
-                                                <p className="text-muted">Start by adding your first service</p>
+                                                <h5 className="text-muted mb-3">No services yet</h5>
+                                                <p className="text-muted mb-4">Start by adding your first service</p>
                                                 <button 
                                                     className="btn btn-primary"
                                                     onClick={() => setShowServiceModal(true)}
@@ -787,50 +1019,6 @@ const Home = () => {
                             </div>
                         </section>
                     )}
-
-                    <section className="hero-section">
-                <div className="container">
-                    <div className="row align-items-center g-4">
-                        <div className="col-lg-6 col-md-12">
-                            <div className='position-relative text-center'>
-                                <div className='hero-img-overlay'></div>
-                                <img className='max-100 hero-img' src={HeroImg} alt=""/>
-                            </div>
-                        </div>
-                        <div className="col-lg-6 col-md-12">
-                            <div className='hero-content'>
-                                <h2 className="ar-heading-bold" style={{color: '#FFFFFF'}}>
-                                    {t('pages.home.heroSection.title')}
-                                </h2>
-                                <h4 className="ar-heading-bold" style={{color: '#FFFFFF'}}>
-                                    {t('pages.home.heroSection.subtitle')}
-                                </h4>
-                                {isServiceProvider ? (
-                                    // Show upgrade package button for service providers with no active subscription
-                                    (!userProfile?.hasActiveSubscription && (
-                                        <Link to={'/profile-sp?tab=packages'}>
-                                            <button className='btn hero-btn'>
-                                                {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
-                                            </button>
-                                        </Link>
-                                    ))
-                                ) : (
-                                    // Show regular button for customers
-                                    <Link to={'/products'}>
-                                        <button className='btn hero-btn'>
-                                            {t('pages.home.heroSection.ctaButton')}
-                                        </button>
-                                    </Link>
-                                )}
-                              
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className='hero-pattern-container'>
-                    <img className='w-100' src={HeroPattern} alt=""/>
-                </div>
-            </section>
 
             <section className="feature-section">
                 <div className="container">
@@ -874,115 +1062,9 @@ const Home = () => {
                     <img className='w-100' src={HeroPattern2} alt=""/>
                 </div>
             </section>
-            <section className='product-section'>
-            <div className="container">
-                <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-3 mb-lg-5 gap-3">
-                    <div className="w-100">
-                        <ul className="nav nav-pills product-list-tabs mb-3 flex-wrap" id="pills-tab" role="tablist">
-                            {categoriesLoading && (
-                                <li className="nav-item" role="presentation">
-                                    <button className="nav-link active" type="button" disabled>
-                                        {t('common.loading') || 'Loading...'}
-                                    </button>
-                                </li>
-                            )}
-                            {!categoriesLoading && categoriesError && (
-                                <li className="nav-item" role="presentation">
-                                    <button className="nav-link active" type="button" disabled>
-                                        {categoriesError}
-                                    </button>
-                                </li>
-                            )}
-                            {!categoriesLoading && !categoriesError && categories.map((cat) => (
-                                <li className="nav-item" role="presentation" key={cat._id}>
-                                    <button
-                                        className={`nav-link ${activeCategoryId === cat._id ? 'active' : ''}`}
-                                        id={`pills-${cat._id}-tab`}
-                                        data-bs-toggle="pill"
-                                        data-bs-target={`#pills-${cat._id}`}
-                                        type="button"
-                                        role="tab"
-                                        aria-controls={`pills-${cat._id}`}
-                                        aria-selected={activeCategoryId === cat._id}
-                                        onClick={() => setActiveCategoryId(cat._id)}
-                                    >
-                                        {(i18n.language === 'ar' ? cat?.name?.ar : cat?.name?.en) || ''}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="w-100">
-                        <div className='d-flex flex-column flex-md-row align-items-start justify-content-end align-items-md-center gap-3'>
-                            <h4 className="mb-0 ar-heading-bold">
-                                {t('pages.home.productSection.title')}
-                            </h4>
-                            {/* <div className='d-flex align-items-center gap-2 flex-wrap'>
-                                <button className='btn mi-btn'>
-                                    <img src={MIP} alt=""/>{t('pages.home.productSection.buttons.mostInteractive')}
-                                </button>
-                                <button className='btn nearby-btn'>
-                                    <img src={NearbyIcon} alt=""/>{t('pages.home.productSection.buttons.nearby')}
-                                </button>
-                            </div> */}
-                        </div>
-                    </div>
-                </div>
-                <div className="tab-content" id="pills-tabContent">
-                    {!categoriesLoading && !categoriesError && categories.map((cat) => (
-                        <div
-                            className={`tab-pane fade ${activeCategoryId === cat._id ? 'show active' : ''}`}
-                            id={`pills-${cat._id}`}
-                            role="tabpanel"
-                            aria-labelledby={`pills-${cat._id}-tab`}
-                            key={cat._id}
-                        >
-                          <div className='row'>
-  {productsByCategory[cat._id]?.length > 0 ? (
-    productsByCategory[cat._id].map((product) => (
-        <ProductCard 
-        key={`${cat._id}-${product._id}`} 
-        product={{
-          id: product._id,
-          name: i18n.language === 'ar' ? product.name_ar : product.name_en,
-          categoryName: parseCategory(product?.categoryName)?.[i18n.language] 
-                       || parseCategory(product?.categoryName)?.en 
-                       || "",
-          price: product.price,
-          measurementUnit: product?.measurementUnit,
-          image: product.images?.[0],
-          isSkeleton: false
-        }} 
-      />
-    ))
-  ) : (
-    // Show empty state message
-    <div className="col-12 text-center py-5">
-      <h5>{t('No products available in this category')}</h5>
-    </div>
-  )}
-</div>
-
-                        </div>
-                    ))}
-                    {(categoriesLoading || categoriesError || categories.length === 0) && (
-                        <div className="tab-pane fade show active" id="pills-placeholder" role="tabpanel">
-                            <div className='row'>
-                                {skeletonProducts.map((product) => (
-                                    <ProductCard key={`placeholder-${product.id}`} product={product} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className='text-center mt-5'>
-                    <img className='max-100' src={ProductPattern} alt=""/>
-                </div>
-            </div>
-        </section>
-
-
-        
+            {
+                !isServiceProvider &&(
+                    <>
         <section className='services-section'>
       <div className="container">
         <div className='d-flex align-items-center justify-content-between mb-5'>
@@ -1130,7 +1212,7 @@ const Home = () => {
 </h6>
                         <p className='fs-12'>{professional.bio || t('pages.home.servicesSection.serviceProvider.description')}</p>
                       </div>
-                      <div className="ratings d-flex align-items-center gap-1">
+                      <div className="ratings d-flex align-items-center">
   {[...Array(5)].map((_, index) => {
     const starValue = index + 1;
     const rating = professional.averageRating || 0;
@@ -1169,6 +1251,7 @@ const Home = () => {
       color: likedProfessionals[professional._id] ? 'red' : 'gray',
       fontSize: '24px',
       transition: '0.2s ease-in-out',
+      paddingRight:"20px"
     }}
   />
                     <button className='btn outlined-btn fs-12'>
@@ -1209,6 +1292,14 @@ const Home = () => {
                     <img className='w-100' src={HeroPattern} alt=""/>
                 </div>
             </section>
+                    </>
+                )  
+            }
+       
+
+
+        
+     
             <section className='customer-section'>
                 <div className="container">
                     <div className="row g-5">
@@ -1314,7 +1405,7 @@ const Home = () => {
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">
-                                    {editingService ? 'Edit Service' : 'Add New Service'}
+                                    {editingService ? t('pages.home.serviceManagement.editService', 'Edit Service') : t('pages.home.serviceManagement.addService', 'Add New Service')}
                                 </h5>
                                 <button 
                                     type="button" 
@@ -1338,7 +1429,7 @@ const Home = () => {
                                 <div className="modal-body">
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Service Name (English)</label>
+                                            <label className="form-label">{t('pages.home.serviceManagement.serviceNameEn', 'Service Name (English)')}</label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
@@ -1348,7 +1439,7 @@ const Home = () => {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Service Name (Arabic)</label>
+                                            <label className="form-label">{t('pages.home.serviceManagement.serviceNameAr', 'Service Name (Arabic)')}</label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
@@ -1357,7 +1448,7 @@ const Home = () => {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Price</label>
+                                            <label className="form-label">{t('pages.home.serviceManagement.price', 'Price')}</label>
                                             <input 
                                                 type="number" 
                                                 className="form-control"
@@ -1367,7 +1458,7 @@ const Home = () => {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Unit</label>
+                                            <label className="form-label">{t('pages.home.serviceManagement.unit', 'Unit')}</label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
@@ -1378,7 +1469,7 @@ const Home = () => {
                                             />
                                         </div>
                                         <div className="col-12 mb-3">
-                                            <label className="form-label">Delivery Time</label>
+                                            <label className="form-label">{t('pages.home.serviceManagement.deliveryTime', 'Delivery Time')}</label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
@@ -1420,10 +1511,42 @@ const Home = () => {
                                         {t('common.cancel', 'Cancel')}
                                     </button>
                                     <button type="submit" className="btn btn-primary">
-                                        {editingService ? 'Update Service' : 'Add Service'}
+                                        {editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')}
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Simple Delete Confirmation Modal */}
+            {showDeleteModal && serviceToDelete && (
+                <div className="modal show d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body text-center py-4">
+                                <h5 className="mb-3">{t('pages.home.serviceManagement.confirmDelete', 'Are you sure you want to delete this service?')}</h5>
+                                <p className="text-muted mb-0">
+                                    {serviceToDelete.nameEn || serviceToDelete.name || 'This service'} will be permanently deleted.
+                                </p>
+                            </div>
+                            <div className="modal-footer justify-content-center">
+                                <button 
+                                    type="button" 
+                                    className="btn btn-secondary me-3" 
+                                    onClick={cancelDeleteService}
+                                >
+                                    {t('common.cancel', 'Cancel')}
+                                </button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-danger" 
+                                    onClick={confirmDeleteService}
+                                >
+                                    {t('pages.home.serviceManagement.deleteService', 'Delete')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

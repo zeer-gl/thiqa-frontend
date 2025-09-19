@@ -179,6 +179,32 @@ export const UserProvider = ({ children }) => {
       
       console.log('Processed profile data:', profileData);
       
+      // For service providers, merge with localStorage data to get latest subscription info
+      if (role === 'sp') {
+        const spUserData = localStorage.getItem('spUserData');
+        if (spUserData) {
+          try {
+            const localData = JSON.parse(spUserData);
+            // Merge subscription-related data from localStorage
+            if (localData.hasActiveSubscription !== undefined) {
+              profileData.hasActiveSubscription = localData.hasActiveSubscription;
+            }
+            if (localData.subscriptionStatus !== undefined) {
+              profileData.subscriptionStatus = localData.subscriptionStatus;
+            }
+            if (localData.subscriptionPlan !== undefined) {
+              profileData.subscriptionPlan = localData.subscriptionPlan;
+            }
+            if (localData.subscriptionExpiry !== undefined) {
+              profileData.subscriptionExpiry = localData.subscriptionExpiry;
+            }
+            console.log('✅ Merged localStorage subscription data with API data');
+          } catch (error) {
+            console.error('Error merging localStorage data:', error);
+          }
+        }
+      }
+      
       // Update the user profile state
       setUserProfile(profileData);
       return profileData;
@@ -193,6 +219,17 @@ export const UserProvider = ({ children }) => {
 
   const updateUserProfile = (updatedData) => {
     setUserProfile(prev => ({ ...prev, ...updatedData }));
+  };
+
+  // Function to force update profile with subscription data
+  const updateSubscriptionStatus = (subscriptionData) => {
+    setUserProfile(prev => ({
+      ...prev,
+      hasActiveSubscription: subscriptionData.hasActiveSubscription || true,
+      subscriptionStatus: subscriptionData.subscriptionStatus || 'active',
+      subscriptionPlan: subscriptionData.subscriptionPlan,
+      subscriptionExpiry: subscriptionData.subscriptionExpiry
+    }));
   };
 
   // Function to specifically fetch service provider profile
@@ -312,6 +349,7 @@ export const UserProvider = ({ children }) => {
         fetchUserProfile,
         fetchServiceProviderProfile,
         updateUserProfile,
+        updateSubscriptionStatus,
         refreshProfile,
         logout,
         checkLoginStatus

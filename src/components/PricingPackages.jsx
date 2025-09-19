@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAlert } from '../context/AlertContext';
+import { useUser } from '../context/Profile';
+import { useSPProfile } from '../context/SPProfileContext';
 import { BaseUrl } from '../assets/BaseUrl';
 import PaymentMethods from './PaymentMethods';
 import '../css/components/pricing-packages.scss';
@@ -8,6 +10,8 @@ import '../css/components/pricing-packages.scss';
 const PricingPackages = () => {
     const { t, i18n } = useTranslation();
     const { showAlert } = useAlert();
+    const { fetchUserProfile, updateSubscriptionStatus } = useUser();
+    const { refreshSPProfile } = useSPProfile();
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [packages, setPackages] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -166,7 +170,7 @@ const PricingPackages = () => {
         setSelectedPackage(packageId);
     };
 
-    const handlePackageClick = (packageId) => {
+    const handlePackageClick = async (packageId) => {
         console.log('=== PACKAGE CLICKED ===');
         console.log('Package ID:', packageId);
         console.log('Available packages:', packages);
@@ -175,11 +179,181 @@ const PricingPackages = () => {
         console.log('Selected package found:', selectedPkg);
         
         if (selectedPkg) {
-            console.log('Setting selected package and showing payment methods');
-            setSelectedPackage(packageId);
-            setShowPaymentMethods(true);
+            console.log('Processing COD payment directly for package:', selectedPkg);
+            await processCODPayment(selectedPkg);
         } else {
             console.error('Package not found with ID:', packageId);
+        }
+    };
+
+    const processCODPayment = async (selectedPlan) => {
+        try {
+            const token = localStorage.getItem('token-sp');
+            
+            if (!token) {
+                showAlert(t('pricingPackages.loginRequired', 'Please login to proceed with subscription'), 'error');
+                return;
+            }
+
+            // Get user data for mobile number
+            const userData = JSON.parse(localStorage.getItem('spUserData') || '{}');
+            let customerMobile = userData.phoneNo || userData.mobile || userData.phone || userData.phoneNumber || userData.contact || userData.contactNumber || '';
+            
+            // Clean the mobile number (remove spaces, dashes, etc.)
+            if (customerMobile) {
+                customerMobile = customerMobile.toString().replace(/[\s\-\(\)\+]/g, '');
+            }
+            
+            console.log('=== COD PAYMENT PROCESSING ===');
+            console.log('Selected Plan:', selectedPlan);
+            console.log('Customer Mobile:', customerMobile);
+            
+            // Validate mobile number
+            if (!customerMobile) {
+                showAlert(t('pricingPackages.mobileRequired', 'Mobile number is required for subscription. Please update your profile with a valid mobile number.'), 'error');
+                return;
+            }
+            
+            if (customerMobile.length > 11) {
+                showAlert(t('pricingPackages.mobileTooLong', `Mobile number is too long (${customerMobile.length} digits). Maximum allowed is 11 digits.`), 'error');
+                return;
+            }
+            
+            if (customerMobile.length < 7) {
+                showAlert(t('pricingPackages.mobileTooShort', `Mobile number is too short (${customerMobile.length} digits). Please provide a valid mobile number.`), 'error');
+                return;
+            }
+
+            // Show loading message
+            showAlert(t('pricingPackages.processingCOD', 'Processing COD subscription...'), 'info');
+
+            // Prepare request body for COD using existing endpoint
+            const requestBody = {
+                planId: selectedPlan.id,
+                paymentMethodId: 'cod', // Use 'cod' as payment method ID
+                CustomerMobile: customerMobile
+            };
+
+            console.log('=== COD SUBSCRIPTION REQUEST ===');
+            console.log('Request URL:', `${BaseUrl}/professional/subscription/purchase`);
+            console.log('Request Body:', requestBody);
+
+            // Call existing subscription purchase API with COD payment method
+            const response = await fetch(`${BaseUrl}/professional/subscription/purchase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            console.log('COD Response Status:', response.status);
+            const responseText = await response.text();
+            console.log('COD Raw Response:', responseText);
+
+            if (!response.ok) {
+                // Check if it's an HTML error page (like the one you encountered)
+                if (responseText.includes('<!DOCTYPE html>') || responseText.includes('<html')) {
+                    throw new Error('Server endpoint not found. Please contact support to enable COD payments.');
+                }
+                throw new Error(`COD subscription failed: ${responseText}`);
+            }
+
+            const data = JSON.parse(responseText);
+            console.log('COD Subscription Response:', data);
+
+            // Handle different possible response structures
+            if (data.success) {
+                // Check if this is a COD subscription with pending status
+                if (data.data && data.data.paymentMethodId === 'cod' && data.data.status === 'pending') {
+                    showAlert(t('pricingPackages.codSuccess', 'COD subscription created successfully! Payment will be collected on delivery.'), 'success');
+                    
+                    // For COD with pending status, we need to manually update the profile
+                    // since the backend might not immediately update the subscription status
+                    setTimeout(async () => {
+                        try {
+                            console.log('🔄 Updating profile for COD subscription with pending status...');
+                            
+                            // Update localStorage data to reflect active subscription
+                            const currentSpData = localStorage.getItem('spUserData');
+                            if (currentSpData) {
+                                try {
+                                    const spData = JSON.parse(currentSpData);
+                                    spData.hasActiveSubscription = true;
+                                    spData.subscriptionStatus = 'active';
+                                    spData.subscriptionPlan = data.data.planName;
+                                    spData.subscriptionExpiry = data.data.nextBillingDate;
+                                    localStorage.setItem('spUserData', JSON.stringify(spData));
+                                    console.log('✅ Updated localStorage spUserData with COD subscription');
+                                } catch (error) {
+                                    console.error('Error updating localStorage:', error);
+                                }
+                            }
+                            
+                            // Update subscription status in profile context
+                            updateSubscriptionStatus({
+                                hasActiveSubscription: true,
+                                subscriptionStatus: 'active',
+                                subscriptionPlan: data.data.planName,
+                                subscriptionExpiry: data.data.nextBillingDate
+                            });
+                            
+                            // Force refresh both profile contexts
+                            await fetchUserProfile();
+                            await refreshSPProfile();
+                            
+                            console.log('✅ Profile updated for COD subscription');
+                        } catch (error) {
+                            console.error('❌ Error updating profile for COD subscription:', error);
+                        }
+                    }, 1000);
+                } else {
+                    // Regular success response
+                    showAlert(t('pricingPackages.codSuccess', 'Subscription activated successfully! Payment will be collected on delivery.'), 'success');
+                    
+                    // Refresh the plans to show updated status
+                    setTimeout(() => {
+                        fetchSubscriptionPlans();
+                    }, 1000);
+                    
+                    // Refresh user profile to update hasActiveSubscription status
+                    setTimeout(async () => {
+                        try {
+                            console.log('🔄 Refreshing user profile after successful subscription...');
+                            
+                            // Force refresh both profile contexts
+                            await fetchUserProfile();
+                            await refreshSPProfile();
+                            
+                            console.log('✅ User profile refreshed successfully after subscription');
+                        } catch (error) {
+                            console.error('❌ Error refreshing user profile:', error);
+                        }
+                    }, 1500);
+                }
+            } else if (data.paymentUrl) {
+                // If the API returns a payment URL (for online payment), show error for COD
+                throw new Error('COD payment method not supported by backend. Please contact support.');
+            } else {
+                throw new Error(data.message || 'COD subscription failed');
+            }
+
+        } catch (error) {
+            console.error('=== COD SUBSCRIPTION ERROR ===');
+            console.error('Error:', error);
+            
+            let errorMessage = t('pricingPackages.codFailed', 'Failed to process COD subscription. Please try again.');
+            
+            if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+                errorMessage = t('pricingPackages.networkError', 'Network error. Please check your internet connection and try again.');
+            } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+                errorMessage = t('pricingPackages.sessionExpired', 'Session expired. Please login again and try.');
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            showAlert(errorMessage, 'error');
         }
     };
 
@@ -268,7 +442,7 @@ const PricingPackages = () => {
                                     {!pkg.isCurrentPlan && (
                                         <div className="package-action mt-3">
                                             <button className="btn btn-primary w-100">
-                                                {t('pricingPackages.selectPlan', 'Select Plan')}
+                                                {t('pricingPackages.selectPlanCOD', 'Select Plan (COD)')}
                                             </button>
                                         </div>
                                     )}
