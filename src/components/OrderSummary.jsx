@@ -97,7 +97,7 @@ const OrderSummary = ({ cartItems, onPayNowClick, isLoading }) => {
                 </div>
 
                 {/* Promo Code Section */}
-                <div className="promo-code-section mb-3">
+                {/* <div className="promo-code-section mb-3">
                     <label className="subtotal-title d-block mb-1" htmlFor="promoCode">
                         {t('order-summary.promo-code')}
                     </label>
@@ -107,7 +107,7 @@ const OrderSummary = ({ cartItems, onPayNowClick, isLoading }) => {
                         className="form-control"
                         placeholder={t('order-summary.code')}
                     />
-                </div>
+                </div> */}
 
                 <div className="d-flex justify-content-between mb-3">
                     <span className="subtotal-title">{t('order-summary.discount')}</span>

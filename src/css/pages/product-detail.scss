@@ -3,6 +3,16 @@
 .product-detail-page {
   padding: 2rem 0;
 
+  // Customer Avatar Styles
+  .customer-avatar {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(33, 57, 93, 0.3);
+    }
+  }
+
   .breadcrumb-section {
     .breadcrumb {
       background: none;

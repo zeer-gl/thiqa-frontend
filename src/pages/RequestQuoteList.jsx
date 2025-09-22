@@ -13,6 +13,7 @@ import AccIcon from "/public/images/accordian-icon.svg";
 import { useEffect, useState } from 'react';
 import { BaseUrl } from '../assets/BaseUrl.jsx';
 import { useAlert } from '../context/AlertContext';
+import { notifyServiceProviderOfferAccepted } from '../utils/notificationService';
 
 const RequestQuoteList = () => {
     const { t } = useTranslation();
@@ -268,6 +269,25 @@ const RequestQuoteList = () => {
             const data = await response.json();
             console.log('✅ Proposal accepted successfully:', data);
             
+            // Send notification to service provider
+            try {
+                const customer = JSON.parse(localStorage.getItem('userData'));
+                const projectTitle = project.title || project.projectName || 'Project';
+                
+                console.log('📧 Sending notification to service provider...');
+                await notifyServiceProviderOfferAccepted(
+                    professionalId,
+                    customer._id,
+                    demandId,
+                    projectTitle,
+                    'en' // Default to English for now
+                );
+                console.log('✅ Notification sent to service provider');
+            } catch (notificationError) {
+                console.error('⚠️ Failed to send notification to service provider:', notificationError);
+                // Don't show error to user - notification failure shouldn't break the main flow
+            }
+            
             // Mark this proposal as accepted
             setAcceptedProposals(prev => new Set([...prev, proposalId]));
             
@@ -276,7 +296,7 @@ const RequestQuoteList = () => {
             
             // Show success message
             showAlert(t('project-offers.proposal-accepted','success') || 'Proposal accepted successfully!');
-            
+            navigate('/');
             // Refresh the quotes list to update the UI
             fetchQuotes(currentPage, searchQuery);
             

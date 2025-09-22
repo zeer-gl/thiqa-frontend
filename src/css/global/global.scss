@@ -51,6 +51,32 @@ body {
   font-size: 18px;
   font-weight: 400;
   color: white;
+  font-family: $font-family-primary;
+}
+
+// Remove borders from active navbar items
+.navbar-nav .nav-item.active,
+.navbar-nav .nav-item.active .nav-link,
+.navbar-nav .nav-link.active,
+.navbar .nav-item.active,
+.navbar .nav-link.active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+// Remove borders from all navbar link states
+.navbar-nav .nav-link,
+.navbar .nav-link {
+  border: none !important;
+  
+  &:active,
+  &:focus,
+  &.active {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
 }
 
 .page-container {

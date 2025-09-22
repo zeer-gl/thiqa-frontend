@@ -2,19 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { useAlert } from '../context/AlertContext';
 import { BaseUrl } from '../assets/BaseUrl';
+import { notifyServiceProviderOfferAccepted } from '../utils/notificationService';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import "../css/components/service-card.scss";
 import { FaHeart, FaRegHeart, FaChevronDown, FaChevronUp } from "react-icons/fa"; // Solid and Regular heart
 import ContactCustomerForm from './ContactCustomerForm';
 import ProjectPriceRequests from './ProjectPriceRequests';
+import Pagination from './Pagination';
 
 const ServiceCard = ({ 
     title, 
     subtitle,
     searchPlaceholder
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { showAlert } = useAlert();
     const navigate = useNavigate();
     const [liked, setLiked] = useState(false);
@@ -27,9 +29,40 @@ const ServiceCard = ({
     const [loading, setLoading] = useState(true);
     const [submittingProposal, setSubmittingProposal] = useState(null);
     const [acceptingProposal, setAcceptingProposal] = useState(null);
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+    const itemsPerPage = 5; // Set to 5 items per page as requested
+    
+    // Subscription state
+    const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+    const [subscriptionChecked, setSubscriptionChecked] = useState(false);
 
-    // Fetch demand quotes from API
-    const fetchDemandQuotes = async () => {
+    // Check if user has active subscription/package
+    const checkUserSubscription = () => {
+        try {
+            const spUserData = localStorage.getItem('spUserData');
+            if (spUserData) {
+                const userData = JSON.parse(spUserData);
+                console.log('User subscription data:', {
+                    hasActiveSubscription: userData.hasActiveSubscription,
+                    subscriptionStatus: userData.subscriptionStatus,
+                    subscriptionPlan: userData.subscriptionPlan,
+                    subscriptionExpiry: userData.subscriptionExpiry
+                });
+                return userData.hasActiveSubscription || userData.subscriptionStatus === 'active';
+            }
+            return false;
+        } catch (error) {
+            console.error('Error checking user subscription:', error);
+            return false;
+        }
+    };
+
+    // Fetch demand quotes from API with pagination
+    const fetchDemandQuotes = async (page = 1) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('token-sp');
@@ -39,7 +72,22 @@ const ServiceCard = ({
                 return;
             }
 
-            const response = await fetch(`${BaseUrl}/professional/demand-quotes`, {
+            // Check if user has active subscription before fetching demand quotes
+            const subscriptionActive = checkUserSubscription();
+            setHasActiveSubscription(subscriptionActive);
+            setSubscriptionChecked(true);
+            
+            if (!subscriptionActive) {
+                console.log('User does not have active subscription, not fetching demand quotes');
+                setProjects([]);
+                setTotalPages(1);
+                setTotalCount(0);
+                setCurrentPage(1);
+                setLoading(false);
+                return;
+            }
+
+            const response = await fetch(`${BaseUrl}/professional/demand-quotes?page=${page}&limit=${itemsPerPage}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,6 +124,24 @@ const ServiceCard = ({
                 }));
                 
                 setProjects(mappedProjects);
+                
+                // Handle pagination data
+                if (data.pagination) {
+                    setTotalPages(data.pagination.totalPages || 1);
+                    setTotalCount(data.pagination.totalCount || data.data.length);
+                    setCurrentPage(data.pagination.currentPage || page);
+                    console.log('Pagination data:', data.pagination);
+                } else {
+                    // Fallback if no pagination data
+                    setTotalPages(1);
+                    setTotalCount(data.data.length);
+                    setCurrentPage(1);
+                }
+            } else {
+                setProjects([]);
+                setTotalPages(1);
+                setTotalCount(0);
+                setCurrentPage(1);
             }
         } catch (error) {
             console.error('Error fetching demand quotes:', error);
@@ -83,6 +149,13 @@ const ServiceCard = ({
         } finally {
             setLoading(false);
         }
+    };
+
+    // Handle page change
+    const handlePageChange = (page) => {
+        console.log('Page changed to:', page);
+        setCurrentPage(page);
+        fetchDemandQuotes(page);
     };
 
     // Load demand quotes on component mount
@@ -200,7 +273,7 @@ const ServiceCard = ({
             showAlert(t('serviceCard.success.projectStarted'), 'success');
             
             // Refresh the project list to show updated status
-            fetchDemandQuotes();
+            fetchDemandQuotes(currentPage);
             
         } catch (error) {
             console.error('❌ Error submitting proposal:', error);
@@ -243,7 +316,7 @@ const ServiceCard = ({
     };
 
     const handleRefresh = () => {
-        fetchDemandQuotes();
+        fetchDemandQuotes(currentPage);
     };
 
     const handleAcceptProposal = async (project) => {
@@ -387,8 +460,27 @@ const ServiceCard = ({
             // Show success message
             showAlert(t('serviceCard.success.proposalAccepted'), 'success');
             
+            // Send notification to service provider
+            try {
+                const customer = JSON.parse(localStorage.getItem('userData'));
+                const projectTitle = project.title || project.projectName || 'Project';
+                
+                console.log('📧 Sending notification to service provider...');
+                await notifyServiceProviderOfferAccepted(
+                    professionalId || vendorId,
+                    customer._id,
+                    demandId,
+                    projectTitle,
+                    i18n.language
+                );
+                console.log('✅ Notification sent to service provider');
+            } catch (notificationError) {
+                console.error('⚠️ Failed to send notification to service provider:', notificationError);
+                // Don't show error to user - notification failure shouldn't break the main flow
+            }
+            
             // Refresh the project list to show updated status
-            fetchDemandQuotes();
+            fetchDemandQuotes(currentPage);
             
         } catch (error) {
             console.error('❌ Error accepting proposal:', error);
@@ -457,6 +549,35 @@ const ServiceCard = ({
             <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
           </div>
           <p className="mt-3">{t('serviceCard.loadingProjectRequests', 'Loading project requests...')}</p>
+        </div>
+      ) : !subscriptionChecked ? (
+        <div className="text-center py-5">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
+          </div>
+          <p className="mt-3">{t('serviceCard.checkingSubscription', 'Checking subscription status...')}</p>
+        </div>
+      ) : !hasActiveSubscription ? (
+        <div className="text-center py-5">
+          <div className="subscription-required">
+            <i className="fas fa-crown fa-3x text-warning mb-3"></i>
+            <h5 className="text-warning mb-3">{t('serviceCard.subscriptionRequired.title', 'Subscription Required')}</h5>
+            <p className="text-muted mb-4">
+              {t('serviceCard.subscriptionRequired.message', 'You need an active subscription to view project requests. Please purchase a package to access demand quotes.')}
+            </p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => {
+                // Navigate to packages tab
+                const url = new URL(window.location);
+                url.searchParams.set('tab', 'packages');
+                window.location.href = url.toString();
+              }}
+            >
+              <i className="fas fa-shopping-cart me-2"></i>
+              {t('serviceCard.subscriptionRequired.viewPackages', 'View Packages')}
+            </button>
+          </div>
         </div>
       ) : filteredProjects.length > 0 ? (
         /* Map through filtered projects - keeping your exact design */
@@ -586,13 +707,29 @@ const ServiceCard = ({
         <div className="text-center py-5">
           <div className="empty-projects">
             <i className="fas fa-folder-open fa-3x text-muted mb-3"></i>
-            <h5 className="text-muted">No project requests found</h5>
+            <h5 className="text-muted">{t('common.noProjectRequestsFound')}</h5>
             <p className="text-muted">
-              No project requests available at the moment
+              {t('common.noProjectRequestsAvailable')}
             </p>
           </div>
         </div>
       )}
+      
+      {/* Dynamic Pagination Component */}
+      {totalPages > 1 && (
+        <div className="pagination-container mt-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            hideNavigation={false}
+            showArrows={false}
+            className="service-card-pagination"
+          />
+      
+        </div>
+      )}
+      
       </div>
       </div>
             ) : showContactForm ? (

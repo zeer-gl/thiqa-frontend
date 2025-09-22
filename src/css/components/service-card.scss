@@ -412,3 +412,187 @@
     }
     
 }
+
+// Service Card Pagination Styling
+.service-card-pagination {
+  .pagination {
+    gap: 0.75rem;
+    
+    .pagination-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      
+      &:hover:not(.disabled) {
+        background-color: #333333;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      &.disabled {
+        background-color: #cccccc;
+        color: #666666;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      i {
+        font-size: 12px;
+        margin: 0 0.25rem;
+      }
+    }
+    
+    .page-numbers {
+      gap: 0.5rem;
+      
+      .page-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 2px solid #000000;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #f8f9fa;
+          border-color: #21395D;
+          color: #21395D;
+          transform: scale(1.05);
+          box-shadow: 0 2px 8px rgba(33, 57, 93, 0.2);
+        }
+        
+        &.active {
+          background-color: #21395D;
+          color: #ffffff;
+          border-color: #21395D;
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(33, 57, 93, 0.3);
+        }
+      }
+      
+      .page-ellipsis {
+        width: 42px;
+        height: 42px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #6c757d;
+      }
+    }
+  }
+}
+
+// Responsive pagination for service card
+@media (max-width: 768px) {
+  .service-card-pagination {
+    .pagination {
+      gap: 0.5rem;
+      
+      .pagination-btn {
+        padding: 0.6rem 1rem;
+        font-size: 13px;
+      }
+      
+      .page-numbers {
+        gap: 0.4rem;
+        
+        .page-btn {
+          width: 38px;
+          height: 38px;
+          font-size: 13px;
+        }
+        
+        .page-ellipsis {
+          width: 38px;
+          height: 38px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .service-card-pagination {
+    .pagination {
+      gap: 0.4rem;
+      
+      .pagination-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 12px;
+      }
+      
+      .page-numbers {
+        gap: 0.3rem;
+        
+        .page-btn {
+          width: 36px;
+          height: 36px;
+          font-size: 12px;
+        }
+        
+        .page-ellipsis {
+          width: 36px;
+          height: 36px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+// Subscription Required Styling
+.subscription-required {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 2px solid #ffc107;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.1);
+  
+  .fa-crown {
+    color: #ffc107;
+    text-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+  }
+  
+  h5 {
+    color: #856404;
+    font-weight: 600;
+  }
+  
+  p {
+    color: #6c757d;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .btn {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+    }
+    
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// RTL Support for subscription required
+[dir="rtl"] {
+  .subscription-required {
+    .btn {
+      i {
+        margin-right: 0;
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}

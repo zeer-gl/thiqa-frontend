@@ -275,7 +275,7 @@ const Checkout = () => {
                                                     <p className="address-full mt-2 mb-1">
                                                         {`${address.building}, ${address.floor_apartment}, ${address.street}, ${address.block}, ${address.area}, ${address.city}`}
                                                     </p>
-                                                    <div className="address-phone">
+                                                    <div className="address-phone" style={{display:"flex", alignItems:"center", gap:"13px"}}>
                                                     <img src={PhoneIcon} alt="" />
                                                         <span>{localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).phoneNo : ''}</span>
                                                      

@@ -5,7 +5,7 @@ import { BaseUrl } from '../assets/BaseUrl.jsx';
 import ProductCard from '../components/ProductCard.jsx'
 
 const ProductList = () => {
-    const { t, i18n } = useTranslation();
+    const { t, i18n, ready } = useTranslation();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -29,7 +29,7 @@ const ProductList = () => {
                 const list = Array.isArray(data?.products) ? data.products : (Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []));
                 setProducts(list);
             } catch (e) {
-                setError(e?.message || 'Unable to load products');
+                setError(e?.message || (ready ? t('common.unableToLoadProducts') : (i18n.language === 'ar' ? 'غير قادر على تحميل المنتجات' : 'Unable to load products')));
             } finally {
                 setLoading(false);
             }
@@ -44,6 +44,23 @@ const ProductList = () => {
         }
       };
 
+    // Don't render until translations are ready
+    if (!ready) {
+        return (
+            <div className="page-container">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-12 text-center">
+                            <h1 className="fw-bold">
+                                {i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="page-container">
             <div className="container">
@@ -57,9 +74,13 @@ const ProductList = () => {
                                 <div key={`s-${s}`} className="col-md-3 mb-3">
                                     <div className="card">
                                         <div className="card-body">
-                                            <h5 className="card-title fw-bold">{t('loading') || 'Loading...'}</h5>
+                                            <h5 className="card-title fw-bold">
+                                                {ready ? t('common.loading') : (i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...')}
+                                            </h5>
                                             <p className="card-text">...</p>
-                                            <button className="btn btn-primary" disabled>{t('loading') || 'Loading...'}</button>
+                                            <button className="btn btn-primary" disabled>
+                                                {ready ? t('common.loading') : (i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...')}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -93,9 +114,15 @@ const ProductList = () => {
       <div key={`e-${item}`} className="col-lg-4 col-md-6 col-sm-12 mb-3">
         <div className="card h-100">
           <div className="card-body">
-            <h5 className="card-title fw-bold">Product {item}</h5>
-            <p className="card-text">Product description here.</p>
-            <button className="btn btn-primary">View Details</button>
+            <h5 className="card-title fw-bold">
+                {ready ? t('common.product') : (i18n.language === 'ar' ? 'منتج' : 'Product')} {item}
+            </h5>
+            <p className="card-text">
+                {ready ? t('common.productDescription') : (i18n.language === 'ar' ? 'وصف المنتج هنا.' : 'Product description here.')}
+            </p>
+            <button className="btn btn-primary">
+                {ready ? t('common.viewDetails') : (i18n.language === 'ar' ? 'عرض التفاصيل' : 'View Details')}
+            </button>
           </div>
         </div>
       </div>

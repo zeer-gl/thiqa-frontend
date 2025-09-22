@@ -43,6 +43,21 @@ function SignupSP() {
     const [longitude, setLongitude] = useState('');
     const [selectedAddress, setSelectedAddress] = useState('');
     
+    // Address form fields (similar to Profile page)
+    const [addressForm, setAddressForm] = useState({
+        name: '',
+        city: '',
+        area: '',
+        block: '',
+        street: '',
+        building: '',
+        floor_apartment: '',
+        lat: '',
+        long: '',
+        is_default: false
+    });
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    
     // UI state
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -187,6 +202,9 @@ const validateForm = () => {
   } else if (!bio.trim() || bio.trim().length < 10) {
     isValid = false;
     errorMessage = t('auth.signupsp.validation.bioLength', 'Bio must be at least 10 characters');
+  } else if (!resume) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.resumeRequired', 'Resume is required');
   } else if (!latitude || !longitude) {
     isValid = false;
     errorMessage = t('auth.signupsp.validation.locationRequired', 'Please select your location on the map');
@@ -210,6 +228,59 @@ const validateForm = () => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
     };
 
+    // Function to check if professional already exists via API
+    const checkProfessionalExistence = async (email, phoneNo) => {
+        try {
+            console.log('Checking professional existence for email:', email, 'phone:', phoneNo);
+            
+            const response = await fetch(`${BaseUrl}/professional/check-email-or-phone`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    phoneNo: phoneNo
+                })
+            });
+            
+            const data = await response.json();
+            console.log('Professional existence check API response:', data);
+            
+            if (response.ok && data.success) {
+                // API returned success, check if email or phone exists
+                const emailExists = data.results?.email?.exists || false;
+                const phoneExists = data.results?.phoneNo?.exists || false;
+                const exists = emailExists || phoneExists;
+                
+                let message = '';
+                if (emailExists && phoneExists) {
+                    message = t('auth.signupsp.emailAndPhoneExist', 'Email and phone number already exist. Please use different credentials or try logging in.');
+                } else if (emailExists) {
+                    message = t('auth.signupsp.emailAlreadyExists', 'Email already exists. Please use a different email or try logging in.');
+                } else if (phoneExists) {
+                    message = t('auth.signupsp.phoneAlreadyExists', 'Phone number already exists. Please use a different phone number or try logging in.');
+                }
+                
+                console.log('Professional existence check result:', { 
+                    emailExists, 
+                    phoneExists, 
+                    exists, 
+                    message,
+                    apiResponse: data 
+                });
+                
+                return { exists, message };
+            } else {
+                // API returned error, but we'll proceed with OTP to avoid blocking users
+                console.warn('API check failed, proceeding with OTP generation');
+                return { exists: false, message: 'Unable to verify professional existence' };
+            }
+        } catch (error) {
+            console.error('Error checking professional existence:', error);
+            // If API fails, we'll proceed with OTP generation to avoid blocking users
+            return { exists: false, message: 'Unable to verify professional existence' };
+        }
+    };
+
     const handleCreateAccount = async (e) => {
         e.preventDefault();
         setFormSubmitted(true);
@@ -220,21 +291,32 @@ const validateForm = () => {
         }
         
         setSubmitting(true);
-        console.log('Starting OTP verification flow...');
+        console.log('Starting professional existence check...');
 
         try {
-            // Step 1: Send OTP first (mobile-style flow)
+            // Step 1: Check if professional already exists via API
+            const existenceCheck = await checkProfessionalExistence(email, phoneNo);
+            
+            if (existenceCheck.exists) {
+                // Professional already exists, show error and don't proceed with OTP
+                showAlert(existenceCheck.message, 'error');
+                setSubmitting(false);
+                return;
+            }
+            
+            // Step 2: Professional doesn't exist, proceed with OTP generation
+            console.log('Professional does not exist, proceeding with OTP generation...');
             const otpSent = await sendOTP(phoneNo);
             
             if (otpSent) {
-                // Step 2: Show OTP modal for verification
-        setShowOtpModal(true);
-        startTimer();
+                // Step 3: Show OTP modal for verification
+                setShowOtpModal(true);
+                startTimer();
             } else {
                 showAlert(t('auth.signup.otpSendFailed'), 'error');
             }
         } catch (error) {
-            console.error('OTP sending error:', error);
+            console.error('Registration flow error:', error);
             showAlert(t('auth.signup.otpSendFailed'), 'error');
         } finally {
             setSubmitting(false);
@@ -562,6 +644,95 @@ const validateForm = () => {
     };
 
 
+    // Location handling function (similar to Profile page)
+    const handleLocationSelect = async (location) => {
+        console.log('Location selected:', location);
+        setSelectedLocation(location);
+        
+        // Update the form with the coordinates from the map
+        setAddressForm((prev) => ({
+            ...prev,
+            lat: location.lat.toString(),
+            long: location.lng.toString(),
+        }));
+
+        // Update the main coordinates for the form
+        setLatitude(location.lat.toString());
+        setLongitude(location.lng.toString());
+
+        // Perform reverse geocoding to auto-fill address fields
+        try {
+            if (window.google && window.google.maps) {
+                const geocoder = new window.google.maps.Geocoder();
+                
+                const result = await new Promise((resolve, reject) => {
+                    geocoder.geocode(
+                        { location: { lat: location.lat, lng: location.lng } },
+                        (results, status) => {
+                            if (status === 'OK' && results && results.length > 0) {
+                                resolve(results[0]);
+                            } else {
+                                reject(new Error('Geocoding failed'));
+                            }
+                        }
+                    );
+                });
+
+                // Extract address components from the geocoding result
+                const addressComponents = result.address_components || [];
+                let city = '';
+                let area = '';
+                let street = '';
+                let building = '';
+
+                // Parse address components
+                addressComponents.forEach(component => {
+                    const types = component.types;
+                    
+                    if (types.includes('locality')) {
+                        city = component.long_name;
+                    } else if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+                        area = component.long_name;
+                    } else if (types.includes('administrative_area_level_1') && !area) {
+                        area = component.long_name;
+                    } else if (types.includes('route')) {
+                        street = component.long_name;
+                    } else if (types.includes('street_number')) {
+                        building = component.long_name;
+                    }
+                });
+
+                // Auto-fill the address form fields
+                setAddressForm((prev) => ({
+                    ...prev,
+                    city: city || prev.city,
+                    area: area || prev.area,
+                    street: street || prev.street,
+                    building: building || prev.building,
+                    name: prev.name || `${city || 'Location'}, ${area || 'Area'}`,
+                }));
+
+                // Update selected address for display
+                if (location.address) {
+                    setSelectedAddress(location.address);
+                }
+
+                console.log('Address fields auto-filled:', { city, area, street, building });
+            }
+        } catch (error) {
+            console.error('Reverse geocoding failed:', error);
+            // Don't show error to user, just log it
+        }
+    };
+
+    // Address form change handler
+    const handleAddressFormChange = (field, value) => {
+        setAddressForm((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
     // Debug: Monitor latitude and longitude changes
     useEffect(() => {
         console.log('Latitude changed to:', latitude);
@@ -694,7 +865,7 @@ const validateForm = () => {
                                                 </div>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'}`}
+                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && !name.trim() ? 'is-invalid' : ''}`}
                                                     id="name"
                                                     placeholder={t('auth.signupsp.name')} 
                                                     value={name}
@@ -706,6 +877,11 @@ const validateForm = () => {
                                                         paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px'
                                                     }}
                                                 />
+                                                {formSubmitted && !name.trim() && (
+                                                    <div className="text-danger mt-1 small">
+                                                        {t('auth.signupsp.validation.nameRequired', 'Name is required')}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
@@ -831,7 +1007,7 @@ const validateForm = () => {
                                                 </div>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'}`}
+                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && !workTitle.trim() ? 'is-invalid' : ''}`}
                                                     id="workTitle"
                                                     placeholder={t('auth.signupsp.workTitle')} 
                                                     value={workTitle}
@@ -843,6 +1019,11 @@ const validateForm = () => {
                                                         paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px'
                                                     }}
                                                 />
+                                                {formSubmitted && !workTitle.trim() && (
+                                                    <div className="text-danger mt-1 small">
+                                                        {t('auth.signupsp.validation.workTitleRequired', 'Work title is required')}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
@@ -1010,7 +1191,7 @@ const validateForm = () => {
                                                 min="0"
                                                 inputMode="numeric"
                                                 dir="ltr"
-                                                className="form-control"
+                                                className={`form-control ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
                                                 id="experience"
                                                 placeholder={t('auth.signupsp.experience')} 
                                                 value={experience}
@@ -1021,12 +1202,17 @@ const validateForm = () => {
                                                     ...(i18n.dir() === 'rtl' ? { textAlign: 'left' } : {})
                                                 }}
                                             />
+                                            {formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) && (
+                                                <div className="text-danger mt-1 small">
+                                                    {t('auth.signupsp.validation.experienceRequired', 'Valid experience years is required')}
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Bio */}
                                         <div className="form-group mb-3">
                                             <textarea
-                                                className="form-control"
+                                                className={`form-control ${formSubmitted && (!bio.trim() || bio.trim().length < 10) ? 'is-invalid' : ''}`}
                                                 id="bio"
                                                 rows="3"
                                                 placeholder={t('auth.signupsp.bio')} 
@@ -1034,6 +1220,11 @@ const validateForm = () => {
                                                 onChange={(e) => setBio(e.target.value)}
                                                 required
                                             />
+                                            {formSubmitted && (!bio.trim() || bio.trim().length < 10) && (
+                                                <div className="text-danger mt-1 small">
+                                                    {!bio.trim() ? t('auth.signupsp.validation.bioRequired', 'Bio is required') : t('auth.signupsp.validation.bioLength', 'Bio must be at least 10 characters')}
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Resume Upload */}
@@ -1058,7 +1249,7 @@ const validateForm = () => {
                                                     }}
                                                 />
                                                 <div 
-                                                    className="form-control d-flex align-items-center"
+                                                    className={`form-control d-flex align-items-center ${formSubmitted && !resume ? 'is-invalid' : ''}`}
                                                     style={{ 
                                                         minHeight: '50px',
                                                         backgroundColor: resume ? '#fff' : '#f8f9fa',
@@ -1075,32 +1266,32 @@ const validateForm = () => {
                                                         {resume ? resume.name : t('auth.signupsp.resumePlaceholder')}
                                                     </span>
                                                 </div>
+                                                {formSubmitted && !resume && (
+                                                    <div className="text-danger mt-1 small">
+                                                        {t('auth.signupsp.validation.resumeRequired', 'Resume is required')}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
                                         {/* Location */}
                                         <div className="form-group mb-3">
+                                            <label className="form-label">{t('auth.signupsp.location')} *</label>
                                             <GoogleMapAddressPicker
-                                                onLocationSelect={(location) => {
-                                                    console.log('Location selected:', location);
-                                                    if (location && typeof location.lat === 'number' && typeof location.lng === 'number') {
-                                                        const newLat = location.lat.toString();
-                                                        const newLng = location.lng.toString();
-                                                        console.log('Setting coordinates:', { lat: newLat, lng: newLng });
-                                                        
-                                                        // Update coordinates immediately
-                                                        setLatitude(newLat);
-                                                        setLongitude(newLng);
-                                                        if (location.address) {
-                                                            setSelectedAddress(location.address);
-                                                        }
-                                                    } else {
-                                                        console.error('Invalid location data:', location);
-                                                    }
-                                                }}
-                                                placeholder={t('auth.signupsp.location')}
+                                                onLocationSelect={handleLocationSelect}
+                                                initialLocation={selectedLocation}
+                                                height="300px"
+                                                key={selectedLocation ? `${selectedLocation.lat}-${selectedLocation.lng}` : 'new-location'}
                                             />
+                                            {formSubmitted && (!latitude || !longitude) && (
+                                                <div className="text-danger mt-1 small">
+                                                    {t('auth.signupsp.validation.locationRequired', 'Please select your location on the map')}
+                                                </div>
+                                            )}
                                         </div>
+
+                                        {/* Address Form Fields (Auto-filled from map) */}
+                                     
                                     </div>
                                     <div>
                                         <div className='mt-4'>

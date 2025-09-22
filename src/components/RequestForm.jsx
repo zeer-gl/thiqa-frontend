@@ -22,12 +22,23 @@ const RequestForm = ({
         const file = e.target.files[0];
         
         if (file) {
-            // Check file size (300MB = 300 * 1024 * 1024 bytes)
-            const maxSize = 300 * 1024 * 1024; // 300MB in bytes
+            // Check file size (5MB = 5 * 1024 * 1024 bytes)
+            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
             const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
             
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+            
+            if (!allowedTypes.includes(file.type)) {
+                setFileSizeError('Please upload only image files (JPEG, PNG, GIF) or PDF files.');
+                setSelectedFile(null);
+                setFieldValue('projectDesign', null);
+                e.target.value = '';
+                return;
+            }
+            
             if (file.size > maxSize) {
-                setFileSizeError(`File size is too large (${fileSizeMB}MB). Maximum allowed size is 300MB.`);
+                setFileSizeError(`File size is too large (${fileSizeMB}MB). Maximum allowed size is 5MB.`);
                 setSelectedFile(null);
                 setFieldValue('projectDesign', null);
                 // Clear the file input

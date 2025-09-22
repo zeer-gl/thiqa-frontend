@@ -214,8 +214,8 @@ const ProductDetail = () => {
             const userData = JSON.parse(userDataString);
             const customerId = userData._id;
             
-            // Validate form
-            if (reviewForm.rating === 0 || reviewForm.efficiencyRating === 0 || 
+            // Validate form - only require individual ratings
+            if (reviewForm.efficiencyRating === 0 || 
                 reviewForm.priceRating === 0 || reviewForm.deliveryRating === 0) {
                     showAlert(t('pages.detail-page.section3.evaluationForm.fillRequiredFields'),'danger');
                 return;
@@ -224,7 +224,6 @@ const ProductDetail = () => {
             const reviewPayload = {
                 productId: id,
                 customerId: customerId,
-                rating: reviewForm.rating,
                 efficiencyRating: reviewForm.efficiencyRating,
                 priceRating: reviewForm.priceRating,
                 deliveryRating: reviewForm.deliveryRating,
@@ -357,23 +356,24 @@ const ProductDetail = () => {
                 quantity,
                 selectedImageIndex,
                 liked: isProductLiked,
+                addedAt: new Date().toISOString(), // Add timestamp for cart persistence
                 // Add any other state you want to preserve
             };
             
-            // Use CartContext to add item
+            // Use CartContext to add item (this automatically saves to localStorage)
             addToCart(cartItem, quantity);
-            
-            // Also save to productdetail for backward compatibility
-            const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-            localStorage.setItem('productdetail', JSON.stringify(existingCart));
             
             // Show success message
             showAlert(t('pages.detail-page.section1.addedToCart'), 'success');
+            
+            // Navigate to payment after a short delay to show the success message
+            setTimeout(() => {
+                navigate('/payment');
+            }, 1000);
         } catch (e) {
             console.error('Error adding to cart:', e);
             showAlert(t('pages.detail-page.section1.addToCartError'), 'error');
         }
-        navigate('/payment');
     };
 
     const handleBuyNow = () => {
@@ -686,11 +686,41 @@ const ProductDetail = () => {
                                         {reviews.map((review, index) => (
                                             <div key={review._id || index} className='mb-5'>
                                                 <div className='d-flex align-items-center gap-3 mb-3'>
-                                                    <img src={CustomerImg2} alt=""
-                                                         style={{width: '40px', height: '40px', borderRadius: '50%'}}/>
+                                                    {review.customerId?.pic ? (
+                                                        <img 
+                                                            src={review.customerId.pic} 
+                                                            alt={review.customerId?.name || 'Customer'}
+                                                            style={{width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover'}}
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div 
+                                                        className="customer-avatar"
+                                                        style={{
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            borderRadius: '50%',
+                                                            backgroundColor: '#21395D',
+                                                            color: 'white',
+                                                            display: review.customerId?.pic ? 'none' : 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '14px',
+                                                            fontWeight: 'bold',
+                                                            textTransform: 'uppercase'
+                                                        }}
+                                                    >
+                                                        {review.customerId?.name ? 
+                                                            review.customerId.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 
+                                                            'U'
+                                                        }
+                                                    </div>
                                                     <div>
                                                         <p className='pb-1'>
-                                                            {t('pages.detail-page.section3.evaluationForm.anonymous')}
+                                                            {review.customerId?.name || t('pages.detail-page.section3.evaluationForm.anonymous')}
                                                         </p>
                                                         <p>
                                                             {new Date(review.createdAt).toLocaleDateString()}
@@ -702,13 +732,17 @@ const ProductDetail = () => {
                                                 <div className="mb-3">
                                                     <label className="form-label fw-bold">{t('pages.detail-page.section3.evaluationForm.overallRating')}:</label>
                                                     <div className="stars">
-                                                        {[...Array(5)].map((_, starIndex) => (
-                                                            <FontAwesomeIcon
-                                                                key={starIndex}
-                                                                icon={faStar}
-                                                                className={starIndex < (review.rating || 0) ? "star-filled" : "star-empty"}
-                                                            />
-                                                        ))}
+                                                        {[...Array(5)].map((_, starIndex) => {
+                                                            // Calculate average rating from the three individual ratings
+                                                            const averageRating = Math.round((review.efficiencyRating + review.priceRating + review.deliveryRating) / 3);
+                                                            return (
+                                                                <FontAwesomeIcon
+                                                                    key={starIndex}
+                                                                    icon={faStar}
+                                                                    className={starIndex < averageRating ? "star-filled" : "star-empty"}
+                                                                />
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
 
@@ -785,7 +819,7 @@ const ProductDetail = () => {
                                         <div className='my-4'>
                                             <div className="row">
                                                 <div className="col-md-4 mb-3">
-                                                    <label className="form-label">{t('pages.detail-page.section3.evaluationForm.overallRating')}</label>
+                                                    <label className="form-label">{t('pages.detail-page.section3.evaluationForm.overallRating')} <small className="text-muted">({t('common.optional', 'Optional')})</small></label>
                                                     <div className="stars">
                                                         {[...Array(5)].map((_, index) => (
                                                             <FontAwesomeIcon

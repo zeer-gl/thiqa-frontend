@@ -37,6 +37,24 @@ const OrderRequest = () => {
         }));
     };
 
+    // File validation function with showAlert
+    const validateFileSize = (file) => {
+        if (!file) return true;
+        
+        const maxSizeMB = 1;
+        const maxSizeBytes = maxSizeMB * 1024 * 1024;
+        
+        if (file.size > maxSizeBytes) {
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            showAlert(
+                t('order-request.file-too-large', `File size (${fileSizeMB}MB) exceeds the limit of ${maxSizeMB}MB. Please choose a smaller file.`), 
+                'error'
+            );
+            return false;
+        }
+        return true;
+    };
+
     useEffect(() => {
         const fetchProjectTypes = async () => {
             try {
@@ -89,9 +107,9 @@ const OrderRequest = () => {
       
       return allowedTypes.includes(value.type);
   })
-  .test('fileSize', t('order-request.file-size-error', 'File size must be 3MB or less'), (value) => {
+  .test('fileSize', t('order-request.file-size-error', 'File size must be 1MB or less'), (value) => {
       if (!value) return true;
-      return value.size <= 3 * 1024 * 1024;
+      return value.size <= 1 * 1024 * 1024;
   }),
         address: Yup.string().required(t('order-request.address-required')),
         projectName: Yup.string().required(t('order-request.project-name-required', 'Project name is required')),
@@ -150,6 +168,12 @@ const OrderRequest = () => {
     // Handle form submission
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
+            // Validate file size before submission
+            if (values.projectDesign && !validateFileSize(values.projectDesign)) {
+                setSubmitting(false);
+                return;
+            }
+
             // Get customerId from localStorage
             let customerId = null;
             try {

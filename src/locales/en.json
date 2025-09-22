@@ -478,7 +478,8 @@
    "price-required": "Price is required",
    "price-number": "Price must be a number",
    "file-type-error": "Only images or PDF files are allowed",
-   "file-size-error": "File size must be 3MB or less"
+   "file-size-error": "File size must be 1MB or less",
+   "file-too-large": "File size exceeds the limit of 1MB. Please choose a smaller file."
   },
 
   "service-request": {
@@ -599,12 +600,6 @@
     "company-18-service": "Premium Painting & Finishing"
   },
 
-  "pagination": {
-    "previous": "Previous",
-    "next": "Next",
-    "page": "Page",
-    "of": "of"
-  },
   "project-offers": {
     "offers": "offers",
     "project-title": "Villa construction project",
@@ -695,7 +690,11 @@
       "otpSendFailed": "Failed to send OTP. Please try again.",
       "invalidOtp": "Invalid OTP code. Please try again.",
       "verifyOtpFailed": "Failed to verify OTP. Please try again.",
-      "registerAsServiceProvider": "Register as a Service Provider"
+      "registerAsServiceProvider": "Register as a Service Provider",
+      "userAlreadyExists": "User with this email or phone number already exists. Please use different credentials or try logging in.",
+      "emailAlreadyExists": "Email already exists. Please use a different email or try logging in.",
+      "phoneAlreadyExists": "Phone number already exists. Please use a different phone number or try logging in.",
+      "emailAndPhoneExist": "Email and phone number already exist. Please use different credentials or try logging in."
     },
     "signupsp": {
       "title": "Service Provider Registration",
@@ -730,8 +729,10 @@
         "workTitleRequired": "Work title is required",
         "specializationRequired": "Please select at least one specialization",
         "experienceRequired": "Valid experience years is required",
+        "bioRequired": "Bio is required",
         "bioLength": "Bio must be at least 10 characters",
-        "locationRequired": "Please select your location on the map"
+        "locationRequired": "Please select your location on the map",
+        "resumeRequired": "Resume is required"
       },
       "specializations": {
         "construction": "Construction",
@@ -765,7 +766,24 @@
       },
       "emailAlreadyExists": "Email already exists. Please use a different email.",
       "phoneAlreadyExists": "Phone number already exists. Please use a different phone number.",
-      "emailOrPhoneExists": "Email or phone number already exists. Please use different credentials."
+      "emailOrPhoneExists": "Email or phone number already exists. Please use different credentials.",
+      "professionalAlreadyExists": "Professional with this email or phone number already exists. Please use different credentials or try logging in.",
+      "emailAndPhoneExist": "Email and phone number already exist. Please use different credentials or try logging in.",
+      "addressDetails": "Address Details",
+      "addressName": "Address Name",
+      "addressNamePlaceholder": "e.g., Home, Office",
+      "city": "City",
+      "cityPlaceholder": "Enter city",
+      "area": "Area",
+      "areaPlaceholder": "Enter area",
+      "block": "Block",
+      "blockPlaceholder": "Enter block",
+      "street": "Street",
+      "streetPlaceholder": "Enter street",
+      "building": "Building",
+      "buildingPlaceholder": "Enter building",
+      "floorApartment": "Floor/Apartment",
+      "floorApartmentPlaceholder": "e.g., 2nd Floor, Apt 5"
     },
     "loginsp": {
       "title": "Service Provider Registration",
@@ -1102,6 +1120,13 @@
     "loading": "Loading...",
     "userNotFound": "User not found",
     "back": "Back",
+    "unableToLoadProducts": "Unable to load products",
+    "product": "Product",
+    "productDescription": "Product description here.",
+    "viewDetails": "View Details",
+    "noProjectRequestsFound": "No project requests found",
+    "noProjectRequestsAvailable": "No project requests available at the moment",
+    "optional": "Optional",
     "search": "Search...",
     "error": "Error",
     "success": "Success",
@@ -1134,7 +1159,18 @@
     "requestSubmittedSuccessfully": "Request submitted successfully",
     "somethingWentWrong": "Something went wrong",
     "more": "more",
-    "retry": "Retry"
+    "retry": "Retry",
+    "fileSizeTooLarge": "File size must be less than 5MB. Please choose a smaller file.",
+    "invalidFileType": "Please upload only image files (JPEG, PNG, GIF) or PDF files.",
+    "errorReadingUserData": "Error reading user data from localStorage. Please login again.",
+    "invalidCategorySelected": "Invalid category selected. Please select a valid category.",
+    "requestSentSuccessfully": "Request sent successfully!",
+    "fileSizeTooLargeError": "File size too large. Please choose a smaller file (max 5MB).",
+    "notificationSystemError": "There was an issue with the notification system. Please try again.",
+    "dataFormatError": "There was an issue with the data format. Please check your input and try again.",
+    "requestTimeout": "Request timeout. Please try again with a smaller file.",
+    "networkError": "Network error. Please check your connection and try again.",
+    "requestFailed": "Request failed. Please try again."
   },
   "product-showcase": {
     "project-offers": "Project Offers",
@@ -1304,6 +1340,12 @@
       }
     },
     "loadingProjectRequests": "Loading project requests...",
+    "checkingSubscription": "Checking subscription status...",
+    "subscriptionRequired": {
+      "title": "Subscription Required",
+      "message": "You need an active subscription to view project requests. Please purchase a package to access demand quotes.",
+      "viewPackages": "View Packages"
+    },
     "errors": {
       "loginRequired": "Please login to view project requests",
       "loadFailed": "Failed to load project requests",
@@ -1475,5 +1517,21 @@
       "today": "Today",
       "selectAnyDate": "You can select any date (past or future)"
     }
+  },
+  "notifications": {
+    "offerAccepted": {
+      "title": "Offer Accepted!",
+      "message": "Your offer for project \"{projectTitle}\" has been accepted by the customer!",
+      "description": "Congratulations! A customer has accepted your proposal. You can now start working on the project."
+    }
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "projects": "projects"
   }
 }

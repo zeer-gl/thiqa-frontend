@@ -4,14 +4,84 @@ $navy: #21395D;
 $cream: #EEE7DB;
 $lightCream: #EEE7DB4F;
 
+// Font System - Consistent for both Arabic and English
+$font-family-primary: 'FF Shamel Family Sans One Book', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+$font-family-bold: 'FF Shamel Family Sans One Bold', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+$font-family-mono: 'Courier New', 'Monaco', 'Menlo', monospace;
+
+// Font weights
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
 @for $i from 12 through 50 {
   .fs-#{$i} {
     font-size: #{$i}px !important;
   }
 }
 
-p, h1, h2, h3, h4, h5, h6 {
+// Global Font System
+body {
+  font-family: $font-family-primary !important;
+  font-weight: $font-weight-normal;
+  line-height: 1.6;
+}
+
+// Headings use bold font family
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-bold !important;
   margin-bottom: 0 !important;
+}
+
+// Paragraphs and text elements
+p, span, div, a, button, input, textarea, select {
+  font-family: $font-family-primary !important;
+}
+
+// Bold text elements
+strong, b, .fw-bold, .font-weight-bold {
+  font-family: $font-family-bold !important;
+}
+
+// Monospace elements
+code, pre, .font-mono {
+  font-family: $font-family-mono !important;
+}
+
+// Font utility classes for consistent usage
+.font-primary {
+  font-family: $font-family-primary !important;
+}
+
+.font-bold {
+  font-family: $font-family-bold !important;
+}
+
+.font-mono {
+  font-family: $font-family-mono !important;
+}
+
+// Language-specific font classes
+.font-arabic {
+  font-family: $font-family-primary !important;
+}
+
+.font-english {
+  font-family: $font-family-primary !important;
+}
+
+// Consistent font weights
+.font-weight-normal {
+  font-weight: $font-weight-normal !important;
+}
+
+.font-weight-medium {
+  font-weight: $font-weight-medium !important;
+}
+
+.font-weight-semibold {
+  font-weight: $font-weight-semibold !important;
 }
 
 .max-100 {
@@ -92,11 +162,6 @@ $font-size-large: 18px;
 $font-size-xl: 20px;
 $font-size-xxl: 24px;
 $font-size-xxxl: 32px;
-
-// Font weights
-$font-weight-normal: 400;
-$font-weight-medium: 500;
-$font-weight-semibold: 600;
 
 // Line heights
 $line-height-small: 22px;

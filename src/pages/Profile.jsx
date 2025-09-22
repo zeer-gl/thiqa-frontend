@@ -904,6 +904,73 @@ const Profile = () => {
     setActiveTab(tabId);
   };
 
+  // Image compression utility
+  const compressImage = (file, maxSizeKB = 500) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions (max 800px width/height)
+        let { width, height } = img;
+        const maxDimension = 800;
+        
+        if (width > height && width > maxDimension) {
+          height = (height * maxDimension) / width;
+          width = maxDimension;
+        } else if (height > maxDimension) {
+          width = (width * maxDimension) / height;
+          height = maxDimension;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Determine output format based on original file type
+        let outputType = 'image/jpeg'; // default
+        let quality = 0.8;
+        
+        if (file.type === 'image/png') {
+          outputType = 'image/png';
+          quality = 0.9; // PNG compression is different
+        } else if (file.type === 'image/gif') {
+          outputType = 'image/jpeg'; // Convert GIF to JPEG for better compression
+        } else if (file.type === 'image/webp') {
+          outputType = 'image/webp';
+          quality = 0.8;
+        }
+        
+        canvas.toBlob((blob) => {
+          if (blob.size <= maxSizeKB * 1024) {
+            // Create a proper File object with correct name and type
+            const compressedFile = new File([blob], file.name, {
+              type: outputType,
+              lastModified: Date.now()
+            });
+            resolve(compressedFile);
+          } else {
+            // Further compress if still too large
+            const lowerQuality = outputType === 'image/png' ? 0.7 : 0.6;
+            canvas.toBlob((compressedBlob) => {
+              // Create a proper File object with correct name and type
+              const finalFile = new File([compressedBlob], file.name, {
+                type: outputType,
+                lastModified: Date.now()
+              });
+              resolve(finalFile);
+            }, outputType, lowerQuality);
+          }
+        }, outputType, quality);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleEditProfile = async () => {
     if (!isEditingProfile) {
       setIsEditingProfile(true);
@@ -938,12 +1005,34 @@ const Profile = () => {
       let res;
   
       if (profilePicFile) {
+        // Validate file size before processing
+        const maxSizeMB = 1;
+        if (profilePicFile.size > maxSizeMB * 1024 * 1024) {
+          throw new Error(`File size must be less than ${maxSizeMB}MB. Current size: ${(profilePicFile.size / (1024 * 1024)).toFixed(2)}MB`);
+        }
+
+        // Compress image if it's larger than 200KB
+        let processedFile = profilePicFile;
+        if (profilePicFile.size > 200 * 1024) {
+          console.log('Compressing image...');
+          processedFile = await compressImage(profilePicFile);
+          console.log('Image compressed from', profilePicFile.size, 'to', processedFile.size, 'bytes');
+        }
+
         // Case 1: New image file selected
         const formData = new FormData();
         formData.append("name", profileData.name || "");
         formData.append("email", profileData.email || "");
         formData.append("phoneNo", profileData.phone || "");
-        formData.append("pic", profilePicFile);
+        formData.append("pic", processedFile);
+        
+        // Debug logging
+        console.log('Uploading file details:', {
+          name: processedFile.name,
+          type: processedFile.type,
+          size: processedFile.size,
+          lastModified: processedFile.lastModified
+        });
   
         res = await fetch(`${BaseUrl}/customer/${userId}/updateProfile`, {
           method: "POST",
@@ -961,7 +1050,7 @@ const Profile = () => {
         formData.append("pic", profilePicFile); // empty string removes image
   
         res = await fetch(`${BaseUrl}/customer/${userId}/updateProfile`, {
-          method: "PUT",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
           },
@@ -976,7 +1065,7 @@ const Profile = () => {
         };
   
         res = await fetch(`${BaseUrl}/customer/${userId}/updateProfile`, {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
@@ -996,11 +1085,35 @@ const Profile = () => {
         setIsEditingProfile(false);
       } else {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err?.message || `Failed to update profile (${res.status})`);
+        
+        // Handle specific error cases
+        if (res.status === 413) {
+          throw new Error("File size too large. Please choose a smaller image (max 1MB).");
+        } else if (res.status === 0) {
+          throw new Error("Network error. Please check your connection and try again.");
+        } else {
+          throw new Error(err?.message || `Failed to update profile (${res.status})`);
+        }
       }
     } catch (e) {
-      console.error(e?.message || "Unable to update profile");
-      showAlert(e?.message || "Unable to update profile", "error");
+      console.error('Profile update error:', e);
+      
+      // Provide specific error messages
+      let errorMessage = "Unable to update profile";
+      
+      if (e?.message?.includes('File size must be less than')) {
+        errorMessage = e.message;
+      } else if (e?.message?.includes('File size too large')) {
+        errorMessage = e.message;
+      } else if (e?.message?.includes('Network error')) {
+        errorMessage = e.message;
+      } else if (e?.message?.includes('Failed to fetch')) {
+        errorMessage = "Network connection failed. Please check your internet connection and try again.";
+      } else if (e?.message) {
+        errorMessage = e.message;
+      }
+      
+      showAlert(errorMessage, "error");
     } finally {
       setUpdatingProfile(false);
       setProfileLoading(false);
@@ -1016,15 +1129,57 @@ const Profile = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file size (1MB limit for better server compatibility)
+      const maxSizeMB = 1;
+      if (file.size > maxSizeMB * 1024 * 1024) {
+        showAlert(`File size must be less than ${maxSizeMB}MB. Current size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`, "error");
+        // Reset the file input
+        event.target.value = '';
+        return;
+      }
+
+      // Validate file type (matching server requirements)
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        showAlert('Please select a valid image file (JPEG, PNG, GIF, or WebP)', "error");
+        // Reset the file input
+        event.target.value = '';
+        return;
+      }
+
+      // Compress image if it's larger than 200KB
+      let processedFile = file;
+      if (file.size > 200 * 1024) {
+        try {
+          console.log('Compressing image on selection...');
+          processedFile = await compressImage(file);
+          console.log('Image compressed from', file.size, 'to', processedFile.size, 'bytes');
+        } catch (error) {
+          console.error('Error compressing image:', error);
+          showAlert('Error processing image. Please try a different file.', "error");
+          event.target.value = '';
+          return;
+        }
+      }
+      
+      // Ensure we have a proper File object
+      if (!(processedFile instanceof File)) {
+        console.warn('Processed file is not a File object, creating one...');
+        processedFile = new File([processedFile], file.name, {
+          type: file.type,
+          lastModified: Date.now()
+        });
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setProfileImage(e.target.result);
       };
-      reader.readAsDataURL(file);
-      setProfilePicFile(file);
+      reader.readAsDataURL(processedFile);
+      setProfilePicFile(processedFile);
     }
   };
 

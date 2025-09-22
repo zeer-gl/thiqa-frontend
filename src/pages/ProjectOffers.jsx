@@ -25,6 +25,7 @@ const ProjectOffers = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [acceptedProposals, setAcceptedProposals] = useState(new Set());
 
+
     const toggleAccordion = (itemId) => {
         setExpandedItems(prev => ({
             ...prev,
@@ -47,6 +48,8 @@ const ProjectOffers = () => {
         
         // Refresh the project offers to get updated data
         fetchProjectOffers(currentPage, itemsPerPage, searchQuery);
+        navigate('/');
+
     };
 
     // Debug function to check authentication and data

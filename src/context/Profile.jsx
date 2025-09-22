@@ -290,6 +290,9 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Preserve cart data before logout
+    const cartData = localStorage.getItem('cart');
+    
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userRole");
     localStorage.removeItem("userData");
@@ -299,6 +302,12 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("serviceProviderId");
     localStorage.removeItem("spUserData");
     localStorage.removeItem("registrationData");
+    
+    // Restore cart data if it existed
+    if (cartData) {
+      localStorage.setItem('cart', cartData);
+    }
+    
     setIsLoggedIn(false);
     setIsServiceProvider(false);
     setUserProfile(null);

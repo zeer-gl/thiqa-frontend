@@ -864,13 +864,7 @@ const Home = () => {
                                             {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
                                         </button>
                                     </Link>
-                                        <button 
-                                            className='btn btn-outline-light btn-sm'
-                                            onClick={handleManualRefresh}
-                                            style={{ fontSize: '12px', padding: '5px 10px' }}
-                                        >
-                                            🔄 Refresh Profile (Debug)
-                                        </button>
+                                    
                                     </div>
                                 </div>
                             </div>

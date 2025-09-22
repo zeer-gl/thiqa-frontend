@@ -24,6 +24,14 @@ export const CartProvider = ({ children }) => {
           const cartArray = Array.isArray(parsedCart) ? parsedCart : [];
           setCartItems(cartArray);
           setCartCount(cartArray.length);
+          
+          console.log('🛒 Cart loaded from localStorage:', {
+            itemCount: cartArray.length,
+            totalItems: cartArray.reduce((sum, item) => sum + (item.quantity || 1), 0),
+            cartData: cartArray
+          });
+        } else {
+          console.log('🛒 No cart data found in localStorage');
         }
       } catch (error) {
         console.error('Error loading cart data:', error);
@@ -96,14 +104,25 @@ export const CartProvider = ({ children }) => {
       if (existingItemIndex >= 0) {
         // Update quantity if product already in cart
         existingCart[existingItemIndex].quantity = quantity;
+        existingCart[existingItemIndex].updatedAt = new Date().toISOString();
       } else {
         // Add new item to cart
-        existingCart.push({ ...product, quantity });
+        existingCart.push({ 
+          ...product, 
+          quantity,
+          addedAt: new Date().toISOString()
+        });
       }
       
       setCartItems(existingCart);
       setCartCount(existingCart.length);
       localStorage.setItem('cart', JSON.stringify(existingCart));
+      
+      console.log('🛒 Cart updated:', {
+        itemCount: existingCart.length,
+        totalItems: existingCart.reduce((sum, item) => sum + item.quantity, 0),
+        cartData: existingCart
+      });
       
       // Dispatch custom event to notify other components
       window.dispatchEvent(new CustomEvent('cartUpdated'));
@@ -168,6 +187,27 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
   };
 
+  // Function to check if cart has items (useful for persistence verification)
+  const hasCartItems = () => {
+    return cartItems.length > 0;
+  };
+
+  // Function to get cart summary for debugging
+  const getCartSummary = () => {
+    return {
+      itemCount: cartItems.length,
+      totalItems: getTotalItemsCount(),
+      totalPrice: getTotalPrice(),
+      items: cartItems.map(item => ({
+        id: item._id,
+        name: item.name_en || item.name_ar || item.title,
+        quantity: item.quantity,
+        price: item.price,
+        addedAt: item.addedAt
+      }))
+    };
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -178,7 +218,9 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         clearCart,
         getTotalPrice,
-        getTotalItemsCount
+        getTotalItemsCount,
+        hasCartItems,
+        getCartSummary
       }}
     >
       {children}

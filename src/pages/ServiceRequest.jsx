@@ -18,6 +18,53 @@ const ServiceRequest = () => {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
+    // Image compression function
+    const compressImage = (file, quality = 0.8, maxWidth = 1920, maxHeight = 1080) => {
+        return new Promise((resolve, reject) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = () => {
+                // Calculate new dimensions
+                let { width, height } = img;
+                
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = (width * maxHeight) / height;
+                        height = maxHeight;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // Draw and compress
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            resolve(blob);
+                        } else {
+                            reject(new Error('Canvas to blob conversion failed'));
+                        }
+                    },
+                    file.type,
+                    quality
+                );
+            };
+            
+            img.onerror = () => reject(new Error('Image loading failed'));
+            img.src = URL.createObjectURL(file);
+        });
+    };
+
     // Fetch professional categories from API
     const fetchCategories = async () => {
         try {
@@ -175,6 +222,22 @@ const ServiceRequest = () => {
             showAlert(t('common.selectCategory', 'Please select a category'), 'error');
             return;
         }
+
+        // Validate file size if projectDesign is provided
+        if (values.projectDesign) {
+            const maxSize = 5 * 1024 * 1024; // 5MB limit
+            if (values.projectDesign.size > maxSize) {
+                showAlert(t('common.fileSizeTooLarge'), 'error');
+                return;
+            }
+            
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
+            if (!allowedTypes.includes(values.projectDesign.type)) {
+                showAlert(t('common.invalidFileType'), 'error');
+                return;
+            }
+        }
         
         try {
             setSubmitting(true);
@@ -200,12 +263,12 @@ const ServiceRequest = () => {
                 }
             } catch (err) {
                 console.error('Error getting customer ID:', err);
-                showAlert('Error reading user data from localStorage. Please login again.', 'error');
+                showAlert(t('common.errorReadingUserData'), 'error');
                 return;
             }
 
             if (!customerId) {
-                showAlert('User not found. Please login again.', 'error');
+                showAlert(t('common.userNotFound'), 'error');
                 return;
             }
             
@@ -214,39 +277,101 @@ const ServiceRequest = () => {
             console.log('Category _id being sent:', selectedCategory._id);
             console.log('Date of request being sent:', new Date().toISOString());
 
-            // Prepare form data for API
-            const formData = new FormData();
-            formData.append('customerId', customerId);
-            formData.append('title', values.title);
-            formData.append('description', values.description);
-            formData.append('budget', values.budget);
-            formData.append('deadline', values.deadline);
-            formData.append('dateOfRequest', new Date().toISOString()); // Add current date as dateOfRequest
-            formData.append('address', values.address);
-            formData.append('typeOfProject', selectedCategory._id); // Send category _id instead of name
-            formData.append('projectName', values.projectName);
-            formData.append('price', values.price);
-            
-            // Add file if selected
-            if (values.projectDesign) {
-                formData.append('projectDesign', values.projectDesign);
+            // Validate selectedCategory is not an object that could cause issues
+            if (selectedCategory && typeof selectedCategory === 'object') {
+                console.log('Selected category object:', selectedCategory);
+                if (!selectedCategory._id) {
+                    showAlert(t('common.invalidCategorySelected'), 'error');
+                    return;
+                }
             }
 
-            // Debug: Log form data
+            // Prepare form data for API - ensure all values are strings and clean
+            const formData = new FormData();
+            
+            // Clean and validate all string values
+            const cleanString = (value) => {
+                if (value === null || value === undefined) return '';
+                if (typeof value === 'object') {
+                    console.error('Object detected, converting to string:', value);
+                    return JSON.stringify(value);
+                }
+                return String(value).trim();
+            };
+            
+            formData.append('customerId', cleanString(customerId));
+            formData.append('title', cleanString(values.title));
+            formData.append('description', cleanString(values.description));
+            formData.append('budget', cleanString(values.budget));
+            formData.append('deadline', cleanString(values.deadline));
+            formData.append('dateOfRequest', new Date().toISOString());
+            formData.append('address', cleanString(values.address));
+            formData.append('typeOfProject', cleanString(selectedCategory._id));
+            formData.append('projectName', cleanString(values.projectName));
+            formData.append('price', cleanString(values.price));
+            
+            // Debug: Log all form values to ensure they're strings
+            console.log('Form values being sent (all converted to strings):');
+            console.log('customerId:', String(customerId));
+            console.log('title:', String(values.title));
+            console.log('description:', String(values.description));
+            console.log('budget:', String(values.budget));
+            console.log('deadline:', String(values.deadline));
+            console.log('address:', String(values.address));
+            console.log('typeOfProject:', String(selectedCategory._id));
+            console.log('projectName:', String(values.projectName));
+            console.log('price:', String(values.price));
+            
+            // Add file if selected (with size validation)
+            if (values.projectDesign) {
+                // Compress image if it's an image file and too large
+                if (values.projectDesign.type.startsWith('image/') && values.projectDesign.size > 2 * 1024 * 1024) {
+                    try {
+                        const compressedFile = await compressImage(values.projectDesign, 0.8, 1920, 1080);
+                        formData.append('projectDesign', compressedFile, values.projectDesign.name);
+                        console.log('Image compressed from', values.projectDesign.size, 'to', compressedFile.size);
+                    } catch (compressionError) {
+                        console.warn('Image compression failed, using original:', compressionError);
+                        formData.append('projectDesign', values.projectDesign);
+                    }
+                } else {
+                formData.append('projectDesign', values.projectDesign);
+                }
+            }
+
+            // Debug: Log form data and validate no objects are being sent
             console.log('Form data being sent:');
             for (let [key, value] of formData.entries()) {
                 console.log(key, value);
+                // Check if any value is an object
+                if (typeof value === 'object' && value !== null && !(value instanceof File)) {
+                    console.error('WARNING: Object detected in form data:', key, value);
+                }
             }
             console.log('All form values:', values);
 
-            // Call create API
+            // Additional validation: ensure no objects in form values
+            Object.keys(values).forEach(key => {
+                if (typeof values[key] === 'object' && values[key] !== null && !(values[key] instanceof File)) {
+                    console.error('WARNING: Object detected in form values:', key, values[key]);
+                }
+            });
+
+            // Call create API with proper headers and timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+            
             const response = await fetch(`${BaseUrl}/customer/create-demand-quote`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                    // Don't set Content-Type for FormData, let browser set it with boundary
                 },
-                body: formData
+                body: formData,
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
 
             console.log('API Response status:', response.status);
             console.log('API Response headers:', response.headers);
@@ -255,16 +380,27 @@ const ServiceRequest = () => {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('API Error:', errorData);
                 
-                // Show specific error message
-                const errorMessage = errorData.message || errorData.error || `Failed to create quote request (${response.status})`;
-                showAlert(`API Error: ${errorMessage}`, 'error');
+                // Handle specific error cases
+                let errorMessage = errorData.message || errorData.error || `Failed to create quote request (${response.status})`;
+                
+                if (response.status === 413) {
+                    errorMessage = t('common.fileSizeTooLargeError');
+                } else if (errorData.error && errorData.error.includes('Notification validation failed')) {
+                    errorMessage = t('common.notificationSystemError');
+                } else if (errorData.error && errorData.error.includes('message_ar')) {
+                    errorMessage = t('common.notificationSystemError');
+                } else if (errorData.error && errorData.error.includes('Cast to string failed')) {
+                    errorMessage = t('common.dataFormatError');
+                }
+                
+                showAlert(errorMessage, 'error');
                 return;
             }
 
             const result = await response.json();
             console.log('✅ Quote request created successfully:', result);
             
-            showAlert('Request sent successfully!', 'success');
+            showAlert(t('common.requestSentSuccessfully'), 'success');
             resetForm();
             
             // Redirect to success page
@@ -273,14 +409,22 @@ const ServiceRequest = () => {
         } catch (error) {
             console.error('Error creating quote request:', error);
             
-            // Show specific error message
-            if (error.message.includes('User not found')) {
-                showAlert('User not found. Please login again.', 'error');
+            // Handle specific error cases
+            let errorMessage = t('common.requestFailed');
+            
+            if (error.name === 'AbortError') {
+                errorMessage = t('common.requestTimeout');
+            } else if (error.message.includes('User not found')) {
+                errorMessage = t('common.userNotFound');
             } else if (error.message.includes('Error reading user data')) {
-                showAlert('Error reading user data. Please login again.', 'error');
-            } else {
-                showAlert(`Error: ${error.message || 'Request failed'}`, 'error');
+                errorMessage = t('common.errorReadingUserData');
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage = t('common.networkError');
+            } else if (error.message) {
+                errorMessage = error.message;
             }
+            
+            showAlert(errorMessage, 'error');
         } finally {
             setSubmitting(false);
             setSubmitting(false); // Reset our local submitting state too

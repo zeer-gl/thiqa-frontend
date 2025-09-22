@@ -32,6 +32,33 @@ const ServiceList = () => {
     const [categoryTotalPages, setCategoryTotalPages] = useState(1); // For categories
     const categoryItemsPerPage = 10; // For categories
 
+  // Helper function to check if a provider has a specific specialization
+  const providerHasSpecialization = (provider, specializationId) => {
+    if (!provider || !specializationId) {
+      console.log('Invalid provider or specializationId:', { provider: !!provider, specializationId });
+      return false;
+    }
+    
+    // Check if the provider has the specialization in their allSpecializationIds array
+    const hasSpecialization = provider.allSpecializationIds && provider.allSpecializationIds.includes(specializationId);
+    
+    // Also check the specializations array as a fallback
+    const hasSpecializationFallback = provider.specializations && provider.specializations.some(spec => spec._id === specializationId);
+    
+    const result = hasSpecialization || hasSpecializationFallback;
+    
+    console.log(`Checking specialization for ${provider.name}:`, {
+      specializationId,
+      allSpecializationIds: provider.allSpecializationIds,
+      specializations: provider.specializations?.map(s => ({ id: s._id, name: s.name })),
+      hasSpecialization,
+      hasSpecializationFallback,
+      result
+    });
+    
+    return result;
+  };
+
   const fetchCategories = async (page = 1) => {
     try {
       const res = await fetch(
@@ -95,11 +122,16 @@ const ServiceList = () => {
         category: p.specializations && p.specializations[0] ? p.specializations[0].name : t('service-list.building'),
         categoryId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null,
         specializations: p.specializations || [], // Store all specializations
+        allSpecializationIds: p.specializations ? p.specializations.map(spec => spec._id) : [], // Store all specialization IDs for filtering
         rating: typeof p.averageRating === 'number' ? p.averageRating : 0,
         image: p.image || p.pic,
         isFavorite: !!p.isLiked
       }));
-      console.log('mapped', mapped)
+      console.log('mapped professionals with specializations:', mapped.map(p => ({
+        name: p.name,
+        specializations: p.specializations,
+        allSpecializationIds: p.allSpecializationIds
+      })))
       
       setAllServiceProviders(mapped);
       setServiceProviders(mapped);
@@ -145,6 +177,7 @@ const ServiceList = () => {
         category: p.specializations && p.specializations[0] ? p.specializations[0].name : t('service-list.building'),
         categoryId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null,
         specializations: p.specializations || [], // Store all specializations
+        allSpecializationIds: p.specializations ? p.specializations.map(spec => spec._id) : [], // Store all specialization IDs for filtering
         rating: typeof p.averageRating === 'number' ? p.averageRating : 0,
         image: p.image || p.pic,
         isFavorite: !!p.isLiked
@@ -174,7 +207,8 @@ const ServiceList = () => {
       filtered = filtered.filter(provider => 
         provider.name.toLowerCase().includes(query) ||
         provider.service.toLowerCase().includes(query) ||
-        provider.category.toLowerCase().includes(query)
+        provider.category.toLowerCase().includes(query) ||
+        provider.specializations.some(spec => spec.name.toLowerCase().includes(query))
       );
     }
     
@@ -221,6 +255,7 @@ const ServiceList = () => {
       // Call backend API with specialization parameter
       const apiUrl = `${BaseUrl}/professional/get-all-professsional?specialization=${encodeURIComponent(categoryId)}&page=1&limit=1000`;
       console.log('Category API URL:', apiUrl);
+      console.log('Category ID being sent:', categoryId);
       
       const res = await fetch(apiUrl);
       console.log('Category API response status:', res.status);
@@ -243,27 +278,23 @@ const ServiceList = () => {
         category: p.specializations && p.specializations[0] ? p.specializations[0].name : t('service-list.building'),
         categoryId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null,
         specializations: p.specializations || [], // Store all specializations
+        allSpecializationIds: p.specializations ? p.specializations.map(spec => spec._id) : [], // Store all specialization IDs for filtering
         rating: typeof p.averageRating === 'number' ? p.averageRating : 0,
         image: p.image || p.pic,
         isFavorite: !!p.isLiked
       }));
       
-      // If API returned all professionals (not filtered), apply client-side filtering
-      if (mapped.length === allServiceProviders.length) {
-        console.log('API returned all professionals, applying client-side filtering for category:', categoryId);
-        const filtered = allServiceProviders.filter(provider => {
-          const hasSpecialization = provider.specializations.some(spec => spec._id === categoryId);
-          console.log(`Provider ${provider.name} has specialization ${categoryId}:`, hasSpecialization);
-          return hasSpecialization;
-        });
-        console.log('Client-side filtered results:', filtered.length, 'providers');
-        setServiceProviders(filtered);
-        setTotalPages(Math.ceil(filtered.length / itemsPerPage));
-      } else {
-        console.log('API returned filtered results:', mapped.length, 'providers');
-        setServiceProviders(mapped);
-        setTotalPages(Math.ceil(mapped.length / itemsPerPage));
-      }
+      // Always apply client-side filtering to ensure accuracy
+      console.log('Applying client-side filtering for category:', categoryId);
+      const filtered = mapped.filter(provider => {
+        const hasSpecialization = providerHasSpecialization(provider, categoryId);
+        console.log(`Provider ${provider.name} has specialization ${categoryId}:`, hasSpecialization);
+        console.log(`Provider ${provider.name} specializations:`, provider.allSpecializationIds);
+        return hasSpecialization;
+      });
+      console.log('Client-side filtered results:', filtered.length, 'providers');
+      setServiceProviders(filtered);
+      setTotalPages(Math.ceil(filtered.length / itemsPerPage));
       
       setCurrentPage(1); // Reset to first page when filtering
     } catch (e) {
@@ -271,7 +302,9 @@ const ServiceList = () => {
       // Fallback to client-side filtering if API fails
       console.log('API failed, using client-side filtering for category:', categoryId);
       const filtered = allServiceProviders.filter(provider => {
-        const hasSpecialization = provider.specializations.some(spec => spec._id === categoryId);
+        const hasSpecialization = providerHasSpecialization(provider, categoryId);
+        console.log(`Fallback: Provider ${provider.name} has specialization ${categoryId}:`, hasSpecialization);
+        console.log(`Fallback: Provider ${provider.name} specializations:`, provider.allSpecializationIds);
         return hasSpecialization;
       });
       console.log('Fallback filtered results:', filtered.length, 'providers');
@@ -293,7 +326,11 @@ const ServiceList = () => {
       const selectedCategory = serviceCategories.find(cat => cat.id === filterId);
       if (selectedCategory) {
         console.log('Fetching professionals for category:', selectedCategory.name, 'ID:', selectedCategory.id);
+        console.log('Selected category details:', selectedCategory);
         fetchProfessionalsByCategory(selectedCategory.id);
+      } else {
+        console.error('Selected category not found:', filterId);
+        console.log('Available categories:', serviceCategories);
       }
     } else {
       // If 'all' is selected, show all professionals
@@ -322,12 +359,33 @@ const ServiceList = () => {
       serviceCategories.forEach(category => {
         if (category.id !== 'all') {
           const filtered = allServiceProviders.filter(provider => {
-            return provider.specializations.some(spec => spec._id === category.id);
+            return providerHasSpecialization(provider, category.id);
           });
           console.log(`Category "${category.name}" (${category.id}): ${filtered.length} providers`);
           console.log('Providers:', filtered.map(p => p.name));
+          console.log('Provider specializations:', filtered.map(p => ({ name: p.name, specializations: p.allSpecializationIds })));
         }
       });
+    };
+
+    // Add specific debug function for "kiny" category
+    window.debugKinyFiltering = () => {
+      console.log('=== Kiny Category Debug ===');
+      const kinyCategory = serviceCategories.find(cat => cat.name === 'kiny');
+      if (kinyCategory) {
+        console.log('Kiny category found:', kinyCategory);
+        const filtered = allServiceProviders.filter(provider => {
+          return providerHasSpecialization(provider, kinyCategory.id);
+        });
+        console.log(`Kiny filtered results: ${filtered.length} providers`);
+        console.log('Kiny providers:', filtered.map(p => ({
+          name: p.name,
+          specializations: p.specializations?.map(s => ({ id: s._id, name: s.name })),
+          allSpecializationIds: p.allSpecializationIds
+        })));
+      } else {
+        console.log('Kiny category not found in serviceCategories');
+      }
     };
   }, []);
 

@@ -186,6 +186,59 @@ function Signup() {
     return isValid;
   };
 
+  // Function to check if user already exists via API
+  const checkUserExistence = async (email, phoneNo) => {
+    try {
+      console.log('Checking user existence for email:', email, 'phone:', phoneNo);
+      
+      const response = await fetch(`${BaseUrl}/customer/check-email-or-phone`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          phoneNo: phoneNo
+        })
+      });
+      
+      const data = await response.json();
+      console.log('User existence check API response:', data);
+      
+      if (response.ok && data.success) {
+        // API returned success, check if email or phone exists
+        const emailExists = data.results?.email?.exists || false;
+        const phoneExists = data.results?.phoneNo?.exists || false;
+        const exists = emailExists || phoneExists;
+        
+        let message = '';
+        if (emailExists && phoneExists) {
+          message = t('auth.signup.emailAndPhoneExist', 'Email and phone number already exist. Please use different credentials or try logging in.');
+        } else if (emailExists) {
+          message = t('auth.signup.emailAlreadyExists', 'Email already exists. Please use a different email or try logging in.');
+        } else if (phoneExists) {
+          message = t('auth.signup.phoneAlreadyExists', 'Phone number already exists. Please use a different phone number or try logging in.');
+        }
+        
+        console.log('User existence check result:', { 
+          emailExists, 
+          phoneExists, 
+          exists, 
+          message,
+          apiResponse: data 
+        });
+        
+        return { exists, message };
+      } else {
+        // API returned error, but we'll proceed with OTP to avoid blocking users
+        console.warn('API check failed, proceeding with OTP generation');
+        return { exists: false, message: 'Unable to verify user existence' };
+      }
+    } catch (error) {
+      console.error('Error checking user existence:', error);
+      // If API fails, we'll proceed with OTP generation to avoid blocking users
+      return { exists: false, message: 'Unable to verify user existence' };
+    }
+  };
+
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
@@ -196,22 +249,33 @@ function Signup() {
     }
     
     setSubmitting(true);
-    console.log('Starting OTP verification flow...');
+    console.log('Starting user existence check...');
 
     try {
-      // Step 1: Send OTP first (mobile-style flow)
+      // Step 1: Check if user already exists via API
+      const existenceCheck = await checkUserExistence(email, phoneNo);
+      
+      if (existenceCheck.exists) {
+        // User already exists, show error and don't proceed with OTP
+        showAlert(existenceCheck.message, 'error');
+        setSubmitting(false);
+        return;
+      }
+      
+      // Step 2: User doesn't exist, proceed with OTP generation
+      console.log('User does not exist, proceeding with OTP generation...');
       const otpSent = await sendOTP(phoneNo);
       
       if (otpSent) {
-        // Step 2: Show OTP modal for verification
+        // Step 3: Show OTP modal for verification
         setShowOtpModal(true);
         startTimer();
         // Don't show registration success here - only after OTP verification
-        } else {
+      } else {
         showAlert(t('auth.signup.otpSendFailed'), 'error');
       }
     } catch (error) {
-      console.error('OTP sending error:', error);
+      console.error('Registration flow error:', error);
       showAlert(t('auth.signup.otpSendFailed'), 'error');
     } finally {
       setSubmitting(false);

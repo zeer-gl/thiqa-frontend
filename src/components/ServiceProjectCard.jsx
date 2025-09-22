@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import AccIcon from "/public/images/accordian-icon.svg";
 import { BaseUrl } from '../assets/BaseUrl.jsx';
 import { useAlert } from '../context/AlertContext';
+import { notifyServiceProviderOfferAccepted } from '../utils/notificationService';
 import '../css/components/phone-modal.scss';
 
 const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalAccepted, acceptedProposals = new Set() }) => {
@@ -139,6 +140,25 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
             
             // Show success message using showAlert
             showAlert(t('project-offers.proposal-accepted') || 'Proposal accepted successfully!', 'success');
+            
+            // Send notification to service provider
+            try {
+                const customer = JSON.parse(localStorage.getItem('userData'));
+                const projectTitle = project.title || project.projectName || 'Project';
+                
+                console.log('📧 Sending notification to service provider...');
+                await notifyServiceProviderOfferAccepted(
+                    finalProfessionalId,
+                    customer._id,
+                    project.id,
+                    projectTitle,
+                    'en' // Default to English for now
+                );
+                console.log('✅ Notification sent to service provider');
+            } catch (notificationError) {
+                console.error('⚠️ Failed to send notification to service provider:', notificationError);
+                // Don't show error to user - notification failure shouldn't break the main flow
+            }
             
             // Call the callback to update parent state with the proposal ID and project ID
             if (onProposalAccepted) {

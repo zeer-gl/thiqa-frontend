@@ -217,7 +217,26 @@ const Navbar = () => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         setShowProfileMenu(false);
-                                        localStorage.clear(); 
+                                        
+                                        // Preserve cart data before logout
+                                        const cartData = localStorage.getItem('cart');
+                                        
+                                        // Clear all localStorage except cart
+                                        localStorage.removeItem("isLoggedIn");
+                                        localStorage.removeItem("userRole");
+                                        localStorage.removeItem("userData");
+                                        localStorage.removeItem("userId");
+                                        localStorage.removeItem("token");
+                                        localStorage.removeItem("token-sp");
+                                        localStorage.removeItem("serviceProviderId");
+                                        localStorage.removeItem("spUserData");
+                                        localStorage.removeItem("registrationData");
+                                        
+                                        // Restore cart data if it existed
+                                        if (cartData) {
+                                            localStorage.setItem('cart', cartData);
+                                        }
+                                        
                                         window.location.href = isServiceProvider ? '/login-sp' : '/login'; 
                                     }}
                                     style={{

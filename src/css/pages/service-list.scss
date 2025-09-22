@@ -97,7 +97,7 @@
                                 font-weight: 700;
                                 color: #21395D;
                                 font-size: 16px;
-                                font-family: 'FF Shamel Family Sans One Bold', sans-serif;
+                                font-family: $font-family-bold;
                                 background: #f1f5f9;
                                 padding: 2px 6px;
                                 border-radius: 4px;
@@ -119,7 +119,7 @@
                                 font-size: 10px;
                                 color: #21395D;
                                 margin: 0;
-                                font-family: 'FF Shamel Family Sans One Book', sans-serif;
+                                font-family: $font-family-primary;
                             }
                         }
 
@@ -188,7 +188,7 @@
                     cursor: pointer;
                     text-align: left;
                     width: 100%;
-                    font-family: 'FF Shamel Family Sans One Book', sans-serif;
+                    font-family: $font-family-primary;
 
                     i {
                         font-size: 16px;
