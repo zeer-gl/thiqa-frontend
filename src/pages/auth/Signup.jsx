@@ -277,57 +277,37 @@ function Signup() {
 
       console.log('Google authentication request:', requestBody);
       
-      // First try to login with Google (in case user already exists)
-      let res = await fetch(`${BaseUrl}/customer/customer-google-login`, {
+      // Use the unified oauth-register-login API that handles both registration and login
+      const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody)
       });
       
-      let data;
-      let isLogin = true;
-      
-      // If login fails, try registration
       if (!res.ok) {
-        console.log('Google login failed, trying registration...');
-        isLogin = false;
-        
-        res = await fetch(`${BaseUrl}/customer/customer-google-registration`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody)
-        });
-        
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err?.message || `Google authentication failed (${res.status})`);
-        }
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.message || `Google authentication failed (${res.status})`);
       }
       
-      if(res.ok){
-        data = await res.json();
-        console.log('Google authentication data:', data);
-        
-        // Store user data and token
-        if (data.customer) {
-          localStorage.setItem('userData', JSON.stringify(data.customer));
-        }
-        
-        // Set login status
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole', 'user');
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-        
-        // Show appropriate success message
-        const successMessage = isLogin 
-          ? t('auth.login.googleLoginSuccess', 'Google login successful!')
-          : t('auth.signup.googleRegistrationSuccess', 'Google registration successful!');
-        
-        showAlert(successMessage, 'success');
-        navigate("/");
+      const data = await res.json();
+      console.log('Google authentication data:', data);
+      
+      // Store user data and token
+      if (data.customer) {
+        localStorage.setItem('userData', JSON.stringify(data.customer));
       }
+      
+      // Set login status
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', 'user');
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      
+      // Show success message based on API response
+      const successMessage = data.message || t('auth.signup.googleAuthenticationSuccess', 'Google authentication successful!');
+      showAlert(successMessage, 'success');
+      navigate("/");
      
     } catch (err) {
       const msg = (err?.code === "auth/configuration-not-found")
@@ -391,35 +371,20 @@ function Signup() {
       
       console.log('Apple authentication request:', requestBody);
       
-      // First try to login with Apple (in case user already exists)
-      let res = await fetch(`${BaseUrl}/customer/customer-apple-login`, {
+      // Use the unified oauth-register-login API that handles both registration and login
+      const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody)
       });
       
-      let data;
-      let isLogin = true;
-      
-      // If login fails, try registration
       if (!res.ok) {
-        console.log('Apple login failed, trying registration...');
-        isLogin = false;
-        
-        res = await fetch(`${BaseUrl}/customer/customer-apple-registration`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody)
-        });
-        
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData?.message || `Apple authentication failed (${res.status})`);
-        }
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.message || `Apple authentication failed (${res.status})`);
       }
       
       // Successful authentication
-      data = await res.json();
+      const data = await res.json();
       console.log('Apple authentication data:', data);
       
       // Store user data and token
@@ -434,11 +399,8 @@ function Signup() {
         localStorage.setItem('token', data.token);
       }
       
-      // Show appropriate success message
-      const successMessage = isLogin 
-        ? t('auth.login.appleLoginSuccess', 'Apple login successful!')
-        : t('auth.signup.appleRegistrationSuccess', 'Apple registration successful!');
-      
+      // Show success message based on API response
+      const successMessage = data.message || t('auth.signup.appleAuthenticationSuccess', 'Apple authentication successful!');
       showAlert(successMessage, 'success');
       navigate("/");
       

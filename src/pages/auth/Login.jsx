@@ -209,9 +209,9 @@ function Login() {
             };
 
             console.log('Google login request:', requestBody);
-            console.log('API URL:', `${BaseUrl}/customer/customer-google-registration`);
+            console.log('API URL:', `${BaseUrl}/customer/oauth-register-login`);
 
-            const res = await fetch(`${BaseUrl}/customer/customer-google-registration`, {
+            const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody)
@@ -222,25 +222,25 @@ function Login() {
                 throw new Error(err?.message || `Google login failed (${res.status})`);
             }
             
-            if(res.ok){
-                const data = await res.json();
-                console.log('Google login data:', data);
-                
-                // Store user data and token
-                if (data.customer) {
-                    localStorage.setItem('userData', JSON.stringify(data.customer));
-                }
-                
-                // Set login status
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userRole', 'user');
-                if (data.token) {
-                    localStorage.setItem('token', data.token);
-                }
-                
-                showAlert(t('Google login successful'), 'success');
-                navigate("/");
+            const data = await res.json();
+            console.log('Google authentication data:', data);
+            
+            // Store user data and token
+            if (data.customer) {
+                localStorage.setItem('userData', JSON.stringify(data.customer));
             }
+            
+            // Set login status
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', 'user');
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+            }
+            
+            // Show success message based on API response
+            const successMessage = data.message || t('Google authentication successful');
+            showAlert(successMessage, 'success');
+            navigate("/");
             
         } catch (err) {
             const msg = (err?.code === "auth/configuration-not-found")
@@ -268,7 +268,7 @@ function Login() {
             
             if (!idToken) throw new Error("Apple authentication failed - no ID token");
         
-            const res = await fetch(`${BaseUrl}/customer/customer-apple-registration`, {
+            const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
@@ -301,6 +301,7 @@ function Login() {
             }
             
             const data = await res.json();
+            console.log('Apple authentication data:', data);
             
             // Store user data and token
             if (data.customer) {
@@ -314,7 +315,9 @@ function Login() {
                 localStorage.setItem('token', data.token);
             }
             
-            showAlert(t('Apple login successful'), 'success');
+            // Show success message based on API response
+            const successMessage = data.message || t('Apple authentication successful');
+            showAlert(successMessage, 'success');
             navigate("/");
             
         } catch (err) {

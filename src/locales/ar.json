@@ -742,6 +742,8 @@
       "googleConfigMissing": "إعدادات غوغل مفقودة",
       "googleRegistrationFailed": "فشل في التسجيل عبر غوغل",
       "appleRegistrationFailed": "فشل في التسجيل عبر آبل",
+      "googleAuthenticationSuccess": "تم المصادقة عبر غوغل بنجاح!",
+      "appleAuthenticationSuccess": "تم المصادقة عبر آبل بنجاح!",
       "otp": {
         "title": "أدخل رمز التحقق",
         "description": "أدخل الرمز المرسل إلى هاتفك للتحقق من حسابك.",
