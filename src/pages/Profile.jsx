@@ -140,9 +140,14 @@ const Profile = () => {
   const [addressForm, setAddressForm] = useState({
     name: '',
     city: '',
-    address: '',
-    phone: '',
-    isDefault: false
+    area: '',
+    block: '',
+    street: '',
+    building: '',
+    floor_apartment: '',
+    lat: '',
+    long: '',
+    is_default: false
   });
   
   const [paymentForm, setPaymentForm] = useState({
@@ -1101,15 +1106,75 @@ const Profile = () => {
     }));
   };
 
-  const handleLocationSelect = (location) => {
+  const handleLocationSelect = async (location) => {
     console.log('Location selected:', location); // Debug log
     setSelectedLocation(location);
+    
     // Update the form with the coordinates from the map
     setAddressForm((prev) => ({
       ...prev,
       lat: location.lat.toString(),
       long: location.lng.toString(),
     }));
+
+    // Perform reverse geocoding to auto-fill address fields
+    try {
+      if (window.google && window.google.maps) {
+        const geocoder = new window.google.maps.Geocoder();
+        
+        const result = await new Promise((resolve, reject) => {
+          geocoder.geocode(
+            { location: { lat: location.lat, lng: location.lng } },
+            (results, status) => {
+              if (status === 'OK' && results && results.length > 0) {
+                resolve(results[0]);
+              } else {
+                reject(new Error('Geocoding failed'));
+              }
+            }
+          );
+        });
+
+        // Extract address components from the geocoding result
+        const addressComponents = result.address_components || [];
+        let city = '';
+        let area = '';
+        let street = '';
+        let building = '';
+
+        // Parse address components
+        addressComponents.forEach(component => {
+          const types = component.types;
+          
+          if (types.includes('locality')) {
+            city = component.long_name;
+          } else if (types.includes('sublocality') || types.includes('sublocality_level_1')) {
+            area = component.long_name;
+          } else if (types.includes('administrative_area_level_1') && !area) {
+            area = component.long_name;
+          } else if (types.includes('route')) {
+            street = component.long_name;
+          } else if (types.includes('street_number')) {
+            building = component.long_name;
+          }
+        });
+
+        // Auto-fill the address form fields
+        setAddressForm((prev) => ({
+          ...prev,
+          city: city || prev.city,
+          area: area || prev.area,
+          street: street || prev.street,
+          building: building || prev.building,
+          name: prev.name || `${city || 'Location'}, ${area || 'Area'}`,
+        }));
+
+        console.log('Address fields auto-filled:', { city, area, street, building });
+      }
+    } catch (error) {
+      console.error('Reverse geocoding failed:', error);
+      // Don't show error to user, just log it
+    }
   };
 
   const handleSaveAddress = async () => {

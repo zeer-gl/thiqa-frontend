@@ -25,12 +25,13 @@ export const UserProvider = ({ children }) => {
       setIsLoggedIn(login);
       setIsServiceProvider(role === "sp"); // Fixed: service provider role is 'sp', not 'user'
       
-      console.log('🔍 Profile Context Debug:', {
-        login,
-        role,
-        isServiceProvider: role === "sp",
-        timestamp: new Date().toISOString()
-      });
+      // Debug log removed to prevent console spam
+      // console.log('🔍 Profile Context Debug:', {
+      //   login,
+      //   role,
+      //   isServiceProvider: role === "sp",
+      //   timestamp: new Date().toISOString()
+      // });
       
       return login;
     } catch (e) {
@@ -310,7 +311,7 @@ export const UserProvider = ({ children }) => {
     // Set up an interval to check for login status changes
     const intervalId = setInterval(() => {
       checkLoginStatus();
-    }, 1000); // Check every second
+    }, 5000); // Check every 5 seconds (reduced frequency)
 
     // If logged in, fetch profile (but only if not already fetching)
     if (isLoggedIn && !userProfile && !isFetchingProfile) {

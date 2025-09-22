@@ -752,6 +752,7 @@
       "googleRegistrationSuccess": "Google registration successful",
       "googleConfigMissing": "Google configuration missing",
       "googleRegistrationFailed": "Google registration failed",
+      "appleRegistrationFailed": "Apple registration failed",
       "otp": {
         "title": "Enter OTP",
         "description": "Enter the code sent to your phone to verify your account.",
@@ -1459,7 +1460,9 @@
       "requestError": "Request error: {{message}}",
       "submitFailed": "Failed to submit proposal. Please try again.",
       "invalidDataFormat": "Invalid data format",
-      "proposalAlreadySubmitted": "You have already submitted a proposal for this demand."
+      "proposalAlreadySubmitted": "You have already submitted a proposal for this demand.",
+      "fileSizeLarge": "File size is large. The file is greater than 1MB.",
+      "invalidFileType": "Only image files are allowed (JPEG, PNG, GIF, WebP)."
     },
     "success": {
       "proposalSubmitted": "Your proposal has been submitted successfully!",

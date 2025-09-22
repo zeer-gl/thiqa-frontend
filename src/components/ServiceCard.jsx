@@ -120,7 +120,7 @@ const ServiceCard = ({
         try {
             setSubmittingProposal(project.id);
             
-            console.log('=== SUBMIT PROPOSAL DEBUG ===');
+            console.log('=== START PROJECT DEBUG ===');
             console.log('Project:', project);
             console.log('Project ID (demandId):', project.id);
             
@@ -194,10 +194,10 @@ const ServiceCard = ({
             }
 
             const data = await response.json();
-            console.log('✅ Proposal submitted successfully:', data);
+            console.log('✅ Project started successfully:', data);
             
             // Show success message
-            showAlert(t('serviceCard.success.proposalSubmitted'), 'success');
+            showAlert(t('serviceCard.success.projectStarted'), 'success');
             
             // Refresh the project list to show updated status
             fetchDemandQuotes();
@@ -520,6 +520,7 @@ const ServiceCard = ({
                     </div>
           {/* Accordion Content */}
           {expandedCards[project.id] && (
+         
             <>
               <div className="card-detail">
                 <p className="card-detail-heading">{t('projectDetails.title', 'Project Details')}</p>
@@ -537,7 +538,7 @@ const ServiceCard = ({
                 </p>
                 {project.isAccepted && (
                   <p className="card-detail-subheading text-success">
-                    <b>{t('projectDetails.status', 'Status')}:</b> {t('projectDetails.acceptedBy', 'Accepted by')} {project.acceptedByType}
+                    <b>{t('projectDetails.status', 'Status')}:</b> {t('projectDetails.acceptedBy', 'Accepted by')} {project?.clientName}
                   </p>
                 )}
               </div>

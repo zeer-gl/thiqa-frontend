@@ -280,6 +280,12 @@ const ProfileSP = () => {
                 return;
             }
 
+            // Check network connectivity
+            if (!navigator.onLine) {
+                showAlert('No internet connection. Please check your network and try again.', 'error');
+                return;
+            }
+
             const formData = new FormData();
             formData.append('name', profileData.name);
             formData.append('workTitle', profileData.workTitle);
@@ -309,13 +315,30 @@ const ProfileSP = () => {
                 console.log(key, ':', value instanceof File ? `File: ${value.name}` : value);
             }
 
-            const response = await fetch(`${BaseUrl}/professional/update-professsional/${serviceProviderId}`, {
-                method: 'PUT',
+            // Debug: Log the full URL and request details
+            const fullUrl = `${BaseUrl}/professional/update-professsional/${serviceProviderId}`;
+            console.log('=== API REQUEST DEBUG ===');
+            console.log('Full URL:', fullUrl);
+            console.log('Method: POST');
+            console.log('Service Provider ID:', serviceProviderId);
+            console.log('Token exists:', !!token);
+            console.log('BaseUrl:', BaseUrl);
+            console.log('Timestamp:', new Date().toISOString());
+
+            // Add timeout and better error handling
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+            const response = await fetch(fullUrl, {
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
-                body: formData
+                body: formData,
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
@@ -350,7 +373,21 @@ const ProfileSP = () => {
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            showAlert('Failed to update profile', 'error');
+            console.error('Error type:', error.constructor.name);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            
+            // Provide more specific error messages
+            let errorMessage = 'Failed to update profile';
+            if (error.name === 'AbortError') {
+                errorMessage = 'Request timeout: The server took too long to respond. Please try again.';
+            } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                errorMessage = 'Network error: Unable to connect to server. Please check your internet connection and try again.';
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            showAlert(errorMessage, 'error');
         } finally {
             setSaving(false);
         }

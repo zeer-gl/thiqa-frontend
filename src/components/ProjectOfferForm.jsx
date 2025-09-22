@@ -214,9 +214,32 @@ const ProjectOfferForm = ({
     };
 
     const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        
+        if (file) {
+            // Check file type - only allow images
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+                showAlert(t('projectOfferForm.errors.invalidFileType', 'Only image files are allowed (JPEG, PNG, GIF, WebP).'), 'error');
+                // Clear the file input
+                e.target.value = '';
+                return;
+            }
+            
+            // Check file size (1MB = 1024 * 1024 bytes)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            
+            if (fileSizeInMB > 1) {
+                showAlert(t('projectOfferForm.errors.fileSizeLarge', 'File size is large.'), 'error');
+                // Clear the file input
+                e.target.value = '';
+                return;
+            }
+        }
+        
         setFormData(prev => ({
             ...prev,
-            projectFile: e.target.files[0]
+            projectFile: file
         }));
     };
 
@@ -357,6 +380,23 @@ const ProjectOfferForm = ({
         if (!formData.projectDuration || !formData.price || !formData.notes) {
             showAlert(t('projectOfferForm.errors.fillRequiredFields'), 'error');
             return;
+        }
+        
+        // Validate file if file is selected
+        if (formData.projectFile) {
+            // Check file type - only allow images
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(formData.projectFile.type)) {
+                showAlert(t('projectOfferForm.errors.invalidFileType'), 'error');
+                return;
+            }
+            
+            // Check file size (1MB = 1024 * 1024 bytes)
+            const fileSizeInMB = formData.projectFile.size / (1024 * 1024);
+            if (fileSizeInMB > 1) {
+                showAlert(t('projectOfferForm.errors.fileSizeLarge'), 'error');
+                return;
+            }
         }
         
         // Additional validation for duration and price
@@ -768,6 +808,7 @@ const ProjectOfferForm = ({
                                 type="file"
                                 id="projectFile"
                                 className="file-input"
+                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                                 onChange={handleFileChange}
                             />
                             <label htmlFor="projectFile" className="file-upload-label">

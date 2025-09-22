@@ -23,12 +23,30 @@ const ProjectOffers = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [acceptedProposals, setAcceptedProposals] = useState(new Set());
 
     const toggleAccordion = (itemId) => {
         setExpandedItems(prev => ({
             ...prev,
             [itemId]: !prev[itemId]
         }));
+    };
+
+    // Handle when a proposal is accepted - hide accordion and button
+    const handleProposalAccepted = (proposalId, projectId) => {
+        console.log('✅ Proposal accepted, hiding accordion and button:', { proposalId, projectId });
+        
+        // Hide the accordion for this project
+        setExpandedItems(prev => ({
+            ...prev,
+            [projectId]: false
+        }));
+        
+        // Mark this proposal as accepted to hide the button
+        setAcceptedProposals(prev => new Set([...prev, proposalId]));
+        
+        // Refresh the project offers to get updated data
+        fetchProjectOffers(currentPage, itemsPerPage, searchQuery);
     };
 
     // Debug function to check authentication and data
@@ -293,7 +311,8 @@ const ProjectOffers = () => {
                         offers={project.proposals}
                         isExpanded={expandedItems[project.id]}
                         onToggle={toggleAccordion}
-                        onProposalAccepted={() => fetchProjectOffers(currentPage, itemsPerPage, searchQuery)}
+                        onProposalAccepted={handleProposalAccepted}
+                        acceptedProposals={acceptedProposals}
                     />
                     ))
                 )}

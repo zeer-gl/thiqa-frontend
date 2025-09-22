@@ -9,33 +9,103 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
   const [selectedLocation, setSelectedLocation] = useState(initialLocation);
   const [isMapReady, setIsMapReady] = useState(false);
   const mapRef = useRef(null);
-  const searchInputRef = useRef(null);
-  const autocompleteRef = useRef(null);
 
   // Default center (Kuwait City)
   const defaultCenter = { lat: 29.3759, lng: 47.9774 };
   const defaultZoom = 12;
 
+  // Helper function to create markers (works with or without Advanced Markers)
+  const createMarker = (position, map, title, draggable = true) => {
+    try {
+      // Try to use Advanced Marker Element first
+      if (window.google && window.google.maps && window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+        console.log('Creating Advanced Marker Element');
+        return new window.google.maps.marker.AdvancedMarkerElement({
+          position,
+          map,
+          title,
+          gmpDraggable: draggable
+        });
+      } else {
+        // Fallback to regular Marker
+        console.log('Creating regular Marker (Advanced Markers not available)');
+        return new window.google.maps.Marker({
+          position,
+          map,
+          title,
+          draggable
+        });
+      }
+    } catch (error) {
+      console.warn('Error creating Advanced Marker, falling back to regular Marker:', error);
+      // Fallback to regular Marker
+      return new window.google.maps.Marker({
+        position,
+        map,
+        title,
+        draggable
+      });
+    }
+  };
+
   const render = (status) => {
+    // Debug: Log Google Maps status (reduced logging - only on failure)
+    if (status === Status.FAILURE) {
+      console.log('=== GOOGLE MAPS STATUS DEBUG ===');
     console.log('Google Maps Status:', status);
     console.log('API Key available:', !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY);
+      console.log('API Key length:', import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.length || 0);
+      console.log('API Key starts with:', import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.substring(0, 10) || 'N/A');
+      console.log('Map ID available:', !!import.meta.env.VITE_GOOGLE_MAPS_MAP_ID);
+      console.log('Current URL:', window.location.href);
+      console.log('User Agent:', navigator.userAgent);
+    }
     
     switch (status) {
       case Status.LOADING:
         return (
-          <div className="map-loading" style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="map-loading" style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">{t('common.loading')}</span>
             </div>
             <p className="mt-2 text-muted">Loading Google Maps...</p>
+            <small className="text-muted">This may take a few moments</small>
           </div>
         );
       case Status.FAILURE:
         return (
-          <div className="map-error" style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-            <i className="fas fa-exclamation-triangle text-warning mb-2" style={{ fontSize: '2rem' }}></i>
-            <p className="text-muted">{t('profile.addresses.mapLoadError', 'Failed to load map')}</p>
-            <small className="text-muted">Please check your Google Maps API key configuration</small>
+          <div className="map-error" style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '20px' }}>
+            <i className="fas fa-exclamation-triangle text-danger mb-3" style={{ fontSize: '3rem' }}></i>
+            <h5 className="text-danger mb-3">Google Maps Failed to Load</h5>
+            <div className="text-start" style={{ maxWidth: '400px' }}>
+              <p className="text-muted mb-2">This error usually occurs due to:</p>
+              <ul className="text-muted small">
+                <li>Invalid or missing API key</li>
+                <li>API key not enabled for required services</li>
+                <li>Billing not set up in Google Cloud Console</li>
+                <li>Domain restrictions on the API key</li>
+                <li>API quotas exceeded</li>
+              </ul>
+            </div>
+            <div className="mt-3">
+              <button 
+                className="btn btn-outline-primary btn-sm me-2"
+                onClick={() => window.open('https://console.cloud.google.com/google/maps-apis', '_blank')}
+              >
+                <i className="fas fa-external-link-alt me-1"></i>
+                Google Cloud Console
+              </button>
+              <button 
+                className="btn btn-outline-secondary btn-sm"
+                onClick={() => window.location.reload()}
+              >
+                <i className="fas fa-refresh me-1"></i>
+                Retry
+              </button>
+            </div>
+            <small className="text-muted mt-3">
+              Check browser console for detailed error information
+            </small>
           </div>
         );
       default:
@@ -52,207 +122,57 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
       const lat = event.latLng.lat();
       const lng = event.latLng.lng();
       
+      console.log('Map clicked at coordinates:', { lat, lng });
+      
       // Remove existing marker
       if (marker) {
         marker.setMap(null);
       }
       
-      // Add new marker using AdvancedMarkerElement (recommended)
-      const newMarker = new window.google.maps.marker.AdvancedMarkerElement({
-        position: { lat, lng },
-        map: map,
-        title: t('profile.addresses.selectedLocation', 'Selected Location'),
-        gmpDraggable: true, // Use gmpDraggable for AdvancedMarkerElement
-      });
+      // Add new marker using helper function
+      const newMarker = createMarker(
+        { lat, lng },
+        map,
+        t('profile.addresses.selectedLocation', 'Selected Location'),
+        true
+      );
       
       // Add drag end listener to marker - only when user finishes dragging
       newMarker.addListener('dragend', () => {
-        const newPosition = newMarker.position;
-        const newLat = newPosition.lat;
-        const newLng = newPosition.lng;
+        let newLat, newLng;
+        
+        // Handle different marker types
+        if (newMarker.position && typeof newMarker.position.lat === 'function') {
+          // Regular Marker
+          newLat = newMarker.position.lat();
+          newLng = newMarker.position.lng();
+        } else if (newMarker.position) {
+          // Advanced Marker Element
+          newLat = newMarker.position.lat;
+          newLng = newMarker.position.lng;
+        }
         
         console.log('Marker dragged to new position:', { lat: newLat, lng: newLng });
         setSelectedLocation({ lat: newLat, lng: newLng });
         
-        // Only make API call when user finishes dragging
+        // Get address for new position
         getAddressFromCoordinates(newLat, newLng);
-        
-        // Don't call onLocationSelect here - let the geocoding function handle it
-        // This prevents duplicate calls and ensures address is included
       });
       
       setMarker(newMarker);
       setSelectedLocation({ lat, lng });
       
-      // Only get address when user actually selects a location
+      // Get address for clicked location
       getAddressFromCoordinates(lat, lng);
-      
-      // Don't call onLocationSelect here - let the geocoding function handle it
-      // This prevents duplicate calls and ensures address is included
     });
     
     // Store listener for cleanup
     map.clickListener = clickListener;
     
-    // Initialize search box with a small delay to ensure Places API is loaded
-    setTimeout(() => {
-      initializeSearchBox(map);
-    }, 100);
+    // Search box removed - users click on map to select location
   }, [marker, onLocationSelect, t]);
 
-  const initializeSearchBox = (map) => {
-    if (!searchInputRef.current) {
-      console.warn('Search input ref not available');
-      return;
-    }
-    
-    if (window.google && window.google.maps && window.google.maps.places) {
-      try {
-        // Use the new PlaceAutocompleteElement instead of deprecated Autocomplete
-        if (window.google.maps.places.PlaceAutocompleteElement) {
-          // Create the new autocomplete element
-          const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
-            types: ['address'],
-            componentRestrictions: { country: 'kw' } // Restrict to Kuwait
-          });
-          
-          // Replace the input with the new element
-          const inputContainer = searchInputRef.current?.parentNode;
-          if (inputContainer && searchInputRef.current) {
-            inputContainer.replaceChild(autocompleteElement, searchInputRef.current);
-          } else {
-            console.warn('Input container or search input ref not found');
-            return;
-          }
-          
-          // Store reference
-          autocompleteRef.current = autocompleteElement;
-          
-          // Add event listener for place selection
-          autocompleteElement.addEventListener('gmp-placeselect', (event) => {
-            const place = event.place;
-            
-            if (!place.geometry || !place.geometry.location) {
-              console.log('No details available for input: ' + place.name);
-              return;
-            }
-            
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-            
-            // Remove existing marker
-            if (marker) {
-              marker.setMap(null);
-            }
-            
-            // Add new marker with stable configuration
-            const newMarker = new window.google.maps.marker.AdvancedMarkerElement({
-              position: { lat, lng },
-              map: map,
-        gmpDraggable: true, // Use gmpDraggable for AdvancedMarkerElement
-        title: place.name || t('profile.addresses.selectedLocation', 'Selected Location')
-            });
-            
-            // Add drag end listener to marker
-            newMarker.addListener('dragend', () => {
-              const newPosition = newMarker.position;
-              const newLat = newPosition.lat;
-              const newLng = newPosition.lng;
-              
-              console.log('Marker dragged to new position:', { lat: newLat, lng: newLng });
-              setSelectedLocation({ lat: newLat, lng: newLng });
-              
-              // Only make API call when user finishes dragging
-              getAddressFromCoordinates(newLat, newLng);
-              
-              // Don't call onLocationSelect here - let the geocoding function handle it
-              // This prevents duplicate calls and ensures address is included
-            });
-            
-            setMarker(newMarker);
-            setSelectedLocation({ lat, lng });
-            
-            // Call parent callback with address from search
-            if (onLocationSelect) {
-              console.log('Search selection - calling onLocationSelect with:', { lat, lng, address: place.formattedAddress });
-              onLocationSelect({ lat, lng, address: place.formattedAddress });
-            }
-            
-            // Center map on selected location
-            map.setCenter({ lat, lng });
-            map.setZoom(16);
-          });
-        } else {
-          // Fallback to old Autocomplete if new API is not available
-          console.warn('New PlaceAutocompleteElement not available, using legacy Autocomplete');
-          autocompleteRef.current = new window.google.maps.places.Autocomplete(searchInputRef.current, {
-            types: ['address'],
-            componentRestrictions: { country: 'kw' }
-          });
-          
-          autocompleteRef.current.bindTo('bounds', map);
-          
-          autocompleteRef.current.addListener('place_changed', () => {
-            const place = autocompleteRef.current.getPlace();
-            
-            if (!place.geometry || !place.geometry.location) {
-              console.log('No details available for input: ' + place.name);
-              return;
-            }
-            
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-            
-            // Remove existing marker
-            if (marker) {
-              marker.setMap(null);
-            }
-            
-            // Add new marker with stable configuration
-            const newMarker = new window.google.maps.marker.AdvancedMarkerElement({
-              position: { lat, lng },
-              map: map,
-        gmpDraggable: true, // Use gmpDraggable for AdvancedMarkerElement
-        title: place.name || t('profile.addresses.selectedLocation', 'Selected Location')
-            });
-            
-            // Add drag end listener to marker
-            newMarker.addListener('dragend', () => {
-              const newPosition = newMarker.position;
-              const newLat = newPosition.lat;
-              const newLng = newPosition.lng;
-              
-              console.log('Marker dragged to new position:', { lat: newLat, lng: newLng });
-              setSelectedLocation({ lat: newLat, lng: newLng });
-              
-              // Only make API call when user finishes dragging
-              getAddressFromCoordinates(newLat, newLng);
-              
-              // Don't call onLocationSelect here - let the geocoding function handle it
-              // This prevents duplicate calls and ensures address is included
-            });
-            
-            setMarker(newMarker);
-            setSelectedLocation({ lat, lng });
-            
-            // Call parent callback with address from search
-            if (onLocationSelect) {
-              console.log('Legacy search selection - calling onLocationSelect with:', { lat, lng, address: place.formatted_address });
-              onLocationSelect({ lat, lng, address: place.formatted_address });
-            }
-            
-            // Center map on selected location
-            map.setCenter({ lat, lng });
-            map.setZoom(16);
-          });
-        }
-      } catch (error) {
-        console.error('Error initializing search box:', error);
-      }
-    } else {
-      console.warn('Google Maps Places API not loaded yet');
-    }
-  };
+  // Search box functionality removed - users click on map to select location
 
   // Debounced geocoding function to prevent too many API calls
   const debouncedGeocoding = useMemo(() => {
@@ -265,111 +185,56 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
           
           // Only make geocoding request if coordinates are valid
           if (lat && lng && lat !== 0 && lng !== 0) {
-            console.log('Starting geocoding for coordinates:', { lat, lng });
+            // console.log('Starting geocoding for coordinates:', { lat, lng });
             const geocodeRequest = { 
               location: { lat, lng },
               language: 'en' // Ensure English results
             };
             
-            console.log('Geocoding request:', geocodeRequest);
+            // console.log('Geocoding request:', geocodeRequest);
             
             // Add timeout to geocoding request
             const geocodeTimeout = setTimeout(() => {
-              console.log('Geocoding timeout - calling onLocationSelect with coordinates only');
+              // console.log('Geocoding timeout - calling onLocationSelect with coordinates only');
               if (onLocationSelect) {
-                onLocationSelect({ lat, lng });
+                onLocationSelect({ lat, lng, address: `Location: ${lat.toFixed(6)}, ${lng.toFixed(6)}` });
               }
-            }, 10000); // 10 second timeout
+            }, 5000); // 5 second timeout
             
             geocoder.geocode(geocodeRequest, (results, status) => {
               clearTimeout(geocodeTimeout); // Clear timeout if geocoding completes
-              console.log('Geocoding response:', { status, results });
+              // console.log('Geocoding response:', { status, results });
+              
               if (status === 'OK' && results && results.length > 0) {
                 const result = results[0];
                 const address = result.formatted_address;
                 
-                // Extract detailed address components
-                const addressComponents = {
-                  street_number: '',
-                  route: '',
-                  neighborhood: '',
-                  sublocality: '',
-                  locality: '',
-                  administrative_area_level_1: '',
-                  country: '',
-                  postal_code: ''
-                };
-                
-                // Parse address components
-                if (result.address_components) {
-                  result.address_components.forEach(component => {
-                    const types = component.types;
-                    if (types.includes('street_number')) {
-                      addressComponents.street_number = component.long_name;
-                    }
-                    if (types.includes('route')) {
-                      addressComponents.route = component.long_name;
-                    }
-                    if (types.includes('neighborhood')) {
-                      addressComponents.neighborhood = component.long_name;
-                    }
-                    if (types.includes('sublocality')) {
-                      addressComponents.sublocality = component.long_name;
-                    }
-                    if (types.includes('locality')) {
-                      addressComponents.locality = component.long_name;
-                    }
-                    if (types.includes('administrative_area_level_1')) {
-                      addressComponents.administrative_area_level_1 = component.long_name;
-                    }
-                    if (types.includes('country')) {
-                      addressComponents.country = component.long_name;
-                    }
-                    if (types.includes('postal_code')) {
-                      addressComponents.postal_code = component.long_name;
-                    }
-                  });
-                }
-                
-                console.log('Geocoding successful:', address);
-                console.log('Address components:', addressComponents);
+                // console.log('Geocoding successful:', address);
                 
                 if (onLocationSelect) {
-                  console.log('Geocoding - calling onLocationSelect with detailed info:', { 
-                    lat, 
-                    lng, 
-                    address, 
-                    addressComponents 
-                  });
+                  // console.log('Geocoding - calling onLocationSelect with address:', { 
+                  //   lat, 
+                  //   lng, 
+                  //   address 
+                  // });
                   onLocationSelect({ 
                     lat, 
                     lng, 
-                    address, 
-                    addressComponents 
+                    address
                   });
                 }
               } else {
                 console.log('Geocoding failed:', status, results);
                 
-                // Try a simpler geocoding request as fallback
-                console.log('Trying fallback geocoding...');
-                geocoder.geocode({ location: { lat, lng } }, (fallbackResults, fallbackStatus) => {
-                  console.log('Fallback geocoding response:', { fallbackStatus, fallbackResults });
-                  if (fallbackStatus === 'OK' && fallbackResults && fallbackResults.length > 0) {
-                    const fallbackAddress = fallbackResults[0].formatted_address;
-                    console.log('Fallback geocoding successful:', fallbackAddress);
+                // Still call onLocationSelect with coordinates if geocoding fails
                     if (onLocationSelect) {
-                      onLocationSelect({ lat, lng, address: fallbackAddress });
-                    }
-                  } else {
-                    console.log('Fallback geocoding also failed');
-                    // Still call onLocationSelect with coordinates only if geocoding fails
-                    if (onLocationSelect) {
-                      console.log('All geocoding failed - calling onLocationSelect with coordinates only:', { lat, lng });
-                      onLocationSelect({ lat, lng });
-                    }
-                  }
-                });
+                  console.log('Geocoding failed - calling onLocationSelect with coordinates only:', { lat, lng });
+                  onLocationSelect({ 
+                    lat, 
+                    lng, 
+                    address: `Location: ${lat.toFixed(6)}, ${lng.toFixed(6)}` 
+                  });
+                }
               }
             });
           } else {
@@ -378,7 +243,7 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
         } else {
           console.log('Google Maps API not available for geocoding');
         }
-      }, 500); // 500ms delay
+      }, 300); // 300ms delay
     };
   }, [onLocationSelect]);
 
@@ -400,18 +265,27 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
           }
           
           // Create new marker with stable configuration
-          const newMarker = new window.google.maps.marker.AdvancedMarkerElement({
-            position: { lat, lng },
-            map: map,
-              gmpDraggable: true, // Use gmpDraggable for AdvancedMarkerElement
-              title: t('profile.addresses.selectedLocation', 'Selected Location')
-          });
+          const newMarker = createMarker(
+            { lat, lng },
+            map,
+            t('profile.addresses.selectedLocation', 'Selected Location'),
+            true
+          );
           
           // Add drag end listener
           newMarker.addListener('dragend', () => {
-            const newPosition = newMarker.position;
-            const newLat = newPosition.lat;
-            const newLng = newPosition.lng;
+            let newLat, newLng;
+            
+            // Handle different marker types
+            if (newMarker.position && typeof newMarker.position.lat === 'function') {
+              // Regular Marker
+              newLat = newMarker.position.lat();
+              newLng = newMarker.position.lng();
+            } else if (newMarker.position) {
+              // Advanced Marker Element
+              newLat = newMarker.position.lat;
+              newLng = newMarker.position.lng;
+            }
             
             console.log('Debounced marker dragged to new position:', { lat: newLat, lng: newLng });
             setSelectedLocation({ lat: newLat, lng: newLng });
@@ -443,12 +317,12 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
         }
         
         // Add marker for initial location with stable configuration
-        const newMarker = new window.google.maps.marker.AdvancedMarkerElement({
-          position: { lat, lng },
-          map: map,
-              gmpDraggable: true, // Use gmpDraggable for AdvancedMarkerElement
-              title: t('profile.addresses.selectedLocation', 'Selected Location')
-        });
+        const newMarker = createMarker(
+          { lat, lng },
+          map,
+          t('profile.addresses.selectedLocation', 'Selected Location'),
+          true
+        );
         
         setMarker(newMarker);
         setSelectedLocation({ lat, lng });
@@ -460,26 +334,12 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
     }
   }, [initialLocation, map, marker, t, selectedLocation]);
 
-  // Reinitialize search box when Google Maps API is available
-  useEffect(() => {
-    if (map && window.google && window.google.maps && window.google.maps.places) {
-      initializeSearchBox(map);
-    }
-  }, [map]);
+  // Search box functionality removed
 
   // Cleanup function to prevent memory leaks
   useEffect(() => {
     return () => {
-      // Clean up autocomplete
-      if (autocompleteRef.current) {
-        try {
-          if (window.google && window.google.maps && window.google.maps.event) {
-            window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
-          }
-        } catch (error) {
-          console.warn('Error cleaning up autocomplete:', error);
-        }
-      }
+      // Autocomplete cleanup removed (search functionality removed)
       
       // Clean up map listeners
       if (map && map.clickListener) {
@@ -506,20 +366,13 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
   return (
     <div className="google-map-address-picker">
       {/* Search Input - Only show if Places API is available and map is ready */}
-      {isMapReady && window.google && window.google.maps && window.google.maps.places && (
-        <div className="mb-3">
-          <label className="form-label">
-            <i className="fas fa-search me-2"></i>
-            {t('profile.addresses.searchLocation', 'Search Location')}
-          </label>
-          <input
-            ref={searchInputRef}
-            type="text"
-            className="form-control"
-            placeholder={t('profile.addresses.searchPlaceholder', 'Type address to search...')}
-          />
-        </div>
-      )}
+      {/* Instructions for users */}
+      <div className="mb-3 p-3 bg-info bg-opacity-10 border border-info rounded">
+        <small className="text-info">
+          <i className="fas fa-info-circle me-2"></i>
+          {t('profile.addresses.clickMapInstruction', 'Click anywhere on the map to select your location. The address fields will be automatically filled.')}
+        </small>
+      </div>
       
       {/* Fallback message if Places API is not available or map not ready */}
       {(!isMapReady || !window.google || !window.google.maps || !window.google.maps.places) && (
@@ -538,6 +391,18 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
             apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} 
             libraries={['places', 'marker']}
             render={render}
+            callback={(status) => {
+              // Only log on failure to reduce console spam
+              if (status === Status.FAILURE) {
+                console.log('Google Maps Wrapper Callback:', status);
+                console.error('Google Maps failed to load. Check the following:');
+                console.error('1. API Key is valid and active');
+                console.error('2. Required APIs are enabled (Maps JavaScript API, Places API, Geocoding API)');
+                console.error('3. Billing is set up in Google Cloud Console');
+                console.error('4. Domain restrictions allow this domain');
+                console.error('5. API quotas are not exceeded');
+              }
+            }}
           >
             <MapComponent
               center={selectedLocation || defaultCenter}
@@ -546,10 +411,27 @@ const GoogleMapAddressPicker = ({ onLocationSelect, initialLocation = null, heig
             />
           </Wrapper>
         ) : (
-          <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-            <i className="fas fa-exclamation-triangle text-warning mb-2" style={{ fontSize: '2rem' }}></i>
-            <p className="text-muted">Google Maps API key not configured</p>
-            <small className="text-muted">Please add VITE_GOOGLE_MAPS_API_KEY to your .env file</small>
+          <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '20px' }}>
+            <i className="fas fa-key text-warning mb-3" style={{ fontSize: '3rem' }}></i>
+            <h5 className="text-warning mb-3">Google Maps API Key Missing</h5>
+            <div className="text-start" style={{ maxWidth: '400px' }}>
+              <p className="text-muted mb-2">To use Google Maps, you need to:</p>
+              <ol className="text-muted small">
+                <li>Get a Google Maps API key from Google Cloud Console</li>
+                <li>Enable the required APIs (Maps JavaScript API, Places API, Geocoding API)</li>
+                <li>Set up billing in Google Cloud Console</li>
+                <li>Add the API key to your .env file as VITE_GOOGLE_MAPS_API_KEY</li>
+              </ol>
+            </div>
+            <div className="mt-3">
+              <button 
+                className="btn btn-outline-primary btn-sm"
+                onClick={() => window.open('https://console.cloud.google.com/google/maps-apis', '_blank')}
+              >
+                <i className="fas fa-external-link-alt me-1"></i>
+                Get API Key
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -565,7 +447,10 @@ const MapComponent = ({ center, zoom, onLoad }) => {
 
   useEffect(() => {
     if (ref.current && !mapRef.current) {
-      const map = new window.google.maps.Map(ref.current, {
+      // Try to get Map ID from environment or use default
+      const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
+      
+      const mapOptions = {
         center,
         zoom,
         mapTypeControl: true,
@@ -581,7 +466,17 @@ const MapComponent = ({ center, zoom, onLoad }) => {
             stylers: [{ visibility: 'off' }]
           }
         ]
-      });
+      };
+
+      // Add mapId if it's not the demo ID
+      if (mapId && mapId !== 'DEMO_MAP_ID') {
+        mapOptions.mapId = mapId;
+        console.log('Using Map ID:', mapId);
+      } else {
+        // console.log('No valid Map ID provided, using default map configuration');
+      }
+
+      const map = new window.google.maps.Map(ref.current, mapOptions);
       
       mapRef.current = map;
       

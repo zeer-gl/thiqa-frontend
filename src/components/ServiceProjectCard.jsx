@@ -7,14 +7,13 @@ import { BaseUrl } from '../assets/BaseUrl.jsx';
 import { useAlert } from '../context/AlertContext';
 import '../css/components/phone-modal.scss';
 
-const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalAccepted }) => {
+const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalAccepted, acceptedProposals = new Set() }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { showAlert } = useAlert();
     const [showPhoneModal, setShowPhoneModal] = useState(false);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [acceptingProposal, setAcceptingProposal] = useState(null);
-    const [acceptedProposals, setAcceptedProposals] = useState(new Set());
 
     // Handle phone button click
     const handlePhoneClick = (professional) => {
@@ -138,15 +137,12 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
             const data = await response.json();
             console.log('✅ Proposal accepted successfully:', data);
             
-            // Mark this proposal as accepted
-            setAcceptedProposals(prev => new Set([...prev, proposalId]));
-            
             // Show success message using showAlert
             showAlert(t('project-offers.proposal-accepted') || 'Proposal accepted successfully!', 'success');
             
-            // Call the callback to refresh the parent component
+            // Call the callback to update parent state with the proposal ID and project ID
             if (onProposalAccepted) {
-                onProposalAccepted();
+                onProposalAccepted(proposalId, project.id);
             }
             
             // Redirect to home page after accepting proposal
@@ -228,7 +224,21 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                         >
                                             <span>{t('project-offers.view-quote')}</span>
                                         </button> */}
-                                        {!acceptedProposals.has(offer._id || offer.id) && (
+                                        {(() => {
+                                            const isLocallyAccepted = acceptedProposals.has(offer._id || offer.id);
+                                            const isApiAccepted = offer.isAccepted;
+                                            const shouldShowButton = !isLocallyAccepted && !isApiAccepted;
+                                            
+                                            console.log('🔍 Button Rendering Debug:', {
+                                                proposalId: offer._id || offer.id,
+                                                isLocallyAccepted,
+                                                isApiAccepted,
+                                                shouldShowButton,
+                                                offer: offer
+                                            });
+                                            
+                                            return shouldShowButton;
+                                        })() && (
                                         <button 
                                             className="btn-call"
                                                 onClick={() => {

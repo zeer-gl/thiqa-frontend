@@ -741,6 +741,7 @@
       "googleRegistrationSuccess": "تم التسجيل عبر غوغل بنجاح",
       "googleConfigMissing": "إعدادات غوغل مفقودة",
       "googleRegistrationFailed": "فشل في التسجيل عبر غوغل",
+      "appleRegistrationFailed": "فشل في التسجيل عبر آبل",
       "otp": {
         "title": "أدخل رمز التحقق",
         "description": "أدخل الرمز المرسل إلى هاتفك للتحقق من حسابك.",
@@ -1460,7 +1461,9 @@
       "requestError": "خطأ في الطلب: {{message}}",
       "submitFailed": "فشل في إرسال العرض. يرجى المحاولة مرة أخرى.",
       "invalidDataFormat": "تنسيق البيانات غير صحيح",
-      "proposalAlreadySubmitted": "لقد قمت بإرسال عرض لهذا الطلب مسبقاً."
+      "proposalAlreadySubmitted": "لقد قمت بإرسال عرض لهذا الطلب مسبقاً.",
+      "fileSizeLarge": "حجم الملف كبير. الملف أكبر من 1 ميجابايت.",
+      "invalidFileType": "يُسمح فقط بملفات الصور (JPEG، PNG، GIF، WebP)."
     },
     "success": {
       "proposalSubmitted": "تم إرسال عرضك بنجاح!",

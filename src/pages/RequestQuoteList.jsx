@@ -12,6 +12,7 @@ import ListIcon from '../assets/payment/list-icon.svg';
 import AccIcon from "/public/images/accordian-icon.svg";
 import { useEffect, useState } from 'react';
 import { BaseUrl } from '../assets/BaseUrl.jsx';
+import { useAlert } from '../context/AlertContext';
 
 const RequestQuoteList = () => {
     const { t } = useTranslation();
@@ -22,6 +23,7 @@ const RequestQuoteList = () => {
 
     const [quotes, setQuotes] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
+    const { showAlert } = useAlert();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -178,12 +180,12 @@ const RequestQuoteList = () => {
             
             // Validate customer authentication
             if (!customerToken || !customerData) {
-                alert('Customer authentication required. Please login as a customer.');
+                showAlert('Customer authentication required. Please login as a customer.');
                 return;
             }
             
             if (userRole !== 'user') {
-                alert(`Access denied. Only customers can accept proposals. Current role: ${userRole}`);
+                showAlert(`Access denied. Only customers can accept proposals. Current role: ${userRole}`);
                 return;
             }
             
@@ -214,12 +216,12 @@ const RequestQuoteList = () => {
             
             // Validate required parameters
             if (!demandId) {
-                alert('Demand ID is missing');
+                showAlert('Demand ID is missing');
                 return;
             }
             
             if (!professionalId) {
-                alert('Professional ID is missing. No valid proposal found.');
+                showAlert('Professional ID is missing. No valid proposal found.');
                 return;
             }
             
@@ -248,17 +250,17 @@ const RequestQuoteList = () => {
                 
                 // Handle specific errors
                 if (errorData.message?.includes('not authorized')) {
-                    alert('You are not authorized to accept this proposal.');
+                    showAlert('You are not authorized to accept this proposal.');
                 } else if (errorData.message?.includes('not found')) {
-                    alert('Proposal or project not found. Please refresh the page and try again.');
+                    showAlert('Proposal or project not found. Please refresh the page and try again.');
                 } else if (errorData.message?.includes('already accepted')) {
-                    alert('This proposal has already been accepted.');
+                    showAlert('This proposal has already been accepted.');
                 } else if (errorData.message?.includes('Demand ID, action, and either Professional ID or Vendor ID are required')) {
-                    alert('Missing required parameters. Please ensure the project has valid proposals and try again.');
+                    showAlert('Missing required parameters. Please ensure the project has valid proposals and try again.');
                 } else if (errorData.message?.includes('but not both')) {
-                    alert('Invalid proposal data. Please contact support.');
+                    showAlert('Invalid proposal data. Please contact support.');
                 } else {
-                    alert(errorData?.message || `Failed to accept proposal (${response.status})`);
+                    showAlert(errorData?.message || `Failed to accept proposal (${response.status})`);
                 }
                 return;
             }
@@ -269,15 +271,18 @@ const RequestQuoteList = () => {
             // Mark this proposal as accepted
             setAcceptedProposals(prev => new Set([...prev, proposalId]));
             
+            // Hide the accordion for this project
+            setExpandedProject(null);
+            
             // Show success message
-            alert(t('project-offers.proposal-accepted') || 'Proposal accepted successfully!');
+            showAlert(t('project-offers.proposal-accepted','success') || 'Proposal accepted successfully!');
             
             // Refresh the quotes list to update the UI
             fetchQuotes(currentPage, searchQuery);
             
         } catch (error) {
             console.error('❌ Error accepting proposal:', error);
-            alert(error.message || t('project-offers.accept-error') || 'Failed to accept proposal. Please try again.');
+            showAlert(error.message || t('project-offers.accept-error') || 'Failed to accept proposal. Please try again.');
         } finally {
             setAcceptingProposal(null);
         }
@@ -412,7 +417,21 @@ const RequestQuoteList = () => {
                                                     </div>
                                                     <div className="offer-buttons">
                                                  
-                                                    {!acceptedProposals.has(offer._id || offer.id) && (
+                                                    {(() => {
+                                                        const isLocallyAccepted = acceptedProposals.has(offer._id || offer.id);
+                                                        const isApiAccepted = offer.isAccepted;
+                                                        const shouldShowButton = !isLocallyAccepted && !isApiAccepted;
+                                                        
+                                                        console.log('🔍 RequestQuoteList Button Rendering Debug:', {
+                                                            proposalId: offer._id || offer.id,
+                                                            isLocallyAccepted,
+                                                            isApiAccepted,
+                                                            shouldShowButton,
+                                                            offer: offer
+                                                        });
+                                                        
+                                                        return shouldShowButton;
+                                                    })() && (
                                                         <>
                                                         
                                                         {/* <button 
