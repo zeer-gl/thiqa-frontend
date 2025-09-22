@@ -330,7 +330,7 @@ fieldset {
 /* Customizing label */
 .radio label {
   position: relative;
-  padding: 5px 20px 5px 25px;
+  padding: 11px 20px 5px 25px;
   cursor: pointer;
   border-radius: 20px;
   color: $cream;
@@ -369,7 +369,7 @@ fieldset {
 }
 
 .radio input[type="radio"]:checked + label {
-  padding: 5px 20px 5px 20px;
+  padding: 11px 20px 5px 20px;
 }
 
 .radio input[type="radio"]:checked + label::before {
@@ -404,6 +404,8 @@ fieldset {
   .register-btn-nav {
     width: 100% !important;
     justify-content: center;
+    align-items: center !important;
+   
   }
 
   .nav-icons-container {

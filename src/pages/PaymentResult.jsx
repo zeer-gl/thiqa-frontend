@@ -31,6 +31,29 @@ const PaymentResult = () => {
         const paymentStatus = searchParams.get('PaymentStatus') || searchParams.get('status');
         const error = searchParams.get('Error');
         
+        // Check if user came from payment gateway (has payment parameters)
+        const hasPaymentParams = paymentId || id || paymentStatus || error;
+        
+        // If no payment parameters, user likely navigated back without paying
+        if (!hasPaymentParams) {
+            // Restore cart from pending order
+            const pendingOrder = localStorage.getItem('pendingOrder');
+            if (pendingOrder) {
+                try {
+                    const orderData = JSON.parse(pendingOrder);
+                    // Restore cart items
+                    localStorage.setItem('cart', JSON.stringify(orderData.cartItems));
+                    // Clear pending order
+                    localStorage.removeItem('pendingOrder');
+                } catch (e) {
+                    console.error('Error restoring cart:', e);
+                }
+            }
+            // Redirect to checkout page to continue shopping
+            navigate('/checkout');
+            return;
+        }
+        
         // Determine if payment was successful
         const success = (paymentId && id) || 
                        paymentStatus === 'Paid' || 
@@ -38,6 +61,25 @@ const PaymentResult = () => {
                        (!error && paymentId && paymentStatus !== 'failed');
         
         setIsSuccess(success);
+
+        // Handle cart based on payment result
+        if (success) {
+            // Clear cart and pending order on successful payment
+            localStorage.removeItem('cart');
+            localStorage.removeItem('pendingOrder');
+        } else {
+            // Restore cart on failed payment
+            const pendingOrder = localStorage.getItem('pendingOrder');
+            if (pendingOrder) {
+                try {
+                    const orderData = JSON.parse(pendingOrder);
+                    localStorage.setItem('cart', JSON.stringify(orderData.cartItems));
+                    localStorage.removeItem('pendingOrder');
+                } catch (e) {
+                    console.error('Error restoring cart:', e);
+                }
+            }
+        }
 
         // Start countdown timer for automatic redirect
         const timer = setInterval(() => {
@@ -48,7 +90,7 @@ const PaymentResult = () => {
                     if (success) {
                         navigate('/products'); // Redirect to product list on success
                     } else {
-                        navigate('/'); // Redirect to home on failure
+                        navigate('/checkout'); // Redirect to checkout on failure (cart restored)
                     }
                     return 0;
                 }
@@ -120,11 +162,28 @@ const PaymentResult = () => {
                         </p>
                         <button 
                             className="btn btn-primary"
-                            onClick={() => isSuccess ? navigate('/products') : navigate('/')}
+                            onClick={() => {
+                                if (isSuccess) {
+                                    navigate('/products');
+                                } else {
+                                    // Restore cart before redirecting to checkout
+                                    const pendingOrder = localStorage.getItem('pendingOrder');
+                                    if (pendingOrder) {
+                                        try {
+                                            const orderData = JSON.parse(pendingOrder);
+                                            localStorage.setItem('cart', JSON.stringify(orderData.cartItems));
+                                            localStorage.removeItem('pendingOrder');
+                                        } catch (e) {
+                                            console.error('Error restoring cart:', e);
+                                        }
+                                    }
+                                    navigate('/checkout');
+                                }
+                            }}
                         >
                             {isSuccess 
                                 ? t('paymentResult.goToProducts', 'Go to Products')
-                                : t('paymentResult.goHome', 'Go to Home')
+                                : t('paymentResult.goToCheckout', 'Go to Checkout')
                             }
                         </button>
                     </div>

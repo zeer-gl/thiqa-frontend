@@ -546,6 +546,7 @@
   },
 
   "service-list": {
+    "loading": "Loading professionals...",
     "title": "Service Providers",
     "subtitle": "Find the best service providers in your area",
     "categories": "Categories",
@@ -648,6 +649,7 @@
     "politicsAndPrivacy": "Politics and Privacy"
   },
   "auth": {
+    "registerFirst": "Please register first to access this feature",
     "login": {
       "title": "Login",
       "subtitle": "Log in to continue",
@@ -694,7 +696,17 @@
       "userAlreadyExists": "User with this email or phone number already exists. Please use different credentials or try logging in.",
       "emailAlreadyExists": "Email already exists. Please use a different email or try logging in.",
       "phoneAlreadyExists": "Phone number already exists. Please use a different phone number or try logging in.",
-      "emailAndPhoneExist": "Email and phone number already exist. Please use different credentials or try logging in."
+      "emailAndPhoneExist": "Email and phone number already exist. Please use different credentials or try logging in.",
+      "genericError": "An error occurred. Please try again.",
+      "validation": {
+        "nameRequired": "Name is required",
+        "phoneRequired": "Phone number is required",
+        "phoneFormat": "Please enter a valid Kuwait phone number (e.g., 51234567, +96551234567)",
+        "emailRequired": "Email is required",
+        "passwordRequired": "Password is required",
+        "confirmPasswordRequired": "Confirm password is required",
+        "passwordMismatch": "Password and confirm password do not match"
+      }
     },
     "signupsp": {
       "title": "Service Provider Registration",
@@ -1533,5 +1545,19 @@
     "to": "to",
     "of": "of",
     "projects": "projects"
+  },
+  "paymentResult": {
+    "successTitle": "Payment Successful",
+    "errorTitle": "Payment Failed",
+    "successMessage": "Your payment has been processed successfully",
+    "errorMessage": "We couldn't process your payment",
+    "successDetailsTitle": "Payment Confirmed",
+    "errorDetailsTitle": "Payment Processing Error",
+    "successDetailsText": "Your payment has been completed successfully. You can now access your purchased products.",
+    "errorDetailsText": "Your payment could not be completed. Please try again or contact support if the issue persists.",
+    "successRedirectMessage": "Redirecting to products page in {{count}} seconds...",
+    "errorRedirectMessage": "Redirecting to checkout page in {{count}} seconds...",
+    "goToProducts": "Go to Products",
+    "goToCheckout": "Go to Checkout"
   }
 }

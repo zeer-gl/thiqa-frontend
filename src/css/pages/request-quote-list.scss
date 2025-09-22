@@ -81,9 +81,32 @@
   font-size: 12px;
 }
 
+.rq-side-icon {
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
 .rq-side-icon img {
-  width: 24px;
-  height: 24px;
+  width: 50px !important;
+  height: 50px !important;
+  object-fit: cover;
+}
+
+// PDF Preview Styling
+.pdf-preview {
+  width: 50px !important;
+  height: 50px !important;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 }
 
 @media (max-width: 767px) {

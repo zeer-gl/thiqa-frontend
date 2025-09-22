@@ -202,7 +202,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 <div className="project-details">
                     <div>
                         <h3 className="ar-heading-bold">{project.title}</h3>
-                        <p>{project.subtitle}</p>
+                        <p>{project.description}</p>
                     </div>
                 </div>
                 <div className="project-actions">

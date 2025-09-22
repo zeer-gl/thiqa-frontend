@@ -18,6 +18,22 @@ import { notifyServiceProviderOfferAccepted } from '../utils/notificationService
 const RequestQuoteList = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    
+    // Helper function to detect if a file is a PDF
+    const isPdfFile = (url) => {
+        if (!url) return false;
+        const lowerUrl = url.toLowerCase();
+        return lowerUrl.includes('.pdf') || 
+               lowerUrl.includes('pdf') || 
+               lowerUrl.includes('application/pdf');
+    };
+    
+    // Helper function to get file extension
+    const getFileExtension = (url) => {
+        if (!url) return '';
+        const parts = url.split('.');
+        return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+    };
     const [currentPage, setCurrentPage] = useState(1);
     const [activeFilter, setActiveFilter] = useState('all');
     const itemsPerPage = 8; // keep UI size; we'll request this from API
@@ -415,8 +431,106 @@ const RequestQuoteList = () => {
                             </div>
                             <div className="rq-actions">
                          
-                                <div className="rq-side-icon">
-                                    <img src={project?.projectDesign || BallPattern} alt="" />
+                                <div className="rq-side-icon" style={{ width: '50px', height: '50px' }}>
+                                    {(() => {
+                                        const projectDesign = project?.projectDesign || BallPattern;
+                                        
+                                        // Check if it's a PDF file (more robust detection)
+                                        const isPdf = projectDesign && (
+                                            projectDesign.toLowerCase().includes('.pdf') ||
+                                            projectDesign.toLowerCase().includes('pdf') ||
+                                            projectDesign.includes('application/pdf')
+                                        );
+                                        
+                                        if (isPdf) {
+                                            return (
+                                                <div 
+                                                    className="pdf-preview" 
+                                                    style={{ 
+                                                        width: '50px', 
+                                                        height: '50px', 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center',
+                                                        backgroundColor: '#f8f9fa',
+                                                        border: '1px solid #dee2e6',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        // Open PDF in new tab
+                                                        window.open(projectDesign, '_blank', 'noopener,noreferrer');
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.target.style.backgroundColor = '#e9ecef';
+                                                        e.target.style.transform = 'scale(1.05)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.target.style.backgroundColor = '#f8f9fa';
+                                                        e.target.style.transform = 'scale(1)';
+                                                    }}
+                                                >
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        textAlign: 'center'
+                                                    }}>
+                                                        <i className="fas fa-file-pdf" style={{ 
+                                                            fontSize: '20px', 
+                                                            color: '#dc3545',
+                                                            marginBottom: '2px'
+                                                        }}></i>
+                                                        <span style={{ 
+                                                            fontSize: '8px', 
+                                                            color: '#6c757d',
+                                                            fontWeight: '500'
+                                                        }}>
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        } else {
+                                            // Display as image for non-PDF files
+                                            return (
+                                                <img 
+                                                    src={projectDesign} 
+                                                    alt="Project Design" 
+                                                    style={{
+                                                        width: '30px',
+                                                        height: '30px',
+                                                        objectFit: 'cover',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        // Open image in new tab
+                                                        window.open(projectDesign, '_blank', 'noopener,noreferrer');
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.target.style.transform = 'scale(1.05)';
+                                                        e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.target.style.transform = 'scale(1)';
+                                                        e.target.style.boxShadow = 'none';
+                                                    }}
+                                                    onError={(e) => {
+                                                        // Fallback to default image if loading fails
+                                                        e.target.src = BallPattern;
+                                                    }}
+                                                />
+                                            );
+                                        }
+                                    })()}
                                     </div>
                                 </div>
                             </div>

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAlert } from '../context/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const AuthWrapper = ({ children }) => {
     const [isChecking, setIsChecking] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const { showAlert: showAlertFunction } = useAlert();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const checkAuth = () => {
@@ -16,6 +21,12 @@ const AuthWrapper = ({ children }) => {
                 // User is authenticated if any token exists and isLoggedIn flag is true
                 const authenticated = !!((token || tokenSP) && isLoggedIn);
                 setIsAuthenticated(authenticated);
+                
+                // If not authenticated, show alert and set flag to show alert
+                if (!authenticated) {
+                    setShowAlert(true);
+                    showAlertFunction(t('auth.registerFirst', 'Please register first to access this feature'), 'warning');
+                }
             } catch (error) {
                 console.error('Error checking authentication:', error);
                 setIsAuthenticated(false);
@@ -47,7 +58,14 @@ const AuthWrapper = ({ children }) => {
         return children;
     }
 
-    // If not authenticated, redirect to home screen
+    // If not authenticated, redirect to home screen after showing alert
+    if (showAlert) {
+        // Small delay to ensure alert is shown before redirect
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 2000);
+    }
+    
     return <Navigate to="/" replace />;
 };
 

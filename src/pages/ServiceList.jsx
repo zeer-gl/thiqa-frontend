@@ -70,10 +70,14 @@ const ServiceList = () => {
       const { data, pagination } = await res.json();
 
       const categories = data.map((category) => ({
-        id: category._id,
+        id: category._id, // This is the specialization ID from getAll-professional-categories
         name: category.name,
         icon: 'fas fa-th',
       }));
+      
+      console.log('=== CATEGORIES LOADED ===');
+      console.log('Categories from getAll-professional-categories API:', categories);
+      console.log('Category IDs that will be used for filtering:', categories.map(cat => ({ name: cat.name, id: cat.id })));
 
       const updatedCategories =
         page === 1
@@ -121,6 +125,7 @@ const ServiceList = () => {
         service: p.workTitle || (p.specializations && p.specializations[0]?.name) || t('service-list.company-1-service'),
         category: p.specializations && p.specializations[0] ? p.specializations[0].name : t('service-list.building'),
         categoryId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null,
+        firstSpecializationId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null, // Store first specialization ID
         specializations: p.specializations || [], // Store all specializations
         allSpecializationIds: p.specializations ? p.specializations.map(spec => spec._id) : [], // Store all specialization IDs for filtering
         rating: typeof p.averageRating === 'number' ? p.averageRating : 0,
@@ -129,6 +134,7 @@ const ServiceList = () => {
       }));
       console.log('mapped professionals with specializations:', mapped.map(p => ({
         name: p.name,
+        firstSpecializationId: p.firstSpecializationId,
         specializations: p.specializations,
         allSpecializationIds: p.allSpecializationIds
       })))
@@ -176,6 +182,7 @@ const ServiceList = () => {
         service: p.workTitle || (p.specializations && p.specializations[0]?.name) || t('service-list.company-1-service'),
         category: p.specializations && p.specializations[0] ? p.specializations[0].name : t('service-list.building'),
         categoryId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null,
+        firstSpecializationId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null, // Store first specialization ID
         specializations: p.specializations || [], // Store all specializations
         allSpecializationIds: p.specializations ? p.specializations.map(spec => spec._id) : [], // Store all specialization IDs for filtering
         rating: typeof p.averageRating === 'number' ? p.averageRating : 0,
@@ -248,14 +255,25 @@ const ServiceList = () => {
   // Fetch professionals by category using API
   const fetchProfessionalsByCategory = async (categoryId) => {
     try {
-      console.log('Fetching professionals for category ID:', categoryId);
+      console.log('=== CATEGORY FILTERING DEBUG ===');
+      console.log('Category ID received:', categoryId);
+      console.log('Available service categories:', serviceCategories);
       setLoading(true);
       setError('');
       
-      // Call backend API with specialization parameter
-      const apiUrl = `${BaseUrl}/professional/get-all-professsional?specialization=${encodeURIComponent(categoryId)}&page=1&limit=1000`;
-      console.log('Category API URL:', apiUrl);
-      console.log('Category ID being sent:', categoryId);
+      // Find the category object to get the specialization ID
+      const selectedCategory = serviceCategories.find(cat => cat.id === categoryId);
+      const specializationId = selectedCategory ? selectedCategory.id : categoryId;
+      
+      console.log('Selected category object:', selectedCategory);
+      console.log('Specialization ID to use:', specializationId);
+      
+      // Call backend API with specialization parameter using the specialization ID
+      const apiUrl = `${BaseUrl}/professional/get-all-professsional?specialization=${encodeURIComponent(specializationId)}&page=1&limit=1000`;
+      console.log('=== API REQUEST ===');
+      console.log('API URL:', apiUrl);
+      console.log('Specialization parameter:', specializationId);
+      console.log('Encoded specialization:', encodeURIComponent(specializationId));
       
       const res = await fetch(apiUrl);
       console.log('Category API response status:', res.status);
@@ -277,6 +295,7 @@ const ServiceList = () => {
         service: p.workTitle || (p.specializations && p.specializations[0]?.name) || t('service-list.company-1-service'),
         category: p.specializations && p.specializations[0] ? p.specializations[0].name : t('service-list.building'),
         categoryId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null,
+        firstSpecializationId: p.specializations && p.specializations[0] ? p.specializations[0]._id : null, // Store first specialization ID
         specializations: p.specializations || [], // Store all specializations
         allSpecializationIds: p.specializations ? p.specializations.map(spec => spec._id) : [], // Store all specialization IDs for filtering
         rating: typeof p.averageRating === 'number' ? p.averageRating : 0,
@@ -284,32 +303,22 @@ const ServiceList = () => {
         isFavorite: !!p.isLiked
       }));
       
-      // Always apply client-side filtering to ensure accuracy
-      console.log('Applying client-side filtering for category:', categoryId);
-      const filtered = mapped.filter(provider => {
-        const hasSpecialization = providerHasSpecialization(provider, categoryId);
-        console.log(`Provider ${provider.name} has specialization ${categoryId}:`, hasSpecialization);
-        console.log(`Provider ${provider.name} specializations:`, provider.allSpecializationIds);
-        return hasSpecialization;
-      });
-      console.log('Client-side filtered results:', filtered.length, 'providers');
-      setServiceProviders(filtered);
-      setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+      // Trust the backend API filtering - no client-side filtering needed
+      console.log('=== BACKEND FILTERING RESULTS ===');
+      console.log(`Professionals returned by backend API: ${mapped.length}`);
+      console.log('Provider names from API:', mapped.map(p => p.name));
+      
+      // Display all professionals returned by the backend API
+        setServiceProviders(mapped);
+        setTotalPages(Math.ceil(mapped.length / itemsPerPage));
       
       setCurrentPage(1); // Reset to first page when filtering
     } catch (e) {
       console.error('Category API error:', e);
-      // Fallback to client-side filtering if API fails
-      console.log('API failed, using client-side filtering for category:', categoryId);
-      const filtered = allServiceProviders.filter(provider => {
-        const hasSpecialization = providerHasSpecialization(provider, categoryId);
-        console.log(`Fallback: Provider ${provider.name} has specialization ${categoryId}:`, hasSpecialization);
-        console.log(`Fallback: Provider ${provider.name} specializations:`, provider.allSpecializationIds);
-        return hasSpecialization;
-      });
-      console.log('Fallback filtered results:', filtered.length, 'providers');
-      setServiceProviders(filtered);
-      setTotalPages(Math.ceil(filtered.length / itemsPerPage));
+      // Show error message instead of fallback filtering
+      setError(`Failed to load professionals for this category: ${e.message}`);
+      setServiceProviders([]);
+      setTotalPages(0);
       setCurrentPage(1);
     } finally {
       setLoading(false);
@@ -325,8 +334,9 @@ const ServiceList = () => {
     if (filterId !== 'all') {
       const selectedCategory = serviceCategories.find(cat => cat.id === filterId);
       if (selectedCategory) {
-        console.log('Fetching professionals for category:', selectedCategory.name, 'ID:', selectedCategory.id);
+        console.log('Fetching professionals for category:', selectedCategory.name, 'Specialization ID:', selectedCategory.id);
         console.log('Selected category details:', selectedCategory);
+        // Pass the specialization ID (which is the same as category.id in this case)
         fetchProfessionalsByCategory(selectedCategory.id);
       } else {
         console.error('Selected category not found:', filterId);
@@ -386,6 +396,112 @@ const ServiceList = () => {
       } else {
         console.log('Kiny category not found in serviceCategories');
       }
+    };
+
+    // Add debug function to test API call manually
+    window.testCategoryAPI = async (specializationId) => {
+      console.log('=== MANUAL API TEST ===');
+      console.log('Testing API call with specialization ID:', specializationId);
+      
+      try {
+        const apiUrl = `${BaseUrl}/professional/get-all-professsional?specialization=${encodeURIComponent(specializationId)}&page=1&limit=1000`;
+        console.log('API URL:', apiUrl);
+        
+        const res = await fetch(apiUrl);
+        console.log('Response status:', res.status);
+        
+        if (res.ok) {
+          const data = await res.json();
+          console.log('API Response:', data);
+          console.log('Total professionals returned:', data?.data?.length);
+          
+          // Show professionals with this specialization
+          const professionalsWithSpecialization = data.data.filter(prof => 
+            prof.specializations && prof.specializations.some(spec => spec._id === specializationId)
+          );
+          console.log('Professionals with this specialization:', professionalsWithSpecialization.length);
+          console.log('Professional names:', professionalsWithSpecialization.map(p => p.name));
+        } else {
+          console.error('API call failed:', res.status, res.statusText);
+        }
+      } catch (error) {
+        console.error('API test error:', error);
+      }
+    };
+
+    // Add debug function to test filtering by first specialization ID
+    window.testFirstSpecializationFiltering = () => {
+      console.log('=== FIRST SPECIALIZATION FILTERING TEST ===');
+      console.log('All professionals with their first specialization IDs:');
+      
+      allServiceProviders.forEach(provider => {
+        console.log(`${provider.name}:`, {
+          firstSpecializationId: provider.firstSpecializationId,
+          firstSpecializationName: provider.specializations?.[0]?.name,
+          allSpecializations: provider.specializations?.map(s => ({ id: s._id, name: s.name }))
+        });
+      });
+      
+      // Test filtering by first specialization ID
+      const contractorId = '6793de5fe815e9e04f9690ce'; // contractor specialization ID
+      const contractorsByFirst = allServiceProviders.filter(provider => 
+        provider.firstSpecializationId === contractorId
+      );
+      console.log(`Professionals with first specialization as "contractor": ${contractorsByFirst.length}`);
+      console.log('Contractor names:', contractorsByFirst.map(p => p.name));
+    };
+
+    // Add debug function to test complete category filtering flow
+    window.testCategoryFilteringFlow = () => {
+      console.log('=== COMPLETE CATEGORY FILTERING FLOW TEST ===');
+      console.log('1. Categories from getAll-professional-categories API:');
+      console.log(serviceCategories);
+      
+      console.log('2. Testing filter for "contractor" category:');
+      const contractorCategory = serviceCategories.find(cat => cat.name === 'contractor');
+      if (contractorCategory) {
+        console.log('Contractor category found:', contractorCategory);
+        console.log('This ID will be passed to API:', contractorCategory.id);
+        console.log('API URL will be:', `${BaseUrl}/professional/get-all-professsional?specialization=${contractorCategory.id}&page=1&limit=1000`);
+        
+        // Test the actual filtering
+        const contractors = allServiceProviders.filter(provider => 
+          provider.allSpecializationIds.includes(contractorCategory.id)
+        );
+        console.log(`3. Professionals with "contractor" specialization: ${contractors.length}`);
+        console.log('Contractor names:', contractors.map(p => p.name));
+      } else {
+        console.log('Contractor category not found in serviceCategories');
+      }
+    };
+
+    // Add debug function to test API call for specific specialization
+    window.testSpecializationAPICall = (specializationId, specializationName) => {
+      console.log(`=== TESTING API CALL FOR ${specializationName.toUpperCase()} ===`);
+      console.log(`Specialization ID: ${specializationId}`);
+      console.log(`Specialization Name: ${specializationName}`);
+      
+      const apiUrl = `${BaseUrl}/professional/get-all-professsional?specialization=${encodeURIComponent(specializationId)}&page=1&limit=1000`;
+      console.log('API URL:', apiUrl);
+      
+      // Make the API call
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+          console.log('API Response:', data);
+          console.log(`Total professionals returned: ${data?.data?.length || 0}`);
+          
+          if (data?.data) {
+            console.log('Provider names from API:', data.data.map(p => p.name));
+            console.log('Provider specializations from API:');
+            data.data.forEach(provider => {
+              console.log(`${provider.name}:`, provider.specializations?.map(s => ({ id: s._id, name: s.name })));
+            });
+          }
+        })
+        .catch(error => {
+          console.error('API Call Error:', error);
+      });
     };
   }, []);
 
@@ -533,7 +649,7 @@ const ServiceList = () => {
                                 <div className="providers-grid">
                   {loading ? (
                     <div className="text-center">
-                      <p>Loading professionals...</p>
+                      <p>{t('service-list.loading', 'Loading professionals...')}</p>
                     </div>
                   ) : currentProviders.length === 0 ? (
                     <div className='text-center'>
@@ -597,9 +713,20 @@ const ServiceList = () => {
                                                     </div>
 
                                                     <div className="category-button-section">
-                                                        <button className="category-btn">
-                                                            {provider.category}
-                                                        </button>
+                                                        {provider.specializations && provider.specializations.length > 0 ? (
+                                                            <button className="category-btn">
+                                                                {provider.specializations[0].name}
+                                                                {provider.specializations.length > 1 && (
+                                                                    <span className="more-count">
+                                                                        +{provider.specializations.length - 1} more
+                                                                    </span>
+                                                                )}
+                                                            </button>
+                                                        ) : (
+                                                            <button className="category-btn">
+                                                                {provider.category}
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>

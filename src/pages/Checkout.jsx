@@ -146,38 +146,24 @@ const Checkout = () => {
                 const orderData = await response.json();
                 showAlert(t('checkout.messages.orderPlacedSuccess'), 'success');
                 
-                // Clear cart after successful order
-                localStorage.removeItem('cart');
-                setCartItems([]);
+                // Don't clear cart immediately - wait for successful payment
+                // Cart will be cleared only after successful payment confirmation
                 
                 // Check if there's an invoice URL to redirect to
                 if (orderData.paymentInfo && orderData.paymentInfo.invoiceUrl) {
-                    // Open invoice URL in new secured window and monitor when it's closed
-                    const paymentWindow = window.open(
-                        orderData.paymentInfo.invoiceUrl,
-                        'paymentWindow',
-                        'width=800,height=600,scrollbars=yes,resizable=yes,status=yes,location=yes,toolbar=no,menubar=no'
-                    );
+                    // Store order info for payment result handling
+                    localStorage.setItem('pendingOrder', JSON.stringify({
+                        orderId: orderData.orderId,
+                        cartItems: cartItems,
+                        timestamp: Date.now()
+                    }));
                     
-                    // Monitor the payment window
-                    const checkClosed = setInterval(() => {
-                        if (paymentWindow.closed) {
-                            clearInterval(checkClosed);
-                            // Redirect to payment result page to handle success/failure
-                            window.location.href = '/payment/result';
-                        }
-                    }, 1000);
-                    
-                    // Fallback: redirect after 30 minutes if window is still open
-                    setTimeout(() => {
-                        if (!paymentWindow.closed) {
-                            clearInterval(checkClosed);
-                            paymentWindow.close();
-                            window.location.href = '/payment/result';
-                        }
-                    }, 30 * 60 * 1000); // 30 minutes
+                    // Redirect to Fatora payment page in the same tab
+                    window.location.href = orderData.paymentInfo.invoiceUrl;
                 } else {
-                    // Fallback to success modal if no invoice URL
+                    // Clear cart only if no payment gateway (direct success)
+                    localStorage.removeItem('cart');
+                    setCartItems([]);
                     setShowPaymentModal(true);
                 }
             } else {

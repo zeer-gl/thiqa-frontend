@@ -913,7 +913,7 @@ const validateForm = () => {
           setPhoneError('');
           setPhoneValid(true);
         } else {
-          setPhoneError('Please enter a valid Kuwait phone number');
+          setPhoneError(t('auth.signupsp.validation.phoneFormat', 'Please enter a valid Kuwait phone number'));
           setPhoneValid(false);
         }
       }}
@@ -933,8 +933,8 @@ const validateForm = () => {
     )
   }
   
-  {formSubmitted && !phoneNo && <div className="text-danger mt-1">{t('Phone number is required')}</div>}
-  {formSubmitted && phoneNo && !validatePhone(phoneNo) && <div className="text-danger mt-1">{t('Please enter a valid Kuwait phone number (e.g., 51234567, +96551234567)')}</div>}
+  {formSubmitted && !phoneNo && <div className="text-danger mt-1">{t('auth.signupsp.validation.phoneRequired', 'Phone number is required')}</div>}
+  {formSubmitted && phoneNo && !validatePhone(phoneNo) && <div className="text-danger mt-1">{t('auth.signupsp.validation.phoneFormat', 'Please enter a valid Kuwait phone number (e.g., 51234567, +96551234567)')}</div>}
 </div>
 
                                         {/* Email */}
@@ -1178,7 +1178,7 @@ const validateForm = () => {
                                                 
                                                 {formSubmitted && selectedSpecializations.length === 0 && (
                                                     <div className="text-danger mt-1 small">
-                                                        Please select at least one specialization
+                                                        {t('auth.signupsp.validation.specializationRequired', 'Please select at least one specialization')}
                                                     </div>
                                                 )}
                                             </div>

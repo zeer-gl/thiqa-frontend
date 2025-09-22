@@ -14,7 +14,7 @@ const Alert = () => {
     }`}
     style={{
       right: '1rem',
-      top: '3rem',
+      top: '4rem',
       zIndex: 9999,
       maxWidth: '400px',
       animation: 'fadeIn 0.3s ease-in'

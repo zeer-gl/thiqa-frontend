@@ -702,7 +702,7 @@ function Signup() {
                         />
                       </div>
                     
-                      {formSubmitted && !name && <div className="text-danger mt-1">{t('Name field is required ')}</div>}
+                      {formSubmitted && !name && <div className="text-danger mt-1">{t('auth.signup.validation.nameRequired', 'Name is required')}</div>}
                     </div>
 
                     <div className="form-group mb-3">
@@ -733,7 +733,7 @@ function Signup() {
                               setPhoneError('');
                               setPhoneValid(true);
                             } else {
-                              setPhoneError('Please enter a valid Kuwait phone number');
+                              setPhoneError(t('auth.signup.validation.phoneFormat', 'Please enter a valid Kuwait phone number'));
                               setPhoneValid(false);
                             }
                           }}
@@ -747,8 +747,8 @@ function Signup() {
                           )
                          }
 					
-                      {formSubmitted && !phoneNo && <div className="text-danger mt-1">{t('Phone number is required')}</div>}
-                      {formSubmitted && phoneNo && !validatePhone(phoneNo) && <div className="text-danger mt-1">{t('Please enter a valid Kuwait phone number (e.g., 51234567, +96551234567)')}</div>}
+                      {formSubmitted && !phoneNo && <div className="text-danger mt-1">{t('auth.signup.validation.phoneRequired', 'Phone number is required')}</div>}
+                      {formSubmitted && phoneNo && !validatePhone(phoneNo) && <div className="text-danger mt-1">{t('auth.signup.validation.phoneFormat', 'Please enter a valid Kuwait phone number (e.g., 51234567, +96551234567)')}</div>}
                     </div>
 
                     <div className="form-group mb-3">
@@ -767,7 +767,7 @@ function Signup() {
                             </div>
                           )
                          }
-                      {formSubmitted && !email && <div className="text-danger mt-1">{t('Email is required')}</div>}
+                      {formSubmitted && !email && <div className="text-danger mt-1">{t('auth.signup.validation.emailRequired', 'Email is required')}</div>}
 					
 
                     </div>
@@ -790,7 +790,7 @@ function Signup() {
                           <img src={EyeIcon} alt="Toggle password visibility" style={{ width: "20px", height: "20px" }} />
                         </div>
                       </div>
-                      {formSubmitted && !password && <div className="text-danger mt-1">{t('Password is required')}</div>}
+                      {formSubmitted && !password && <div className="text-danger mt-1">{t('auth.signup.validation.passwordRequired', 'Password is required')}</div>}
                     </div>
 
                     <div className="form-group mb-3">
@@ -811,8 +811,8 @@ function Signup() {
                           <img src={EyeIcon} alt="Toggle confirm password visibility" style={{ width: "20px", height: "20px" }} />
                         </div>
                       </div>
-                      {formSubmitted && !confirmPassword && <div className="text-danger mt-1">{t('Confirm password is required')}</div>}
-                      {formSubmitted && confirmPassword && password !== confirmPassword && <div className="text-danger mt-1">{t('Password and confirm pasword not match')}</div>}
+                      {formSubmitted && !confirmPassword && <div className="text-danger mt-1">{t('auth.signup.validation.confirmPasswordRequired', 'Confirm password is required')}</div>}
+                      {formSubmitted && confirmPassword && password !== confirmPassword && <div className="text-danger mt-1">{t('auth.signup.validation.passwordMismatch', 'Password and confirm password do not match')}</div>}
                     </div>
                   </div>
 
