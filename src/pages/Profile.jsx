@@ -13,6 +13,7 @@ import HeartIcon from "/public/images/profile/Heart.svg";
 import SidePattern from '/public/images/side-pattern.svg';
 import PhoneIcon from '/public/images/profile/phone-icon.svg';
 import Bin from '/public/images/profile/bin-icon.svg';
+import LockIcon from '/public/images/auth/reg-lock.svg';
 
 import OrderCard from '../components/OrderCard';
 import ServiceCard from '../components/ServiceCard';
@@ -157,6 +158,15 @@ const Profile = () => {
     cvv: '',
     type: 'visa'
   });
+  
+  const [changePasswordForm, setChangePasswordForm] = useState({
+    currentPassword: '',
+    newPassword: ''
+  });
+  
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [changePasswordErrors, setChangePasswordErrors] = useState({});
+  
   
   // Sample profile data - in a real app, this would come from an API or context
   const [profileData, setProfileData] = useState({
@@ -898,6 +908,12 @@ const Profile = () => {
       text: t('profile.sidebar.likedServices'),
       active: false,
     },
+    {
+      id: 'change-password',
+      icon: LockIcon,
+      text: t('profile.sidebar.changePassword'),
+      active: false,
+    },
   ];
 
   const handleTabClick = (tabId) => {
@@ -1121,9 +1137,152 @@ const Profile = () => {
   };
   
 
-  const handleChangePassword = () => {
-    console.log('Change password clicked');
+  const handleChangePasswordFormChange = (field, value) => {
+    setChangePasswordForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    
+    // Clear error when user starts typing
+    if (changePasswordErrors[field]) {
+      setChangePasswordErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }));
+    }
   };
+
+  const validateChangePasswordForm = () => {
+    const newErrors = {};
+    
+    if (!changePasswordForm.currentPassword.trim()) {
+      const currentPasswordError = t('profile.changePassword.currentPasswordRequired') || 'كلمة المرور الحالية مطلوبة';
+      console.log('Current password error translation:', currentPasswordError); // Debug log
+      newErrors.currentPassword = currentPasswordError;
+    }
+    
+    if (!changePasswordForm.newPassword.trim()) {
+      const newPasswordError = t('profile.changePassword.newPasswordRequired') || 'كلمة المرور الجديدة مطلوبة';
+      console.log('New password error translation:', newPasswordError); // Debug log
+      newErrors.newPassword = newPasswordError;
+    } else if (changePasswordForm.newPassword.length < 6) {
+      const passwordTooShortError = t('profile.changePassword.passwordTooShort') || 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل';
+      console.log('Password too short error translation:', passwordTooShortError); // Debug log
+      newErrors.newPassword = passwordTooShortError;
+    }
+    
+    setChangePasswordErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSaveChangePassword = async () => {
+    if (!validateChangePasswordForm()) {
+      return;
+    }
+    
+    setChangingPassword(true);
+    
+    try {
+      // Get customer ID
+      let customerId = null;
+      try {
+        const storedUser = localStorage.getItem('userData');
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          customerId = parsed?._id || parsed?.id || null;
+        }
+        if (!customerId) {
+          customerId = localStorage.getItem('userId');
+        }
+      } catch {
+        throw new Error('Failed to parse user data from local storage');
+      }
+      
+      if (!customerId) {
+        throw new Error('User not found in local storage');
+      }
+      
+      // Prepare API payload
+      const payload = {
+        currentPassword: changePasswordForm.currentPassword,
+        newPassword: changePasswordForm.newPassword
+      };
+      
+      const response = await fetch(`${BaseUrl}/customer/${customerId}/changePassword`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        // Handle specific error messages and translate them
+        let errorMessage = data.message || `Failed to change password: ${response.status}`;
+        
+        // Translate common error messages
+        if (errorMessage.toLowerCase().includes('current password') || 
+            errorMessage.toLowerCase().includes('incorrect password') ||
+            errorMessage.toLowerCase().includes('wrong password')) {
+          errorMessage = t('profile.changePassword.currentPasswordIncorrect') || 'كلمة المرور الحالية غير صحيحة';
+        } else if (errorMessage.toLowerCase().includes('password too weak') ||
+                   errorMessage.toLowerCase().includes('weak password')) {
+          errorMessage = t('profile.changePassword.passwordTooWeak') || 'كلمة المرور ضعيفة جداً';
+        } else if (errorMessage.toLowerCase().includes('password too short')) {
+          errorMessage = t('profile.changePassword.passwordTooShort') || 'كلمة المرور قصيرة جداً';
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      if (data.success) {
+        const successMessage = t('profile.changePassword.successMessage');
+        console.log('Success message:', successMessage); // Debug log
+        showAlert(successMessage, 'success');
+        // Clear form
+        setChangePasswordForm({
+          currentPassword: '',
+          newPassword: ''
+        });
+      } else {
+        throw new Error(data.message || t('profile.changePassword.errorMessage'));
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      
+      // Handle and translate error messages
+      let errorMessage = error.message || t('profile.changePassword.errorMessage');
+      
+      // Check if it's already a translated message (contains Arabic characters)
+      const hasArabicChars = /[\u0600-\u06FF]/.test(errorMessage);
+      
+      if (!hasArabicChars) {
+        // Translate common English error messages
+        if (errorMessage.toLowerCase().includes('current password') || 
+            errorMessage.toLowerCase().includes('incorrect password') ||
+            errorMessage.toLowerCase().includes('wrong password')) {
+          errorMessage = t('profile.changePassword.currentPasswordIncorrect') || 'كلمة المرور الحالية غير صحيحة';
+        } else if (errorMessage.toLowerCase().includes('password too weak') ||
+                   errorMessage.toLowerCase().includes('weak password')) {
+          errorMessage = t('profile.changePassword.passwordTooWeak') || 'كلمة المرور ضعيفة جداً';
+        } else if (errorMessage.toLowerCase().includes('password too short')) {
+          errorMessage = t('profile.changePassword.passwordTooShort') || 'كلمة المرور قصيرة جداً';
+        } else if (errorMessage.toLowerCase().includes('network') ||
+                   errorMessage.toLowerCase().includes('connection')) {
+          errorMessage = t('profile.changePassword.networkError') || 'خطأ في الشبكة';
+        }
+      }
+      
+      console.log('Final error message:', errorMessage); // Debug log
+      showAlert(errorMessage, 'error');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+  
 
   const handleProfilePictureChange = () => {
     fileInputRef.current.click();
@@ -1605,10 +1764,10 @@ const Profile = () => {
                 </div>
 
                 {/* Button Section */}
-                <div className="button-section">
-                  {/* <button className="btn btn-secondary" onClick={handleChangePassword} disabled={isEditingProfile}>
+                <div className="button-section d-flex gap-3">
+                  <button className="btn btn-secondary" onClick={() => setActiveTab('change-password')} disabled={isEditingProfile}>
                     {t('profile.content.changePasswordButton')}
-                  </button> */}
+                  </button>
                   <button className="btn btn-primary" onClick={handleEditProfile}>
                     {profileLoading ? t('common.saving') : isEditingProfile ? t('common.save') : t('profile.content.editProfileButton')}
                   </button>
@@ -2123,6 +2282,69 @@ const Profile = () => {
                 )}
               </div>
             )}
+
+            {activeTab === 'change-password' && (
+              <div className="change-password-section">
+                <h3 className="ar-heading-bold mb-4">{t('profile.changePassword.title', 'Change Password')}</h3>
+                
+                <div className="form-section">
+                  <form onSubmit={(e) => { e.preventDefault(); handleSaveChangePassword(); }}>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">
+                          {t('profile.changePassword.currentPassword', 'Current Password')} *
+                        </label>
+                        <input
+                          type="password"
+                          className={`form-input ${changePasswordErrors.currentPassword ? 'is-invalid' : ''}`}
+                          value={changePasswordForm.currentPassword}
+                          onChange={(e) => handleChangePasswordFormChange('currentPassword', e.target.value)}
+                          placeholder={t('profile.changePassword.currentPasswordPlaceholder', 'Enter your current password')}
+                        />
+                        {changePasswordErrors.currentPassword && (
+                          <div className="text-danger mt-1">{changePasswordErrors.currentPassword}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">
+                          {t('profile.changePassword.newPassword', 'New Password')} *
+                        </label>
+                        <input
+                          type="password"
+                          className={`form-input ${changePasswordErrors.newPassword ? 'is-invalid' : ''}`}
+                          value={changePasswordForm.newPassword}
+                          onChange={(e) => handleChangePasswordFormChange('newPassword', e.target.value)}
+                          placeholder={t('profile.changePassword.newPasswordPlaceholder', 'Enter your new password')}
+                        />
+                        {changePasswordErrors.newPassword && (
+                          <div className="text-danger mt-1">{changePasswordErrors.newPassword}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="button-section d-flex gap-3">
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={changingPassword}
+                      >
+                        {changingPassword ? (
+                          <>
+                            <i className="fas fa-spinner fa-spin me-2"></i>
+                            {t('common.changing', 'Changing...')}
+                          </>
+                        ) : (
+                          t('profile.changePassword.saveChanges', 'Save Changes')
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -2348,6 +2570,7 @@ const Profile = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

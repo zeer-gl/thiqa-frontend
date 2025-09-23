@@ -846,7 +846,8 @@
       "paymentMethod": "طريقة الدفع",
       "service": "الخدمة",
       "favorites": "المفضلة",
-      "likedServices": "الخدمات المفضلة"
+      "likedServices": "الخدمات المفضلة",
+      "changePassword": "تغيير كلمة المرور"
     },
     "content": {
       "nameLabel": "الاسم",
@@ -858,6 +859,24 @@
       "editProfileButton": "تعديل الملف",
       "changePasswordButton": "تغيير كلمة المرور",
       "logout": "تسجيل الخروج"
+    },
+    "changePassword": {
+      "title": "تغيير كلمة المرور",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "currentPasswordPlaceholder": "أدخل كلمة المرور الحالية",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+      "saveChanges": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "fillAllFields": "يرجى ملء جميع الحقول",
+      "passwordTooShort": "كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل",
+      "currentPasswordRequired": "كلمة المرور الحالية مطلوبة",
+      "newPasswordRequired": "كلمة المرور الجديدة مطلوبة",
+      "currentPasswordIncorrect": "كلمة المرور الحالية غير صحيحة",
+      "passwordTooWeak": "كلمة المرور ضعيفة جداً",
+      "networkError": "خطأ في الشبكة",
+      "successMessage": "تم تغيير كلمة المرور بنجاح",
+      "errorMessage": "فشل في تغيير كلمة المرور"
     },
     "addresses": {
       "addNewAddress": "أضافة عنوان جديد",
@@ -1132,6 +1151,7 @@
     "sending": "جاري الإرسال...",
     "submitting": "جاري الإرسال...",
     "saving": "جاري الحفظ...",
+    "changing": "جاري التغيير...",
     "saveChanges": "حفظ التغييرات",
     "total": "المجموع",
     "kwd": "د.ك",

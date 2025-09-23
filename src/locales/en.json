@@ -857,7 +857,8 @@
       "paymentMethod": "Payment Method",
       "service": "Service",
       "favorites": "Favorites",
-      "likedServices": "Liked Services"
+      "likedServices": "Liked Services",
+      "changePassword": "Change Password"
     },
     "content": {
       "nameLabel": "Name",
@@ -869,6 +870,21 @@
       "editProfileButton": "Edit Profile",
       "changePasswordButton": "Change Password",
       "logout": "Logout"
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "currentPasswordPlaceholder": "Enter your current password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "fillAllFields": "Please fill in all fields",
+      "passwordTooShort": "New password must be at least 6 characters",
+      "currentPasswordRequired": "Current password is required",
+      "newPasswordRequired": "New password is required",
+      "successMessage": "Password changed successfully",
+      "errorMessage": "Failed to change password"
     },
     "addresses": {
       "addNewAddress": "Add New Address",
@@ -1131,6 +1147,7 @@
     "sending": "Sending...",
     "submitting": "Submitting...",
     "saving": "Saving...",
+    "changing": "Changing...",
     "saveChanges": "Save Changes",
     "total": "Total",
     "kwd": "KWD",
