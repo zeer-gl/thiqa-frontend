@@ -42,6 +42,8 @@ import RequestQuoteList from './pages/RequestQuoteList.jsx';
 import ForgetPassword from './pages/auth/ForgetPassword.jsx';
 import ResetPassword from './pages/auth/ResetPassword.jsx';
 import PersonalProfile from './pages/PersonalProfile.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsAndConditions from './pages/TermsAndConditions.jsx';
 
 // Components
 import PageTitle from './components/PageTitle';
@@ -142,6 +144,8 @@ function AppContent() {
 
                         {/* Public routes - accessible without authentication */}
                         <Route path="/" element={<Home />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                         
                         {/* Protected routes - require authentication */}
                         <Route path="/offers" element={

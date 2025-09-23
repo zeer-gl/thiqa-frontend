@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useAlert } from '../context/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
     const [isChecking, setIsChecking] = useState(true);
     const [userRole, setUserRole] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const { showAlert: showAlertFunction } = useAlert();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const checkAuthAndRole = () => {
@@ -27,7 +30,10 @@ const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
                 const authenticated = !!((token || tokenSP) && isLoggedIn);
                 setIsAuthenticated(authenticated);
 
-                if (authenticated) {
+                // If not authenticated, show alert but don't redirect
+                if (!authenticated) {
+                    showAlertFunction(t('auth.registerFirst', 'Please register first to access this feature'), 'warning');
+                } else if (authenticated) {
                     // Determine user role - prioritize userRole from localStorage
                     let role = 'user'; // default role
                     
@@ -53,6 +59,7 @@ const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
                 console.error('Error checking authentication and role:', error);
                 setIsAuthenticated(false);
                 setUserRole(null);
+                showAlertFunction(t('auth.registerFirst', 'Please register first to access this feature'), 'warning');
             } finally {
                 setIsChecking(false);
             }
@@ -146,9 +153,20 @@ const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
         );
     }
 
-    // If not authenticated, redirect to home
+    // If not authenticated, show a message instead of redirecting
     if (!isAuthenticated) {
-        return <Navigate to="/" replace />;
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
+                <div className="text-center">
+                    <div className="alert alert-warning" role="alert">
+                        <h4 className="alert-heading">Access Restricted</h4>
+                        <p>Please register first to access this feature.</p>
+                        <hr />
+                        <p className="mb-0">You need to be logged in to view this content.</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     // If authenticated but role not allowed, redirect to appropriate profile

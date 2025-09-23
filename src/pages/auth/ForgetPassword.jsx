@@ -36,9 +36,9 @@ function ForgetPassword() {
         switch(name) {
             case 'email':
                 if (!value.trim()) {
-                    error = t('Email is required');
+                    error = t('auth.validation.emailRequired', 'Email is required');
                 } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                    error = t('Please enter a valid email');
+                    error = t('auth.validation.emailInvalid', 'Please enter a valid email');
                 }
                 break;
             default:
@@ -80,14 +80,14 @@ function ForgetPassword() {
         try {
             // Static implementation - just show success message
             setTimeout(() => {
-                showAlert(t('Password reset link sent to your email'), 'success');
+                showAlert(t('auth.forgotPassword.successMessage', 'Password reset link sent to your email'), 'success');
                 setSubmitting(false);
                 // Optionally navigate back to login
                 // navigate('/login');
             }, 2000);
             
         } catch (err) {
-            showAlert(err.message || t('Network error occurred'), 'error');
+            showAlert(err.message || t('auth.forgotPassword.networkError', 'Network error occurred'), 'error');
             setSubmitting(false);
         }
     };

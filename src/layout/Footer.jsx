@@ -51,8 +51,8 @@ const Footer = () => {
                                             {t('nav.serviceProviders', 'Service Providers')}
                                         </Link>
                                         <Link 
-                                            className={`nav-link px-4 py-2 nav-item ${location.pathname === '/privacy' ? 'active' : ''}`} 
-                                            to="/privacy"
+                                            className={`nav-link px-4 py-2 nav-item ${location.pathname === '/about' ? 'active' : ''}`} 
+                                            to="/about"
                                         >
                                             {t('footer.privacy')}
                                         </Link>
@@ -73,21 +73,21 @@ const Footer = () => {
                 <div className="splitter"></div>
                 <div className='d-flex align-items-center justify-content-between mt-3'>
                     <div className='d-flex align-items-center gap-3 footer-socials'>
-                        <div className='nav-icons-container'>
-                            <img src={Youtube} alt=""/>
-                        </div>
-                        <div className='nav-icons-container'>
-                            <img src={Tiktok} alt=""/>
-                        </div>
-                        <div className='nav-icons-container'>
-                            <img src={LinkedIn} alt=""/>
-                        </div>
-                        <div className='nav-icons-container'>
-                            <img src={Instagram} alt=""/>
-                        </div>
-                        <div className='nav-icons-container'>
-                            <img src={Facebook} alt=""/>
-                        </div>
+                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className='nav-icons-container'>
+                            <img src={Youtube} alt="YouTube"/>
+                        </a>
+                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" className='nav-icons-container'>
+                            <img src={Tiktok} alt="TikTok"/>
+                        </a>
+                        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className='nav-icons-container'>
+                            <img src={LinkedIn} alt="LinkedIn"/>
+                        </a>
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className='nav-icons-container'>
+                            <img src={Instagram} alt="Instagram"/>
+                        </a>
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className='nav-icons-container'>
+                            <img src={Facebook} alt="Facebook"/>
+                        </a>
                     </div>
                     <div>
                         <p className='text-white'>
@@ -95,12 +95,12 @@ const Footer = () => {
                         </p>
                     </div>
                     <div className='d-flex gap-4 align-items-center'>
-                        <a href='#' className='text-decoration-none text-white'>
+                        <Link to='/terms-and-conditions' className='text-decoration-none text-white'>
                             {t('footer.laws')}
-                        </a>
-                        <a href="" className='text-decoration-none text-white'>
+                        </Link>
+                        <Link to="/privacy-policy" className='text-decoration-none text-white'>
                             {t('footer.politicsAndPrivacy')}
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

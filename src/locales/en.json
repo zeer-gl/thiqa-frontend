@@ -830,7 +830,9 @@
       "subtitle": "Enter your email to reset your password",
       "email": "Email",
       "submitButton": "Send Reset Link",
-      "backToLogin": "Back to Login"
+      "backToLogin": "Back to Login",
+      "successMessage": "Password reset link sent to your email",
+      "networkError": "Network error occurred"
     },
     "resetPassword": {
       "title": "Reset Password",
@@ -839,6 +841,10 @@
       "confirmPassword": "Confirm Password",
       "submitButton": "Reset Password",
       "backToLogin": "Back to Login"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email"
     }
   },
   "profile": {
