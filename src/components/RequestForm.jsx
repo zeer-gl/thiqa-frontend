@@ -22,8 +22,8 @@ const RequestForm = ({
         const file = e.target.files[0];
         
         if (file) {
-            // Check file size (5MB = 5 * 1024 * 1024 bytes)
-            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            // Check file size (1MB = 1 * 1024 * 1024 bytes)
+            const maxSize = 1 * 1024 * 1024; // 1MB in bytes
             const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
             
             // Validate file type
@@ -38,7 +38,7 @@ const RequestForm = ({
             }
             
             if (file.size > maxSize) {
-                setFileSizeError(`File size is too large (${fileSizeMB}MB). Maximum allowed size is 5MB.`);
+                setFileSizeError(`File size is too large (${fileSizeMB}MB). Maximum allowed size is 1MB.`);
                 setSelectedFile(null);
                 setFieldValue('projectDesign', null);
                 // Clear the file input
@@ -117,13 +117,6 @@ const RequestForm = ({
                                                 <span className="file-size">({(selectedFile.size / (1024 * 1024)).toFixed(2)}MB)</span>
                                             </div>
                                         )}
-                                        {/* File size error display */}
-                                        {fileSizeError && (
-                                            <div className="file-size-error">
-                                                <i className="fas fa-exclamation-triangle"></i>
-                                                {fileSizeError}
-                                            </div>
-                                        )}
                                     </>
                                 ) : field.type === 'textarea' ? (
                                     <Field
@@ -184,6 +177,14 @@ const RequestForm = ({
                                     />
                                 )}
                             </div>
+                            
+                            {/* File size error display - below the field */}
+                            {field.type === 'file' && fileSizeError && (
+                                <div className="text-danger mt-2 small">
+                                    {fileSizeError}
+                                </div>
+                            )}
+                            
                             <ErrorMessage name={field.name} component="div" className="error-message" />
                         </div>
                     ))}

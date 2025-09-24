@@ -798,8 +798,8 @@
       "floorApartmentPlaceholder": "e.g., 2nd Floor, Apt 5"
     },
     "loginsp": {
-      "title": "Service Provider Registration",
-      "subtitle": "Create your service provider account",
+      "title": "Service Provider Login",
+      "subtitle": "Don't have an account? Sign up",
       "fullName": "Full Name",
       "phone": "Phone Number",
       "email": "Email Address",
@@ -813,26 +813,56 @@
       "terms": "Terms",
       "and": "and",
       "privacy": "Privacy Policy",
+      "loginFailed": "Login failed",
+      "invalidCredentials": "Invalid credentials",
+      "professionalNotFound": "Professional not found",
+      "accountNotVerified": "Account not verified",
+      "accountBlocked": "Account blocked",
+      "networkError": "Network error",
+      "unexpectedError": "Unexpected error occurred",
+      "googleLoginSuccess": "Google login successful!",
       "otp": {
         "title": "Enter OTP",
         "description": "Enter the code sent to your phone to verify your account.",
         "submit": "Submit",
         "resend": "Resend Code",
-        "timerPrefix": "Time left:"
+        "timerPrefix": "Time left:",
+        "alert": "Please enter all 4 digits."
       },
-      "registerAsSeeker": "Register as Service Seeker",
+      "registerAsSeeker": "Register as Service Provider",
       "registerAsCustomer": "Register as a Customer",
       "loginAsProvider": "Login as Service Provider",
-      "loginAsCustomer": "Login as Customer"
+      "loginAsCustomer": "Login as Customer",
+      "forgotPassword": "Forget Password"
     },
     "forgotPassword": {
       "title": "Forgot Password",
-      "subtitle": "Enter your email to reset your password",
-      "email": "Email",
-      "submitButton": "Send Reset Link",
+      "subtitle": "Enter your phone number to receive OTP",
+      "verifyOtp": "Verify OTP",
+      "resetPassword": "Reset Password",
+      "otpSubtitle": "Enter the 4-digit OTP sent to your phone",
+      "resetSubtitle": "Enter your new password",
+      "phoneNumber": "Phone Number",
+      "phonePlaceholder": "+965 12345678",
+      "otp": "OTP Code",
+      "otpPlaceholder": "1234",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "sendOtp": "Send OTP",
       "backToLogin": "Back to Login",
-      "successMessage": "Password reset link sent to your email",
-      "networkError": "Network error occurred"
+      "otpSent": "OTP sent to your phone number",
+      "sendOtpError": "Failed to send OTP",
+      "otpVerified": "OTP verified successfully",
+      "otpInvalid": "Invalid OTP",
+      "passwordResetSuccess": "Password reset successfully",
+      "resetError": "Failed to reset password",
+      "networkError": "Network error occurred",
+      "email": "Email",
+      "phone": "Phone",
+      "emailPlaceholder": "example@example.com",
+      "changeContact": "Change Contact Method"
     },
     "resetPassword": {
       "title": "Reset Password",
@@ -844,7 +874,15 @@
     },
     "validation": {
       "emailRequired": "Email is required",
-      "emailInvalid": "Please enter a valid email"
+      "emailInvalid": "Please enter a valid email",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "otpRequired": "OTP is required",
+      "otpInvalid": "Please enter a valid 4-digit OTP",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordMismatch": "Passwords do not match"
     }
   },
   "profile": {
@@ -883,6 +921,9 @@
       "passwordTooShort": "New password must be at least 6 characters",
       "currentPasswordRequired": "Current password is required",
       "newPasswordRequired": "New password is required",
+      "currentPasswordIncorrect": "Current password is incorrect",
+      "passwordTooWeak": "Password is too weak",
+      "networkError": "Network error",
       "successMessage": "Password changed successfully",
       "errorMessage": "Failed to change password"
     },

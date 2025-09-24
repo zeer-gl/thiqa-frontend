@@ -811,3 +811,36 @@ fieldset {
     justify-content: center;
   }
 }
+
+// Service Modal Styles
+.service-modal-dialog {
+  margin: 0 !important;
+  position: absolute !important;
+  max-width: 45vw !important;
+  max-height: 90vh !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 45vw !important;
+  
+  // Ensure proper centering on all screens
+  @media (min-width: 768px) {
+    margin: 0 !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 45vw !important;
+    max-width: 45vw !important;
+  }
+  
+  @media (max-width: 767px) {
+    margin: 0 !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
+  }
+}

@@ -660,8 +660,8 @@ function Signup() {
                   <img className="auth-logo" src={Logo} alt="" />
                 </div>
                 <div className="my-4">
-                  <h2 className="pb-3 ar-heading-bold">{t("auth.signup.title")}</h2>
-                  <h5 className="ar-heading-bold">{t("auth.signup.subtitle")}</h5>
+                  <h2 className={`pb-3 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t("auth.signup.title")}</h2>
+                  <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>{t("auth.signup.subtitle")}</h5>
                
                 </div>
 				<div className={errorMsg ? "mb-10" : ""}>

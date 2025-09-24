@@ -37,6 +37,7 @@ import { useUser } from '../context/Profile.jsx';
 
 const Home = () => {
     const {t, i18n} = useTranslation();
+    const { showAlert } = useAlert();
 
     const [liked, setLiked] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -62,6 +63,7 @@ const Home = () => {
     const [editingService, setEditingService] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [serviceToDelete, setServiceToDelete] = useState(null);
+    const [serviceFormLoading, setServiceFormLoading] = useState(false);
     const [serviceForm, setServiceForm] = useState({
         name: '',
         nameEn: '',
@@ -69,7 +71,8 @@ const Home = () => {
         price: '',
         unit: '',
         deliveryTime: '',
-        image: null
+        image: null,
+        existingImage: null
     });
     
     // Pagination states for professionals
@@ -81,6 +84,23 @@ const Home = () => {
     // Filtering states
     const [currentFilter, setCurrentFilter] = useState(null); // 'interactive', 'nearby', or null
     const [isFilterActive, setIsFilterActive] = useState(false);
+    
+    // Lock/unlock body scroll when modal is open/closed
+    useEffect(() => {
+        if (showServiceModal) {
+            // Lock body scroll
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Unlock body scroll
+            document.body.style.overflow = 'unset';
+        }
+        
+        // Cleanup function to restore scroll when component unmounts
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [showServiceModal]);
+    
     const toggleHeart = () => {
         setLiked(!liked);
     };
@@ -88,6 +108,7 @@ const Home = () => {
     // Service management functions
     const fetchServices = async () => {
         try {
+            console.log('🔄 Fetching services...');
             setLoadingServices(true);
             setServicesError(null);
             
@@ -128,6 +149,7 @@ const Home = () => {
             if (response.data && response.data.services) {
                 setServices(response.data.services);
                 console.log('✅ Services fetched successfully:', response.data.services);
+                console.log('📊 Total services:', response.data.services.length);
                 
                 // Debug: Log service IDs and structure
                 response.data.services.forEach((service, index) => {
@@ -175,8 +197,11 @@ const Home = () => {
 
             console.log('✅ Get Single Service API Response:', response.data);
             
-            if (response.data && response.data.success) {
-                return { success: true, data: response.data.service };
+            // Check if response has service data (either directly or wrapped in success object)
+            if (response.data && (response.data.success || response.data._id || response.data.nameEn)) {
+                // If response has success field, use the service from it, otherwise use the response directly
+                const serviceData = response.data.success ? response.data.service : response.data;
+                return { success: true, data: serviceData };
             } else {
                 throw new Error(response.data?.message || 'Failed to get service details');
             }
@@ -191,7 +216,9 @@ const Home = () => {
         }
     };
 
-    const createService = async (serviceData) => {
+    // Unified function to handle both create and update service
+    const saveService = async (serviceData, serviceId = null) => {
+        console.log('🔄 Saving service',serviceId);
         try {
             const token = localStorage.getItem('token-sp');
             if (!token) {
@@ -218,63 +245,33 @@ const Home = () => {
                 throw new Error('Professional ID not found');
             }
 
-            const formData = new FormData();
-            formData.append('name', serviceData.name);
-            formData.append('nameEn', serviceData.nameEn);
-            formData.append('nameAr', serviceData.nameAr);
-            formData.append('price', serviceData.price);
-            formData.append('unit', serviceData.unit);
-            formData.append('deliveryTime', serviceData.deliveryTime);
+            // Determine if this is create or update operation
+            const isUpdate = serviceId && serviceId.trim() !== '';
             
-            if (serviceData.image) {
-                formData.append('serviceImages', serviceData.image);
-            }
-
-            // Debug: Log all form data fields being sent
-            console.log('🔍 Create Service - FormData fields being sent to API:');
-            const formDataEntries = [];
-            for (let [key, value] of formData.entries()) {
-                formDataEntries.push({ key, value: value instanceof File ? `File: ${value.name}` : value });
-            }
-            console.table(formDataEntries);
-
-            const response = await axios.post(`${BaseUrl}/professional/add-service/${professionalId}`, formData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            console.log('Create Service API Response:', response.data);
-
-            if (response.data && response.data.success) {
-                // Refresh services list
-                await fetchServices();
-                return { success: true, data: response.data.service };
-            } else {
-                throw new Error(response.data?.message || 'Failed to create service');
-            }
-        } catch (error) {
-            console.error('❌ Error creating service:', error);
-            throw new Error(error.response?.data?.message || error.message || 'Failed to create service');
-        }
-    };
-
-    const updateService = async (serviceId, serviceData) => {
-        try {
-            const token = localStorage.getItem('token-sp');
-            if (!token) {
-                throw new Error('Please login again');
-            }
-
-            console.log('🔍 Update Service Debug:', {
-                serviceId,
+            console.log(`🔍 ${isUpdate ? 'Update' : 'Create'} Service Debug:`, {
+                serviceId: serviceId || 'N/A',
+                isUpdate,
                 serviceData,
                 token: token ? 'Present' : 'Missing'
             });
 
             const formData = new FormData();
-            formData.append('name', serviceData.name);
+            
+            // Debug: Log the serviceData being sent
+            console.log('🔍 Service data being sent:', {
+                name: serviceData.name,
+                nameEn: serviceData.nameEn,
+                nameAr: serviceData.nameAr,
+                price: serviceData.price,
+                unit: serviceData.unit,
+                deliveryTime: serviceData.deliveryTime,
+                hasImage: !!serviceData.image
+            });
+            
+            // Only append name if it exists and is not empty
+            if (serviceData.name && serviceData.name.trim() !== '') {
+                formData.append('name', serviceData.name);
+            }
             formData.append('nameEn', serviceData.nameEn);
             formData.append('nameAr', serviceData.nameAr);
             formData.append('price', serviceData.price);
@@ -285,43 +282,85 @@ const Home = () => {
                 formData.append('serviceImages', serviceData.image);
             }
 
-            console.log('🔍 FormData contents:');
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}:`, value);
-            }
-            
             // Debug: Log all form data fields being sent
-            console.log('🔍 All FormData fields being sent to API:');
+            console.log(`🔍 ${isUpdate ? 'Update' : 'Create'} Service - FormData fields being sent to API:`);
             const formDataEntries = [];
             for (let [key, value] of formData.entries()) {
                 formDataEntries.push({ key, value: value instanceof File ? `File: ${value.name}` : value });
             }
             console.table(formDataEntries);
 
-            const response = await axios.put(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            // Choose the appropriate API endpoint and method
+            let response;
+            if (isUpdate) {
+                // Update existing service
+                response = await axios.put(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            } else {
+                // Create new service
+                response = await axios.post(`${BaseUrl}/professional/add-service/${professionalId}`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            }
 
-            console.log('✅ Update Service API Response:', response.data);
+            console.log(`✅ ${isUpdate ? 'Update' : 'Create'} Service API Response:`, response.data);
 
-            if (response.data && response.data.success) {
+            // Debug: Compare sent data with received data
+            if (isUpdate && response.data && response.data.service) {
+                console.log('🔍 Data comparison:');
+                console.log('📤 Sent data:', {
+                    nameEn: serviceData.nameEn,
+                    nameAr: serviceData.nameAr,
+                    price: serviceData.price,
+                    unit: serviceData.unit,
+                    deliveryTime: serviceData.deliveryTime
+                });
+                console.log('📥 Received data:', {
+                    nameEn: response.data.service.nameEn,
+                    nameAr: response.data.service.nameAr,
+                    price: response.data.service.price,
+                    unit: response.data.service.unit,
+                    deliveryTime: response.data.service.deliveryTime
+                });
+            }
+
+            // Check for various success response formats
+            const isSuccess = response.data && (
+                response.data.success || 
+                response.data.message?.includes('successfully') ||
+                response.data.message?.includes('updated') ||
+                response.data.message === 'Service added successfully' ||
+                response.data._id // If response has service ID, it's likely successful
+            );
+
+            if (isSuccess) {
+                console.log(`✅ Service ${isUpdate ? 'updated' : 'created'} successfully, refreshing services...`);
                 // Refresh services list
                 await fetchServices();
-                return { success: true, data: response.data.service };
+                
+                // Return appropriate data based on operation
+                const serviceData = response.data.service || response.data.updatedService || response.data.newService || response.data;
+                console.log('📊 Returned service data:', serviceData);
+                return { success: true, data: serviceData };
             } else {
-                throw new Error(response.data?.message || 'Failed to update service');
+                console.log(`❌ Service ${isUpdate ? 'update' : 'creation'} failed:`, response.data);
+                throw new Error(response.data?.message || `Failed to ${isUpdate ? 'update' : 'create'} service`);
             }
         } catch (error) {
-            console.error('❌ Error updating service:', error);
+            console.error(`❌ Error ${serviceId ? 'updating' : 'creating'} service:`, error);
             console.error('❌ Error details:', {
                 message: error.message,
                 response: error.response?.data,
                 status: error.response?.status
             });
-            throw new Error(error.response?.data?.message || error.message || 'Failed to update service');
+            throw new Error(error.response?.data?.message || error.message || `Failed to ${serviceId ? 'update' : 'create'} service`);
         }
     };
 
@@ -347,7 +386,7 @@ const Home = () => {
 
             console.log('✅ Delete Service API Response:', response.data);
 
-            if (response.data && response.data.success) {
+            if (response.data && (response.data.success || response.data.message?.includes('successfully'))) {
                 // Refresh services list
                 await fetchServices();
                 return { success: true };
@@ -369,28 +408,59 @@ const Home = () => {
         e.preventDefault();
         
         try {
+            setServiceFormLoading(true);
+            
             if (editingService) {
-                await updateService(editingService._id, serviceForm);
+                console.log('🔄 Updating service...');
+                const updateResult = await saveService(serviceForm, editingService._id);
+                console.log('✅ Service updated successfully');
+                
+                // Update the editingService with fresh data from API
+                if (updateResult.success && updateResult.data) {
+                    setEditingService(updateResult.data);
+                    console.log('🔄 Updated editingService with fresh data:', updateResult.data);
+                    
+                    // Update the form with the fresh data from API
+                    setServiceForm({
+                        name: updateResult.data.name || '',
+                        nameEn: updateResult.data.nameEn || '',
+                        nameAr: updateResult.data.nameAr || '',
+                        price: updateResult.data.price || '',
+                        unit: updateResult.data.unit || '',
+                        deliveryTime: updateResult.data.deliveryTime || '',
+                        image: null, // Reset new image selection
+                        existingImage: updateResult.data.image || null // Update with fresh image URL
+                    });
+                    console.log('🔄 Updated form with fresh data from API');
+                }
+                
                 showAlert(t('pages.home.serviceManagement.serviceUpdated', 'Service updated successfully!'), 'success');
             } else {
-                await createService(serviceForm);
+                console.log('🔄 Creating service...');
+                await saveService(serviceForm);
+                console.log('✅ Service created successfully');
                 showAlert(t('pages.home.serviceManagement.serviceCreated', 'Service created successfully!'), 'success');
+                
+                // Reset form and close modal for create operation
+                console.log('🔄 Resetting form and closing modal...');
+                setServiceForm({
+                    name: '',
+                    nameEn: '',
+                    nameAr: '',
+                    price: '',
+                    unit: '',
+                    deliveryTime: '',
+                    image: null,
+                    existingImage: null
+                });
+                setEditingService(null);
+                setShowServiceModal(false);
+                console.log('✅ Modal closed and form reset');
             }
-            
-            // Reset form and close modal
-            setServiceForm({
-                name: '',
-                nameEn: '',
-                nameAr: '',
-                price: '',
-                unit: '',
-                deliveryTime: '',
-                image: null
-            });
-            setEditingService(null);
-            setShowServiceModal(false);
         } catch (error) {
             showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + `: ${error.message}`, 'error');
+        } finally {
+            setServiceFormLoading(false);
         }
     };
 
@@ -409,7 +479,8 @@ const Home = () => {
                     price: freshService.price || '',
                     unit: freshService.unit || '',
                     deliveryTime: freshService.deliveryTime || '',
-            image: null
+                    image: null, // New image file (if user selects one)
+                    existingImage: freshService.image || null // Keep reference to existing image
         });
         setShowServiceModal(true);
             } else {
@@ -702,7 +773,7 @@ const Home = () => {
                 const res = await fetch(`${BaseUrl}/customer/products/category/${categoryId}`, {
                     method: "GET",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem('token')}`
+                        "Authorization": `${localStorage.getItem('token')}`
                     }
                 });
                 
@@ -746,7 +817,7 @@ const Home = () => {
                 const res = await fetch(`${BaseUrl}/customer/products/category/${categoryId}`,{
                     method:"GET",
                     headers:{
-                        "Authorization":`Bearer ${localStorage.getItem('token')}`
+                        "Authorization":`${localStorage.getItem('token')}`
                     }
                 });
                 if (!res.ok) {
@@ -1394,8 +1465,21 @@ const Home = () => {
 
             {/* Service Modal */}
             {showServiceModal && (
-                <div className="modal show d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                    <div className="modal-dialog modal-lg">
+                <div className="modal show d-block" style={{
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    zIndex: '1050',
+                    display: 'block',
+                    padding: '20px',
+                    overflow: 'auto',
+                    width: '100%',
+                    height: '100%'
+                }}>
+                    <div className="modal-dialog modal-lg service-modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">
@@ -1404,6 +1488,7 @@ const Home = () => {
                                 <button 
                                     type="button" 
                                     className="btn-close" 
+                                    disabled={serviceFormLoading}
                                     onClick={() => {
                                         setShowServiceModal(false);
                                         setEditingService(null);
@@ -1414,7 +1499,8 @@ const Home = () => {
                                             price: '',
                                             unit: '',
                                             deliveryTime: '',
-                                            image: null
+                                            image: null,
+                                            existingImage: null
                                         });
                                     }}
                                 ></button>
@@ -1429,6 +1515,7 @@ const Home = () => {
                                                 className="form-control"
                                                 value={serviceForm.nameEn}
                                                 onChange={(e) => setServiceForm({...serviceForm, nameEn: e.target.value})}
+                                                disabled={serviceFormLoading}
                                                 required
                                             />
                                         </div>
@@ -1439,6 +1526,7 @@ const Home = () => {
                                                 className="form-control"
                                                 value={serviceForm.nameAr}
                                                 onChange={(e) => setServiceForm({...serviceForm, nameAr: e.target.value})}
+                                                disabled={serviceFormLoading}
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
@@ -1448,6 +1536,7 @@ const Home = () => {
                                                 className="form-control"
                                                 value={serviceForm.price}
                                                 onChange={(e) => setServiceForm({...serviceForm, price: e.target.value})}
+                                                disabled={serviceFormLoading}
                                                 required
                                             />
                                         </div>
@@ -1459,6 +1548,7 @@ const Home = () => {
                                                 value={serviceForm.unit}
                                                 onChange={(e) => setServiceForm({...serviceForm, unit: e.target.value})}
                                                 placeholder="e.g., Kg, Ltr, Hour"
+                                                disabled={serviceFormLoading}
                                                 required
                                             />
                                         </div>
@@ -1470,17 +1560,35 @@ const Home = () => {
                                                 value={serviceForm.deliveryTime}
                                                 onChange={(e) => setServiceForm({...serviceForm, deliveryTime: e.target.value})}
                                                 placeholder="e.g., 3-5 business days"
+                                                disabled={serviceFormLoading}
                                                 required
                                             />
                                         </div>
                                         <div className="col-12 mb-3">
                                             <label className="form-label">Service Image</label>
+                                            {serviceForm.existingImage && (
+                                                <div className="mb-2">
+                                                    <small className="text-muted">Current Image:</small>
+                                                    <div className="mt-1">
+                                                        <img 
+                                                            src={serviceForm.existingImage} 
+                                                            alt="Current service image" 
+                                                            style={{maxWidth: '200px', maxHeight: '150px', objectFit: 'cover'}}
+                                                            className="img-thumbnail"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
                                             <input 
                                                 type="file" 
                                                 className="form-control"
                                                 accept="image/*"
                                                 onChange={(e) => setServiceForm({...serviceForm, image: e.target.files[0]})}
+                                                disabled={serviceFormLoading}
                                             />
+                                            <small className="form-text text-muted">
+                                                {serviceForm.existingImage ? 'Select a new image to replace the current one, or leave empty to keep the current image.' : 'Select an image for your service.'}
+                                            </small>
                                         </div>
                                     </div>
                                 </div>
@@ -1488,6 +1596,7 @@ const Home = () => {
                                     <button 
                                         type="button" 
                                         className="btn btn-secondary" 
+                                        disabled={serviceFormLoading}
                                         onClick={() => {
                                             setShowServiceModal(false);
                                             setEditingService(null);
@@ -1498,14 +1607,22 @@ const Home = () => {
                                                 price: '',
                                                 unit: '',
                                                 deliveryTime: '',
-                                                image: null
+                                                image: null,
+                                                existingImage: null
                                             });
                                         }}
                                     >
                                         {t('common.cancel', 'Cancel')}
                                     </button>
-                                    <button type="submit" className="btn btn-primary">
-                                        {editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')}
+                                    <button type="submit" className="btn btn-primary" disabled={serviceFormLoading}>
+                                        {serviceFormLoading ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                {editingService ? t('common.saving', 'Saving...') : t('common.saving', 'Saving...')}
+                                            </>
+                                        ) : (
+                                            editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
+                                        )}
                                     </button>
                                 </div>
                             </form>

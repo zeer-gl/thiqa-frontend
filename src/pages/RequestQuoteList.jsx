@@ -312,8 +312,8 @@ const RequestQuoteList = () => {
             
             // Show success message
             showAlert(t('project-offers.proposal-accepted','success') || 'Proposal accepted successfully!');
-            navigate('/');
-            // Refresh the quotes list to update the UI
+        
+            // Refresh the quotes list to update the UI - stay on current page
             fetchQuotes(currentPage, searchQuery);
             
         } catch (error) {

@@ -14,6 +14,7 @@ import SidePattern from '/public/images/side-pattern.svg';
 import PhoneIcon from '/public/images/profile/phone-icon.svg';
 import Bin from '/public/images/profile/bin-icon.svg';
 import LockIcon from '/public/images/auth/reg-lock.svg';
+import EyeIcon from '/public/images/eye.svg';
 
 import OrderCard from '../components/OrderCard';
 import ServiceCard from '../components/ServiceCard';
@@ -166,6 +167,8 @@ const Profile = () => {
   
   const [changingPassword, setChangingPassword] = useState(false);
   const [changePasswordErrors, setChangePasswordErrors] = useState({});
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   
   
   // Sample profile data - in a real app, this would come from an API or context
@@ -1150,6 +1153,14 @@ const Profile = () => {
         [field]: ''
       }));
     }
+  };
+
+  const toggleCurrentPasswordVisibility = () => {
+    setShowCurrentPassword(prev => !prev);
+  };
+
+  const toggleNewPasswordVisibility = () => {
+    setShowNewPassword(prev => !prev);
   };
 
   const validateChangePasswordForm = () => {
@@ -2294,13 +2305,28 @@ const Profile = () => {
                         <label className="form-label">
                           {t('profile.changePassword.currentPassword', 'Current Password')} *
                         </label>
-                        <input
-                          type="password"
-                          className={`form-input ${changePasswordErrors.currentPassword ? 'is-invalid' : ''}`}
-                          value={changePasswordForm.currentPassword}
-                          onChange={(e) => handleChangePasswordFormChange('currentPassword', e.target.value)}
-                          placeholder={t('profile.changePassword.currentPasswordPlaceholder', 'Enter your current password')}
-                        />
+                        <div className="position-relative">
+                          <input
+                            type={showCurrentPassword ? "text" : "password"}
+                            className={`form-input ${changePasswordErrors.currentPassword ? 'is-invalid' : ''}`}
+                            value={changePasswordForm.currentPassword}
+                            onChange={(e) => handleChangePasswordFormChange('currentPassword', e.target.value)}
+                            placeholder={t('profile.changePassword.currentPasswordPlaceholder', 'Enter your current password')}
+                            style={{ paddingRight: '45px' }}
+                          />
+                          <button
+                            type="button"
+                            className="position-absolute top-50 translate-middle-y end-0 me-3 bg-transparent border-0"
+                            onClick={toggleCurrentPasswordVisibility}
+                            style={{ cursor: 'pointer', zIndex: 10 }}
+                          >
+                            <img 
+                              src={EyeIcon} 
+                              alt="Toggle password visibility"
+                              style={{ width: '20px', height: '20px', opacity: showCurrentPassword ? 1 : 0.6 }}
+                            />
+                          </button>
+                        </div>
                         {changePasswordErrors.currentPassword && (
                           <div className="text-danger mt-1">{changePasswordErrors.currentPassword}</div>
                         )}
@@ -2312,13 +2338,28 @@ const Profile = () => {
                         <label className="form-label">
                           {t('profile.changePassword.newPassword', 'New Password')} *
                         </label>
-                        <input
-                          type="password"
-                          className={`form-input ${changePasswordErrors.newPassword ? 'is-invalid' : ''}`}
-                          value={changePasswordForm.newPassword}
-                          onChange={(e) => handleChangePasswordFormChange('newPassword', e.target.value)}
-                          placeholder={t('profile.changePassword.newPasswordPlaceholder', 'Enter your new password')}
-                        />
+                        <div className="position-relative">
+                          <input
+                            type={showNewPassword ? "text" : "password"}
+                            className={`form-input ${changePasswordErrors.newPassword ? 'is-invalid' : ''}`}
+                            value={changePasswordForm.newPassword}
+                            onChange={(e) => handleChangePasswordFormChange('newPassword', e.target.value)}
+                            placeholder={t('profile.changePassword.newPasswordPlaceholder', 'Enter your new password')}
+                            style={{ paddingRight: '45px' }}
+                          />
+                          <button
+                            type="button"
+                            className="position-absolute top-50 translate-middle-y end-0 me-3 bg-transparent border-0"
+                            onClick={toggleNewPasswordVisibility}
+                            style={{ cursor: 'pointer', zIndex: 10 }}
+                          >
+                            <img 
+                              src={EyeIcon} 
+                              alt="Toggle password visibility"
+                              style={{ width: '20px', height: '20px', opacity: showNewPassword ? 1 : 0.6 }}
+                            />
+                          </button>
+                        </div>
                         {changePasswordErrors.newPassword && (
                           <div className="text-danger mt-1">{changePasswordErrors.newPassword}</div>
                         )}

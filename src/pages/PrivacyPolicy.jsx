@@ -1,13 +1,33 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const PrivacyPolicy = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     return (
         <div className="container py-5">
             <div className="row justify-content-center">
                 <div className="col-lg-8">
+                    {/* Back Button */}
+                    <div className="mb-4">
+                        <button 
+                            className="btn btn-outline-secondary"
+                            onClick={() => {
+                                // Try to go back in history, fallback to home if no history
+                                if (window.history.length > 1) {
+                                    navigate(-1);
+                                } else {
+                                    navigate('/');
+                                }
+                            }}
+                        >
+                            <i className="fas fa-arrow-left me-2"></i>
+                            {t('common.back', 'Back')}
+                        </button>
+                    </div>
+                    
                     <h1 className="mb-4">{t('privacy.title', 'Privacy Policy')}</h1>
                     
                     <div className="card">

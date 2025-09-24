@@ -858,8 +858,9 @@ const ProjectOfferForm = ({
                     </div>
 
                     {/* Footer Links */}
+
                     <div className="footer-links">
-                        <a href="#" className="footer-link">{termsText}</a>
+                        <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="footer-link">{termsText}</a>
                     </div>
                 </form>
             </div>

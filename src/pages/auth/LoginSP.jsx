@@ -128,14 +128,35 @@ function LoginSP() {
             
             if (error.response) {
                 // Server responded with error status
-                const errorMessage = error.response.data?.message || error.response.data?.error || 'Login failed. Please check your credentials.';
+                let errorMessage = error.response.data?.message || error.response.data?.error || t('auth.loginsp.loginFailed');
+                
+                // Translate common English error messages to Arabic
+                if (errorMessage.toLowerCase().includes('invalid credentials') ||
+                    errorMessage.toLowerCase().includes('invalid email or password') ||
+                    errorMessage.toLowerCase().includes('wrong password') ||
+                    errorMessage.toLowerCase().includes('incorrect password')) {
+                    errorMessage = t('auth.loginsp.invalidCredentials') || 'بيانات الدخول غير صحيحة';
+                } else if (errorMessage.toLowerCase().includes('professional not found') ||
+                           errorMessage.toLowerCase().includes('user not found') ||
+                           errorMessage.toLowerCase().includes('email not found')) {
+                    errorMessage = t('auth.loginsp.professionalNotFound') || 'مقدم الخدمة غير موجود';
+                } else if (errorMessage.toLowerCase().includes('account not verified') ||
+                           errorMessage.toLowerCase().includes('email not verified')) {
+                    errorMessage = t('auth.loginsp.accountNotVerified') || 'الحساب غير مفعل';
+                } else if (errorMessage.toLowerCase().includes('account blocked') ||
+                           errorMessage.toLowerCase().includes('account suspended')) {
+                    errorMessage = t('auth.loginsp.accountBlocked') || 'الحساب محظور';
+                }
+                
                 showAlert(errorMessage, 'error');
             } else if (error.request) {
                 // Network error
-                showAlert('Network error. Please check your connection.', 'error');
+                const networkError = t('auth.loginsp.networkError') || 'خطأ في الشبكة';
+                showAlert(networkError, 'error');
             } else {
                 // Other error
-                showAlert('An unexpected error occurred. Please try again.', 'error');
+                const unexpectedError = t('auth.loginsp.unexpectedError') || 'حدث خطأ غير متوقع';
+                showAlert(unexpectedError, 'error');
             }
         } finally {
             setSubmitting(false);
@@ -352,8 +373,8 @@ function LoginSP() {
                                     <img className='auth-logo' src={Logo} alt=""/>
                                 </div>
                                 <div className="my-4">
-                                    <h2 className='pb-3 ar-heading-bold'>{t('auth.loginsp.title', 'Professional Login')}</h2>
-                                    <h5 className="ar-heading-bold">
+                                    <h2 className={`pb-3 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t('auth.loginsp.title', 'Professional Login')}</h2>
+                                    <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
                                         <Link to="/signup-sp" className='text-decoration-none'>
                                             {t('auth.loginsp.subtitle', 'Don\'t have an account? Sign up')}
                                         </Link>
@@ -434,6 +455,12 @@ function LoginSP() {
                                         </div>
                                     </div>
                                     
+                                    <div className='text-center mt-3'>
+                                        <Link className='fw-semibold text-decoration-none' to='/forget-password-sp'>
+                                            {t('auth.loginsp.forgotPassword', 'Forget Password')}
+                                        </Link>
+                                    </div>
+                                    
                                     <div className="text-center mt-4">
                                         <p>{t("auth.signup.orLoginVia")}</p>
                                         <div className="d-flex justify-content-center gap-3 align-items-center mt-4">
@@ -486,7 +513,7 @@ function LoginSP() {
                             <div className="mb-3">
                                 <img style={{maxWidth:'100px'}} src={Logo} alt=""/>
                             </div>
-                            <h3 className="otp-title mb-2 ar-heading-bold">{t('auth.loginsp.otp.title', 'Enter OTP')}</h3>
+                            <h3 className={`otp-title mb-2 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t('auth.loginsp.otp.title', 'Enter OTP')}</h3>
                             <p className="otp-description navy">
                                 {t('auth.loginsp.otp.description', 'Enter the code sent to your phone to verify your account.')}
                             </p>

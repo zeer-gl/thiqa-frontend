@@ -40,6 +40,7 @@ import PaymentSuccess from './pages/PaymentSuccess.jsx';
 import PriceRequestSuccess from './pages/PriceRequestSuccess.jsx';
 import RequestQuoteList from './pages/RequestQuoteList.jsx';
 import ForgetPassword from './pages/auth/ForgetPassword.jsx';
+import ForgetPasswordSP from './pages/auth/ForgetPasswordSP.jsx';
 import ResetPassword from './pages/auth/ResetPassword.jsx';
 import PersonalProfile from './pages/PersonalProfile.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
@@ -80,7 +81,7 @@ function AppContent() {
                 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
                 const hasValidAuth = !!((token || tokenSP) && isLoggedIn);
                 
-                const authRoutes = ['/login', '/login-sp', '/signup', '/signup-sp', '/forget-password', '/reset-password'];
+                const authRoutes = ['/login', '/login-sp', '/signup', '/signup-sp', '/forget-password', '/forget-password-sp', '/reset-password'];
                 const isAuthRoute = authRoutes.some(route => location.pathname.startsWith(route));
                 
                 // If on auth route, allow immediate access
@@ -106,11 +107,11 @@ function AppContent() {
     }, [location.pathname]);
 
     // Define paths that should not show Navbar and Footer
-    const hideLayoutOn = ['/login', '/login-sp', '/signup', '/signup-sp', '/forget-password', '/reset-password'];
+    const hideLayoutOn = ['/login', '/login-sp', '/signup', '/signup-sp', '/forget-password', '/forget-password-sp', '/reset-password'];
     const hideLayout = hideLayoutOn.includes(location.pathname);
 
     // Define auth routes that don't need authentication wrapper
-    const authRoutes = ['/login', '/login-sp', '/signup', '/signup-sp', '/forget-password', '/reset-password'];
+    const authRoutes = ['/login', '/login-sp', '/signup', '/signup-sp', '/forget-password', '/forget-password-sp', '/reset-password'];
     const isAuthRoute = authRoutes.includes(location.pathname);
 
     // Show loading screen while app is initializing or auth is being checked
@@ -139,8 +140,9 @@ function AppContent() {
                         <Route path="/login-sp" element={<LoginSP />} />
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/signup-sp" element={<SignupSP />}/>
-                        <Route path="/forget-password" element={<ForgetPassword />} />
-                        <Route path="/reset-password/:token" element={<ResetPassword />} />
+                                <Route path="/forget-password" element={<ForgetPassword />} />
+                                <Route path="/forget-password-sp" element={<ForgetPasswordSP />} />
+                                <Route path="/reset-password/:token" element={<ResetPassword />} />
 
                         {/* Public routes - accessible without authentication */}
                         <Route path="/" element={<Home />} />

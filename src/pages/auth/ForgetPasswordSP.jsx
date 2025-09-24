@@ -12,7 +12,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
 import { BaseUrl } from '../../assets/BaseUrl.jsx';
 import { AlertContext } from '../../context/AlertContext.jsx';
 
-function ForgetPassword() {
+function ForgetPasswordSP() {
     const {t, i18n} = useTranslation();
     const navigate = useNavigate();
     const { showAlert } = useContext(AlertContext);
@@ -26,7 +26,7 @@ function ForgetPassword() {
     const [confirmPassword, setConfirmPassword] = useState("");
     
     // Flow state
-    const [currentStep, setCurrentStep] = useState(1); // 1: Email/Phone, 2: OTP, 3: Reset Password
+    const [currentStep, setCurrentStep] = useState(1); // 1: Email, 2: OTP, 3: Reset Password
     const [resetToken, setResetToken] = useState("");
     const [usePhone, setUsePhone] = useState(false); // Toggle between email and phone
     
@@ -137,7 +137,7 @@ function ForgetPassword() {
         try {
             const body = usePhone ? { phoneNo } : { email };
             
-            const response = await fetch(`${BaseUrl}/customer/forget-password/send-otp`, {
+            const response = await fetch(`${BaseUrl}/professional/forget-password/send-otp`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ function ForgetPassword() {
         try {
             const body = usePhone ? { phoneNo, otp } : { email, otp };
             
-            const response = await fetch(`${BaseUrl}/customer/forget-password/verify-otp`, {
+            const response = await fetch(`${BaseUrl}/professional/forget-password/verify-otp`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ function ForgetPassword() {
 
     const resetPassword = async () => {
         try {
-            const response = await fetch(`${BaseUrl}/customer/forget-password/reset`, {
+            const response = await fetch(`${BaseUrl}/professional/forget-password/reset`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ function ForgetPassword() {
 
             if (response.ok && data.success) {
                 showAlert(t('auth.forgotPassword.passwordResetSuccess', 'Password reset successfully'), 'success');
-                navigate('/login');
+                navigate('/login-sp');
             } else {
                 throw new Error(data.message || t('auth.forgotPassword.resetError', 'Failed to reset password'));
             }
@@ -268,14 +268,14 @@ function ForgetPassword() {
                                         {currentStep === 3 && t('auth.forgotPassword.resetPassword', 'Reset Password')}
                                     </h2>
                                     <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
-                                        {currentStep === 1 && t('auth.forgotPassword.subtitle', 'Enter your phone number to receive OTP')}
-                                        {currentStep === 2 && t('auth.forgotPassword.otpSubtitle', 'Enter the 4-digit OTP sent to your phone')}
+                                        {currentStep === 1 && t('auth.forgotPassword.subtitle', 'Enter your email or phone number to receive OTP')}
+                                        {currentStep === 2 && t('auth.forgotPassword.otpSubtitle', 'Enter the 4-digit OTP sent to you')}
                                         {currentStep === 3 && t('auth.forgotPassword.resetSubtitle', 'Enter your new password')}
                                     </h5>
                                 </div>
                       
                                 <form onSubmit={handleSubmit}>
-                                    {/* Step 1: Phone Number */}
+                                    {/* Step 1: Email or Phone */}
                                     {currentStep === 1 && (
                                         <div>
                                             {/* Toggle between email and phone */}
@@ -305,7 +305,7 @@ function ForgetPassword() {
                                                         type="email" 
                                                         className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                                                         id="email"
-                                                        placeholder={t('auth.forgotPassword.emailPlaceholder', 'example@example.com')}
+                                                        placeholder={t('auth.forgotPassword.emailPlaceholder', 'professional@example.com')}
                                                         value={email}
                                                         onChange={(e) => handleInputChange('email', e.target.value)}
                                                     />
@@ -334,7 +334,7 @@ function ForgetPassword() {
 
                                     {/* Step 2: OTP Verification */}
                                     {currentStep === 2 && (
-                                    <div>
+                                        <div>
                                             <div className="form-group mb-3">
                                                 <label htmlFor="otp" className='form-label'>{t('auth.forgotPassword.otp', 'OTP Code')}</label>
                                                 <input 
@@ -350,7 +350,7 @@ function ForgetPassword() {
                                                     <div className="text-danger mt-1">{errors.otp}</div>
                                                 )}
                                             </div>
-                                    
+                                         
                                         </div>
                                     )}
 
@@ -385,7 +385,7 @@ function ForgetPassword() {
                                                     <div className="text-danger mt-1">{errors.confirmPassword}</div>
                                                 )}
                                             </div>
-                                    </div>
+                                        </div>
                                     )}
                                     
                                     <div>
@@ -408,7 +408,7 @@ function ForgetPassword() {
                                     </div>
                                     
                                     <div className='text-center mt-4'>
-                                        <Link className='fw-semibold text-decoration-none' to='/login'>
+                                        <Link className='fw-semibold text-decoration-none' to='/login-sp'>
                                             {t('auth.forgotPassword.backToLogin', 'Back to Login')}
                                         </Link>
                                     </div>
@@ -422,4 +422,4 @@ function ForgetPassword() {
     );
 }
 
-export default ForgetPassword;
+export default ForgetPasswordSP;

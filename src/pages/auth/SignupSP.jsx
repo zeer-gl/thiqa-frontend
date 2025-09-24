@@ -848,8 +848,8 @@ const validateForm = () => {
                                     <img className='auth-logo' src={Logo} alt=""/>
                                 </div>
                                 <div className="my-4">
-                                    <h2 className='pb-3 ar-heading-bold'>{t('auth.signupsp.title')}</h2>
-                                    <h5 className="ar-heading-bold">
+                                    <h2 className={`pb-3 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t('auth.signupsp.title')}</h2>
+                                    <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
                                         <Link to="/login-sp" className='text-decoration-none'>
                                             {t('auth.signupsp.subtitle')}
                                         </Link>

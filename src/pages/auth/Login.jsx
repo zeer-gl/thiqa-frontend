@@ -134,18 +134,45 @@ function Login() {
             } else {
                 const err = await res.json().catch(() => ({}));
 
-               
-                const backendMessage = err?.message || err?.error || t('Login failed');
-                showAlert(backendMessage, 'error');
-                setBackendError(backendMessage)
+                // Handle and translate error messages
+                let errorMessage = err?.message || err?.error || t('auth.login.loginFailed');
+                
+                // Translate common English error messages to Arabic
+                if (errorMessage.toLowerCase().includes('invalid credentials') ||
+                    errorMessage.toLowerCase().includes('invalid email or password') ||
+                    errorMessage.toLowerCase().includes('wrong password') ||
+                    errorMessage.toLowerCase().includes('incorrect password')) {
+                    errorMessage = t('auth.login.invalidCredentials') || 'بيانات الدخول غير صحيحة';
+                } else if (errorMessage.toLowerCase().includes('user not found') ||
+                           errorMessage.toLowerCase().includes('email not found')) {
+                    errorMessage = t('auth.login.userNotFound') || 'المستخدم غير موجود';
+                } else if (errorMessage.toLowerCase().includes('account not verified') ||
+                           errorMessage.toLowerCase().includes('email not verified')) {
+                    errorMessage = t('auth.login.accountNotVerified') || 'الحساب غير مفعل';
+                } else if (errorMessage.toLowerCase().includes('account blocked') ||
+                           errorMessage.toLowerCase().includes('account suspended')) {
+                    errorMessage = t('auth.login.accountBlocked') || 'الحساب محظور';
+                }
+                
+                showAlert(errorMessage, 'error');
+                setBackendError(errorMessage);
                
                 // Set specific field errors if provided by backend
                 if (err.field) {
-                    setErrors(prev => ({ ...prev, [err.field]: backendMessage }));
+                    setErrors(prev => ({ ...prev, [err.field]: errorMessage }));
                 }
             }
         } catch (err) {
-            showAlert(err.message || t('Network error occurred'), 'error');
+            // Handle and translate network errors
+            let errorMessage = err.message || t('auth.login.networkError') || 'خطأ في الشبكة';
+            
+            if (errorMessage.toLowerCase().includes('network') ||
+                errorMessage.toLowerCase().includes('connection') ||
+                errorMessage.toLowerCase().includes('fetch')) {
+                errorMessage = t('auth.login.networkError') || 'خطأ في الشبكة';
+            }
+            
+            showAlert(errorMessage, 'error');
         } finally {
             setSubmitting(false);
         }
@@ -355,8 +382,8 @@ function Login() {
                                     <img className='auth-logo' src={Logo} alt=""/>
                                 </div>
                                 <div className="my-4">
-                                    <h2 className='pb-3 ar-heading-bold'>{t('auth.login.title')}</h2>
-                                    <h5 className="ar-heading-bold">{t('auth.login.subtitle')}</h5>
+                                    <h2 className={`pb-3 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t('auth.login.title')}</h2>
+                                    <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>{t('auth.login.subtitle')}</h5>
                                 </div>
                       
                                 <form onSubmit={handleLogin}>

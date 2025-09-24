@@ -165,8 +165,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 onProposalAccepted(proposalId, project.id);
             }
             
-            // Redirect to home page after accepting proposal
-            navigate('/');
+            // Stay on current page - no navigation needed
             
         } catch (error) {
             console.error('❌ Error accepting proposal:', error);

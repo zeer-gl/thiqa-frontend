@@ -46,10 +46,8 @@ const ProjectOffers = () => {
         // Mark this proposal as accepted to hide the button
         setAcceptedProposals(prev => new Set([...prev, proposalId]));
         
-        // Refresh the project offers to get updated data
+        // Refresh the project offers to get updated data - stay on current page
         fetchProjectOffers(currentPage, itemsPerPage, searchQuery);
-        navigate('/');
-
     };
 
     // Debug function to check authentication and data
