@@ -579,10 +579,16 @@ const ServiceCard = ({
             <button 
               className="btn btn-primary"
               onClick={() => {
-                // Navigate to packages tab
+                // Navigate to packages tab while preserving language
+                const currentLanguage = i18n.language;
                 const url = new URL(window.location);
                 url.searchParams.set('tab', 'packages');
-                window.location.href = url.toString();
+                
+                // Store current language in localStorage to preserve it
+                localStorage.setItem('i18nextLng', currentLanguage);
+                
+                // Use navigate instead of window.location.href to preserve language
+                navigate(url.pathname + url.search);
               }}
             >
               <i className="fas fa-shopping-cart me-2"></i>
