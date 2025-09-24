@@ -39,6 +39,7 @@ function SignupSP() {
     const [experience, setExperience] = useState('');
     const [bio, setBio] = useState('');
     const [resume, setResume] = useState(null);
+    const [resumeError, setResumeError] = useState('');
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [selectedAddress, setSelectedAddress] = useState('');
@@ -160,7 +161,7 @@ const validatePhone = (val) => {
   return validateKuwaitNumber(cleanNumber);
 };
 
-const validateKuwaitNumber = (number) => {
+    const validateKuwaitNumber = (number) => {
   // Kuwait mobile numbers: 8 digits starting with 5, 6, or 9
   const mobilePattern = /^[569]\d{7}$/;
   
@@ -168,6 +169,21 @@ const validateKuwaitNumber = (number) => {
   const landlinePattern = /^2\d{6}$/;
   
   return mobilePattern.test(number) || landlinePattern.test(number);
+};
+
+// Function to validate PDF files
+const validatePdfFile = (file) => {
+  if (!file) return false;
+  
+  // Check file type
+  const allowedTypes = ['application/pdf'];
+  const fileType = file.type;
+  
+  // Check file extension as fallback
+  const fileName = file.name.toLowerCase();
+  const hasPdfExtension = fileName.endsWith('.pdf');
+  
+  return allowedTypes.includes(fileType) || hasPdfExtension;
 };
 
 // Update validateForm function to include phone validation (around line 114)
@@ -205,6 +221,9 @@ const validateForm = () => {
   } else if (!resume) {
     isValid = false;
     errorMessage = t('auth.signupsp.validation.resumeRequired', 'Resume is required');
+  } else if (resume && !validatePdfFile(resume)) {
+    isValid = false;
+    errorMessage = t('auth.signupsp.validation.resumePdfOnly', 'Only PDF files are allowed for resume upload');
   } else if (!latitude || !longitude) {
     isValid = false;
     errorMessage = t('auth.signupsp.validation.locationRequired', 'Please select your location on the map');
@@ -409,6 +428,11 @@ const validateForm = () => {
                     localStorage.setItem('serviceProviderId', result._id);
                     localStorage.setItem('spUserData', JSON.stringify(result));
                 }
+                
+                // Set default payment status to true for new service providers
+                localStorage.setItem('spPaymentStatus', 'true');
+                localStorage.setItem('spHasActiveSubscription', 'true');
+                localStorage.setItem('spSubscriptionStatus', 'active');
                 
                 showAlert(t('auth.signupsp.registrationSuccess', 'Professional registration successful!'), 'success');
                 navigate('/profile-sp?tab=packages');
@@ -622,6 +646,11 @@ const validateForm = () => {
                 if (data.token) {
                     localStorage.setItem('token-sp', data.token);
                 }
+                
+                // Set default payment status to true for new service providers
+                localStorage.setItem('spPaymentStatus', 'true');
+                localStorage.setItem('spHasActiveSubscription', 'true');
+                localStorage.setItem('spSubscriptionStatus', 'active');
                 
                 // Show appropriate success message
                 const successMessage = isLogin 
@@ -1237,8 +1266,22 @@ const validateForm = () => {
                                                     type="file" 
                                                     className="form-control"
                                                     id="resume"
-                                                    accept=".pdf,.doc,.docx"
-                                                    onChange={(e) => setResume(e.target.files[0])}
+                                                    accept=".pdf"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            if (validatePdfFile(file)) {
+                                                                setResume(file);
+                                                                setResumeError('');
+                                                            } else {
+                                                                setResume(null);
+                                                                setResumeError(t('auth.signupsp.validation.resumePdfOnly', 'Only PDF files are allowed for resume upload'));
+                                                            }
+                                                        } else {
+                                                            setResume(null);
+                                                            setResumeError('');
+                                                        }
+                                                    }}
                                                     style={{ 
                                                         opacity: 0,
                                                         position: 'absolute',
@@ -1263,10 +1306,15 @@ const validateForm = () => {
                                                     }}
                                                 >
                                                     <span>
-                                                        {resume ? resume.name : t('auth.signupsp.resumePlaceholder')}
+                                                        {resume ? resume.name : t('auth.signupsp.resumePlaceholder', 'Upload PDF resume...')}
                                                     </span>
                                                 </div>
-                                                {formSubmitted && !resume && (
+                                                {resumeError && (
+                                                    <div className="text-danger mt-1 small">
+                                                        {resumeError}
+                                                    </div>
+                                                )}
+                                                {formSubmitted && !resume && !resumeError && (
                                                     <div className="text-danger mt-1 small">
                                                         {t('auth.signupsp.validation.resumeRequired', 'Resume is required')}
                                                     </div>

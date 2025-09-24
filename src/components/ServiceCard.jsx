@@ -40,13 +40,24 @@ const ServiceCard = ({
     const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
     const [subscriptionChecked, setSubscriptionChecked] = useState(false);
 
-    // Check if user has active subscription/package
+    // Check if user has active subscription/package using localStorage payment status
     const checkUserSubscription = () => {
         try {
+            // Check localStorage payment status first (highest priority)
+            const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+            const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+            
+            if (spPaymentStatus === 'true' || spHasActiveSubscription === 'true') {
+                console.log('✅ ServiceCard: Using localStorage payment status - true');
+                return true;
+            }
+            
+            // Fallback to spUserData if localStorage keys don't exist
             const spUserData = localStorage.getItem('spUserData');
             if (spUserData) {
                 const userData = JSON.parse(spUserData);
-                console.log('User subscription data:', {
+                console.log('ServiceCard: User data:', userData);
+                console.log('ServiceCard: User subscription data:', {
                     hasActiveSubscription: userData.hasActiveSubscription,
                     subscriptionStatus: userData.subscriptionStatus,
                     subscriptionPlan: userData.subscriptionPlan,

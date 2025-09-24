@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import PaymentSuccessModal from '../components/PaymentSuccessModal';
 import '../css/pages/checkout.scss';
@@ -13,6 +14,7 @@ import PhoneIcon from '/public/images/profile/phone-icon.svg';
 const Checkout = () => {
     const { t } = useTranslation();
     const { showAlert } = useAlert();
+    const navigate = useNavigate();
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
@@ -275,7 +277,7 @@ const Checkout = () => {
                                         <p className="text-muted">{t('checkout.no-addresses')}</p>
                                         <button 
                                             className="btn btn-outline-primary"
-                                            onClick={() => window.location.href = '/profile?tab=addresses'}
+                                            onClick={() => navigate('/profile?tab=addresses')}
                                         >
                                             {t('checkout.add-address')}
                                         </button>

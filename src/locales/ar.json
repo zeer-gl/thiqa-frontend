@@ -22,7 +22,8 @@
         "title": "خدمات الإنشاء و والبناء",
         "subtitle": "اطلب الخدمة اللتي تحتاجها و سنتكفل بإرسالها الأن اطلب الخدمة اللتي تحتاجها و سنتكفل ب",
         "ctaButton": "انشاء طلب عرض سعر",
-        "upgradePackage": "ترقية الباقة"
+        "upgradePackage": "ترقية الباقة",
+        "viewPackages": "عرض الباقات"
       },
       "upgradeSection": {
         "title": "قم بترقية خطتك",
@@ -46,7 +47,17 @@
         "serviceUpdated": "تم تحديث الخدمة بنجاح!",
         "serviceDeleted": "تم حذف الخدمة بنجاح!",
         "serviceError": "خطأ",
-        "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذه الخدمة؟"
+        "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذه الخدمة؟",
+        "serviceImage": "صورة الخدمة",
+        "currentImage": "الصورة الحالية",
+        "currentServiceImage": "صورة الخدمة الحالية",
+        "replaceImage": "اختر صورة جديدة لاستبدال الصورة الحالية، أو اتركها فارغة للاحتفاظ بالصورة الحالية.",
+        "selectImage": "اختر صورة لخدمتك.",
+        "loadingServices": "جاري تحميل الخدمات...",
+        "startAdding": "ابدأ بإضافة خدمتك الأولى",
+        "delivery": "التسليم",
+        "unitPlaceholder": "مثال: كيلو، لتر، ساعة",
+        "deliveryTimePlaceholder": "مثال: 3-5 أيام عمل"
       },
       "featureSection": {
         "customerSupport": {
@@ -651,12 +662,14 @@
       "signupLink": "أنشئ حسابك الآن",
       "visitorLogin": "الدخول كزائر",
       "loginAsServiceProvider": "تسجيل الدخول كمقدم خدمة",
+      "loginSuccess": "تم تسجيل الدخول بنجاح",
       "loginFailed": "فشل في تسجيل الدخول",
       "invalidCredentials": "بيانات الدخول غير صحيحة",
       "userNotFound": "المستخدم غير موجود",
       "accountNotVerified": "الحساب غير مفعل",
       "accountBlocked": "الحساب محظور",
-      "networkError": "خطأ في الشبكة"
+      "networkError": "خطأ في الشبكة",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة مرة أخرى بعد 15 دقيقة"
     },
     "signup": {
       "title": "إنشاء حساب",
@@ -714,7 +727,7 @@
       "selectSpecializations": "اختر التخصصات...",
       "experience": "سنوات الخبرة",
       "bio": "السيرة الذاتية",
-      "resumePlaceholder": "يرجى اختيار السيرة الذاتية",
+      "resumePlaceholder": "رفع سيرة ذاتية PDF...",
       "location": "الموقع",
       "multiSelectHint": "انقر لاختيار عدة تخصصات",
       "creating": "جاري إنشاء الحساب...",
@@ -739,7 +752,8 @@
         "bioRequired": "السيرة الذاتية مطلوبة",
         "bioLength": "يجب أن تكون السيرة الذاتية 10 أحرف على الأقل",
         "locationRequired": "يرجى اختيار موقعك على الخريطة",
-        "resumeRequired": "السيرة الذاتية مطلوبة"
+        "resumeRequired": "السيرة الذاتية مطلوبة",
+        "resumePdfOnly": "يُسمح فقط بملفات PDF لرفع السيرة الذاتية"
       },
       "specializations": {
         "construction": "البناء",
@@ -763,6 +777,8 @@
       "appleRegistrationFailed": "فشل في التسجيل عبر آبل",
       "googleAuthenticationSuccess": "تم المصادقة عبر غوغل بنجاح!",
       "appleAuthenticationSuccess": "تم المصادقة عبر آبل بنجاح!",
+      "appleConfigMissing": "إعدادات آبل مفقودة",
+      "appleRegistrationFailed": "فشل في التسجيل عبر آبل",
       "otp": {
         "title": "أدخل رمز التحقق",
         "description": "أدخل الرمز المرسل إلى هاتفك للتحقق من حسابك.",
@@ -810,6 +826,7 @@
       "accountBlocked": "الحساب محظور",
       "networkError": "خطأ في الشبكة",
       "unexpectedError": "حدث خطأ غير متوقع",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة مرة أخرى بعد 15 دقيقة",
       "google": "غوغل",
       "apple": "آبل",
       "terms": "الشروط",
@@ -826,7 +843,17 @@
       "registerAsCustomer": "التسجيل كعميل",
       "loginAsProvider": "تسجيل الدخول كمقدم خدمة",
       "loginAsCustomer": "تسجيل الدخول كعميل",
-      "forgotPassword": "نسيت كلمة المرور"
+      "forgotPassword": "نسيت كلمة المرور",
+      "loginSuccess": "تم تسجيل الدخول بنجاح!",
+      "loginFailed": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+      "invalidCredentials": "بيانات اعتماد غير صحيحة",
+      "professionalNotFound": "لم يتم العثور على مقدم الخدمة",
+      "professionalNotFoundCredentials": "لم يتم العثور على مقدم الخدمة بالبيانات المقدمة",
+      "accountNotVerified": "الحساب غير مُتحقق منه",
+      "accountBlocked": "الحساب محظور",
+      "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+      "unexpectedError": "حدث خطأ غير متوقع",
+      "tooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة مرة أخرى بعد 15 دقيقة"
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور",
@@ -1084,6 +1111,11 @@
       "myServices": "خدماتي",
       "favorites": "المفضلة"
     },
+    "priceRequests": {
+      "title": "طلبات الأسعار",
+      "subtitle": "عرض والرد على طلبات أسعار العملاء",
+      "searchPlaceholder": "البحث في طلبات الأسعار..."
+    },
     "content": {
       "nameLabel": "الاسم",
       "nameValue": "أحمد مازن",
@@ -1163,7 +1195,9 @@
       "advancedAnalytics": "لوحة تحليلات متقدمة",
       "customBranding": "خيارات علامة تجارية مخصصة",
       "dedicatedManager": "مدير حساب مخصص",
-      "selectPackage": "اختر الباقة"
+      "selectPackage": "اختر الباقة",
+      "noPaymentMethods": "لا توجد طرق دفع متاحة لهذه الباقة",
+      "paymentMethodsFailed": "فشل في تحميل طرق الدفع: "
     },
     "services": {
       "modernCeilingLights": {
@@ -1252,6 +1286,11 @@
     "requestTimeout": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى بملف أصغر.",
     "networkError": "خطأ في الشبكة. يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
     "requestFailed": "فشل الطلب. يرجى المحاولة مرة أخرى."
+  },
+  "requestForm": {
+    "fileTypeError": "يرجى رفع ملفات الصور فقط (JPEG، PNG، GIF) أو ملفات PDF.",
+    "fileSizeError": "حجم الملف كبير جداً ({{fileSize}}ميجابايت). الحد الأقصى المسموح به هو 1 ميجابايت.",
+    "fileSizeErrorGeneric": "حجم الملف كبير جداً. الحد الأقصى المسموح به هو 1 ميجابايت."
   },
   "product-showcase": {
     "project-offers": "عروض المشاريع",

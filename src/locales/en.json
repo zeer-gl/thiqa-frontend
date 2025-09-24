@@ -22,7 +22,8 @@
         "title": "Construction and construction services",
         "subtitle": "Request the service you need and we will take care of sending it. Now request the service you need and we will take care of it",
         "ctaButton": "Order now",
-        "upgradePackage": "Upgrade Package"
+        "upgradePackage": "Upgrade Package",
+        "viewPackages": "View Packages"
       },
       "upgradeSection": {
         "title": "Upgrade Your Plan",
@@ -46,7 +47,17 @@
         "serviceUpdated": "Service updated successfully!",
         "serviceDeleted": "Service deleted successfully!",
         "serviceError": "Error",
-        "confirmDelete": "Are you sure you want to delete this service?"
+        "confirmDelete": "Are you sure you want to delete this service?",
+        "serviceImage": "Service Image",
+        "currentImage": "Current Image",
+        "currentServiceImage": "Current service image",
+        "replaceImage": "Select a new image to replace the current one, or leave empty to keep the current image.",
+        "selectImage": "Select an image for your service.",
+        "loadingServices": "Loading services...",
+        "startAdding": "Start by adding your first service",
+        "delivery": "Delivery",
+        "unitPlaceholder": "e.g., Kg, Ltr, Hour",
+        "deliveryTimePlaceholder": "e.g., 3-5 business days"
       },
       "featureSection": {
         "customerSupport": {
@@ -661,7 +672,15 @@
       "noAccount": "Don't have an account?",
       "signupLink": "Create your account now",
       "visitorLogin": "Login as Visitor",
-      "loginAsServiceProvider": "Login as Service Provider"
+      "loginAsServiceProvider": "Login as Service Provider",
+      "loginSuccess": "Login successful",
+      "loginFailed": "Login failed",
+      "invalidCredentials": "Invalid credentials",
+      "userNotFound": "User not found",
+      "accountNotVerified": "Account not verified",
+      "accountBlocked": "Account blocked",
+      "networkError": "Network error",
+      "tooManyAttempts": "Too many attempts. Please try again after 15 minutes"
     },
     "signup": {
       "title": "Create an account",
@@ -719,7 +738,7 @@
       "selectSpecializations": "Select specializations...",
       "experience": "Years of Experience",
       "bio": "CV/Resume/Biography",
-      "resumePlaceholder": "Please select resume",
+      "resumePlaceholder": "Upload PDF resume...",
       "location": "Location",
       "multiSelectHint": "Click to select multiple specializations",
       "creating": "Creating Account...",
@@ -744,7 +763,8 @@
         "bioRequired": "Bio is required",
         "bioLength": "Bio must be at least 10 characters",
         "locationRequired": "Please select your location on the map",
-        "resumeRequired": "Resume is required"
+        "resumeRequired": "Resume is required",
+        "resumePdfOnly": "Only PDF files are allowed for resume upload"
       },
       "specializations": {
         "construction": "Construction",
@@ -768,6 +788,8 @@
       "appleRegistrationFailed": "Apple registration failed",
       "googleAuthenticationSuccess": "Google authentication successful!",
       "appleAuthenticationSuccess": "Apple authentication successful!",
+      "appleConfigMissing": "Apple configuration missing",
+      "appleRegistrationFailed": "Apple registration failed",
       "otp": {
         "title": "Enter OTP",
         "description": "Enter the code sent to your phone to verify your account.",
@@ -820,6 +842,7 @@
       "accountBlocked": "Account blocked",
       "networkError": "Network error",
       "unexpectedError": "Unexpected error occurred",
+      "tooManyAttempts": "Too many attempts. Please try again after 15 minutes",
       "googleLoginSuccess": "Google login successful!",
       "otp": {
         "title": "Enter OTP",
@@ -833,7 +856,17 @@
       "registerAsCustomer": "Register as a Customer",
       "loginAsProvider": "Login as Service Provider",
       "loginAsCustomer": "Login as Customer",
-      "forgotPassword": "Forget Password"
+      "forgotPassword": "Forget Password",
+      "loginSuccess": "Login successful!",
+      "loginFailed": "Login failed. Please try again.",
+      "invalidCredentials": "Invalid credentials",
+      "professionalNotFound": "Professional not found",
+      "professionalNotFoundCredentials": "Professional not found with the provided credentials",
+      "accountNotVerified": "Account not verified",
+      "accountBlocked": "Account is blocked",
+      "networkError": "Network error. Please check your connection.",
+      "unexpectedError": "Unexpected error occurred",
+      "tooManyAttempts": "Too many attempts. Please try again after 15 minutes"
     },
     "forgotPassword": {
       "title": "Forgot Password",
@@ -1103,6 +1136,11 @@
       "myServices": "My Services",
       "favorites": "Favorites"
     },
+    "priceRequests": {
+      "title": "Price Requests",
+      "subtitle": "View and respond to customer price requests",
+      "searchPlaceholder": "Search price requests..."
+    },
     "content": {
       "nameLabel": "Name",
       "nameValue": "Ahmed Mazen",
@@ -1180,7 +1218,9 @@
       "advancedAnalytics": "Advanced Analytics Dashboard",
       "customBranding": "Custom Branding Options",
       "dedicatedManager": "Dedicated Account Manager",
-      "selectPackage": "Select Package"
+      "selectPackage": "Select Plan",
+      "noPaymentMethods": "No payment methods available for this plan",
+      "paymentMethodsFailed": "Failed to load payment methods: "
     },
     "profileUpdatedSuccessfully": "Profile updated successfully!"
   },
@@ -1247,6 +1287,11 @@
     "requestTimeout": "Request timeout. Please try again with a smaller file.",
     "networkError": "Network error. Please check your connection and try again.",
     "requestFailed": "Request failed. Please try again."
+  },
+  "requestForm": {
+    "fileTypeError": "Please upload only image files (JPEG, PNG, GIF) or PDF files.",
+    "fileSizeError": "File size is too large ({{fileSize}}MB). Maximum allowed size is 1MB.",
+    "fileSizeErrorGeneric": "File size is too large. Maximum allowed size is 1MB."
   },
   "product-showcase": {
     "project-offers": "Project Offers",

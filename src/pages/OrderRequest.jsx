@@ -47,7 +47,7 @@ const OrderRequest = () => {
         if (file.size > maxSizeBytes) {
             const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
             showAlert(
-                t('order-request.file-too-large', `File size (${fileSizeMB}MB) exceeds the limit of ${maxSizeMB}MB. Please choose a smaller file.`), 
+                t('requestForm.fileSizeError', 'File size is too large ({{fileSize}}MB). Maximum allowed size is 1MB.', { fileSize: fileSizeMB }), 
                 'error'
             );
             return false;
@@ -92,7 +92,7 @@ const OrderRequest = () => {
             .min(10, t('order-request.description-min-length')),
             projectDesign: Yup.mixed()
   .required(t('order-request.file-required'))
-  .test('fileType', t('order-request.file-type-error', 'Only images or PDF files are allowed'), (value) => {
+  .test('fileType', t('requestForm.fileTypeError', 'Please upload only image files (JPEG, PNG, GIF) or PDF files.'), (value) => {
       if (!value) return true;
       if (!value.type) return true;
       
@@ -107,7 +107,7 @@ const OrderRequest = () => {
       
       return allowedTypes.includes(value.type);
   })
-  .test('fileSize', t('order-request.file-size-error', 'File size must be 1MB or less'), (value) => {
+  .test('fileSize', t('requestForm.fileSizeErrorGeneric', 'File size is too large. Maximum allowed size is 1MB.'), (value) => {
       if (!value) return true;
       return value.size <= 1 * 1024 * 1024;
   }),

@@ -54,6 +54,31 @@ const Profile = () => {
     timestamp: new Date().toISOString()
   });
   
+  // Ensure language is properly set when component mounts
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('i18nextLng');
+    console.log('🔍 Profile Language Debug:', {
+      savedLanguage,
+      currentLanguage: i18n.language,
+      resolvedLanguage: i18n.resolvedLanguage
+    });
+    
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      console.log('🔄 Changing language from', i18n.language, 'to', savedLanguage);
+      i18n.changeLanguage(savedLanguage);
+    }
+    
+    // Set document direction and language
+    const direction = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = direction;
+    document.documentElement.lang = i18n.language;
+    
+    console.log('📝 Document settings:', {
+      dir: document.documentElement.dir,
+      lang: document.documentElement.lang
+    });
+  }, [i18n]);
+
   // All state hooks
   const [activeTab, setActiveTab] = useState('profile');
   const [profileImage, setProfileImage] = useState(null);
@@ -2407,7 +2432,7 @@ const Profile = () => {
               <div className="form-section">
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.name')} *</label>
+                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.name')} *    </label>
                     <input
                       type="text"
                       className="form-input"
@@ -2440,7 +2465,7 @@ const Profile = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.block')}</label>
+                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.block')}* </label>
                     <input
                       type="text"
                       className="form-input"
@@ -2453,7 +2478,7 @@ const Profile = () => {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.street')}</label>
+                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.street')} * </label>
                     <input
                       type="number"
                       className="form-input"
@@ -2476,7 +2501,7 @@ const Profile = () => {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.floorApartment')}</label>
+                    <label className="form-label" style={{textAlign: "left"}}>{t('profile.addresses.floorApartment')} * </label>
                     <input
                       type="text"
                       className="form-input"

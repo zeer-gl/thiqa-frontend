@@ -17,6 +17,7 @@ const PricingPackages = () => {
     const [loading, setLoading] = useState(true);
     const [currentPlan, setCurrentPlan] = useState(null);
     const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+    const [paymentMethods, setPaymentMethods] = useState([]);
 
     // Fetch subscription plans from API
     const fetchSubscriptionPlans = async () => {
@@ -179,10 +180,70 @@ const PricingPackages = () => {
         console.log('Selected package found:', selectedPkg);
         
         if (selectedPkg) {
-            console.log('Processing COD payment directly for package:', selectedPkg);
-            await processCODPayment(selectedPkg);
+            console.log('Fetching payment methods for package:', selectedPkg);
+            await fetchPaymentMethods(selectedPkg);
         } else {
             console.error('Package not found with ID:', packageId);
+        }
+    };
+
+    // Fetch payment methods for selected plan
+    const fetchPaymentMethods = async (selectedPlan) => {
+        try {
+            const token = localStorage.getItem('token-sp');
+            
+            if (!token) {
+                showAlert(t('pricingPackages.loginRequired', 'Please login to view payment methods'), 'error');
+                return;
+            }
+
+            console.log('=== FETCHING PAYMENT METHODS ===');
+            console.log('Selected Plan:', selectedPlan);
+            console.log('Token exists:', !!token);
+
+            const response = await fetch(`${BaseUrl}/professional/subscription/payment-methods/${selectedPlan.id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            console.log('Payment methods response status:', response.status);
+            const responseText = await response.text();
+            console.log('Payment methods raw response:', responseText);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch payment methods: ${responseText}`);
+            }
+
+            const data = JSON.parse(responseText);
+            console.log('Payment methods API response:', data);
+
+            if (data.success && data.data && Array.isArray(data.data)) {
+                // Filter out COD payment method
+                const filteredMethods = data.data.filter(method => 
+                    method.paymentMethodCode !== 'cod' && 
+                    method.paymentMethodId !== 'cod'
+                );
+                
+                console.log('Filtered payment methods (COD removed):', filteredMethods);
+                
+                if (filteredMethods.length === 0) {
+                    showAlert(t('pricingPackages.noPaymentMethods', 'No payment methods available for this plan'), 'warning');
+                    return;
+                }
+                
+                // Store payment methods and show modal
+                setPaymentMethods(filteredMethods);
+                setShowPaymentMethods(true);
+                setSelectedPackage(selectedPlan.id);
+            } else {
+                throw new Error('Invalid response format from payment methods API');
+            }
+        } catch (error) {
+            console.error('Error fetching payment methods:', error);
+            showAlert(t('pricingPackages.paymentMethodsFailed', 'Failed to load payment methods: ') + error.message, 'error');
         }
     };
 
@@ -374,9 +435,30 @@ const PricingPackages = () => {
     // Show payment methods if a plan is selected
     if (showPaymentMethods && selectedPackage) {
         const selectedPkg = packages.find(pkg => pkg.id === selectedPackage);
+        console.log('=== PAYMENT METHODS RENDER DEBUG ===');
+        console.log('selectedPackage:', selectedPackage);
+        console.log('packages:', packages);
+        console.log('selectedPkg found:', selectedPkg);
+        console.log('paymentMethods:', paymentMethods);
+        
+        if (!selectedPkg) {
+            console.error('Selected package not found in packages array');
+            return (
+                <div className="alert alert-danger">
+                    <h4>Error: Package not found</h4>
+                    <p>Selected package ID: {selectedPackage}</p>
+                    <p>Available packages: {packages.map(p => p.id).join(', ')}</p>
+                    <button className="btn btn-secondary" onClick={handleBackToPlans}>
+                        Back to Plans
+                    </button>
+                </div>
+            );
+        }
+        
         return (
             <PaymentMethods 
                 selectedPlan={selectedPkg}
+                paymentMethods={paymentMethods}
                 onBack={handleBackToPlans}
                 onPaymentSuccess={handlePaymentSuccess}
             />
@@ -442,7 +524,7 @@ const PricingPackages = () => {
                                     {!pkg.isCurrentPlan && (
                                         <div className="package-action mt-3">
                                             <button className="btn btn-primary w-100">
-                                                {t('pricingPackages.selectPlanCOD', 'Select Plan (COD)')}
+                                                {t('pricingPackages.selectPlan', 'Select Plan')}
                                             </button>
                                         </div>
                                     )}

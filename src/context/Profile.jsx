@@ -199,9 +199,48 @@ export const UserProvider = ({ children }) => {
             if (localData.subscriptionExpiry !== undefined) {
               profileData.subscriptionExpiry = localData.subscriptionExpiry;
             }
+            
+            // Check for localStorage payment status keys - these take priority over API data
+            const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+            const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+            const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
+            
+            // Override API data with localStorage values if they exist
+            if (spPaymentStatus === 'true') {
+              profileData.hasActiveSubscription = true;
+              profileData.subscriptionStatus = 'active';
+              console.log('✅ Using localStorage spPaymentStatus: true');
+            } else if (spHasActiveSubscription === 'true') {
+              profileData.hasActiveSubscription = true;
+              console.log('✅ Using localStorage spHasActiveSubscription: true');
+            }
+            
+            if (spSubscriptionStatus) {
+              profileData.subscriptionStatus = spSubscriptionStatus;
+              console.log('✅ Using localStorage spSubscriptionStatus:', spSubscriptionStatus);
+            }
             console.log('✅ Merged localStorage subscription data with API data');
           } catch (error) {
             console.error('Error merging localStorage data:', error);
+          }
+        } else {
+          // If spUserData doesn't exist, still check localStorage payment status keys
+          const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+          const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+          const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
+          
+          if (spPaymentStatus === 'true') {
+            profileData.hasActiveSubscription = true;
+            profileData.subscriptionStatus = 'active';
+            console.log('✅ Using localStorage spPaymentStatus (no spUserData): true');
+          } else if (spHasActiveSubscription === 'true') {
+            profileData.hasActiveSubscription = true;
+            console.log('✅ Using localStorage spHasActiveSubscription (no spUserData): true');
+          }
+          
+          if (spSubscriptionStatus) {
+            profileData.subscriptionStatus = spSubscriptionStatus;
+            console.log('✅ Using localStorage spSubscriptionStatus (no spUserData):', spSubscriptionStatus);
           }
         }
       }
@@ -290,8 +329,11 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Preserve cart data before logout
+    // Preserve cart data and subscription status before logout
     const cartData = localStorage.getItem('cart');
+    const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+    const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+    const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
     
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userRole");
@@ -306,6 +348,17 @@ export const UserProvider = ({ children }) => {
     // Restore cart data if it existed
     if (cartData) {
       localStorage.setItem('cart', cartData);
+    }
+    
+    // Restore subscription status if it existed
+    if (spPaymentStatus) {
+      localStorage.setItem('spPaymentStatus', spPaymentStatus);
+    }
+    if (spHasActiveSubscription) {
+      localStorage.setItem('spHasActiveSubscription', spHasActiveSubscription);
+    }
+    if (spSubscriptionStatus) {
+      localStorage.setItem('spSubscriptionStatus', spSubscriptionStatus);
     }
     
     setIsLoggedIn(false);

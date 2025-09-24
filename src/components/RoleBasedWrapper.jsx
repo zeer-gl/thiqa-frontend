@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../context/AlertContext';
 import { useTranslation } from 'react-i18next';
 
 const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
+    const navigate = useNavigate();
     const [isChecking, setIsChecking] = useState(true);
     const [userRole, setUserRole] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -98,7 +100,7 @@ const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
             localStorage.setItem('isLoggedIn', 'true');
             // Keep existing token
             console.log('✅ Switched to user role. Now navigate to /profile');
-            window.location.href = '/profile';
+            navigate('/profile');
         };
         
         window.switchToSPRole = () => {
@@ -107,7 +109,7 @@ const RoleBasedWrapper = ({ children, allowedRoles = ['user', 'sp'] }) => {
             localStorage.setItem('isLoggedIn', 'true');
             // Keep existing token
             console.log('✅ Switched to SP role. Now navigate to /profile-sp');
-            window.location.href = '/profile-sp';
+            navigate('/profile-sp');
         };
         
         // Function to clean up localStorage tokens

@@ -58,16 +58,16 @@ function LoginSP() {
         
         if (!email.trim()) {
             isValid = false;
-            errorMessage = 'Email is required';
+            errorMessage = t('auth.signupsp.validation.emailRequired', 'Email is required');
         } else if (!validateEmail(email)) {
             isValid = false;
-            errorMessage = 'Please enter a valid email address';
+            errorMessage = t('auth.signupsp.validation.emailInvalid', 'Please enter a valid email address');
         } else if (!password.trim()) {
             isValid = false;
-            errorMessage = 'Password is required';
+            errorMessage = t('auth.signupsp.validation.passwordRequired', 'Password is required');
         } else if (password.length < 6) {
             isValid = false;
-            errorMessage = 'Password must be at least 6 characters';
+            errorMessage = t('auth.signupsp.validation.passwordLength', 'Password must be at least 6 characters');
         }
         
         if (!isValid) {
@@ -75,7 +75,7 @@ function LoginSP() {
         }
         
         return isValid;
-    }, [email, password, validateEmail, showAlert]);
+    }, [email, password, validateEmail, showAlert, t]);
 
     const handleLogin = useCallback(async (e) => {
         e.preventDefault();
@@ -117,10 +117,10 @@ function LoginSP() {
                     }
                 }
                 
-                showAlert('Login successful!', 'success');
+                showAlert(t('auth.loginsp.loginSuccess', 'Login successful!'), 'success');
                 navigate('/profile-sp?tab=packages');
             } else {
-                showAlert('Login failed. Please try again.', 'error');
+                showAlert(t('auth.loginsp.loginFailed', 'Login failed. Please try again.'), 'error');
             }
             
         } catch (error) {
@@ -128,40 +128,40 @@ function LoginSP() {
             
             if (error.response) {
                 // Server responded with error status
-                let errorMessage = error.response.data?.message || error.response.data?.error || t('auth.loginsp.loginFailed');
+                let errorMessage = error.response.data?.message || error.response.data?.error || t('auth.loginsp.loginFailed', 'Login failed');
                 
                 // Translate common English error messages to Arabic
-                if (errorMessage.toLowerCase().includes('invalid credentials') ||
+                if (errorMessage.toLowerCase().includes('professional not found with the provided credentials') ||
+                    errorMessage.toLowerCase().includes('professional not found')) {
+                    errorMessage = t('auth.loginsp.professionalNotFoundCredentials', 'Professional not found with the provided credentials');
+                } else if (errorMessage.toLowerCase().includes('invalid credentials') ||
                     errorMessage.toLowerCase().includes('invalid email or password') ||
                     errorMessage.toLowerCase().includes('wrong password') ||
-                    errorMessage.toLowerCase().includes('incorrect password')) {
-                    errorMessage = t('auth.loginsp.invalidCredentials') || 'بيانات الدخول غير صحيحة';
-                } else if (errorMessage.toLowerCase().includes('professional not found') ||
-                           errorMessage.toLowerCase().includes('user not found') ||
-                           errorMessage.toLowerCase().includes('email not found')) {
-                    errorMessage = t('auth.loginsp.professionalNotFound') || 'مقدم الخدمة غير موجود';
-                } else if (errorMessage.toLowerCase().includes('account not verified') ||
-                           errorMessage.toLowerCase().includes('email not verified')) {
-                    errorMessage = t('auth.loginsp.accountNotVerified') || 'الحساب غير مفعل';
-                } else if (errorMessage.toLowerCase().includes('account blocked') ||
-                           errorMessage.toLowerCase().includes('account suspended')) {
-                    errorMessage = t('auth.loginsp.accountBlocked') || 'الحساب محظور';
+                    errorMessage.toLowerCase().includes('incorrect password') ||
+                    errorMessage.toLowerCase().includes('invalid password') ||
+                    errorMessage.toLowerCase().includes('please check your credentials')) {
+                    errorMessage = t('auth.loginsp.invalidCredentials', 'Invalid credentials');
+                } else if (errorMessage.toLowerCase().includes('too many attempts') ||
+                    errorMessage.toLowerCase().includes('too many tries') ||
+                    errorMessage.toLowerCase().includes('15 min') ||
+                    errorMessage.toLowerCase().includes('15 minutes')) {
+                    errorMessage = t('auth.loginsp.tooManyAttempts', 'Too many attempts. Please try again after 15 minutes');
                 }
                 
                 showAlert(errorMessage, 'error');
             } else if (error.request) {
                 // Network error
-                const networkError = t('auth.loginsp.networkError') || 'خطأ في الشبكة';
+                const networkError = t('auth.loginsp.networkError', 'Network error');
                 showAlert(networkError, 'error');
             } else {
                 // Other error
-                const unexpectedError = t('auth.loginsp.unexpectedError') || 'حدث خطأ غير متوقع';
+                const unexpectedError = t('auth.loginsp.unexpectedError', 'Unexpected error occurred');
                 showAlert(unexpectedError, 'error');
             }
         } finally {
             setSubmitting(false);
         }
-    }, [email, password, validateForm, showAlert, navigate]);
+    }, [email, password, validateForm, showAlert, navigate, t]);
 
     // GOOGLE LOGIN FOR SERVICE PROVIDER
     const handleGoogleLogin = useCallback(async () => {
@@ -280,13 +280,13 @@ function LoginSP() {
             
         } catch (err) {
             const msg = (err?.code === "auth/configuration-not-found")
-                ? "Google configuration missing"
-                : (err?.message || "Google login failed");
+                ? t('auth.signupsp.googleConfigMissing', 'Google configuration missing')
+                : (err?.message || t('auth.signupsp.googleRegistrationFailed', 'Google login failed'));
             showAlert(msg, 'error');
         } finally {
             setSocialSubmitting(false);
         }
-    }, [showAlert, navigate]);
+    }, [showAlert, navigate, t]);
 
 
     const startTimer = () => {
@@ -400,7 +400,7 @@ function LoginSP() {
                                                 />
                                                 {formSubmitted && (!email || !validateEmail(email)) && (
                                                     <div className="text-danger mt-1 small">
-                                                        {!email ? 'Email is required' : 'Please enter a valid email address'}
+                                                        {!email ? t('auth.signupsp.validation.emailRequired', 'Email is required') : t('auth.signupsp.validation.emailInvalid', 'Please enter a valid email address')}
                                                     </div>
                                                 )}
                                             </div>
@@ -436,7 +436,7 @@ function LoginSP() {
                                                 </button>
                                                 {formSubmitted && (!password || password.length < 6) && (
                                                     <div className="text-danger mt-1 small">
-                                                        {!password ? 'Password is required' : 'Password must be at least 6 characters'}
+                                                        {!password ? t('auth.signupsp.validation.passwordRequired', 'Password is required') : t('auth.signupsp.validation.passwordLength', 'Password must be at least 6 characters')}
                                                 </div>
                                                 )}
                                             </div>

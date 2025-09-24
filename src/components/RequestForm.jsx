@@ -30,7 +30,7 @@ const RequestForm = ({
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
             
             if (!allowedTypes.includes(file.type)) {
-                setFileSizeError('Please upload only image files (JPEG, PNG, GIF) or PDF files.');
+                setFileSizeError(t('requestForm.fileTypeError', 'Please upload only image files (JPEG, PNG, GIF) or PDF files.'));
                 setSelectedFile(null);
                 setFieldValue('projectDesign', null);
                 e.target.value = '';
@@ -38,7 +38,7 @@ const RequestForm = ({
             }
             
             if (file.size > maxSize) {
-                setFileSizeError(`File size is too large (${fileSizeMB}MB). Maximum allowed size is 1MB.`);
+                setFileSizeError(t('requestForm.fileSizeError', 'File size is too large ({{fileSize}}MB). Maximum allowed size is 1MB.', { fileSize: fileSizeMB }));
                 setSelectedFile(null);
                 setFieldValue('projectDesign', null);
                 // Clear the file input

@@ -270,7 +270,7 @@ const Home = () => {
             
             // Only append name if it exists and is not empty
             if (serviceData.name && serviceData.name.trim() !== '') {
-                formData.append('name', serviceData.name);
+            formData.append('name', serviceData.name);
             }
             formData.append('nameEn', serviceData.nameEn);
             formData.append('nameAr', serviceData.nameAr);
@@ -295,11 +295,11 @@ const Home = () => {
             if (isUpdate) {
                 // Update existing service
                 response = await axios.put(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             } else {
                 // Create new service
                 response = await axios.post(`${BaseUrl}/professional/add-service/${professionalId}`, formData, {
@@ -435,26 +435,28 @@ const Home = () => {
                 }
                 
                 showAlert(t('pages.home.serviceManagement.serviceUpdated', 'Service updated successfully!'), 'success');
+                setShowServiceModal(false);
             } else {
                 console.log('🔄 Creating service...');
                 await saveService(serviceForm);
                 console.log('✅ Service created successfully');
                 showAlert(t('pages.home.serviceManagement.serviceCreated', 'Service created successfully!'), 'success');
-                
+                setShowServiceModal(false);
+            
                 // Reset form and close modal for create operation
                 console.log('🔄 Resetting form and closing modal...');
-                setServiceForm({
-                    name: '',
-                    nameEn: '',
-                    nameAr: '',
-                    price: '',
-                    unit: '',
-                    deliveryTime: '',
+            setServiceForm({
+                name: '',
+                nameEn: '',
+                nameAr: '',
+                price: '',
+                unit: '',
+                deliveryTime: '',
                     image: null,
                     existingImage: null
-                });
-                setEditingService(null);
-                setShowServiceModal(false);
+            });
+            setEditingService(null);
+            setShowServiceModal(false);
                 console.log('✅ Modal closed and form reset');
             }
         } catch (error) {
@@ -557,12 +559,12 @@ const Home = () => {
         fetchCategories();
     }, []);
 
-    // Fetch services for service providers with active subscription
+    // Fetch services for service providers
     useEffect(() => {
-        if (isServiceProvider && userProfile?.hasActiveSubscription) {
+        if (isServiceProvider) {
             fetchServices();
         }
-    }, [isServiceProvider, userProfile?.hasActiveSubscription]);
+    }, [isServiceProvider]);
 
     // Refresh profile data when component mounts (useful after subscription changes)
     useEffect(() => {
@@ -885,8 +887,13 @@ const Home = () => {
 
 
      
-    // Check if service provider has no active subscription
-    const shouldShowUpgradeOnly = isServiceProvider && !userProfile?.hasActiveSubscription;
+    // Check localStorage for payment status - this takes priority over API data
+    const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+    const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+    
+    // Service providers can now access all features without subscription check
+    // But we still check localStorage for payment status
+    const shouldShowUpgradeOnly = false;
     
     // Debug: Service provider section visibility
     console.log('🔍 Service Provider Section Debug:', {
@@ -894,6 +901,8 @@ const Home = () => {
         hasActiveSubscription: userProfile?.hasActiveSubscription,
         shouldShowUpgradeOnly,
         willShowServiceSection: isServiceProvider && userProfile?.hasActiveSubscription,
+        localStoragePaymentStatus: spPaymentStatus,
+        localStorageHasActiveSubscription: spHasActiveSubscription,
         userProfile: userProfile ? {
             name: userProfile.name,
             hasActiveSubscription: userProfile.hasActiveSubscription,
@@ -966,14 +975,12 @@ const Home = () => {
                                     {t('pages.home.heroSection.subtitle')}
                                 </h4>
                                 {isServiceProvider ? (
-                                    // Show upgrade package button for service providers with no active subscription
-                                    (!userProfile?.hasActiveSubscription && (
+                                    // Show packages button for service providers
                                         <Link to={'/profile-sp?tab=packages'}>
                                             <button className='btn hero-btn'>
-                                                {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
+                                            {t('pages.home.heroSection.viewPackages', 'View Packages')}
                                             </button>
                                         </Link>
-                                    ))
                                 ) : (
                                     // Show regular button for customers
                                     <Link to={'/products'}>
@@ -1010,9 +1017,9 @@ const Home = () => {
                                         {loadingServices ? (
                                             <div className="text-center py-5">
                                                 <div className="spinner-border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
+                                                    <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
                                                 </div>
-                                                <p className="mt-3">Loading services...</p>
+                                                <p className="mt-3">{t('pages.home.serviceManagement.loadingServices', 'Loading services...')}</p>
                                             </div>
                                         ) : servicesError ? (
                                             <div className="alert alert-danger">{servicesError}</div>
@@ -1037,10 +1044,10 @@ const Home = () => {
                                                                     <p className="card-text text-muted">{service.nameAr}</p>
                                                                 )}
                                                                 <div className="mb-2">
-                                                                    <strong>Price:</strong> {service.price} {service.unit}
+                                                                    <strong>{t('pages.home.serviceManagement.price', 'Price')}:</strong> {service.price} {service.unit}
                                                                 </div>
                                                                 <div className="mb-3">
-                                                                    <strong>Delivery:</strong> {service.deliveryTime}
+                                                                    <strong>{t('pages.home.serviceManagement.delivery', 'Delivery')}:</strong> {service.deliveryTime}
                                                                 </div>
                                                                 <div className="mt-auto">
                                                                     <div className="btn-group w-100" role="group">
@@ -1049,14 +1056,14 @@ const Home = () => {
                                                                             onClick={() => handleEditService(service)}
                                                                         >
                                                                             <i className="fas fa-edit me-1"></i>
-                                                                            Edit
+                                                                            {t('common.edit', 'Edit')}
                                                                         </button>
                                                                         <button 
                                                                             className="btn btn-outline-danger btn-sm"
                                                                             onClick={() => handleDeleteService(service)}
                                                                         >
                                                                             <i className="fas fa-trash me-1"></i>
-                                                                            Delete
+                                                                            {t('common.delete', 'Delete')}
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1068,15 +1075,9 @@ const Home = () => {
                                         ) : (
                                             <div className="d-flex flex-column align-items-center justify-content-center text-center py-5" style={{minHeight: '300px'}}>
                                                 <i className="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                                <h5 className="text-muted mb-3">No services yet</h5>
-                                                <p className="text-muted mb-4">Start by adding your first service</p>
-                                                <button 
-                                                    className="btn btn-primary"
-                                                    onClick={() => setShowServiceModal(true)}
-                                                >
-                                                    <i className="fas fa-plus me-2"></i>
-                                                    Add Your First Service
-                                                </button>
+                                                <h5 className="text-muted mb-3">{t('pages.home.serviceManagement.noServices', 'No services yet')}</h5>
+                                                <p className="text-muted mb-4">{t('pages.home.serviceManagement.startAdding', 'Start by adding your first service')}</p>
+                                             
                                             </div>
                                         )}
                                     </div>
@@ -1481,8 +1482,22 @@ const Home = () => {
                 }}>
                     <div className="modal-dialog modal-lg service-modal-dialog">
                         <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">
+                            <div className="modal-header" style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: '1px solid #dee2e6',
+                                padding: '1rem',
+                                direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
+                            }}>
+                                <h5 className="modal-title" style={{
+                                    margin: '0',
+                                    textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                    fontWeight: '600',
+                                    color: '#333',
+                                    fontSize: '1.25rem',
+                                    lineHeight: '1.4'
+                                }}>
                                     {editingService ? t('pages.home.serviceManagement.editService', 'Edit Service') : t('pages.home.serviceManagement.addService', 'Add New Service')}
                                 </h5>
                                 <button 
@@ -1503,13 +1518,48 @@ const Home = () => {
                                             existingImage: null
                                         });
                                     }}
-                                ></button>
+                                    style={{
+                                        margin: '0',
+                                        padding: '0.75rem',
+                                      
+                                        border: 'none',
+                                        borderRadius: '50%',
+                                        fontSize: '1.25rem',
+                                        cursor: 'pointer',
+                                        opacity: serviceFormLoading ? 0.5 : 1,
+                                        color: '#000',
+                                        fontWeight: 'bold',
+                                        width: '40px',
+                                        height: '40px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                       
+                                    }}
+                                 
+                                 
+                                    aria-label={t('common.close', 'Close')}
+                                >
+                              
+                                </button>
                             </div>
                             <form onSubmit={handleServiceSubmit}>
-                                <div className="modal-body">
+                                <div className="modal-body" style={{
+                                    padding: '1.5rem',
+                                    direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
+                                }}>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">{t('pages.home.serviceManagement.serviceNameEn', 'Service Name (English)')}</label>
+                                            <label className="form-label" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                display: 'block',
+                                                marginBottom: '0.5rem',
+                                                fontWeight: '500',
+                                                color: '#333',
+                                                fontSize: '0.95rem'
+                                            }}>
+                                                {t('pages.home.serviceManagement.serviceNameEn', 'Service Name (English)')}
+                                            </label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
@@ -1517,20 +1567,40 @@ const Home = () => {
                                                 onChange={(e) => setServiceForm({...serviceForm, nameEn: e.target.value})}
                                                 disabled={serviceFormLoading}
                                                 required
+                                                style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">{t('pages.home.serviceManagement.serviceNameAr', 'Service Name (Arabic)')}</label>
+                                            <label className="form-label" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                display: 'block',
+                                                marginBottom: '0.5rem',
+                                                fontWeight: '500',
+                                                color: '#333',
+                                                fontSize: '0.95rem'
+                                            }}>
+                                                {t('pages.home.serviceManagement.serviceNameAr', 'Service Name (Arabic)')}
+                                            </label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
                                                 value={serviceForm.nameAr}
                                                 onChange={(e) => setServiceForm({...serviceForm, nameAr: e.target.value})}
                                                 disabled={serviceFormLoading}
+                                                style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">{t('pages.home.serviceManagement.price', 'Price')}</label>
+                                            <label className="form-label" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                display: 'block',
+                                                marginBottom: '0.5rem',
+                                                fontWeight: '500',
+                                                color: '#333',
+                                                fontSize: '0.95rem'
+                                            }}>
+                                                {t('pages.home.serviceManagement.price', 'Price')}
+                                            </label>
                                             <input 
                                                 type="number" 
                                                 className="form-control"
@@ -1538,41 +1608,71 @@ const Home = () => {
                                                 onChange={(e) => setServiceForm({...serviceForm, price: e.target.value})}
                                                 disabled={serviceFormLoading}
                                                 required
+                                                style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">{t('pages.home.serviceManagement.unit', 'Unit')}</label>
+                                            <label className="form-label" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                display: 'block',
+                                                marginBottom: '0.5rem',
+                                                fontWeight: '500',
+                                                color: '#333',
+                                                fontSize: '0.95rem'
+                                            }}>
+                                                {t('pages.home.serviceManagement.unit', 'Unit')}
+                                            </label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
                                                 value={serviceForm.unit}
                                                 onChange={(e) => setServiceForm({...serviceForm, unit: e.target.value})}
-                                                placeholder="e.g., Kg, Ltr, Hour"
+                                                placeholder={t('pages.home.serviceManagement.unitPlaceholder', 'e.g., Kg, Ltr, Hour')}
                                                 disabled={serviceFormLoading}
                                                 required
+                                                style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
                                         </div>
                                         <div className="col-12 mb-3">
-                                            <label className="form-label">{t('pages.home.serviceManagement.deliveryTime', 'Delivery Time')}</label>
+                                            <label className="form-label" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                display: 'block',
+                                                marginBottom: '0.5rem',
+                                                fontWeight: '500',
+                                                color: '#333',
+                                                fontSize: '0.95rem'
+                                            }}>
+                                                {t('pages.home.serviceManagement.deliveryTime', 'Delivery Time')}
+                                            </label>
                                             <input 
                                                 type="text" 
                                                 className="form-control"
                                                 value={serviceForm.deliveryTime}
                                                 onChange={(e) => setServiceForm({...serviceForm, deliveryTime: e.target.value})}
-                                                placeholder="e.g., 3-5 business days"
+                                                placeholder={t('pages.home.serviceManagement.deliveryTimePlaceholder', 'e.g., 3-5 business days')}
                                                 disabled={serviceFormLoading}
                                                 required
+                                                style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
                                         </div>
                                         <div className="col-12 mb-3">
-                                            <label className="form-label">Service Image</label>
+                                            <label className="form-label" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                display: 'block',
+                                                marginBottom: '0.5rem',
+                                                fontWeight: '500',
+                                                color: '#333',
+                                                fontSize: '0.95rem'
+                                            }}>
+                                                {t('pages.home.serviceManagement.serviceImage', 'Service Image')}
+                                            </label>
                                             {serviceForm.existingImage && (
                                                 <div className="mb-2">
-                                                    <small className="text-muted">Current Image:</small>
+                                                    <small className="text-muted">{t('pages.home.serviceManagement.currentImage', 'Current Image')}:</small>
                                                     <div className="mt-1">
                                                         <img 
                                                             src={serviceForm.existingImage} 
-                                                            alt="Current service image" 
+                                                            alt={t('pages.home.serviceManagement.currentServiceImage', 'Current service image')} 
                                                             style={{maxWidth: '200px', maxHeight: '150px', objectFit: 'cover'}}
                                                             className="img-thumbnail"
                                                         />
@@ -1586,13 +1686,27 @@ const Home = () => {
                                                 onChange={(e) => setServiceForm({...serviceForm, image: e.target.files[0]})}
                                                 disabled={serviceFormLoading}
                                             />
-                                            <small className="form-text text-muted">
-                                                {serviceForm.existingImage ? 'Select a new image to replace the current one, or leave empty to keep the current image.' : 'Select an image for your service.'}
+                                            <small className="form-text text-muted" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left', 
+                                                display: 'block', 
+                                                marginTop: '0.5rem',
+                                                color: '#666',
+                                                fontSize: '0.875rem'
+                                            }}>
+                                                {serviceForm.existingImage ? t('pages.home.serviceManagement.replaceImage', 'Select a new image to replace the current one, or leave empty to keep the current image.') : t('pages.home.serviceManagement.selectImage', 'Select an image for your service.')}
                                             </small>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div className="modal-footer" style={{
+                                    display: 'flex',
+                                    justifyContent: i18n.language === 'ar' ? 'flex-start' : 'flex-end',
+                                    gap: '0.75rem',
+                                    padding: '1rem 1.5rem',
+                                    borderTop: '1px solid #dee2e6',
+                                    backgroundColor: '#f8f9fa',
+                                    direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
+                                }}>
                                     <button 
                                         type="button" 
                                         className="btn btn-secondary" 
@@ -1611,14 +1725,26 @@ const Home = () => {
                                                 existingImage: null
                                             });
                                         }}
+                                        style={{
+                                            minWidth: '100px',
+                                            opacity: serviceFormLoading ? 0.6 : 1
+                                        }}
                                     >
                                         {t('common.cancel', 'Cancel')}
                                     </button>
-                                    <button type="submit" className="btn btn-primary" disabled={serviceFormLoading}>
+                                    <button 
+                                        type="submit" 
+                                        className="btn btn-primary" 
+                                        disabled={serviceFormLoading}
+                                        style={{
+                                            minWidth: '120px',
+                                            opacity: serviceFormLoading ? 0.6 : 1
+                                        }}
+                                    >
                                         {serviceFormLoading ? (
                                             <>
                                                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                {editingService ? t('common.saving', 'Saving...') : t('common.saving', 'Saving...')}
+                                                {t('common.saving', 'Saving...')}
                                             </>
                                         ) : (
                                             editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
@@ -1645,8 +1771,9 @@ const Home = () => {
                             <div className="modal-footer justify-content-center">
                                 <button 
                                     type="button" 
-                                    className="btn btn-secondary me-3" 
+                                    className="btn btn-secondary" 
                                     onClick={cancelDeleteService}
+                                    style={{width: '100%'}}
                                 >
                                     {t('common.cancel', 'Cancel')}
                                 </button>
@@ -1654,6 +1781,7 @@ const Home = () => {
                                     type="button" 
                                     className="btn btn-danger" 
                                     onClick={confirmDeleteService}
+                                    style={{width: '100%'}}
                                 >
                                     {t('pages.home.serviceManagement.deleteService', 'Delete')}
                                 </button>

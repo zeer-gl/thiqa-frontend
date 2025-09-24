@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Logo from '/public/images/logo-white.svg';
 import PersonLogo from '/public/images/person-icon.svg';
@@ -13,6 +13,7 @@ import { useCart } from '../context/CartContext.jsx';
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const { 
         userProfile, 
@@ -188,11 +189,13 @@ const Navbar = () => {
                                         console.log('🔍 Profile Link Click Debug:', {
                                             isServiceProvider,
                                             userRole: localStorage.getItem('userRole'),
-                                            targetUrl: isServiceProvider ? "/profile-sp" : "/profile"
+                                            targetUrl: isServiceProvider ? "/profile-sp" : "/profile",
+                                            currentLanguage: i18n.language,
+                                            savedLanguage: localStorage.getItem('i18nextLng')
                                         });
                                         setShowProfileMenu(false);
-                                        // Navigate programmatically
-                                        window.location.href = isServiceProvider ? "/profile-sp" : "/profile";
+                                        // Navigate using React Router to preserve language state
+                                        navigate(isServiceProvider ? "/profile-sp" : "/profile");
                                     }}
                                     style={{
                                         color: 'white',
@@ -218,10 +221,13 @@ const Navbar = () => {
                                         e.stopPropagation();
                                         setShowProfileMenu(false);
                                         
-                                        // Preserve cart data before logout
+                                        // Preserve cart data and subscription status before logout
                                         const cartData = localStorage.getItem('cart');
+                                        const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+                                        const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+                                        const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
                                         
-                                        // Clear all localStorage except cart
+                                        // Clear all localStorage except cart and subscription status
                                         localStorage.removeItem("isLoggedIn");
                                         localStorage.removeItem("userRole");
                                         localStorage.removeItem("userData");
@@ -235,6 +241,17 @@ const Navbar = () => {
                                         // Restore cart data if it existed
                                         if (cartData) {
                                             localStorage.setItem('cart', cartData);
+                                        }
+                                        
+                                        // Restore subscription status if it existed
+                                        if (spPaymentStatus) {
+                                            localStorage.setItem('spPaymentStatus', spPaymentStatus);
+                                        }
+                                        if (spHasActiveSubscription) {
+                                            localStorage.setItem('spHasActiveSubscription', spHasActiveSubscription);
+                                        }
+                                        if (spSubscriptionStatus) {
+                                            localStorage.setItem('spSubscriptionStatus', spSubscriptionStatus);
                                         }
                                         
                                         window.location.href = isServiceProvider ? '/login-sp' : '/login'; 

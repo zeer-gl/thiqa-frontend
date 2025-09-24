@@ -70,7 +70,16 @@ function AppContent() {
         const direction = i18n.language === 'ar' ? 'rtl' : 'ltr';
         document.documentElement.dir = direction;
         document.documentElement.lang = i18n.language;
-    }, [i18n.language]);
+        
+        // Debug language state
+        console.log('🌐 App Language Debug:', {
+            currentLanguage: i18n.language,
+            resolvedLanguage: i18n.resolvedLanguage,
+            savedLanguage: localStorage.getItem('i18nextLng'),
+            direction: direction,
+            pathname: location.pathname
+        });
+    }, [i18n.language, location.pathname]);
 
     // Check authentication status immediately
     useEffect(() => {

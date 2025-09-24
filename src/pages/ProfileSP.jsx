@@ -22,7 +22,7 @@ import PricingPackages from '../components/PricingPackages';
 import PaymentForm from '../components/PaymentForm';
 
 const ProfileSP = () => {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const { showAlert } = useAlert();
     const [searchParams] = useSearchParams();
     const { userRole, isLoading } = useUserRole();
@@ -36,6 +36,31 @@ const ProfileSP = () => {
     const [isFetchingProfile, setIsFetchingProfile] = useState(false);
 
     const fileInputRef = useRef(null);
+
+    // Ensure language is properly set when component mounts
+    useEffect(() => {
+        const savedLanguage = localStorage.getItem('i18nextLng');
+        console.log('🔍 ProfileSP Language Debug:', {
+            savedLanguage,
+            currentLanguage: i18n.language,
+            resolvedLanguage: i18n.resolvedLanguage
+        });
+        
+        if (savedLanguage && savedLanguage !== i18n.language) {
+            console.log('🔄 Changing language from', i18n.language, 'to', savedLanguage);
+            i18n.changeLanguage(savedLanguage);
+        }
+        
+        // Set document direction and language
+        const direction = i18n.language === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.dir = direction;
+        document.documentElement.lang = i18n.language;
+        
+        console.log('📝 Document settings:', {
+            dir: document.documentElement.dir,
+            lang: document.documentElement.lang
+        });
+    }, [i18n]);
 
     // Real profile data from API
     const [profileData, setProfileData] = useState({
@@ -1413,8 +1438,10 @@ const ProfileSP = () => {
 
                                           {activeTab === 'projectPriceRequest' && (
                                                                <ServiceCard
-                         
-                        />
+                                                                title={t('profileSP.priceRequests.title', 'Price Requests')}
+                                                                subtitle={t('profileSP.priceRequests.subtitle', 'View and respond to customer price requests')}
+                                                                searchPlaceholder={t('profileSP.priceRequests.searchPlaceholder', 'Search price requests...')}
+                                                               />
              
        
      

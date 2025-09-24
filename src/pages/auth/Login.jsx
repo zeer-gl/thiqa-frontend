@@ -51,14 +51,14 @@ function Login() {
         switch(name) {
             case 'email':
                 if (!value.trim()) {
-                    error = t('Email is required');
+                    error = t('auth.signup.validation.emailRequired', 'Email is required');
                 } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                    error = t('Please enter a valid email');
+                    error = t('auth.signup.validation.emailInvalid', 'Please enter a valid email');
                 }
                 break;
             case 'password':
                 if (!value) {
-                    error = t('Password is required');
+                    error = t('auth.signup.validation.passwordRequired', 'Password is required');
                 }
                 break;
                 case 'rememberMe':
@@ -129,29 +129,34 @@ function Login() {
                 localStorage.setItem('userRole', 'user');
                 localStorage.setItem('token',data.token);
                 
-                showAlert(t('Login successful'), 'success');
+                showAlert(t('auth.login.loginSuccess', 'Login successful'), 'success');
                 navigate('/');
             } else {
                 const err = await res.json().catch(() => ({}));
 
                 // Handle and translate error messages
-                let errorMessage = err?.message || err?.error || t('auth.login.loginFailed');
+                let errorMessage = err?.message || err?.error || t('auth.login.loginFailed', 'Login failed');
                 
                 // Translate common English error messages to Arabic
                 if (errorMessage.toLowerCase().includes('invalid credentials') ||
                     errorMessage.toLowerCase().includes('invalid email or password') ||
                     errorMessage.toLowerCase().includes('wrong password') ||
                     errorMessage.toLowerCase().includes('incorrect password')) {
-                    errorMessage = t('auth.login.invalidCredentials') || 'بيانات الدخول غير صحيحة';
+                    errorMessage = t('auth.login.invalidCredentials', 'Invalid credentials');
                 } else if (errorMessage.toLowerCase().includes('user not found') ||
                            errorMessage.toLowerCase().includes('email not found')) {
-                    errorMessage = t('auth.login.userNotFound') || 'المستخدم غير موجود';
+                    errorMessage = t('auth.login.userNotFound', 'User not found');
                 } else if (errorMessage.toLowerCase().includes('account not verified') ||
                            errorMessage.toLowerCase().includes('email not verified')) {
-                    errorMessage = t('auth.login.accountNotVerified') || 'الحساب غير مفعل';
+                    errorMessage = t('auth.login.accountNotVerified', 'Account not verified');
                 } else if (errorMessage.toLowerCase().includes('account blocked') ||
                            errorMessage.toLowerCase().includes('account suspended')) {
-                    errorMessage = t('auth.login.accountBlocked') || 'الحساب محظور';
+                    errorMessage = t('auth.login.accountBlocked', 'Account blocked');
+                } else if (errorMessage.toLowerCase().includes('too many attempts') ||
+                           errorMessage.toLowerCase().includes('too many tries') ||
+                           errorMessage.toLowerCase().includes('15 min') ||
+                           errorMessage.toLowerCase().includes('15 minutes')) {
+                    errorMessage = t('auth.login.tooManyAttempts', 'Too many attempts. Please try again after 15 minutes');
                 }
                 
                 showAlert(errorMessage, 'error');
@@ -164,12 +169,12 @@ function Login() {
             }
         } catch (err) {
             // Handle and translate network errors
-            let errorMessage = err.message || t('auth.login.networkError') || 'خطأ في الشبكة';
+            let errorMessage = err.message || t('auth.login.networkError', 'Network error');
             
             if (errorMessage.toLowerCase().includes('network') ||
                 errorMessage.toLowerCase().includes('connection') ||
                 errorMessage.toLowerCase().includes('fetch')) {
-                errorMessage = t('auth.login.networkError') || 'خطأ في الشبكة';
+                errorMessage = t('auth.login.networkError', 'Network error');
             }
             
             showAlert(errorMessage, 'error');
@@ -265,14 +270,14 @@ function Login() {
             }
             
             // Show success message based on API response
-            const successMessage = data.message || t('Google authentication successful');
+            const successMessage = data.message || t('auth.signup.googleAuthenticationSuccess', 'Google authentication successful');
             showAlert(successMessage, 'success');
             navigate("/");
             
         } catch (err) {
             const msg = (err?.code === "auth/configuration-not-found")
-                ? "Google configuration missing"
-                : (err?.message || "Google login failed");
+                ? t('auth.signup.googleConfigMissing', 'Google configuration missing')
+                : (err?.message || t('auth.signup.googleRegistrationFailed', 'Google login failed'));
             showAlert(msg, 'error');
         } finally {
             setSocialSubmitting(false);
@@ -343,14 +348,14 @@ function Login() {
             }
             
             // Show success message based on API response
-            const successMessage = data.message || t('Apple authentication successful');
+            const successMessage = data.message || t('auth.signup.appleAuthenticationSuccess', 'Apple authentication successful');
             showAlert(successMessage, 'success');
             navigate("/");
             
         } catch (err) {
             const msg = (err?.code === "auth/configuration-not-found")
-                ? "Apple configuration missing"
-                : (err?.message || "Apple login failed");
+                ? t('auth.signup.appleConfigMissing', 'Apple configuration missing')
+                : (err?.message || t('auth.signup.appleRegistrationFailed', 'Apple login failed'));
             showAlert(msg, 'error');
         } finally {
             setSocialSubmitting(false);

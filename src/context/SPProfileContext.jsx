@@ -121,6 +121,26 @@ export const SPProfileProvider = ({ children }) => {
       
       console.log('Processed SP profile data:', profileData);
       
+      // Check for localStorage payment status keys - these take priority over API data
+      const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+      const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+      const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
+      
+      // Override API data with localStorage values if they exist
+      if (spPaymentStatus === 'true') {
+        profileData.hasActiveSubscription = true;
+        profileData.subscriptionStatus = 'active';
+        console.log('✅ SP Profile: Using localStorage spPaymentStatus: true');
+      } else if (spHasActiveSubscription === 'true') {
+        profileData.hasActiveSubscription = true;
+        console.log('✅ SP Profile: Using localStorage spHasActiveSubscription: true');
+      }
+      
+      if (spSubscriptionStatus) {
+        profileData.subscriptionStatus = spSubscriptionStatus;
+        console.log('✅ SP Profile: Using localStorage spSubscriptionStatus:', spSubscriptionStatus);
+      }
+      
       // Update the SP profile state
       setSpProfile(profileData);
       console.log('✅ SP Profile updated in context:', {

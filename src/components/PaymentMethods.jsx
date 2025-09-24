@@ -6,141 +6,29 @@ import { useSPProfile } from '../context/SPProfileContext';
 import { BaseUrl } from '../assets/BaseUrl';
 import '../css/components/payment-methods.scss';
 
-const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
+const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess }) => {
     const { t, i18n } = useTranslation();
     const { showAlert } = useAlert();
     const { fetchUserProfile } = useUser();
     const { refreshSPProfile } = useSPProfile();
-    const [paymentMethods, setPaymentMethods] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    
+    // Debug: Log received props
+    console.log('=== PAYMENT METHODS COMPONENT MOUNTED ===');
+    console.log('selectedPlan prop:', selectedPlan);
+    console.log('paymentMethods prop:', paymentMethods);
+    console.log('selectedPlan type:', typeof selectedPlan);
+    console.log('selectedPlan id:', selectedPlan?.id);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [retryCount, setRetryCount] = useState(0);
     const [lastError, setLastError] = useState(null);
 
-    // Fetch payment methods for selected plan
-    const fetchPaymentMethods = async () => {
-        try {
-            setLoading(true);
-            setPaymentMethods([]); // Clear previous methods
-            const token = localStorage.getItem('token-sp');
-            
-            console.log('=== FETCHING PAYMENT METHODS ===');
-            console.log('Selected Plan:', selectedPlan);
-            console.log('Token exists:', !!token);
-            
-            if (!token) {
-                showAlert(t('paymentMethods.loginRequired', 'Please login to view payment methods'), 'error');
-                return;
-            }
-
-            if (!selectedPlan || !selectedPlan.id) {
-                showAlert(t('paymentMethods.noPlanSelected', 'No plan selected'), 'error');
-                return;
-            }
-
-            // Try multiple possible API endpoints
-            const possibleEndpoints = [
-                `${BaseUrl}/professional/subscription/payment-methods/${selectedPlan.id}`,
-                `${BaseUrl}/professional/subscription/payment-methods`,
-                `${BaseUrl}/professional/payment-methods`,
-                `${BaseUrl}/payment-methods`
-            ];
-
-            let response = null;
-            let data = null;
-            let lastError = null;
-
-            for (const endpoint of possibleEndpoints) {
-                try {
-                    console.log('Trying endpoint:', endpoint);
-                    response = await fetch(endpoint, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-                    console.log('Response status:', response.status);
-                    
-                    if (response.ok) {
-                        data = await response.json();
-                        console.log('Payment methods API response:', data);
-                        break;
-                    } else {
-                        const errorText = await response.text();
-                        console.log('Error response:', errorText);
-                        lastError = new Error(`HTTP ${response.status}: ${errorText}`);
-                    }
-                } catch (error) {
-                    console.log('Endpoint failed:', endpoint, error);
-                    lastError = error;
-                }
-            }
-
-            if (!response || !response.ok) {
-                throw lastError || new Error(t('paymentMethods.fetchFailed', 'Failed to fetch payment methods'));
-            }
-            
-            // Handle different response structures
-            if (data) {
-                let paymentMethodsData = [];
-            
-            if (data.success && data.data) {
-                    paymentMethodsData = data.data;
-                } else if (data.success && data.paymentMethods) {
-                    paymentMethodsData = data.paymentMethods;
-                } else if (Array.isArray(data)) {
-                    paymentMethodsData = data;
-                } else if (data.paymentMethods && Array.isArray(data.paymentMethods)) {
-                    paymentMethodsData = data.paymentMethods;
-                }
-
-                console.log('Processed payment methods:', paymentMethodsData);
-                setPaymentMethods(paymentMethodsData);
-                
-                if (paymentMethodsData.length === 0) {
-                    console.log('No payment methods found in response');
-                    showAlert(t('paymentMethods.noMethodsFound', 'No payment methods available for this plan'), 'warning');
-                }
-            } else {
-                throw new Error('No data received from API');
-            }
-        } catch (error) {
-            console.error('Error fetching payment methods:', error);
-            console.error('Error details:', {
-                message: error.message,
-                stack: error.stack
-            });
-            showAlert(t('paymentMethods.loadFailed', 'Failed to load payment methods: ' + error.message), 'error');
-            
-            // Set COD as the only payment method
-            setPaymentMethods([
-                {
-                    paymentMethodId: 'cod',
-                    paymentMethodEn: 'Cash on Delivery',
-                    paymentMethodAr: 'الدفع عند الاستلام',
-                    imageUrl: '/public/images/payment/cod.png',
-                    serviceCharge: 0,
-                    currencyIso: 'KWD',
-                    isEmbeddedSupported: false
-                }
-            ]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Payment methods are now received as props from PricingPackages component
 
 
 
-    // Fetch payment methods when component mounts or selectedPlan changes
-    useEffect(() => {
-        if (selectedPlan && selectedPlan.id) {
-            console.log('=== COMPONENT MOUNTED - FETCHING PAYMENT METHODS ===');
-            fetchPaymentMethods();
-        }
-    }, [selectedPlan]);
+    // Payment methods are provided as props, no need to fetch them
 
     // Add global error handler for debugging
     useEffect(() => {
@@ -176,6 +64,8 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
         console.log('=== PROCEED TO PAYMENT CLICKED ===');
         console.log('Selected Payment Method:', selectedPaymentMethod);
         console.log('Selected Plan:', selectedPlan);
+        console.log('Selected Plan ID:', selectedPlan?.id);
+        console.log('Selected Plan Type:', typeof selectedPlan);
         console.log('Processing State:', processing);
         
         if (!selectedPaymentMethod) {
@@ -199,127 +89,17 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
                 return;
             }
 
-            // Get user data for mobile number
-            const userData = JSON.parse(localStorage.getItem('spUserData') || '{}');
-            let customerMobile = userData.phoneNo || userData.mobile || userData.phone || userData.phoneNumber || userData.contact || userData.contactNumber || '';
-            
-            // Clean the mobile number (remove spaces, dashes, etc.)
-            if (customerMobile) {
-                customerMobile = customerMobile.toString().replace(/[\s\-\(\)\+]/g, '');
-            }
-            
-            console.log('=== USER DATA FOR PAYMENT ===');
-            console.log('User Data:', userData);
-            console.log('Customer Mobile:', customerMobile);
-            
-            // Validate mobile number
-            console.log('=== MOBILE VALIDATION DEBUG ===');
-            console.log('Customer Mobile:', customerMobile);
-            console.log('Mobile Type:', typeof customerMobile);
-            console.log('Mobile Length:', customerMobile ? customerMobile.length : 'N/A');
-            console.log('Is Empty:', !customerMobile);
-            console.log('Is Too Long:', customerMobile && customerMobile.length > 11);
-            
-            if (!customerMobile) {
-                showAlert(t('paymentMethods.mobileRequired', 'Mobile number is required for payment. Please update your profile with a valid mobile number.'), 'error');
-                return;
-            }
-            
-            if (customerMobile.length > 11) {
-                showAlert(t('paymentMethods.mobileTooLong', `Mobile number is too long (${customerMobile.length} digits). Maximum allowed is 11 digits.`), 'error');
-                return;
-            }
-            
-            if (customerMobile.length < 7) {
-                showAlert(t('paymentMethods.mobileTooShort', `Mobile number is too short (${customerMobile.length} digits). Please provide a valid mobile number.`), 'error');
-                return;
-            }
+            // No mobile number validation needed for purchase API
 
-            // Check if COD payment method is selected
-            if (selectedPaymentMethod.paymentMethodId === 'cod') {
-                // Handle COD payment - no external payment gateway needed
-                console.log('=== COD PAYMENT PROCESSING ===');
-                console.log('Processing COD payment for plan:', selectedPlan);
-                
-                // Prepare request body for COD
-                const requestBody = {
-                    planId: selectedPlan.id,
-                    paymentMethodId: 'cod',
-                    paymentMethod: 'Cash on Delivery',
-                    CustomerMobile: customerMobile,
-                    paymentStatus: 'pending' // COD payments are initially pending
-                };
+            // Process online payment
+            console.log('=== ONLINE PAYMENT PROCESSING ===');
+            console.log('Processing payment for plan:', selectedPlan);
+            console.log('Payment method:', selectedPaymentMethod);
 
-                console.log('=== COD PAYMENT REQUEST ===');
-                console.log('Request URL:', `${BaseUrl}/professional/subscription/purchase`);
-                console.log('Request Body:', requestBody);
-
-                // Call existing subscription purchase API with COD payment method
-                const response = await fetch(`${BaseUrl}/professional/subscription/purchase`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                console.log('COD Response Status:', response.status);
-                const responseText = await response.text();
-                console.log('COD Raw Response:', responseText);
-
-                if (!response.ok) {
-                    // Check if it's an HTML error page
-                    if (responseText.includes('<!DOCTYPE html>') || responseText.includes('<html')) {
-                        throw new Error('Server endpoint not found. Please contact support to enable COD payments.');
-                    }
-                    throw new Error(`COD payment failed: ${responseText}`);
-                }
-
-                const data = JSON.parse(responseText);
-                console.log('COD Payment Response:', data);
-
-                if (data.success) {
-                    showAlert(t('paymentMethods.codSuccess', 'Subscription activated successfully! Payment will be collected on delivery.'), 'success');
-                    
-                    // Refresh user profile to update hasActiveSubscription status
-                    setTimeout(async () => {
-                        try {
-                            console.log('Refreshing user profile after successful COD payment...');
-                            await fetchUserProfile();
-                            await refreshSPProfile();
-                            console.log('User profile refreshed successfully');
-                        } catch (error) {
-                            console.error('Error refreshing user profile:', error);
-                        }
-                    }, 1000);
-                    
-                    // Call success callback
-                    if (onPaymentSuccess) {
-                        onPaymentSuccess(selectedPlan, selectedPaymentMethod);
-                    }
-                    
-                    // Navigate back or to success page
-                    setTimeout(() => {
-                        if (onBack) {
-                            onBack();
-                        }
-                    }, 2000);
-                } else if (data.paymentUrl) {
-                    // If the API returns a payment URL (for online payment), show error for COD
-                    throw new Error('COD payment method not supported by backend. Please contact support.');
-                } else {
-                    throw new Error(data.message || 'COD payment failed');
-                }
-                
-                return; // Exit early for COD
-            }
-
-            // Original Fatora payment logic (kept for fallback)
+            // Prepare request body for purchase API
             const requestBody = {
                 planId: selectedPlan.id,
-                paymentMethodId: selectedPaymentMethod.paymentMethodId,
-                CustomerMobile: customerMobile
+                paymentMethodId: selectedPaymentMethod.paymentMethodId
             };
 
             console.log('=== PAYMENT INITIATION DEBUG ===');
@@ -463,24 +243,14 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
     // Debug function to test API call manually
     window.testSubscriptionPurchase = async () => {
         const token = localStorage.getItem('token-sp');
-        const userData = JSON.parse(localStorage.getItem('spUserData') || '{}');
-        let customerMobile = userData.phoneNo || userData.mobile || userData.phone || userData.phoneNumber || userData.contact || userData.contactNumber || '';
-        
-        // Clean the mobile number (remove spaces, dashes, etc.)
-        if (customerMobile) {
-            customerMobile = customerMobile.toString().replace(/[\s\-\(\)\+]/g, '');
-        }
         
         const testPayload = {
             planId: "68b8204fb4b552c5333b2168",
-            paymentMethodId: 2,
-            CustomerMobile: customerMobile
+            paymentMethodId: 2
         };
         
         console.log('=== MANUAL API TEST ===');
         console.log('Token:', token);
-        console.log('User Data:', userData);
-        console.log('Customer Mobile:', customerMobile);
         console.log('Payload:', testPayload);
         
         try {
@@ -747,17 +517,11 @@ const PaymentMethods = ({ selectedPlan, onBack, onPaymentSuccess }) => {
                                     {processing ? (
                                         <>
                                             <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                                            {selectedPaymentMethod?.paymentMethodId === 'cod' ? 
-                                                t('paymentMethods.processingCOD', 'Processing COD Order...') :
-                                                t('paymentMethods.redirectingToPayment', 'Redirecting to Payment...')
-                                            }
+                                            {t('paymentMethods.redirectingToPayment', 'Redirecting to Payment...')}
                                         </>
                                     ) : (
                                         <>
-                                            {selectedPaymentMethod?.paymentMethodId === 'cod' ? 
-                                                t('paymentMethods.confirmCOD', 'Confirm COD Order') :
-                                                t('paymentMethods.proceedToPayment', 'Proceed to Payment')
-                                            }
+                                            {t('paymentMethods.proceedToPayment', 'Proceed to Payment')}
                                             <i className="fas fa-arrow-right ms-2"></i>
                                         </>
                                     )}
