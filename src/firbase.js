@@ -3,6 +3,17 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { getAuth } from "firebase/auth";
 
+// Environment-specific configuration
+const isProduction = window.location.hostname === 'thiqa-frontend.vercel.app';
+const isLocalhost = window.location.hostname === 'localhost';
+
+console.log('🔍 Firebase Environment Debug:', {
+  hostname: window.location.hostname,
+  isProduction,
+  isLocalhost,
+  currentUrl: window.location.href
+});
+
 const firebaseConfig = {
   apiKey: "AIzaSyDoW1sWRnxU90k29p2-d3J_l7TXTIXbwc4",
   authDomain: "thigha-e3340.firebaseapp.com", // Updated to match your Firebase project
@@ -12,6 +23,8 @@ const firebaseConfig = {
   appId: "1:910321243694:web:4aca8a6cd18ca70cfef1bf",
   measurementId: "G-76C8W4RX49"
 };
+
+console.log('🔍 Firebase Config Debug:', firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);

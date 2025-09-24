@@ -188,8 +188,18 @@ function Login() {
         setSocialSubmitting(true);
         
         try {
+            console.log('🔍 Google Login Debug:', {
+                currentUrl: window.location.href,
+                hostname: window.location.hostname,
+                authDomain: auth.app.options.authDomain,
+                projectId: auth.app.options.projectId
+            });
+            
             const provider = new GoogleAuthProvider();
+            console.log('🔍 Google Provider Created:', provider);
+            
             const result = await signInWithPopup(auth, provider);
+            console.log('🔍 Google Auth Result:', result);
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const idToken = credential?.idToken;
             if (!idToken) throw new Error("Google authentication failed - no ID token");
@@ -275,9 +285,29 @@ function Login() {
             navigate("/");
             
         } catch (err) {
-            const msg = (err?.code === "auth/configuration-not-found")
-                ? t('auth.signup.googleConfigMissing', 'Google configuration missing')
-                : (err?.message || t('auth.signup.googleRegistrationFailed', 'Google login failed'));
+            console.error('🔍 Google Login Error:', {
+                error: err,
+                message: err?.message,
+                code: err?.code,
+                stack: err?.stack,
+                currentUrl: window.location.href,
+                authDomain: auth.app.options.authDomain,
+                projectId: auth.app.options.projectId
+            });
+            
+            let msg = '';
+            if (err?.code === 'auth/unauthorized-domain') {
+                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing - unauthorized domain');
+            } else if (err?.code === 'auth/popup-closed-by-user') {
+                msg = t('auth.signup.googleRegistrationFailed', 'Google login cancelled by user');
+            } else if (err?.message?.includes('unauthorized')) {
+                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing - unauthorized domain');
+            } else if (err?.code === "auth/configuration-not-found") {
+                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing');
+            } else {
+                msg = err?.message || t('auth.signup.googleRegistrationFailed', 'Google login failed');
+            }
+            
             showAlert(msg, 'error');
         } finally {
             setSocialSubmitting(false);
