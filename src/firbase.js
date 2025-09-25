@@ -30,4 +30,14 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 const auth = getAuth(app); // export a single auth instance
 
+// Debug Firebase configuration
+console.log('🔍 Firebase App Debug:', {
+  appName: app.name,
+  options: app.options,
+  authDomain: app.options.authDomain,
+  projectId: app.options.projectId,
+  currentUrl: window.location.href,
+  hostname: window.location.hostname
+});
+
 export { app, auth, messaging, getToken, onMessage };

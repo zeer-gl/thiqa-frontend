@@ -302,6 +302,10 @@ function Login() {
                 msg = t('auth.signup.googleRegistrationFailed', 'Google login cancelled by user');
             } else if (err?.message?.includes('unauthorized')) {
                 msg = t('auth.signup.googleConfigMissing', 'Google configuration missing - unauthorized domain');
+            } else if (err?.message?.includes('redirect_uri_mismatch')) {
+                msg = 'Google OAuth redirect URI mismatch. Please contact support.';
+            } else if (err?.message?.includes('Error 400')) {
+                msg = 'Google OAuth configuration error. Please contact support.';
             } else if (err?.code === "auth/configuration-not-found") {
                 msg = t('auth.signup.googleConfigMissing', 'Google configuration missing');
             } else {
