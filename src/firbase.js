@@ -11,7 +11,8 @@ console.log('🔍 Firebase Environment Debug:', {
   hostname: window.location.hostname,
   isProduction,
   isLocalhost,
-  currentUrl: window.location.href
+  currentUrl: window.location.href,
+  userAgent: navigator.userAgent
 });
 
 const firebaseConfig = {

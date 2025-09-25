@@ -297,11 +297,11 @@ function Login() {
             
             let msg = '';
             if (err?.code === 'auth/unauthorized-domain') {
-                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing - unauthorized domain');
+                msg = `Domain ${window.location.hostname} is not authorized. Please contact support.`;
             } else if (err?.code === 'auth/popup-closed-by-user') {
                 msg = t('auth.signup.googleRegistrationFailed', 'Google login cancelled by user');
             } else if (err?.message?.includes('unauthorized')) {
-                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing - unauthorized domain');
+                msg = `Domain ${window.location.hostname} is not authorized. Please contact support.`;
             } else if (err?.message?.includes('redirect_uri_mismatch')) {
                 msg = 'Google OAuth redirect URI mismatch. Please contact support.';
             } else if (err?.message?.includes('Error 400')) {
