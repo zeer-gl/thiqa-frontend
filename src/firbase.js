@@ -38,7 +38,16 @@ console.log('🔍 Firebase App Debug:', {
   authDomain: app.options.authDomain,
   projectId: app.options.projectId,
   currentUrl: window.location.href,
-  hostname: window.location.hostname
+  hostname: window.location.hostname,
+  isProduction: window.location.hostname === 'thiqa-frontend.vercel.app'
+});
+
+// Check if domain is authorized
+console.log('🔍 Domain Authorization Check:', {
+  currentDomain: window.location.hostname,
+  isVercelDomain: window.location.hostname === 'thiqa-frontend.vercel.app',
+  isLocalhost: window.location.hostname === 'localhost',
+  isFirebaseDomain: window.location.hostname === 'thigha-e3340.firebaseapp.com'
 });
 
 export { app, auth, messaging, getToken, onMessage };
