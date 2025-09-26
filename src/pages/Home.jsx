@@ -52,6 +52,7 @@ const Home = () => {
     const [error, setError] = useState(null);
     const [likedStates, setLikedStates] = useState({});
     const navigate=useNavigate();
+    
     const { likedProfessionals, toggleProfessionalLike } = useLikes();
     const { isServiceProvider, userProfile, fetchUserProfile } = useUser();
     
@@ -74,6 +75,7 @@ const Home = () => {
         image: null,
         existingImage: null
     });
+    const [imageError, setImageError] = useState('');
     
     // Pagination states for professionals
     const [currentProfessionalsPage, setCurrentProfessionalsPage] = useState(1);
@@ -294,7 +296,7 @@ const Home = () => {
             let response;
             if (isUpdate) {
                 // Update existing service
-                response = await axios.put(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
+                response = await axios.post(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -407,6 +409,11 @@ const Home = () => {
     const handleServiceSubmit = async (e) => {
         e.preventDefault();
         
+        // Validate image before submission
+        if (serviceForm.image && !validateImage(serviceForm.image)) {
+            return; // Stop submission if image validation fails
+        }
+        
         try {
             setServiceFormLoading(true);
             
@@ -484,6 +491,7 @@ const Home = () => {
                     image: null, // New image file (if user selects one)
                     existingImage: freshService.image || null // Keep reference to existing image
         });
+        setImageError(''); // Clear any previous image errors
         setShowServiceModal(true);
             } else {
                 showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + ': Failed to load service details', 'error');
@@ -516,6 +524,31 @@ const Home = () => {
     const cancelDeleteService = () => {
         setShowDeleteModal(false);
         setServiceToDelete(null);
+    };
+
+    // Image validation function
+    const validateImage = (file) => {
+        if (!file) {
+            setImageError('');
+            return true;
+        }
+
+        // Check file size (1MB = 1024 * 1024 bytes)
+        const maxSize = 1024 * 1024; // 1MB in bytes
+        if (file.size > maxSize) {
+            setImageError(t('pages.home.serviceManagement.imageSizeError', 'Image size must be less than 1MB'));
+            return false;
+        }
+
+        // Check file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            setImageError(t('pages.home.serviceManagement.imageTypeError', 'Please select a valid image file (JPEG, PNG, GIF, WebP)'));
+            return false;
+        }
+
+        setImageError('');
+        return true;
     };
 
     // Mock product data
@@ -775,7 +808,7 @@ const Home = () => {
                 const res = await fetch(`${BaseUrl}/customer/products/category/${categoryId}`, {
                     method: "GET",
                     headers: {
-                        "Authorization": `${localStorage.getItem('token')}`
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`
                     }
                 });
                 
@@ -819,7 +852,7 @@ const Home = () => {
                 const res = await fetch(`${BaseUrl}/customer/products/category/${categoryId}`,{
                     method:"GET",
                     headers:{
-                        "Authorization":`${localStorage.getItem('token')}`
+                        "Authorization":`Bearer ${localStorage.getItem('token')}`
                     }
                 });
                 if (!res.ok) {
@@ -977,14 +1010,14 @@ const Home = () => {
                                 {isServiceProvider ? (
                                     // Show packages button for service providers
                                         <Link to={'/profile-sp?tab=packages'}>
-                                            <button className='btn hero-btn'>
+                                            <button className='btn hero-btn pt-2'>
                                             {t('pages.home.heroSection.viewPackages', 'View Packages')}
                                             </button>
                                         </Link>
                                 ) : (
                                     // Show regular button for customers
-                                    <Link to={'/products'}>
-                                        <button className='btn hero-btn'>
+                                    <Link to={'/products'} style={{textDecoration: 'none'}}>
+                                        <button className=' hero-btn pt-2' style={{textDecoration:"none"}}>
                                             {t('pages.home.heroSection.ctaButton')}
                                         </button>
                                     </Link>
@@ -1050,12 +1083,12 @@ const Home = () => {
                                                                     <strong>{t('pages.home.serviceManagement.delivery', 'Delivery')}:</strong> {service.deliveryTime}
                                                                 </div>
                                                                 <div className="mt-auto">
-                                                                    <div className="btn-group w-100" role="group">
+                                                                    <div className="btn-group w-100" role="group" style={{display: 'flex', justifyContent: 'center',alignItems: 'center',gap: '10px'}}>
                                                                         <button 
                                                                             className="btn btn-outline-primary btn-sm"
                                                                             onClick={() => handleEditService(service)}
                                                                         >
-                                                                            <i className="fas fa-edit me-1"></i>
+                                                                            <i className="fas fa-edit "></i>
                                                                             {t('common.edit', 'Edit')}
                                                                         </button>
                                                                         <button 
@@ -1128,34 +1161,141 @@ const Home = () => {
                     <img className='w-100' src={HeroPattern2} alt=""/>
                 </div>
             </section>
+         
             {
                 !isServiceProvider &&(
                     <>
+                       <section className='product-section'>
+            <div className="container">
+                <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-3 mb-lg-5 gap-3">
+                    <div className="w-100">
+                        <ul className="nav nav-pills product-list-tabs mb-3 flex-wrap" id="pills-tab" role="tablist">
+                            {categoriesLoading && (
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" type="button" disabled>
+                                        {t('common.loading') || 'Loading...'}
+                                    </button>
+                                </li>
+                            )}
+                            {!categoriesLoading && categoriesError && (
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" type="button" disabled>
+                                        {categoriesError}
+                                    </button>
+                                </li>
+                            )}
+                            {!categoriesLoading && !categoriesError && categories.map((cat) => (
+                                <li className="nav-item" role="presentation" key={cat._id}>
+                                    <button
+                                        className={`nav-link ${activeCategoryId === cat._id ? 'active' : ''}`}
+                                        id={`pills-${cat._id}-tab`}
+                                        data-bs-toggle="pill"
+                                        data-bs-target={`#pills-${cat._id}`}
+                                        type="button"
+                                        role="tab"
+                                        aria-controls={`pills-${cat._id}`}
+                                        aria-selected={activeCategoryId === cat._id}
+                                        onClick={() => setActiveCategoryId(cat._id)}
+                                    >
+                                        {(i18n.language === 'ar' ? cat?.name?.ar : cat?.name?.en) || ''}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="w-100">
+                        <div className='d-flex flex-column flex-md-row align-items-start justify-content-end align-items-md-center gap-3'>
+                            <h4 className="mb-0 ar-heading-bold">
+                                {t('pages.home.productSection.title')}
+                            </h4>
+                            {/* <div className='d-flex align-items-center gap-2 flex-wrap'>
+                                <button className='btn mi-btn'>
+                                    <img src={MIP} alt=""/>{t('pages.home.productSection.buttons.mostInteractive')}
+                                </button>
+                                <button className='btn nearby-btn'>
+                                    <img src={NearbyIcon} alt=""/>{t('pages.home.productSection.buttons.nearby')}
+                                </button>
+                            </div> */}
+                        </div>
+                    </div>
+                </div>
+                <div className="tab-content" id="pills-tabContent">
+                    {!categoriesLoading && !categoriesError && categories.map((cat) => (
+                        <div
+                            className={`tab-pane fade ${activeCategoryId === cat._id ? 'show active' : ''}`}
+                            id={`pills-${cat._id}`}
+                            role="tabpanel"
+                            aria-labelledby={`pills-${cat._id}-tab`}
+                            key={cat._id}
+                        >
+                          <div className='row'>
+  {productsByCategory[cat._id]?.length > 0 ? (
+    productsByCategory[cat._id].map((product) => (
+        <ProductCard 
+        key={`${cat._id}-${product._id}`} 
+        product={{
+          id: product._id,
+          name: i18n.language === 'ar' ? product.name_ar : product.name_en,
+          categoryName: parseCategory(product?.categoryName)?.[i18n.language] 
+                       || parseCategory(product?.categoryName)?.en 
+                       || "",
+          price: product.price,
+          measurementUnit: product?.measurementUnit,
+          image: product.images?.[0],
+          isSkeleton: false
+        }} 
+      />
+    ))
+  ) : (
+    // Show empty state message
+    <div className="col-12 text-center py-5">
+      <h5>{t('No products available in this category')}</h5>
+    </div>
+  )}
+</div>
+
+                        </div>
+                    ))}
+                    {(categoriesLoading || categoriesError || categories.length === 0) && (
+                        <div className="tab-pane fade show active" id="pills-placeholder" role="tabpanel">
+                            <div className='row'>
+                                {skeletonProducts.map((product) => (
+                                    <ProductCard key={`placeholder-${product.id}`} product={product} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <div className='text-center mt-5'>
+                    <img className='max-100' src={ProductPattern} alt=""/>
+                </div>
+            </div>
+        </section>
         <section className='services-section'>
       <div className="container">
         <div className='d-flex align-items-center justify-content-between mb-5'>
-          <h2 className='ar-heading-bold'>
+          <h2 className='ar-heading-bold' style={{fontSize:'24px'}}>
             {t('pages.home.servicesSection.title')}
           </h2>
           <div className='d-flex align-items-center gap-2 services-buttons-container'>
             <div className="d-flex align-items-center gap-2 main-buttons-group">
-              <Link to={'service-list'}>
-                <button className='btn nearby-btn'>
+              <Link to={'service-list'} className='text-decoration-none'>
+                <button className='btn nearby-btn p-3 text-decoration-none'>
                   {t('pages.home.servicesSection.buttons.seeAll', 'See All')}
                 </button>
               </Link>
        
               <button 
-                className={`btn mi-btn ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
+                className={`btn mi-btn p-3 ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
                 onClick={handleMostInteractiveClick}
               >
-                <img src={MIP} alt="Most Interactive Professionals"/>{t('pages.home.servicesSection.buttons.mostInteractive')}
+                <img src={MIP} className='pb-1' alt="Most Interactive Professionals"/>{t('pages.home.servicesSection.buttons.mostInteractive')}
               </button>
               <button 
-                className={`btn nearby-btn ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
+                className={`btn p-3 nearby-btn ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
                 onClick={handleNearbyClick}
               >
-                <img src={NearbyIcon} alt="Nearby Professionals"/>{t('pages.home.servicesSection.buttons.nearby')}
+                <img src={NearbyIcon}  className='pb-1' alt="Nearby Professionals"/>{t('pages.home.servicesSection.buttons.nearby')}
               </button>
             </div>
             
@@ -1216,13 +1356,17 @@ const Home = () => {
       
       <div className="container">
 
-        <div className="row g-3">
+        <div className="row g-4">
             
           {professionals.map(professional => (
         <div
         key={professional._id}
-        className="col-lg-4 col-md-6"
-        style={{ cursor: "pointer" }}
+        className="col-lg-4 col-md-6 col-sm-6"
+        style={{ 
+          cursor: "pointer",
+          border: "1px solid lightgray",
+          marginBottom: "20px"
+        }}
         onClick={() => navigate(`/service/${professional._id}`)}
       >
               <div className="service-provider-card">
@@ -1266,7 +1410,7 @@ const Home = () => {
                 
                 <div className='d-flex align-items-center justify-content-between py-3'>
                   <div className='d-flex align-items-center gap-3'>
-                    <img src={BallPattern} alt="" width="40" height="40"/>
+                    {/* <img src={BallPattern} alt="" width="40" height="40"/> */}
                     <div className='d-flex align-items-start gap-3'>
                       <div>
                       <h6 className="fs-14 ar-heading-bold">
@@ -1274,9 +1418,14 @@ const Home = () => {
     ?.split(" ")
     .slice(0, 2)                // take first 2 words
     .join(" ") + 
-    (professional.name?.split(" ").length > 2 ? " ..." : "")}
+    (professional.name?.split(" ").length > 2 ? " ." : "")
+    
+    }
 </h6>
-                        <p className='fs-12'>{professional.bio || t('pages.home.servicesSection.serviceProvider.description')}</p>
+                        <p className='fs-12'>{ professional.bio?.split(" ")
+    .slice(0, 4)                // take first 2 words
+    .join(" ") + 
+    (professional.bio?.split(" ").length > 5 ? " ." : "")|| t('pages.home.servicesSection.serviceProvider.description')}</p>
                       </div>
                       <div className="ratings d-flex align-items-center">
   {[...Array(5)].map((_, index) => {
@@ -1333,6 +1482,7 @@ const Home = () => {
         
       </div>
     </section>
+  
             <section className='about-section'>
                 <div className="container">
                     <div className="row">
@@ -1517,6 +1667,7 @@ const Home = () => {
                                             image: null,
                                             existingImage: null
                                         });
+                                        setImageError('');
                                     }}
                                     style={{
                                         margin: '0',
@@ -1681,11 +1832,25 @@ const Home = () => {
                                             )}
                                             <input 
                                                 type="file" 
-                                                className="form-control"
+                                                className={`form-control ${imageError ? 'is-invalid' : ''}`}
                                                 accept="image/*"
-                                                onChange={(e) => setServiceForm({...serviceForm, image: e.target.files[0]})}
+                                                onChange={(e) => {
+                                                    const file = e.target.files[0];
+                                                    setServiceForm({...serviceForm, image: file});
+                                                    validateImage(file);
+                                                }}
                                                 disabled={serviceFormLoading}
                                             />
+                                            {imageError && (
+                                                <div className="invalid-feedback d-block" style={{
+                                                    color: '#dc3545',
+                                                    fontSize: '0.875rem',
+                                                    marginTop: '0.25rem',
+                                                    textAlign: i18n.language === 'ar' ? 'right' : 'left'
+                                                }}>
+                                                    {imageError}
+                                                </div>
+                                            )}
                                             <small className="form-text text-muted" style={{
                                                 textAlign: i18n.language === 'ar' ? 'right' : 'left', 
                                                 display: 'block', 
@@ -1707,32 +1872,7 @@ const Home = () => {
                                     backgroundColor: '#f8f9fa',
                                     direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
                                 }}>
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-secondary" 
-                                        disabled={serviceFormLoading}
-                                        onClick={() => {
-                                            setShowServiceModal(false);
-                                            setEditingService(null);
-                                            setServiceForm({
-                                                name: '',
-                                                nameEn: '',
-                                                nameAr: '',
-                                                price: '',
-                                                unit: '',
-                                                deliveryTime: '',
-                                                image: null,
-                                                existingImage: null
-                                            });
-                                        }}
-                                        style={{
-                                            minWidth: '100px',
-                                            opacity: serviceFormLoading ? 0.6 : 1
-                                        }}
-                                    >
-                                        {t('common.cancel', 'Cancel')}
-                                    </button>
-                                    <button 
+                                          <button 
                                         type="submit" 
                                         className="btn btn-primary" 
                                         disabled={serviceFormLoading}
@@ -1750,6 +1890,33 @@ const Home = () => {
                                             editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
                                         )}
                                     </button>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-secondary" 
+                                        disabled={serviceFormLoading}
+                                        onClick={() => {
+                                            setShowServiceModal(false);
+                                            setEditingService(null);
+                                            setServiceForm({
+                                                name: '',
+                                                nameEn: '',
+                                                nameAr: '',
+                                                price: '',
+                                                unit: '',
+                                                deliveryTime: '',
+                                                image: null,
+                                                existingImage: null
+                                            });
+                                            setImageError('');
+                                        }}
+                                        style={{
+                                            minWidth: '100px',
+                                            opacity: serviceFormLoading ? 0.6 : 1
+                                        }}
+                                    >
+                                        {t('common.cancel', 'Cancel')}
+                                    </button>
+                              
                                 </div>
                             </form>
                         </div>
@@ -1769,6 +1936,14 @@ const Home = () => {
                                 </p>
                             </div>
                             <div className="modal-footer justify-content-center">
+                            <button 
+                                    type="button" 
+                                    className="btn btn-danger" 
+                                    onClick={confirmDeleteService}
+                                    style={{width: '100%'}}
+                                >
+                                    {t('pages.home.serviceManagement.deleteService', 'Delete')}
+                                </button>
                                 <button 
                                     type="button" 
                                     className="btn btn-secondary" 
@@ -1777,14 +1952,7 @@ const Home = () => {
                                 >
                                     {t('common.cancel', 'Cancel')}
                                 </button>
-                                <button 
-                                    type="button" 
-                                    className="btn btn-danger" 
-                                    onClick={confirmDeleteService}
-                                    style={{width: '100%'}}
-                                >
-                                    {t('pages.home.serviceManagement.deleteService', 'Delete')}
-                                </button>
+                             
                             </div>
                         </div>
                     </div>
