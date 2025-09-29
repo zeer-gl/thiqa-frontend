@@ -45,6 +45,7 @@ import ResetPassword from './pages/auth/ResetPassword.jsx';
 import PersonalProfile from './pages/PersonalProfile.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsAndConditions from './pages/TermsAndConditions.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
 
 // Components
 import PageTitle from './components/PageTitle';
@@ -58,6 +59,7 @@ import './css/rtl.scss';
 import './css/pages/service-request-view.scss';
 import './css/pages/contractor-view.scss';
 import './css/pages/personal-profile.scss';
+import './css/pages/terms-of-service.scss';
 import './css/components/loading-screen.scss';
 
 function AppContent() {
@@ -157,6 +159,7 @@ function AppContent() {
                         <Route path="/" element={<Home />} />
                         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                        <Route path="/terms-of-service" element={<TermsOfService />} />
                         
                         {/* Protected routes - require authentication */}
                         <Route path="/offers" element={

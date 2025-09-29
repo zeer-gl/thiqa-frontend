@@ -1,5 +1,5 @@
 import "/src/css/pages/auth.scss";
-import React, { useState, useContext, useCallback, useMemo } from "react";
+import React, { useState, useContext, useCallback, useMemo, useEffect } from "react";
 import Logo from "/public/images/favicon.png";
 import CustomCheckbox from '/src/components/CustomCheckbox.jsx';
 import ArrowRight from '/public/images/arrow-right.svg';
@@ -14,7 +14,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
 import { BaseUrl } from '../../assets/BaseUrl.jsx';
 import { AlertContext } from '../../context/AlertContext.jsx';
 import { auth } from '../../firbase';
-import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, OAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import GoogleIcon from '/public/images/auth/google-icon.svg';
 import AppleIcon from '/public/images/auth/apple-icon.svg';
 
@@ -34,6 +34,61 @@ function Login() {
     // Error state
     const [errors, setErrors] = useState({});
     const[backendErrror,setBackendError]=useState(null);
+
+    // Handle Google redirect result when user comes back from Google
+    useEffect(() => {
+        const handleGoogleRedirect = async () => {
+            try {
+                const result = await getRedirectResult(auth);
+                if (result) {
+                    console.log('🔍 Google Redirect Result:', result);
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const idToken = credential?.idToken;
+                    
+                    if (idToken) {
+                        // Process the Google authentication result
+                        const requestBody = { 
+                            idToken, 
+                            federatedId: result.user.uid,
+                            email: result.user.email || '',
+                            displayName: result.user.displayName || '',
+                            givenName: result.user.displayName?.split(' ')[0] || '',
+                            familyName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
+                            picture: result.user.photoURL || '',
+                            verifiedEmail: result.user.emailVerified || false
+                        };
+
+                        const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(requestBody)
+                        });
+                        
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.customer) {
+                                localStorage.setItem('userData', JSON.stringify(data.customer));
+                            }
+                            localStorage.setItem('isLoggedIn', 'true');
+                            localStorage.setItem('userRole', 'user');
+                            if (data.token) {
+                                localStorage.setItem('token', data.token);
+                            }
+                            showAlert('Google authentication successful!', 'success');
+                            navigate("/");
+                        } else {
+                            throw new Error('Authentication failed');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Google redirect error:', error);
+                showAlert('Google authentication failed. Please try again.', 'error');
+            }
+        };
+
+        handleGoogleRedirect();
+    }, [auth, showAlert, navigate]);
  
     
     const changeLanguage = useCallback((lng) => {
@@ -196,124 +251,17 @@ function Login() {
             });
             
             const provider = new GoogleAuthProvider();
+            provider.addScope('email');
+            provider.addScope('profile');
             console.log('🔍 Google Provider Created:', provider);
             
-            const result = await signInWithPopup(auth, provider);
-            console.log('🔍 Google Auth Result:', result);
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const idToken = credential?.idToken;
-            if (!idToken) throw new Error("Google authentication failed - no ID token");
-
-            // Extract Google user ID from provider data
-            const googleUserId = result.user.providerData?.[0]?.uid;
-            const federatedId = googleUserId || result.user.uid;
-            
-            // Parse raw user info if available
-            let rawUserInfo = {};
-            try {
-                if (result._tokenResponse?.rawUserInfo) {
-                    rawUserInfo = JSON.parse(result._tokenResponse.rawUserInfo);
-                }
-            } catch (e) {
-                console.warn('Could not parse rawUserInfo:', e);
-            }
-
-            const requestBody = { 
-                idToken, 
-                token: 'device_token_here',
-                role: 'customer', // Indicate this is for customer login
-                registrationType: 'customer',
-                userType: 'customer',
-                providerId: 'google.com', // Add required providerId for Google authentication
-                customerId: googleUserId || result.user.uid, // Use Google user ID as customerId
-                email: result.user.email, // Add email from Google user
-                name: result.user.displayName || result.user.email.split('@')[0], // Add name from Google user
-                pic: result.user.photoURL || '', // Add profile picture from Google user
-                federatedId: googleUserId, // Add Google federated ID
-                firstName: result.user.displayName?.split(' ')[0] || '', // Add first name
-                lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '', // Add last name
-                fullName: result.user.displayName || '', // Add full name
-                photoUrl: result.user.photoURL || '', // Add photo URL
-                emailVerified: result.user.emailVerified || false, // Add email verification status
-                oauthAccessToken: credential?.accessToken || '', // Add OAuth access token
-                refreshToken: credential?.refreshToken || '', // Add refresh token
-                expiresIn: credential?.expiresIn || 3600, // Add token expiration
-                localId: result.user.uid, // Add Firebase local ID
-                rawId: googleUserId, // Add raw Google ID
-                googleUserId: googleUserId, // Add explicit Google user ID
-                rawUserInfo: result._tokenResponse?.rawUserInfo || '', // Add raw user info
-                // Add additional Google-specific data
-                googleId: rawUserInfo.id || googleUserId,
-                givenName: rawUserInfo.given_name || result.user.displayName?.split(' ')[0] || '',
-                familyName: rawUserInfo.family_name || result.user.displayName?.split(' ').slice(1).join(' ') || '',
-                picture: rawUserInfo.picture || result.user.photoURL || '',
-                verifiedEmail: rawUserInfo.verified_email || result.user.emailVerified || false
-            };
-
-            console.log('Google login request:', requestBody);
-            console.log('API URL:', `${BaseUrl}/customer/oauth-register-login`);
-
-            const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestBody)
-            });
-            
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err?.message || `Google login failed (${res.status})`);
-            }
-            
-            const data = await res.json();
-            console.log('Google authentication data:', data);
-            
-            // Store user data and token
-            if (data.customer) {
-                localStorage.setItem('userData', JSON.stringify(data.customer));
-            }
-            
-            // Set login status
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userRole', 'user');
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-            }
-            
-            // Show success message based on API response
-            const successMessage = data.message || t('auth.signup.googleAuthenticationSuccess', 'Google authentication successful');
-            showAlert(successMessage, 'success');
-            navigate("/");
+            // Use redirect instead of popup to avoid OAuth configuration issues
+            await signInWithRedirect(auth, provider);
+            // The page will redirect to Google, so we don't need to continue here
             
         } catch (err) {
-            console.error('🔍 Google Login Error:', {
-                error: err,
-                message: err?.message,
-                code: err?.code,
-                stack: err?.stack,
-                currentUrl: window.location.href,
-                authDomain: auth.app.options.authDomain,
-                projectId: auth.app.options.projectId
-            });
-            
-            let msg = '';
-            if (err?.code === 'auth/unauthorized-domain') {
-                msg = `Domain ${window.location.hostname} is not authorized. Please contact support.`;
-            } else if (err?.code === 'auth/popup-closed-by-user') {
-                msg = t('auth.signup.googleRegistrationFailed', 'Google login cancelled by user');
-            } else if (err?.message?.includes('unauthorized')) {
-                msg = `Domain ${window.location.hostname} is not authorized. Please contact support.`;
-            } else if (err?.message?.includes('redirect_uri_mismatch')) {
-                msg = 'Google OAuth redirect URI mismatch. Please contact support.';
-            } else if (err?.message?.includes('Error 400')) {
-                msg = 'Google OAuth configuration error. Please contact support.';
-            } else if (err?.code === "auth/configuration-not-found") {
-                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing');
-            } else {
-                msg = err?.message || t('auth.signup.googleRegistrationFailed', 'Google login failed');
-            }
-            
-            showAlert(msg, 'error');
-        } finally {
+            console.error('🔍 Google Login Error:', err);
+            showAlert('Google login failed. Please try again.', 'error');
             setSocialSubmitting(false);
         }
     }, [showAlert, t, navigate]);

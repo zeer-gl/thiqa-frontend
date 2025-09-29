@@ -51,8 +51,8 @@ const Footer = () => {
                                             {t('nav.serviceProviders', 'Service Providers')}
                                         </Link>
                                         <Link 
-                                            className={`nav-link px-4 py-2 nav-item ${location.pathname === '/about' ? 'active' : ''}`} 
-                                            to="/about"
+                                            className={`nav-link px-4 py-2 nav-item ${location.pathname === '/privacy-policy' ? 'active' : ''}`} 
+                                            to="/privacy-policy"
                                         >
                                             {t('footer.privacy')}
                                         </Link>
