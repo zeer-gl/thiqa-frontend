@@ -108,6 +108,9 @@
       "customerSection": {
         "subtitle": "Customer reviews __",
         "title": "What our customers say",
+        "loadingReviews": "Loading reviews...",
+        "noReviews": "No reviews available",
+        "noReviewsDescription": "Be the first to review our products",
         "testimonial": {
           "text": "I recently shopped at Ckart and it was a wonderful experience! The selection is amazing, catering to a variety of tastes, and I found unique pieces that added a beautiful touch to my home. I recently shopped at Ckart and it was a wonderful experience! The selection is amazing, catering to a variety of tastes, and I found unique pieces that added a beautiful touch to my home.",
           "customerName": "Reem Ahmed",
@@ -247,7 +250,13 @@
         "full-construction": "Total Construction",
         "general-electricity": "General Electricity",
         "view-project": "View Project",
-        "favorites": "Favorites"
+        "favorites": "Favorites",
+        "my-services": "My Services",
+        "delivery-time": "Delivery Time",
+        "see-more": "See More",
+        "see-less": "See Less",
+        "no-services": "No Services Found",
+        "no-services-description": "This professional has not added any services yet."
       },
     "contractorView": {
       "locationSection": {
@@ -432,9 +441,9 @@
   },
 
   "price-request-success": {
-    "title": "Price request added successfully",
-    "subtitle": "You will be notified when a new quote is available",
-    "go-to-list": "Requests for quotations"
+    "title": "Quote Request Added Successfully",
+    "subtitle": "Your quote request has been submitted successfully. We will get back to you soon.",
+    "go-to-home": "Go to Home"
   },
 
   "fatorahCallback": {
@@ -959,6 +968,25 @@
       "networkError": "Network error",
       "successMessage": "Password changed successfully",
       "errorMessage": "Failed to change password"
+    },
+    "phoneVerification": {
+      "phoneFormat": "Please enter a valid Kuwait phone number",
+      "otpSent": "OTP sent to your phone",
+      "otpSendFailed": "Failed to send OTP",
+      "completeOtpRequired": "Please enter the complete OTP code.",
+      "verificationSuccess": "Phone number verified successfully! Updating profile...",
+      "invalidOtp": "Invalid OTP code",
+      "verificationFailed": "Verification failed",
+      "updateFailed": "Phone verified but profile update failed",
+      "otpResent": "OTP resent successfully"
+    },
+    "otp": {
+      "title": "Verify Phone Number",
+      "description": "Please enter the 6-digit OTP code sent to your phone",
+      "timerPrefix": "Resend in",
+      "submit": "Verify",
+      "resend": "Resend OTP",
+      "verifying": "Verifying..."
     },
     "addresses": {
       "addNewAddress": "Add New Address",

@@ -894,7 +894,7 @@ const validateForm = () => {
                                                 </div>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && !name.trim() ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-2 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && !name.trim() ? 'is-invalid' : ''}`}
                                                     id="name"
                                                     placeholder={t('auth.signupsp.name')} 
                                                     value={name}
@@ -922,7 +922,7 @@ const validateForm = () => {
     </div>
     <input 
       type="tel" 
-      className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${
+      className={`form-control  pt-2 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${
         formSubmitted && !phoneNo ? 'is-invalid' : 
         phoneNo && phoneValid ? 'is-valid' : 
         phoneNo && !phoneValid ? 'is-invalid' : ''
@@ -974,7 +974,7 @@ const validateForm = () => {
                                                 </div>
                                                 <input 
                                                     type="email" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                                                     id="email"
                                                     placeholder={t('auth.signupsp.email')} 
                                                     value={email}
@@ -1000,7 +1000,7 @@ const validateForm = () => {
                                               
                                                 <input 
                                                     type={showPassword ? "text" : "password"}
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.signupsp.password')} 
                                                     value={password}
@@ -1023,7 +1023,10 @@ const validateForm = () => {
                                                     onClick={togglePasswordVisibility}
                                                     style={{ background: 'none', border: 'none', zIndex: 10 }}
                                                 >
-                                                    <img src={EyeIcon} alt="Toggle password" style={{ width: '20px', height: '20px' }} />
+                                                    <img src={EyeIcon} 
+                                                    className="pt-1"
+                                                    alt="Toggle password" 
+                                                    style={{ width: '20px', height: '20px' }} />
                                                 </button>
                                             </div>
                                         </div>
@@ -1036,7 +1039,7 @@ const validateForm = () => {
                                                 </div>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && !workTitle.trim() ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-2 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && !workTitle.trim() ? 'is-invalid' : ''}`}
                                                     id="workTitle"
                                                     placeholder={t('auth.signupsp.workTitle')} 
                                                     value={workTitle}
@@ -1065,7 +1068,7 @@ const validateForm = () => {
                                                 
                                                 {/* Custom Multi-Select Component */}
                                                 <div 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && selectedSpecializations.length === 0 ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-2 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && selectedSpecializations.length === 0 ? 'is-invalid' : ''}`}
                                                     style={{ 
                                                         height: '80px', 
                                                         cursor: 'pointer',
@@ -1220,7 +1223,7 @@ const validateForm = () => {
                                                 min="0"
                                                 inputMode="numeric"
                                                 dir="ltr"
-                                                className={`form-control ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
+                                                className={`form-control pt-3 ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
                                                 id="experience"
                                                 placeholder={t('auth.signupsp.experience')} 
                                                 value={experience}
@@ -1343,7 +1346,7 @@ const validateForm = () => {
                                     </div>
                                     <div>
                                         <div className='mt-4'>
-                                            <button type='submit' className='btn ev-submit-btn' disabled={submitting}>
+                                            <button type='submit' className='btn pt-2  ev-submit-btn d-flex align-items-center justify-content-center' disabled={submitting}>
                                                 {submitting ? t('auth.signupsp.creating') : t('auth.signupsp.createAccount')}
                                             </button>
                                         </div>
@@ -1362,13 +1365,16 @@ const validateForm = () => {
                                                 onClick={handleGoogleRegister}
                                                 disabled={socialSubmitting}
                                             >
+                                                <span className="pt-2">
                                                 {t('auth.signupsp.google')}
+                                                </span>
+                                              
                                                 <img src={GoogleIcon} alt=""/>
                                             </button>
                                         </div>
                                     
                                         <div className='mt-3'>
-                                            <Link to="/signup" className='btn seeker-auth-btn text-decoration-none'>
+                                            <Link to="/signup" className='btn pt-2 seeker-auth-btn text-decoration-none d-flex align-items-center justify-content-center'>
                                                 {t('auth.signupsp.registerAsCustomer')}
                                             </Link>
                                         </div>
@@ -1428,7 +1434,7 @@ const validateForm = () => {
                                 ))}
                             </div>
 
-                            <button type="submit" className="btn otp-submit-btn w-100">
+                            <button type="submit" className="btn otp-submit-btn w-100 d-flex align-items-center justify-content-center">
                                 {t('auth.signupsp.otp.submit', 'Submit')}
                             </button>
                         </form>

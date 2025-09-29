@@ -31,8 +31,15 @@
 
     .location-text {
         display: flex;
-        flex-direction: column;
-        gap: 2px;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .location-full {
+        font-size: 14px;
+        color: #ffffff !important;
+        font-weight: 500;
+        white-space: nowrap;
     }
 
     .city {
@@ -121,6 +128,10 @@
             text-align: right;
         }
 
+        .location-full {
+            text-align: right;
+        }
+
         .greeting-text {
             text-align: right;
         }
@@ -144,6 +155,10 @@
 
         .country, .name {
             font-size: 14px;
+        }
+
+        .location-full {
+            font-size: 12px;
         }
 
         .profile-image {
@@ -173,6 +188,10 @@
 
         .country, .name {
             font-size: 12px;
+        }
+
+        .location-full {
+            font-size: 11px;
         }
 
         .profile-image {

@@ -113,28 +113,38 @@
     border: 1px solid #001C4126;
     background-color: transparent;
     padding-inline: 40px;
+    display: flex;
+    align-items: center;
+    line-height: 1.5;
     
     &::placeholder {
       color: #001C4180;
       opacity: 1; /* Firefox */
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
     }
     
     &::-webkit-input-placeholder {
       color: #001C4180;
+      line-height: 1.5;
     }
     
     &::-moz-placeholder {
       color: #001C4180;
       opacity: 1;
+      line-height: 1.5;
     }
     
     &:-ms-input-placeholder {
       color: #001C4180;
+      line-height: 1.5;
     }
     
     &:-moz-placeholder {
       color: #001C4180;
       opacity: 1;
+      line-height: 1.5;
     }
   }
 
@@ -149,6 +159,9 @@
   .ev-submit-btn {
     height: 50px;
     border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
     img {
       transform: rotate(180deg);
@@ -160,9 +173,9 @@
     background-color: $cream !important;
     height: 50px;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   // Utility to remove built-in background icons when using inline icons
@@ -177,6 +190,21 @@
   border: 1px solid #21395D33 !important;
   padding: 12px 15px !important;
   width: 100%;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.seeker-auth-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.otp-submit-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 /* OTP Modal Styles */
 .otp-modal-overlay {

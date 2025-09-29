@@ -283,7 +283,7 @@ function ForgetPasswordSP() {
                                                 <div className="btn-group w-100" role="group">
                                                     <button
                                                         type="button"
-                                                        className={`btn ${!usePhone ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                        className={`btn  pt-2 ${!usePhone ? 'btn-primary' : 'btn-outline-primary'}`}
                                                         onClick={() => setUsePhone(false)}
                                                     >
                                                         {t('auth.forgotPassword.email', 'Email')}
@@ -303,7 +303,7 @@ function ForgetPasswordSP() {
                                                     <label htmlFor="email" className='form-label'>{t('auth.forgotPassword.email', 'Email')}</label>
                                                     <input 
                                                         type="email" 
-                                                        className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                                        className={`form-control  pt-2 ${errors.email ? 'is-invalid' : ''}`}
                                                         id="email"
                                                         placeholder={t('auth.forgotPassword.emailPlaceholder', 'professional@example.com')}
                                                         value={email}
@@ -318,7 +318,7 @@ function ForgetPasswordSP() {
                                                     <label htmlFor="phoneNo" className='form-label'>{t('auth.forgotPassword.phoneNumber', 'Phone Number')}</label>
                                                     <input 
                                                         type="tel" 
-                                                        className={`form-control ${errors.phoneNo ? 'is-invalid' : ''}`}
+                                                        className={`form-control pt-2 ${errors.phoneNo ? 'is-invalid' : ''}`}
                                                         id="phoneNo"
                                                         placeholder={t('auth.forgotPassword.phonePlaceholder', '+965 12345678')}
                                                         value={phoneNo}
@@ -392,7 +392,7 @@ function ForgetPasswordSP() {
                                         <div className='mt-4'>
                                             <button 
                                                 type="submit" 
-                                                className='btn ev-submit-btn' 
+                                                className='btn ev-submit-btn pt-2' 
                                                 disabled={submitting}
                                             >
                                                 {submitting ? (t('common.sending') || "Sending...") : (
@@ -400,7 +400,7 @@ function ForgetPasswordSP() {
                                                         {currentStep === 1 && t('auth.forgotPassword.sendOtp', 'Send OTP')}
                                                         {currentStep === 2 && t('auth.forgotPassword.verifyOtp', 'Verify OTP')}
                                                         {currentStep === 3 && t('auth.forgotPassword.resetPassword', 'Reset Password')}
-                                                        <img src={ArrowRight} alt=""/>
+                                                        <img src={ArrowRight} alt="" className="pt-2"/>
                                                     </>
                                                 )}
                                             </button>

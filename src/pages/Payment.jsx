@@ -153,7 +153,7 @@ const Payment = () => {
                         <h3>{t('payment.emptyCart')}</h3>
                         <p className="text-muted">{t('payment.addItemsToCart')}</p>
                         <button 
-                            className="btn btn-primary mt-3"
+                            className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
                             onClick={() => navigate('/')}
                         >
                             {t('payment.continueShopping')}
@@ -190,15 +190,7 @@ const Payment = () => {
                                                             </h5>
                                                             
                                                             <div className="action-icons">
-                                                                <div className="me-3">
-
-                                                                    <span 
-                                                                        className={`me-4 ${likedProducts[item._id] ? 'text-danger' : 'text-muted'}`}
-                                                                        onClick={() => handleToggleLike(item._id)}
-                                                                    >
-                                                                        {likedProducts[item._id] ? t('payment.remove-favorites') : t('payment.add-favorites')}
-                                                                    </span>
-                                                                </div>
+                  
                                                                 
                                                                 <img 
                                                                     style={{width: '24px', height: '24px', cursor: 'pointer'}} 
@@ -212,27 +204,31 @@ const Payment = () => {
                                                         {/* Product Pricing */}
                                                         <div className="col-md-3">
                                                             <div className="pricing-info">
-                                                                <h5 className='mb-3 d-flex justify-content-center'>
+                                                                <div className='d-flex justify-content-center align-items-center gap-4'>
+                                                                <h6 className='mb-3 d-flex justify-content-center'>
                                                                     {t('payment.quantity')}
-                                                                </h5>
+                                                                </h6>
                                                                 <div className="quantity-selector mb-3">
                                                                     <button 
-                                                                        className="quantity-btn minus-btn me-2"
+                                                                        className="quantity-btn minus-btn me-2 d-flex align-items-center justify-content-center"
                                                                         onClick={() => handleQuantityChange(item._id, -1)}
                                                                     >
-                                                                        <span className="minus-icon">−</span>
+                                                                        <span className="minus-icon pt-2">−</span>
                                                                     </button>
-                                                                    <div className="quantity-display">
+                                                                    <div className="quantity-display pt-2">
                                                                         {(item.quantity || 1).toString().padStart(2, '0')}
                                                                     </div>
                                                                     <button 
-                                                                        className="quantity-btn plus-btn ms-2"
+                                                                        className="quantity-btn plus-btn ms-2 d-flex align-items-center justify-content-center"
                                                                         onClick={() => handleQuantityChange(item._id, 1)}
                                                                         disabled={item.quantity >= (item.stockQuantity || 99)}
                                                                     >
-                                                                        <span className="plus-icon">+</span>
+                                                                        <span className="plus-icon pt-2">+</span>
                                                                     </button>
                                                                 </div>
+                                                                </div>
+
+                                                              
                                                                 <div className="original-price gap-2">
                                                                     <p className='small-price fw-bold text-black'>
                                                                         {item.price} {t('payment.kwd')}
@@ -275,13 +271,13 @@ const Payment = () => {
                             
                             <div className="modal-footer justify-content-center">
                                 <button 
-                                    className="btn btn-secondary me-3" 
+                                    className="btn btn-secondary me-3 d-flex align-items-center justify-content-center" 
                                     onClick={handleCancelDelete}
                                 >
                                     {t('common.cancel', 'Cancel')}
                                 </button>
                                 <button 
-                                    className="btn btn-danger" 
+                                    className="btn btn-danger d-flex align-items-center justify-content-center" 
                                     onClick={handleConfirmDelete}
                                 >
                                     {t('payment.modal.removeButton', 'Remove')}

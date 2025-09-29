@@ -14,16 +14,14 @@ const PriceRequestSuccess = () => {
                 <img className='side-pattern' src={SidePattern} alt="" />
             </div>
             <div className="success-card text-center">
-                <h2 className="title fw-bold mb-3">{t('price-request-success.title')}</h2>
-                <p className="subtitle mb-4">{t('price-request-success.subtitle')}</p>
+                <h2 className="title fw-bold mb-3">{t('price-request-success.title', 'Quote Request Added Successfully')}</h2>
+                <p className="subtitle mb-4">{t('price-request-success.subtitle', 'Your quote request has been submitted successfully. We will get back to you soon.')}</p>
 
                 <div className="pattern-wrap mb-4">
                     <img src={RoundPattern} alt="pattern" />
                 </div>
 
-    
-
-                <Link to="/request-quote/list" className="btn home-btn">{t('price-request-success.go-to-list')}</Link>
+                <Link to="/" className="btn home-btn">{t('price-request-success.go-to-home', 'Go to Home')}</Link>
             </div>
         </div>
     );

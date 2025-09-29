@@ -517,7 +517,7 @@ const ProductDetail = () => {
                                 </h1>
                                 <div className="favorite-section">
                                 <button
-  className={`btn favorite-btn`}
+  className={`btn favorite-btn d-flex align-items-center justify-content-center`}
   onClick={handleToggleLike}
   disabled={false}
   title={
@@ -531,9 +531,11 @@ const ProductDetail = () => {
     className={`heart-icon ${isProductLiked ? 'liked' : ''}`}
     style={{ color: isProductLiked ? 'red' : 'inherit' }} // ✅ only heart turns red
   />
+  <span className="pt-2">
   {isProductLiked
-    ? t('Favourite')
-    : t('Unfavourite')}
+            ? t('Favourite')
+            : t('Unfavourite')}
+            </span>
 </button>
                                     {!localStorage.getItem('token') && (
                                         <small className="text-muted d-block mt-1">
@@ -545,26 +547,47 @@ const ProductDetail = () => {
 
                             <div className='d-flex align-items-center justify-content-between flex-wrap-reverse'>
                                 <div>
-                                <div className="rating-section mb-3">
-  <div className="stars">
-    {[...Array(5)].map((_, index) => (
-      <FontAwesomeIcon
-        key={index}
-        icon={faStar}
-        className={
-          index < Math.floor(products?.ratings?.average || 0)
-            ? "star-filled"
-            : "star-empty"
-        }
-      />
-    ))}
-  </div>
-  <span className="rating-text">
-    {products?.ratings?.average|| 0}
-  </span>
-</div>
+                                {products?.ratings?.average && products?.ratings?.average > 0 ? (
+                                    <div className="rating-section mb-3">
+                                        <div className="stars">
+                                            {[...Array(5)].map((_, index) => (
+                                                <FontAwesomeIcon
+                                                    key={index}
+                                                    icon={faStar}
+                                                    className={
+                                                        index < Math.floor(products?.ratings?.average || 0)
+                                                            ? "star-filled"
+                                                            : "star-empty"
+                                                    }
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="rating-text">
+                                            {products?.ratings?.average}
+                                        </span>
+                                    </div>
+                                ) : products?.averageRating && products?.averageRating > 0 ? (
+                                    <div className="rating-section mb-3">
+                                        <div className="stars">
+                                            {[...Array(5)].map((_, index) => (
+                                                <FontAwesomeIcon
+                                                    key={index}
+                                                    icon={faStar}
+                                                    className={
+                                                        index < Math.floor(products?.averageRating || 0)
+                                                            ? "star-filled"
+                                                            : "star-empty"
+                                                    }
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="rating-text">
+                                            {products?.averageRating}
+                                        </span>
+                                    </div>
+                                ) : null}
                                     <div className='d-flex align-items-center gap-2 mb-3'>
-                                        <span className="reviews-text">{products?.totalReviews ||0} {t('pages.detail-page.section1.reviews')}</span>
+                                        <span className="reviews-text">{products?.ratings?.totalReviews || products?.totalReviews || 0} {t('pages.detail-page.section1.reviews')}</span>
                                         <span style={{color: '#CBD5E1'}}> |</span>
                                         <span className="sales-text">{products?.totalUnitsSold} {t('pages.detail-page.section1.sold')}</span>
                                     </div>
@@ -603,15 +626,15 @@ const ProductDetail = () => {
                                 <div className="quantity-section mb-4">
                                     <div className="quantity-controls">
                                         <button
-                                            className="quantity-btn"
+                                            className="quantity-btn pt-2 d-flex align-items-center justify-content-center"
                                             onClick={() => handleQuantityChange(quantity - 1)}
                                             disabled={quantity <= 1} // prevent going below 1
                                         >
                                             -
                                         </button>
-                                        <span className="quantity-display">{quantity.toString().padStart(2, '0')}</span>
+                                        <span className="quantity-display pt-2">{quantity.toString().padStart(2, '0')}</span>
                                         <button
-                                            className="quantity-btn"
+                                            className="quantity-btn pt-2 d-flex align-items-center justify-content-center"
                                             onClick={() => handleQuantityChange(quantity + 1)}
                                             disabled={products?.stockQuantity === 0 || quantity >= products?.stockQuantity}
                                         >
@@ -622,12 +645,15 @@ const ProductDetail = () => {
 
                                 <div className="action-buttons flex-grow-1 mb-4">
                                     <button 
-                                        className="btn add-to-cart-btn" 
+                                        className="btn add-to-cart-btn d-flex align-items-center justify-content-center" 
                                         onClick={handleAddToCart}
                                         disabled={products?.stockQuantity === 0}
                                     >
                                         <img src={CartIcon} alt=""/>
+                                        <span className="pt-2">
                                         {products?.stockQuantity === 0 ? t('pages.detail-page.section3.evaluationForm.outOfStock') : t('pages.detail-page.section1.addToCart')}
+                                        </span>
+                                      
                                     </button>
                                 </div>
                             </div>
@@ -640,19 +666,19 @@ const ProductDetail = () => {
                 <div className="tabs-section mt-5">
                     <div className="tabs-header">
                         <button
-                            className={`tab-btn ${activeTab === 'description' ? 'active' : ''}`}
+                            className={`tab-btn d-flex align-items-center justify-content-center ${activeTab === 'description' ? 'active' : ''}`}
                             onClick={() => setActiveTab('description')}
                         >
                             {t('pages.detail-page.section3.tabs.description')}
                         </button>
                         <button
-                            className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
+                            className={`tab-btn d-flex align-items-center justify-content-center ${activeTab === 'reviews' ? 'active' : ''}`}
                             onClick={() => setActiveTab('reviews')}
                         >
                             {t('pages.detail-page.section3.tabs.reviews')}
                         </button>
                         <button
-                            className={`tab-btn ${activeTab === 'evaluation' ? 'active' : ''}`}
+                            className={`tab-btn d-flex align-items-center justify-content-center ${activeTab === 'evaluation' ? 'active' : ''}`}
                             onClick={() => setActiveTab('evaluation')}
                         >
                             {t('pages.detail-page.section3.tabs.evaluation')}
@@ -894,12 +920,13 @@ const ProductDetail = () => {
                                         <div className='mt-4'>
                                             <button 
                                                 type='submit' 
-                                                className='btn ev-submit-btn'
+                                                className='btn ev-submit-btn pt-3 d-flex align-items-center justify-content-center'
                                                 disabled={submittingReview}
                                             >
                                                 {submittingReview ? t('pages.detail-page.section3.evaluationForm.submitting') : t('pages.detail-page.section3.evaluationForm.send')} 
                                                 <img 
                                                     src={ArrowRight} 
+                                                    className='pb-2'
                                                     alt=""
                                                     style={{ 
                                                         transform: i18n.dir() === 'rtl' ? 'none' : 'scaleX(-1)'

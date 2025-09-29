@@ -390,7 +390,7 @@ function LoginSP() {
                                                 </div> */}
                                                 <input 
                                                     type="email" 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                                                    className={`form-control  pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                                                     id="email"
                                                     placeholder={t('auth.loginsp.email', 'Email Address')} 
                                                     value={email}
@@ -414,7 +414,7 @@ function LoginSP() {
                                                 </div> */}
                                                 <input 
                                                     type={showPassword ? "text" : "password"} 
-                                                    className={`form-control ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.loginsp.password', 'Password')} 
                                                     value={password}
@@ -430,6 +430,7 @@ function LoginSP() {
                                                 >
                                                     <img 
                                                         src={EyeIcon} 
+                                                        className="pt-2"
                                                         alt="Toggle password visibility"
                                                         style={{ width: '20px', height: '20px' }}
                                                     />
@@ -444,11 +445,11 @@ function LoginSP() {
                                     </div>
                                     <div>
                                         <div className='mt-4'>
-                                            <button type='submit' className='btn ev-submit-btn' disabled={submitting}>
+                                            <button type='submit' className='btn pt-2 ev-submit-btn d-flex align-items-center justify-content-center' disabled={submitting}>
                                                 {submitting ? t('common.sending', 'Logging in...') : t('auth.loginsp.login', 'Login')}
                                             </button>
                                             <div className='mt-3'>
-                                            <Link to="/login" className='btn ev-submit-btn text-decoration-none'>
+                                            <Link to="/login" className='btn pt-2 ev-submit-btn text-decoration-none d-flex align-items-center justify-content-center'>
                                                 {t('auth.loginsp.loginAsCustomer', 'Login as Customer')}
                                             </Link>
                                         </div>
@@ -470,7 +471,11 @@ function LoginSP() {
                                                 onClick={handleGoogleLogin}
                                                 disabled={socialSubmitting}
                                             >
+                                                <span className="pt-2">
                                                 {t("auth.signup.google")}
+                                                </span>
+                                             
+
                                                 <img src={GoogleIcon} alt="" />
                                             </button>
                                         
@@ -479,7 +484,7 @@ function LoginSP() {
                                     
                                     <div className='text-center mt-4'>
                                         <div className='mt-3'>
-                                            <Link to="/signup-sp" className='btn seeker-auth-btn text-decoration-none'>
+                                            <Link to="/signup-sp" className='btn seeker-auth-btn text-decoration-none d-flex align-items-center justify-content-center'>
                                                 {t('auth.loginsp.registerAsSeeker', 'Register as Service Provider')}
                                             </Link>
                                         </div>
@@ -487,7 +492,7 @@ function LoginSP() {
                                         {/* Cross-navigation to Customer Login */}
                                      
                                         <div className='d-flex align-items-center gap-2 justify-content-center mt-4'>
-                                            <a href="#" className='text-decoration-none fw-semibold'>
+                                            <a href="#" className='text-decoration-none pt-2 fw-semibold'>
                                                 {t('auth.loginsp.terms', 'Terms of Service')}
                                             </a>
                                             <p>{t('auth.loginsp.and', 'and')}</p>
@@ -542,7 +547,7 @@ function LoginSP() {
                                 ))}
                             </div>
 
-                            <button type="submit" className="btn otp-submit-btn w-100">
+                            <button type="submit" className="btn otp-submit-btn w-100 d-flex align-items-center justify-content-center">
                                 {t('auth.loginsp.otp.submit', 'Submit')}
                             </button>
                         </form>

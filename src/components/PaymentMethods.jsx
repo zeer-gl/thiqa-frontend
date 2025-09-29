@@ -478,7 +478,7 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                                             )}
                                             {method.isEmbeddedSupported && (
                                                 <div className="embedded-badge">
-                                                    <span className="badge-text">{t('paymentMethods.embeddedSupported', 'Embedded Supported')}</span>
+                                                    <span className="badge-text pt-2">{t('paymentMethods.embeddedSupported', 'Embedded Supported')}</span>
                                                 </div>
                                             )}
                                         </div>
@@ -554,7 +554,7 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                                                 )}
                                                 
                                                 <button 
-                                                    className="btn btn-outline-secondary btn-sm"
+                                                    className="btn btn-outline-secondary pt-2 btn-sm"
                                                     onClick={handleResetPayment}
                                                 >
                                                     <i className="fas fa-refresh me-1"></i>

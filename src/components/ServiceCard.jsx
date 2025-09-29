@@ -525,14 +525,14 @@ const ServiceCard = ({
                         disabled={loading}
                         title="Refresh project requests"
                     >
-                        <i className={`fas fa-sync-alt ${loading ? 'fa-spin' : ''}`}></i>
+                        <i className={`fas pt-2 fa-sync-alt ${loading ? 'fa-spin' : ''}`}></i>
                     </button>
                 </div>
             </div>
         </div>
       <div className="service-card-content-bottom">
       <button 
-                         className={`filter-tag ${selectedFilter === 'all' ? 'active' : ''}`}
+                         className={`filter-tag  pt-3 ${selectedFilter === 'all' ? 'active' : ''}`}
                          onClick={() => handleFilterClick('all')}
                      >
                          <div className="status-dot all"></div>
@@ -543,14 +543,20 @@ const ServiceCard = ({
                          onClick={() => handleFilterClick('open')}
                      >
                          <div className="status-dot open"></div>
+                         <span className="pt-2">
                          {t('projectPriceRequest.status.open', 'مفتوح')}
+                         </span>
+                       
                      </button>
                      <button 
                          className={`filter-tag ${selectedFilter === 'inProgress' ? 'active' : ''}`}
                          onClick={() => handleFilterClick('inProgress')}
                      >
                          <div className="status-dot in-progress"></div>
+                         <span className="pt-2">
                          {t('projectPriceRequest.status.inProgress', 'في طور الإنجاز')}
+                         </span>
+                      
                      </button>
       </div>
       {/* Loading State */}

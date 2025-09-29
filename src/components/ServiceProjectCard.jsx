@@ -206,7 +206,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 </div>
                 <div className="project-actions">
                     <button
-                        className={`offers-button ${project.offers === 0 ? 'disabled' : ''}`}
+                        className={`offers-button pt-1 ${project.offers === 0 ? 'disabled' : ''}`}
                         onClick={() => project.offers > 0 && onToggle(project.id)}
                         disabled={project.offers === 0}
                     >
@@ -259,7 +259,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             return shouldShowButton;
                                         })() && (
                                         <button 
-                                            className="btn-call"
+                                            className="btn-call pt-2"
                                                 onClick={() => {
                                                     console.log('=== BUTTON CLICK DEBUG (UPDATED VERSION) ===');
                                                     console.log('Timestamp:', new Date().toISOString());

@@ -78,7 +78,7 @@ const ProductList = () => {
                                                 {ready ? t('common.loading') : (i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...')}
                                             </h5>
                                             <p className="card-text">...</p>
-                                            <button className="btn btn-primary" disabled>
+                                            <button className="btn btn-primary d-flex align-items-center justify-content-center" disabled>
                                                 {ready ? t('common.loading') : (i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...')}
                                             </button>
                                         </div>
@@ -120,7 +120,7 @@ const ProductList = () => {
             <p className="card-text">
                 {ready ? t('common.productDescription') : (i18n.language === 'ar' ? 'وصف المنتج هنا.' : 'Product description here.')}
             </p>
-            <button className="btn btn-primary">
+            <button className="btn btn-primary d-flex align-items-center justify-content-center">
                 {ready ? t('common.viewDetails') : (i18n.language === 'ar' ? 'عرض التفاصيل' : 'View Details')}
             </button>
           </div>

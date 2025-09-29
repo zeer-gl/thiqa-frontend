@@ -87,6 +87,11 @@ const Home = () => {
     const [currentFilter, setCurrentFilter] = useState(null); // 'interactive', 'nearby', or null
     const [isFilterActive, setIsFilterActive] = useState(false);
     
+    // Customer reviews states
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(false);
+    const [reviewsError, setReviewsError] = useState(null);
+    
     // Lock/unlock body scroll when modal is open/closed
     useEffect(() => {
         if (showServiceModal) {
@@ -599,6 +604,16 @@ const Home = () => {
         }
     }, [isServiceProvider]);
 
+    // Fetch all customer reviews on component mount
+    useEffect(() => {
+        fetchAllCustomerReviews();
+    }, []);
+
+    // Function to refresh reviews (can be called manually if needed)
+    const refreshReviews = () => {
+        fetchAllCustomerReviews();
+    };
+
     // Refresh profile data when component mounts (useful after subscription changes)
     useEffect(() => {
         if (isServiceProvider) {
@@ -798,6 +813,69 @@ const Home = () => {
         setCurrentFilter(null);
         await fetchProfessionals();
     };
+
+    // Function to fetch all customer reviews
+    const fetchAllCustomerReviews = async () => {
+        try {
+            setReviewsLoading(true);
+            setReviewsError(null);
+            
+            const response = await fetch(`${BaseUrl}/customer/get-all-reviews`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch reviews (${response.status})`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && Array.isArray(data.data)) {
+                setReviews(data.data);
+                console.log('✅ All reviews fetched successfully:', data.data);
+            } else {
+                setReviews([]);
+                console.warn('⚠️ No reviews data in response');
+            }
+        } catch (error) {
+            setReviewsError(error.message);
+            console.error('❌ Error fetching reviews:', error);
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
+
+    // Helper function to calculate average rating
+    const calculateAverageRating = (review) => {
+        const { efficiencyRating, priceRating, deliveryRating } = review;
+        return ((efficiencyRating + priceRating + deliveryRating) / 3).toFixed(1);
+    };
+
+    // Helper function to render stars
+    const renderStars = (rating) => {
+        const stars = [];
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<Star key={i} sx={{ color: "#FFD700", fontSize: 18 }} />);
+        }
+        
+        if (hasHalfStar) {
+            stars.push(<StarHalf key="half" sx={{ color: "#FFD700", fontSize: 18 }} />);
+        }
+        
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(<StarBorder key={`empty-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />);
+        }
+        
+        return stars;
+    };
     useEffect(() => {
         const fetchProducts = async (categoryId) => {
             if (!categoryId) return;
@@ -973,7 +1051,7 @@ const Home = () => {
                                     </h4>
                                     <div className="d-flex flex-column gap-3 align-items-center">
                                     <Link to={'/profile-sp?tab=packages'}>
-                                        <button className='btn hero-btn'>
+                                        <button className='btn hero-btn d-flex align-items-center justify-content-center'>
                                             {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
                                         </button>
                                     </Link>
@@ -1010,14 +1088,14 @@ const Home = () => {
                                 {isServiceProvider ? (
                                     // Show packages button for service providers
                                         <Link to={'/profile-sp?tab=packages'}>
-                                            <button className='btn hero-btn pt-2'>
+                                            <button className='btn hero-btn pt-2 d-flex align-items-center justify-content-center'>
                                             {t('pages.home.heroSection.viewPackages', 'View Packages')}
                                             </button>
                                         </Link>
                                 ) : (
                                     // Show regular button for customers
                                     <Link to={'/products'} style={{textDecoration: 'none'}}>
-                                        <button className=' hero-btn pt-2' style={{textDecoration:"none"}}>
+                                        <button className='btn hero-btn pt-2 d-flex align-items-center justify-content-center' style={{textDecoration:"none"}}>
                                             {t('pages.home.heroSection.ctaButton')}
                                         </button>
                                     </Link>
@@ -1039,11 +1117,14 @@ const Home = () => {
                                         <div className="d-flex justify-content-between align-items-center mb-4">
                                             {/* <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2> */}
                                             <button 
-                                                className="btn btn-primary"
+                                                className="btn btn-primary d-flex align-items-center justify-content-center"
                                                 onClick={() => setShowServiceModal(true)}
                                             >
                                                 <i className="fas fa-plus me-2"></i>
+                                                <span className="pt-2">
                                                 {t('pages.home.serviceManagement.addService', 'Add Service')}
+                                                </span>
+                                              
                                             </button>
                                         </div>
                                         
@@ -1085,18 +1166,23 @@ const Home = () => {
                                                                 <div className="mt-auto">
                                                                     <div className="btn-group w-100" role="group" style={{display: 'flex', justifyContent: 'center',alignItems: 'center',gap: '10px'}}>
                                                                         <button 
-                                                                            className="btn btn-outline-primary btn-sm"
+                                                                            className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
                                                                             onClick={() => handleEditService(service)}
                                                                         >
                                                                             <i className="fas fa-edit "></i>
+                                                                            <span className="pt-2">
                                                                             {t('common.edit', 'Edit')}
+                                                                            </span>
+                                                                           
                                                                         </button>
                                                                         <button 
-                                                                            className="btn btn-outline-danger btn-sm"
+                                                                            className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
                                                                             onClick={() => handleDeleteService(service)}
                                                                         >
                                                                             <i className="fas fa-trash me-1"></i>
+                                                                            <span className="pt-2">
                                                                             {t('common.delete', 'Delete')}
+                                                                            </span>
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1280,19 +1366,19 @@ const Home = () => {
           <div className='d-flex align-items-center gap-2 services-buttons-container'>
             <div className="d-flex align-items-center gap-2 main-buttons-group">
               <Link to={'service-list'} className='text-decoration-none'>
-                <button className='btn nearby-btn p-3 text-decoration-none'>
+                <button className='btn nearby-btn p-3 text-decoration-none d-flex align-items-center justify-content-center'>
                   {t('pages.home.servicesSection.buttons.seeAll', 'See All')}
                 </button>
               </Link>
        
               <button 
-                className={`btn mi-btn p-3 ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
+                className={`btn mi-btn p-3 d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
                 onClick={handleMostInteractiveClick}
               >
                 <img src={MIP} className='pb-1' alt="Most Interactive Professionals"/>{t('pages.home.servicesSection.buttons.mostInteractive')}
               </button>
               <button 
-                className={`btn p-3 nearby-btn ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
+                className={`btn p-3 nearby-btn d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
                 onClick={handleNearbyClick}
               >
                 <img src={NearbyIcon}  className='pb-1' alt="Nearby Professionals"/>{t('pages.home.servicesSection.buttons.nearby')}
@@ -1303,7 +1389,7 @@ const Home = () => {
             {totalProfessionalsPages > 1 && (
               <div className="d-flex align-items-center gap-2 ms-3 pagination-buttons-group">
                 <button
-                  className="btn pagination-arrow-btn"
+                  className="btn pagination-arrow-btn d-flex align-items-center justify-content-center"
                   onClick={() => handleProfessionalsPageChange('prev')}
                   disabled={currentProfessionalsPage === 1}
                   style={{
@@ -1315,7 +1401,7 @@ const Home = () => {
                 </button>
                 
                 <button
-                  className="btn pagination-arrow-btn"
+                  className="btn pagination-arrow-btn d-flex align-items-center justify-content-center"
                   onClick={() => handleProfessionalsPageChange('next')}
                   disabled={currentProfessionalsPage === totalProfessionalsPages}
                   style={{
@@ -1344,11 +1430,14 @@ const Home = () => {
               </span>
             </div>
             <button 
-              className="btn btn-outline-secondary btn-sm"
+              className="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
               onClick={clearAllFilters}
             >
               <i className="fas fa-times me-1"></i>
+              <span className='pt-1'>
               Clear Filters
+              </span>
+             
             </button>
           </div>
         )}
@@ -1443,7 +1532,7 @@ const Home = () => {
       return <StarBorder key={index} sx={{ color: "#FFD700", fontSize: 18 }} />;
     }
   })}
-  <span style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
+  <span className='pt-1' style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
     {professional.averageRating?.toFixed(1) || "0.0"}
   </span>
 </div>
@@ -1469,8 +1558,12 @@ const Home = () => {
       paddingRight:"20px"
     }}
   />
-                    <button className='btn outlined-btn fs-12'>
+                    <button className='btn outlined-btn fs-12 d-flex align-items-center justify-content-center'>
+                    <span className='pt-1'>
                       {professional.specialization || t('pages.home.servicesSection.serviceProvider.category')}
+                    </span>
+        
+
                     </button>
                   </div>
                 </div>
@@ -1524,83 +1617,124 @@ const Home = () => {
                             <h1 className='mb-3 ar-heading-bold'>
                                 {t('pages.home.customerSection.title')}
                             </h1>
+                            {!reviewsLoading && !reviewsError && reviews.length > 0 && (
+                                <div className="mb-3" style={{ fontSize: '14px', color: '#666' }}>
+                                    <span>Showing {reviews.length} customer review{reviews.length !== 1 ? 's' : ''}</span>
+                                </div>
+                            )}
+                            {reviewsLoading ? (
+                                <div className="text-center py-5">
+                                    <div className="spinner-border" role="status">
+                                        <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
+                                    </div>
+                                    <p className="mt-3">{t('pages.home.customerSection.loadingReviews', 'Loading reviews...')}</p>
+                                </div>
+                            ) : reviewsError ? (
+                                <div className="alert alert-danger">{reviewsError}</div>
+                            ) : reviews.length > 0 ? (
                             <div id="carouselExampleIndicators" className="carousel position-static slide">
                                 <div className="carousel-indicators mb-0">
-                                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                                            data-bs-slide-to="0" className="active" aria-current="true"
-                                            aria-label="Slide 1"></button>
-                                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                                            data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                                            data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                        {reviews.map((_, index) => (
+                                            <button 
+                                                key={index}
+                                                type="button" 
+                                                data-bs-target="#carouselExampleIndicators"
+                                                data-bs-slide-to={index} 
+                                                className={index === 0 ? "active" : ""} 
+                                                aria-current={index === 0 ? "true" : "false"}
+                                                aria-label={`Slide ${index + 1}`}
+                                            ></button>
+                                        ))}
                                 </div>
                                 <div className="carousel-inner">
-                                    <div className="carousel-item active">
+                                        {reviews.map((review, index) => {
+                                            const averageRating = calculateAverageRating(review);
+                                            const customerName = review.customerId?.name || 'Customer';
+                                            const customerPic = review.customerId?.pic || null;
+                                            
+                                            return (
+                                                <div 
+                                                    key={review._id}
+                                                    className={`carousel-item ${index === 0 ? 'active' : ''}`}
+                                                >
                                         <div className='customer-content'>
                                             <p>
-                                                {t('pages.home.customerSection.testimonial.text')}
+                                                            {review.additionalNotes && review.additionalNotes.trim() !== '' 
+                                                                ? review.additionalNotes 
+                                                                : `Customer rated this product ${calculateAverageRating(review)}/5 stars based on efficiency, price, and delivery.`
+                                                            }
                                             </p>
+                                                        <div className="review-product-info" style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>
+                                                            <small>Product ID: {review.productId}</small>
+                                            </div>
                                             <div className='quote'>
                                                 <img src={QuoteImg} alt=""/>
                                             </div>
                                             <div className='customer-profile'>
-                                                <img src={CustomerImg2} alt=""/>
+                                                            {customerPic ? (
+                                                                <img 
+                                                                    src={customerPic} 
+                                                                    alt={customerName}
+                                                                    onError={(e) => {
+                                                                        e.target.style.display = 'none';
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <div 
+                                                                    className="customer-avatar-fallback"
+                                                                    style={{
+                                                                        width: '60px',
+                                                                        height: '60px',
+                                                                        borderRadius: '50%',
+                                                                        backgroundColor: '#e0e0e0',
+                                                                        color: '#666',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        fontSize: '24px',
+                                                                        fontWeight: 'bold',
+                                                                        textTransform: 'uppercase'
+                                                                    }}
+                                                                >
+                                                                    {customerName.charAt(0)}
+                                                </div>
+                                                            )}
                                                 <div>
                                                     <h5 className='fw-semibold ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerName')}
+                                                                    {customerName}
                                                     </h5>
-                                                    <h5 className='ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerType')}
-                                                    </h5>
+                                                                <div className="d-flex align-items-center gap-2">
+                                                                    <div className="ratings d-flex align-items-center">
+                                                                        {renderStars(parseFloat(averageRating))}
+                                                </div>
+                                                                    <span className='pt-1' style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
+                                                                        {averageRating}
+                                                                    </span>
+                                            </div>
+                                                                <div className="mt-2" style={{ fontSize: '12px', color: '#666' }}>
+                                                                    <div className="d-flex justify-content-between mb-1">
+                                                                        <span>Efficiency: {review.efficiencyRating}/5</span>
+                                                                        <span>Price: {review.priceRating}/5</span>
+                                                                        <span>Delivery: {review.deliveryRating}/5</span>
+                                        </div>
+                                                                    <div className="text-center" style={{ fontSize: '11px', color: '#999' }}>
+                                                                        {new Date(review.createdAt).toLocaleDateString()}
+                                    </div>
+                                            </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="carousel-item">
-                                        <div className='customer-content'>
-                                            <p>
-                                                {t('pages.home.customerSection.testimonial.text')}
-                                            </p>
-                                            <div className='quote'>
-                                                <img src={QuoteImg} alt=""/>
-                                            </div>
-                                            <div className='customer-profile'>
-                                                <img src={CustomerImg2} alt=""/>
-                                                <div>
-                                                    <h5 className='fw-semibold ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerName')}
-                                                    </h5>
-                                                    <h5 className='ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerType')}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="carousel-item">
-                                        <div className='customer-content'>
-                                            <p>
-                                                {t('pages.home.customerSection.testimonial.text')}
-                                            </p>
-                                            <div className='quote'>
-                                                <img src={QuoteImg} alt=""/>
-                                            </div>
-
-                                            <div className='customer-profile'>
-                                                <img src={CustomerImg2} alt=""/>
-                                                <div>
-                                                    <h5 className='fw-semibold ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerName')}
-                                                    </h5>
-                                                    <h5 className='ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerType')}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                            );
+                                        })}
                                 </div>
                             </div>
+                            ) : (
+                                <div className="text-center py-5">
+                                    <h5 className="text-muted mb-3">{t('pages.home.customerSection.noReviews', 'No reviews available')}</h5>
+                                    <p className="text-muted">{t('pages.home.customerSection.noReviewsDescription', 'Be the first to review our products')}</p>
+                            </div>
+                            )}
 
                         </div>
                         <div className="col-lg-6 col-12">
@@ -1849,7 +1983,7 @@ const Home = () => {
                                                     textAlign: i18n.language === 'ar' ? 'right' : 'left'
                                                 }}>
                                                     {imageError}
-                                                </div>
+                                        </div>
                                             )}
                                             <small className="form-text text-muted" style={{
                                                 textAlign: i18n.language === 'ar' ? 'right' : 'left', 
@@ -1860,8 +1994,8 @@ const Home = () => {
                                             }}>
                                                 {serviceForm.existingImage ? t('pages.home.serviceManagement.replaceImage', 'Select a new image to replace the current one, or leave empty to keep the current image.') : t('pages.home.serviceManagement.selectImage', 'Select an image for your service.')}
                                             </small>
-                                        </div>
                                     </div>
+                                </div>
                                 </div>
                                 <div className="modal-footer" style={{
                                     display: 'flex',
@@ -1874,7 +2008,7 @@ const Home = () => {
                                 }}>
                                           <button 
                                         type="submit" 
-                                        className="btn btn-primary" 
+                                        className="btn btn-primary pt-2 d-flex align-items-center justify-content-center" 
                                         disabled={serviceFormLoading}
                                         style={{
                                             minWidth: '120px',
@@ -1892,7 +2026,7 @@ const Home = () => {
                                     </button>
                                     <button 
                                         type="button" 
-                                        className="btn btn-secondary" 
+                                        className="btn btn-secondary pt-2 d-flex align-items-center justify-content-center" 
                                         disabled={serviceFormLoading}
                                         onClick={() => {
                                             setShowServiceModal(false);
@@ -1936,9 +2070,9 @@ const Home = () => {
                                 </p>
                             </div>
                             <div className="modal-footer justify-content-center">
-                            <button 
+                                <button 
                                     type="button" 
-                                    className="btn btn-danger" 
+                                    className="btn btn-danger d-flex align-items-center justify-content-center" 
                                     onClick={confirmDeleteService}
                                     style={{width: '100%'}}
                                 >
@@ -1946,7 +2080,7 @@ const Home = () => {
                                 </button>
                                 <button 
                                     type="button" 
-                                    className="btn btn-secondary" 
+                                    className="btn btn-secondary d-flex align-items-center justify-content-center" 
                                     onClick={cancelDeleteService}
                                     style={{width: '100%'}}
                                 >

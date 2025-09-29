@@ -17,6 +17,8 @@ const ServiceDetail = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [services, setServices] = useState([]);
+    const [showAllServices, setShowAllServices] = useState(false);
 
     // Breadcrumb items
     const breadcrumbItems = [
@@ -38,6 +40,33 @@ const ServiceDetail = () => {
 
     // Check if current professional is liked
     const isCurrentProfessionalLiked = likedProfessionals[id] || false;
+
+    // Fetch services for the professional
+    const fetchServices = async () => {
+        try {
+            setLoading(true);
+            setError('');
+            const res = await fetch(`${BaseUrl}/professional/${id}/services`);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err?.message || `Failed to load services (${res.status})`);
+            }
+            const data = await res.json();
+            // Check if services exist in the response
+            if (data.services && Array.isArray(data.services)) {
+                setServices(data.services);
+                // Save to localStorage for auto-fill functionality
+                localStorage.setItem('professionalServices', JSON.stringify(data.services));
+            } else {
+                throw new Error(data.message || 'No services found');
+            }
+        } catch (err) {
+            console.error('Error fetching services:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchProfessional = async () => {
@@ -64,14 +93,24 @@ const ServiceDetail = () => {
                     avatar: (p.name || 'A').charAt(0),
                     pic: p.pic ,
                     image:p.image,
+                    specializations: p.specializations || []
                 });
+
+                // Save professional data and specializations to localStorage
+                localStorage.setItem('professionalData', JSON.stringify(p));
+                if (p.specializations && p.specializations.length > 0) {
+                    localStorage.setItem('firstSpecialization', JSON.stringify(p.specializations[0]));
+                }
             } catch (e) {
                 setError(e?.message || 'Unable to load professional');
             } finally {
                 setLoading(false);
             }
         };
-        if (id) fetchProfessional();
+        if (id) {
+            fetchProfessional();
+            fetchServices();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -85,8 +124,13 @@ const ServiceDetail = () => {
         }
     };
 
-    const handleRequestService = () => {
+    const handleRequestService = (selectedService = null) => {
         if (!id) return;
+        if (selectedService) {
+            // Save selected service to localStorage for auto-fill
+            localStorage.setItem('selectedService', JSON.stringify(selectedService));
+        }
+        
         navigate(`/request-quote/create?professionalId=${id}`);
     };
 
@@ -148,16 +192,16 @@ const ServiceDetail = () => {
 
                                             {/* Location */}
                                             <div className="location">
-                                                <i className="fas fa-map-marker-alt"></i>
-                                                <span>{contractor.location}</span>
+                                                <i className="fas fa-map-marker-alt pb-1"></i>
+                                                <span className=''>{contractor.location}</span>
 
                                             </div>
                                         </div>
 
                                         {/* Rating Section */}
                                         <div className="rating-section">
-                                            <span className="rating-value">{contractor.rating}</span>
-                                            <div className="stars">
+                                            <span className="rating-value pt-2">{contractor.rating}</span>
+                                            <div className="stars pb-2">
                                                 {[...Array(5)].map((_, index) => (
                                                     <i
                                                         key={index}
@@ -180,7 +224,7 @@ const ServiceDetail = () => {
                                 <div className={`col-lg-6 ${i18n.language === 'ar' ? 'text-start' : 'text-end'}`}>
                                     <div>
                                     <button 
-  className={`btn-favorite-contractor ${isCurrentProfessionalLiked ? 'liked' : ''}`} 
+  className={`btn-favorite-contractor d-flex align-items-center justify-content-center ${isCurrentProfessionalLiked ? 'liked' : ''}`} 
   onClick={handleFavoriteClick}
 >
   <i className={isCurrentProfessionalLiked ? 'fas fa-heart' : 'far fa-heart'}></i>
@@ -201,25 +245,84 @@ const ServiceDetail = () => {
                                 </div>
                             </div>
 
-                            {/* Action Buttons */}
-                            <div className="action-buttons">
-                                <div className="row g-2">
-                                    <div className="col-lg-5">
-                                        <button className="btn btn-request-service w-100" onClick={handleRequestService}>
-                                            {t('pages.service-detail.request-service')}
-                                        </button>
-                                    </div>
-                                    {/* <div className="col-lg-7">
-                                        <button className="btn btn-all-projects w-100">
-                                            {t('pages.service-detail.all-projects')}
-                                        </button>
-                                    </div> */}
-                                </div>
-                            </div>
                         </div>
                     </div>
 
 
+                </div>
+
+                {/* Services Section */}
+                <div className="row mt-5 mb-5">
+                    <div className="col-12">
+                        <div className="services-section">
+                            <h2 className="section-title mb-4 fw-bold">
+                                {t('pages.service-detail.my-services', 'My Services')}
+                            </h2>
+
+                            {services.length > 0 ? (
+                                <>
+                                    <div className="services-grid">
+                                        {(showAllServices ? services : services.slice(0, 6)).map((service, index) => (
+                                            <div key={service._id || index} className="service-card">
+                                                <div className="service-image">
+                                                    <img 
+                                                        src={service.image} 
+                                                        alt={i18n.language === 'ar' ? service.nameAr : service.nameEn}
+                                                        loading="eager"
+                                                    />
+                                                </div>
+                                                <div className="service-content">
+                                                    <h4 className="service-name">
+                                                        {i18n.language === 'ar' ? service.nameAr : service.nameEn}
+                                                    </h4>
+                                                    <div className="service-price">
+                                                        KWD {service.price} / {service.unit}
+                                                    </div>
+                                                    <div className="service-delivery">
+                                                        {t('pages.service-detail.delivery-time', 'Delivery Time')}: {service.deliveryTime}
+                                                    </div>
+                                                    <button 
+                                                        className="btn btn-request-service w-100 mt-2 d-flex align-items-center justify-content-center"
+                                                        onClick={() => handleRequestService(service)}
+                                                    >
+                                                        <span className="pt-1">
+                                                        {t('pages.service-detail.request-service')}
+                                                        </span>
+                                                      
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    {services.length > 6 && (
+                                        <div className="text-center mt-4 d-flex justify-content-center align-items-center" >
+                                            <button 
+                                                className="btn d-flex p-2 align-items-center justify-content-center rounded-pill"
+                                                onClick={() => setShowAllServices(!showAllServices)}
+                                                style={{backgroundColor: '#21395D', color: 'white'}}
+                                            >
+                                                <span className="pt-1">
+                                                {showAllServices 
+                                                    ? t('pages.service-detail.see-less', 'See Less')
+                                                    : t('pages.service-detail.see-more', 'See More')
+                                                }
+                                                </span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="text-center py-5">
+                                    <div className="mb-3">
+                                        <i className="fas fa-tools" style={{ fontSize: '48px', color: '#ccc' }}></i>
+                                    </div>
+                                    <h5 className="text-muted">{t('pages.service-detail.no-services', 'No Services Found')}</h5>
+                                    <p className="text-muted">{t('pages.service-detail.no-services-description', 'This professional has not added any services yet.')}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Bottom Section - Completed Projects */}

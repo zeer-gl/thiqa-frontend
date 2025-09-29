@@ -48,7 +48,46 @@
   border-radius: 100px !important;
   font-size: 21px !important;
   font-weight: 600 !important;
-  padding: 10px 20px !important; 
+  padding: 10px 20px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: fit-content !important;
+  height: 60px !important;
+  padding: 0 24px !important;
+  line-height: 1 !important;
+  min-height: 60px !important;
+  text-decoration: none !important;
+  
+  span, div, p {
+    text-align: center !important;
+    text-decoration: none !important;
+  }
+  
+  &::before, &::after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+  }
+  
+  &[dir="rtl"] {
+    text-align: center !important;
+  }
+}
+
+a:has(.hero-btn) {
+  text-decoration: none !important;
+}
+
+// Standardize button heights
+.mi-btn, .nearby-btn, .pagination-arrow-btn, .product-list-tabs .nav-link {
+  height: 40px !important;
+  min-height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .hero-pattern-container {
@@ -80,6 +119,12 @@
   .nav-link {
     color: $navy !important;
     white-space: nowrap;
+    height: 40px !important;
+    min-height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 16px !important;
   }
 
   .nav-link.active {
@@ -97,6 +142,9 @@
   display: flex !important;
   align-items: center;
   gap: 5px;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 8px 16px !important;
 
   img {
     max-width: 8px;
@@ -112,6 +160,9 @@
   align-items: center;
   background-color: $navy !important;
   gap: 5px;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 8px 16px !important;
 
   img {
     max-width: 8px;
@@ -485,12 +536,16 @@ fieldset {
     .nav-link {
       font-size: 14px;
       padding: 8px 12px;
+      height: 40px !important;
+      min-height: 40px !important;
     }
   }
   
   .mi-btn, .nearby-btn {
     font-size: 12px !important;
     padding: 6px 10px !important;
+    height: 40px !important;
+    min-height: 40px !important;
   }
   
   .carousel-indicators{
@@ -511,8 +566,9 @@ fieldset {
   background: transparent;
   border: 2px solid #e0e0e0;
   color: #666;
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
+  min-height: 40px !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -690,10 +746,30 @@ fieldset {
   @media (max-width: 576px) {
     font-size: 11px !important;
     padding: 8px 12px !important;
+    height: 40px !important;
+    min-height: 40px !important;
     
     img {
       max-width: 10px;
     }
+  }
+}
+
+// Standardize all service section buttons
+.services-section {
+  .btn {
+    height: 40px !important;
+    min-height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 16px !important;
+  }
+  
+  // Ensure all buttons in services section have consistent height
+  .mi-btn, .nearby-btn, .pagination-arrow-btn {
+    height: 40px !important;
+    min-height: 40px !important;
   }
 }
 
@@ -703,6 +779,7 @@ fieldset {
   @media (max-width: 991px) {
     width: 40px;
     height: 40px;
+    min-height: 40px !important;
     
     i {
       font-size: 14px;

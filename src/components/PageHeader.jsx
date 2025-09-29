@@ -56,7 +56,7 @@ const PageHeader = ({
                                         </div>
                                         <div className="plus-sign">+</div>
                                     </div>
-                                    <span>{createButtonText || t("order-request.create-new-quote-request")}</span>
+                                    <span className="pt-1">{createButtonText || t("order-request.create-new-quote-request")}</span>
                                 </button>
                             </div>
                         </div>

@@ -22,6 +22,47 @@ const OrderRequest = () => {
         price: ''
     });
 
+    // Get service name from localStorage
+    const getServiceName = () => {
+        try {
+            const selectedService = localStorage.getItem('selectedService');
+            const professionalServices = localStorage.getItem('professionalServices');
+            
+            if (selectedService) {
+                const service = JSON.parse(selectedService);
+                return t('i18n.language') === 'ar' ? service.nameAr : service.nameEn;
+            }
+            
+            if (professionalServices) {
+                const services = JSON.parse(professionalServices);
+                if (services.length > 0) {
+                    const firstService = services[0];
+                    return t('i18n.language') === 'ar' ? firstService.nameAr : firstService.nameEn;
+                }
+            }
+            
+            return '';
+        } catch (error) {
+            console.error('Error getting service name:', error);
+            return '';
+        }
+    };
+
+    // Get first specialization from localStorage
+    const getFirstSpecialization = () => {
+        try {
+            const firstSpecialization = localStorage.getItem('firstSpecialization');
+            if (firstSpecialization) {
+                const specialization = JSON.parse(firstSpecialization);
+                return specialization._id || '';
+            }
+            return '';
+        } catch (error) {
+            console.error('Error getting first specialization:', error);
+            return '';
+        }
+    };
+
     // Calculate total amount from budget and price
     const calculateTotal = () => {
         const budget = parseFloat(formValues.budget) || 0;
@@ -75,8 +116,7 @@ const OrderRequest = () => {
     // Form validation schema (aligned with backend keys)
     const validationSchema = Yup.object().shape({
         title: Yup.string()
-            .required(t('order-request.title-required', 'Title is required'))
-            .min(5, t('order-request.title-min-length', 'Title must be at least 5 characters')),
+            .required(t('order-request.title-required', 'Title is required')),
 
         budget: Yup.number()
             .typeError(t('order-request.budget-number', 'Budget must be a number'))
@@ -116,17 +156,28 @@ const OrderRequest = () => {
         price: Yup.number().typeError(t('order-request.price-number', 'Price must be a number')).required(t('order-request.price-required', 'Price is required'))
     });
 
+    // Get professional data from localStorage
+    const getProfessionalData = () => {
+        try {
+            const professionalData = localStorage.getItem('professionalData');
+            return professionalData ? JSON.parse(professionalData) : null;
+        } catch (error) {
+            console.error('Error getting professional data:', error);
+            return null;
+        }
+    };
+
     // Initial form values (aligned with backend keys)
     const initialValues = {
-        title: '',
-        typeOfProject: '',
+        title: getServiceName(),
+        typeOfProject: getFirstSpecialization(),
         projectDesign: null,
         budget: '',
         dateOfRequest: '',
         deadline: '',
         description: '',
         address: '',
-        projectName: '',
+        projectName: getProfessionalData()?.name || '',
         price: ''
     };
 
