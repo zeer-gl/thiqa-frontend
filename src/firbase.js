@@ -15,6 +15,11 @@ const firebaseConfig = {
 };
 
 console.log('🔍 Firebase Config Debug:', firebaseConfig);
+console.log('🔍 Environment Variables Debug:', {
+  VITE_FIREBASE_PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  VITE_FIREBASE_AUTH_DOMAIN: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  VITE_FIREBASE_API_KEY: import.meta.env.VITE_FIREBASE_API_KEY
+});
 
 const app = initializeApp(firebaseConfig);
 
