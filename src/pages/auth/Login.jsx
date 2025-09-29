@@ -14,7 +14,7 @@ import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
 import { BaseUrl } from '../../assets/BaseUrl.jsx';
 import { AlertContext } from '../../context/AlertContext.jsx';
 import { auth } from '../../firbase';
-import { GoogleAuthProvider, OAuthProvider, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth';
 import GoogleIcon from '/public/images/auth/google-icon.svg';
 import AppleIcon from '/public/images/auth/apple-icon.svg';
 
@@ -35,60 +35,6 @@ function Login() {
     const [errors, setErrors] = useState({});
     const[backendErrror,setBackendError]=useState(null);
 
-    // Handle Google redirect result when user comes back from Google
-    useEffect(() => {
-        const handleGoogleRedirect = async () => {
-            try {
-                const result = await getRedirectResult(auth);
-                if (result) {
-                    console.log('🔍 Google Redirect Result:', result);
-                    const credential = GoogleAuthProvider.credentialFromResult(result);
-                    const idToken = credential?.idToken;
-                    
-                    if (idToken) {
-                        // Process the Google authentication result
-                        const requestBody = { 
-                            idToken, 
-                            federatedId: result.user.uid,
-                            email: result.user.email || '',
-                            displayName: result.user.displayName || '',
-                            givenName: result.user.displayName?.split(' ')[0] || '',
-                            familyName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
-                            picture: result.user.photoURL || '',
-                            verifiedEmail: result.user.emailVerified || false
-                        };
-
-                        const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(requestBody)
-                        });
-                        
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.customer) {
-                                localStorage.setItem('userData', JSON.stringify(data.customer));
-                            }
-                            localStorage.setItem('isLoggedIn', 'true');
-                            localStorage.setItem('userRole', 'user');
-                            if (data.token) {
-                                localStorage.setItem('token', data.token);
-                            }
-                            showAlert('Google authentication successful!', 'success');
-                            navigate("/");
-                        } else {
-                            throw new Error('Authentication failed');
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Google redirect error:', error);
-                showAlert('Google authentication failed. Please try again.', 'error');
-            }
-        };
-
-        handleGoogleRedirect();
-    }, [auth, showAlert, navigate]);
  
     
     const changeLanguage = useCallback((lng) => {
@@ -255,13 +201,101 @@ function Login() {
             provider.addScope('profile');
             console.log('🔍 Google Provider Created:', provider);
             
-            // Use redirect instead of popup to avoid OAuth configuration issues
-            await signInWithRedirect(auth, provider);
-            // The page will redirect to Google, so we don't need to continue here
+            const result = await signInWithPopup(auth, provider);
+            console.log('🔍 Google Auth Result:', result);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const idToken = credential?.idToken;
+            if (!idToken) throw new Error("Google authentication failed - no ID token");
+
+            // Extract Google user ID from provider data
+            const googleUserId = result.user.providerData?.[0]?.uid;
+            const federatedId = googleUserId || result.user.uid;
+            
+            // Parse raw user info if available
+            let rawUserInfo = {};
+            try {
+                if (result._tokenResponse?.rawUserInfo) {
+                    rawUserInfo = JSON.parse(result._tokenResponse.rawUserInfo);
+                }
+            } catch (e) {
+                console.warn('Could not parse rawUserInfo:', e);
+            }
+
+            const requestBody = { 
+                idToken, 
+                federatedId,
+                email: result.user.email || '',
+                displayName: result.user.displayName || '',
+                givenName: rawUserInfo.given_name || result.user.displayName?.split(' ')[0] || '',
+                familyName: rawUserInfo.family_name || result.user.displayName?.split(' ').slice(1).join(' ') || '',
+                picture: rawUserInfo.picture || result.user.photoURL || '',
+                verifiedEmail: rawUserInfo.verified_email || result.user.emailVerified || false
+            };
+
+            console.log('Google login request:', requestBody);
+            console.log('API URL:', `${BaseUrl}/customer/oauth-register-login`);
+
+            const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err?.message || `Google login failed (${res.status})`);
+            }
+            
+            const data = await res.json();
+            console.log('Google authentication data:', data);
+            
+            // Store user data and token
+            if (data.customer) {
+                localStorage.setItem('userData', JSON.stringify(data.customer));
+            }
+            
+            // Set login status
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', 'user');
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+            }
+            
+            // Show success message based on API response
+            const successMessage = data.message || t('auth.signup.googleAuthenticationSuccess', 'Google authentication successful');
+            showAlert(successMessage, 'success');
+            navigate("/");
             
         } catch (err) {
-            console.error('🔍 Google Login Error:', err);
-            showAlert('Google login failed. Please try again.', 'error');
+            console.error('🔍 Google Login Error:', {
+                error: err,
+                message: err?.message,
+                code: err?.code,
+                stack: err?.stack,
+                currentUrl: window.location.href,
+                authDomain: auth.app.options.authDomain,
+                projectId: auth.app.options.projectId
+            });
+            
+            let msg = '';
+            if (err?.code === 'auth/unauthorized-domain') {
+                msg = `Domain ${window.location.hostname} is not authorized. Please contact support.`;
+            } else if (err?.code === 'auth/popup-closed-by-user') {
+                msg = t('auth.signup.googleRegistrationFailed', 'Google login cancelled by user');
+            } else if (err?.message?.includes('unauthorized')) {
+                msg = `Domain ${window.location.hostname} is not authorized. Please contact support.`;
+            } else if (err?.message?.includes('redirect_uri_mismatch')) {
+                msg = 'Google OAuth redirect URI mismatch. Please contact support.';
+            } else if (err?.message?.includes('Error 400')) {
+                msg = 'Google OAuth configuration error. Please contact support.';
+            } else if (err?.code === "auth/configuration-not-found") {
+                msg = t('auth.signup.googleConfigMissing', 'Google configuration missing');
+            } else {
+                msg = err?.message || t('auth.signup.googleRegistrationFailed', 'Google login failed');
+            }
+            
+            showAlert(msg, 'error');
+        } finally {
             setSocialSubmitting(false);
         }
     }, [showAlert, t, navigate]);
@@ -275,38 +309,114 @@ function Login() {
             provider.addScope('email');
             provider.addScope('name');
             
+            // Don't set custom parameters - let Firebase handle redirect URL automatically
             const result = await signInWithPopup(auth, provider);
+            console.log('🔍 Apple Auth Result:', result);
             const credential = OAuthProvider.credentialFromResult(result);
-            const idToken = credential.idToken;
-            const accessToken = credential.accessToken;
+            const idToken = credential?.idToken;
+            const accessToken = credential?.accessToken;
             
             if (!idToken) throw new Error("Apple authentication failed - no ID token");
         
+            const requestBody = { 
+                idToken, 
+                accessToken,
+                token: 'device_token_here',
+                role: 'customer',
+                registrationType: 'customer',
+                userType: 'customer',
+                providerId: 'apple.com',
+                customerId: result.user.uid,
+                email: result.user.email,
+                name: result.user.displayName || result.user.email?.split('@')[0] || 'Apple User',
+                password: 'apple_signin_' + result.user.uid, // Generate a password for Apple users
+                // Try multiple password field variations that backend might expect
+                userPassword: 'apple_signin_' + result.user.uid,
+                user_password: 'apple_signin_' + result.user.uid,
+                pwd: 'apple_signin_' + result.user.uid,
+                pass: 'apple_signin_' + result.user.uid,
+                // Try nested password structure
+                user: {
+                    password: 'apple_signin_' + result.user.uid,
+                    name: result.user.displayName || result.user.email?.split('@')[0] || 'Apple User',
+                    email: result.user.email
+                },
+                // Try customer object structure
+                customer: {
+                    password: 'apple_signin_' + result.user.uid,
+                    name: result.user.displayName || result.user.email?.split('@')[0] || 'Apple User',
+                    email: result.user.email,
+                    phone: '',
+                    address: '',
+                    city: '',
+                    country: '',
+                    dateOfBirth: '',
+                    gender: ''
+                },
+                // Try different root-level field names
+                customerPassword: 'apple_signin_' + result.user.uid,
+                customer_password: 'apple_signin_' + result.user.uid,
+                customerPwd: 'apple_signin_' + result.user.uid,
+                customerPass: 'apple_signin_' + result.user.uid,
+                // Try different field structures
+                credentials: {
+                    password: 'apple_signin_' + result.user.uid
+                },
+                auth: {
+                    password: 'apple_signin_' + result.user.uid
+                },
+                profile: {
+                    password: 'apple_signin_' + result.user.uid
+                },
+                pic: result.user.photoURL || '',
+                federatedId: result.user.providerData?.[0]?.uid || result.user.uid,
+                firstName: result.user.displayName?.split(' ')[0] || result.user.email?.split('@')[0] || 'Apple',
+                lastName: result.user.displayName?.split(' ').slice(1).join(' ') || 'User',
+                fullName: result.user.displayName || result.user.email?.split('@')[0] || 'Apple User',
+                photoUrl: result.user.photoURL || '',
+                emailVerified: result.user.emailVerified || false,
+                localId: result.user.uid,
+                rawId: result.user.providerData?.[0]?.uid || result.user.uid,
+                appleUserId: result.user.providerData?.[0]?.uid || result.user.uid,
+                // Additional fields that might be required by backend
+                username: result.user.email?.split('@')[0] || 'apple_user',
+                phone: '', // Apple doesn't provide phone number
+                address: '', // Apple doesn't provide address
+                city: '', // Apple doesn't provide city
+                country: '', // Apple doesn't provide country
+                dateOfBirth: '', // Apple doesn't provide date of birth
+                gender: '', // Apple doesn't provide gender
+                isActive: true,
+                isVerified: true,
+                loginMethod: 'apple',
+                socialProvider: 'apple.com'
+            };
+
+            console.log('🔍 Apple Sign-In Request Body:', requestBody);
+            console.log('🔍 Required fields check:', {
+                hasPassword: !!requestBody.password,
+                hasName: !!requestBody.name,
+                passwordValue: requestBody.password,
+                nameValue: requestBody.name,
+                allPasswordFields: {
+                    password: requestBody.password,
+                    userPassword: requestBody.userPassword,
+                    user_password: requestBody.user_password,
+                    pwd: requestBody.pwd,
+                    pass: requestBody.pass
+                },
+                nestedStructures: {
+                    userPassword: requestBody.user?.password,
+                    customerPassword: requestBody.customer?.password,
+                    userObject: requestBody.user,
+                    customerObject: requestBody.customer
+                }
+            });
+
             const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    idToken, 
-                    accessToken,
-                    token: 'device_token_here',
-                    role: 'customer', // Indicate this is for customer login
-                    registrationType: 'customer',
-                    userType: 'customer',
-                    providerId: 'apple.com', // Add required providerId for Apple authentication
-                    customerId: result.user.uid, // Use Apple user ID as customerId
-                    email: result.user.email, // Add email from Apple user
-                    name: result.user.displayName || result.user.email?.split('@')[0] || '', // Add name from Apple user
-                    pic: result.user.photoURL || '', // Add profile picture from Apple user
-                    federatedId: result.user.providerData?.[0]?.uid || result.user.uid, // Add Apple federated ID
-                    firstName: result.user.displayName?.split(' ')[0] || '', // Add first name
-                    lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '', // Add last name
-                    fullName: result.user.displayName || '', // Add full name
-                    photoUrl: result.user.photoURL || '', // Add photo URL
-                    emailVerified: result.user.emailVerified || false, // Add email verification status
-                    localId: result.user.uid, // Add Firebase local ID
-                    rawId: result.user.providerData?.[0]?.uid || result.user.uid, // Add raw Apple ID
-                    appleUserId: result.user.providerData?.[0]?.uid || result.user.uid // Add explicit Apple user ID
-                })
+                body: JSON.stringify(requestBody)
             });
             
             if (!res.ok) {

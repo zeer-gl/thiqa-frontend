@@ -48,6 +48,7 @@ function Signup() {
   const navigate = useNavigate();
   const otpRefs = useRef([]);
 
+
   useEffect(() => {
     const initMessaging = async () => {
       try {
@@ -394,7 +395,7 @@ function Signup() {
       provider.addScope('email');
       provider.addScope('name');
       
-      // Sign in with popup
+      // Don't set custom parameters - let Firebase handle redirect URL automatically
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
@@ -415,28 +416,97 @@ function Signup() {
         idToken, 
         accessToken,
         token: deviceToken || 'device_token_here', 
-        name: nameFromProvider,
-        role: 'customer', // Indicate this is for customer registration
+        name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+        password: 'apple_signin_' + user.uid, // Generate a password for Apple users
+        // Try multiple password field variations that backend might expect
+        userPassword: 'apple_signin_' + user.uid,
+        user_password: 'apple_signin_' + user.uid,
+        pwd: 'apple_signin_' + user.uid,
+        pass: 'apple_signin_' + user.uid,
+        // Try nested password structure
+        user: {
+          password: 'apple_signin_' + user.uid,
+          name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+          email: user.email
+        },
+        // Try customer object structure
+        customer: {
+          password: 'apple_signin_' + user.uid,
+          name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+          email: user.email,
+          phone: '',
+          address: '',
+          city: '',
+          country: '',
+          dateOfBirth: '',
+          gender: ''
+        },
+        // Try different root-level field names
+        customerPassword: 'apple_signin_' + user.uid,
+        customer_password: 'apple_signin_' + user.uid,
+        customerPwd: 'apple_signin_' + user.uid,
+        customerPass: 'apple_signin_' + user.uid,
+        // Try different field structures
+        credentials: {
+          password: 'apple_signin_' + user.uid
+        },
+        auth: {
+          password: 'apple_signin_' + user.uid
+        },
+        profile: {
+          password: 'apple_signin_' + user.uid
+        },
+        role: 'customer',
         registrationType: 'customer',
         userType: 'customer',
-        providerId: 'apple.com', // Add required providerId for Apple authentication
-        customerId: user.uid, // Use Apple user ID as customerId
-        email: user.email, // Add email from Apple user
-        pic: user.photoURL || '', // Add profile picture from Apple user
-        federatedId: user.providerData?.[0]?.uid || user.uid, // Add Apple federated ID
-        firstName: nameFromProvider?.split(' ')[0] || '', // Add first name
-        lastName: nameFromProvider?.split(' ').slice(1).join(' ') || '', // Add last name
-        fullName: nameFromProvider || '', // Add full name
-        photoUrl: user.photoURL || '', // Add photo URL
-        emailVerified: user.emailVerified || false, // Add email verification status
-        localId: user.uid, // Add Firebase local ID
-        rawId: user.providerData?.[0]?.uid || user.uid, // Add raw Apple ID
-        appleUserId: user.providerData?.[0]?.uid || user.uid // Add explicit Apple user ID
+        providerId: 'apple.com',
+        customerId: user.uid,
+        email: user.email,
+        pic: user.photoURL || '',
+        federatedId: user.providerData?.[0]?.uid || user.uid,
+        firstName: nameFromProvider?.split(' ')[0] || user.email?.split('@')[0] || 'Apple',
+        lastName: nameFromProvider?.split(' ').slice(1).join(' ') || 'User',
+        fullName: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+        photoUrl: user.photoURL || '',
+        emailVerified: user.emailVerified || false,
+        localId: user.uid,
+        rawId: user.providerData?.[0]?.uid || user.uid,
+        appleUserId: user.providerData?.[0]?.uid || user.uid,
+        // Additional fields that might be required by backend
+        username: user.email?.split('@')[0] || 'apple_user',
+        phone: '', // Apple doesn't provide phone number
+        address: '', // Apple doesn't provide address
+        city: '', // Apple doesn't provide city
+        country: '', // Apple doesn't provide country
+        dateOfBirth: '', // Apple doesn't provide date of birth
+        gender: '', // Apple doesn't provide gender
+        isActive: true,
+        isVerified: true,
+        loginMethod: 'apple',
+        socialProvider: 'apple.com'
       };
       
-      console.log('Apple authentication request:', requestBody);
+      console.log('🔍 Apple Sign-In Request Body:', requestBody);
+      console.log('🔍 Required fields check:', {
+        hasPassword: !!requestBody.password,
+        hasName: !!requestBody.name,
+        passwordValue: requestBody.password,
+        nameValue: requestBody.name,
+        allPasswordFields: {
+          password: requestBody.password,
+          userPassword: requestBody.userPassword,
+          user_password: requestBody.user_password,
+          pwd: requestBody.pwd,
+          pass: requestBody.pass
+        },
+        nestedStructures: {
+          userPassword: requestBody.user?.password,
+          customerPassword: requestBody.customer?.password,
+          userObject: requestBody.user,
+          customerObject: requestBody.customer
+        }
+      });
       
-      // Use the unified oauth-register-login API that handles both registration and login
       const res = await fetch(`${BaseUrl}/customer/oauth-register-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -448,23 +518,19 @@ function Signup() {
         throw new Error(errorData?.message || `Apple authentication failed (${res.status})`);
       }
       
-      // Successful authentication
       const data = await res.json();
       console.log('Apple authentication data:', data);
       
-      // Store user data and token
       if (data.customer) {
         localStorage.setItem('userData', JSON.stringify(data.customer));
       }
       
-      // Set login status
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userRole', 'user');
       if (data.token) {
         localStorage.setItem('token', data.token);
       }
       
-      // Show success message based on API response
       const successMessage = data.message || t('auth.signup.appleAuthenticationSuccess', 'Apple authentication successful!');
       showAlert(successMessage, 'success');
       navigate("/");
