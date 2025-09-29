@@ -57,6 +57,56 @@
             color: $secondary-color;
             margin-bottom: 34px !important;
         }
+    }
+
+    .address-selection {
+        .addresses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; // Add gap between address items
+        }
+
+        .address-item {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 1rem;
+            background: transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+
+            &:hover {
+                border-color: #3B82F6;
+                box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+            }
+
+            .address-content {
+                .address-header {
+                    margin-bottom: 0.5rem;
+                    
+                    .address-name {
+                        font-size: 1rem;
+                        font-weight: 600;
+                        color: #1F2937;
+                        margin: 0;
+                    }
+                }
+
+                .address-full {
+                    font-size: 0.875rem;
+                    color: #6B7280;
+                    line-height: 1.4;
+                    margin: 0.5rem 0;
+                }
+
+                .address-phone {
+                    font-size: 0.875rem;
+                    color: #6B7280;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+            }
+        }
         
         .shipping-form {
             .form-group {

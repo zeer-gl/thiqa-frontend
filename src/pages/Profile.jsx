@@ -23,6 +23,7 @@ import Pagination from '../components/Pagination';
 import { BaseUrl } from '../assets/BaseUrl.jsx';
 import { useAlert } from '../context/AlertContext';
 import { useUser } from '../context/Profile.jsx';
+import { useLocation as useLocationContext } from '../context/LocationContext.jsx';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Avatar from "@mui/material/Avatar";
 import { useLikes } from '../context/LikesContext';
@@ -37,6 +38,7 @@ import GoogleMapAddressPicker from '../components/GoogleMapAddressPicker';
 import { useLikedServicesTranslations } from '../hooks/useLikedServicesTranslations';
 import { useUserRole } from '../hooks/useUserRole';
 import { Navigate } from 'react-router-dom';
+import Logo from '/public/images/favicon.png';
 
 const Profile = () => {
   // All hooks must be called at the top before any conditional returns
@@ -203,10 +205,22 @@ const Profile = () => {
     phone: t('profile.content.phoneNumberValue'),
   });
   
+  // OTP verification state
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [generatedOTP, setGeneratedOTP] = useState('');
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  const [timer, setTimer] = useState(0);
+  const [otpRefs, setOtpRefs] = useState([]);
+  const [phoneValid, setPhoneValid] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+  const [pendingPhoneUpdate, setPendingPhoneUpdate] = useState('');
+  const [isVerifyingPhone, setIsVerifyingPhone] = useState(false);
+  
   // Context hooks
   const { showAlert } = useAlert();
   const { userProfile, fetchUserProfile, updateUserProfile, logout } = useUser();
   const { likedProfessionals, toggleProfessionalLike } = useLikes();
+  const { updateLocation } = useLocationContext();
 
   // All useEffect hooks must be at the top before any conditional returns
   useEffect(() => {
@@ -720,6 +734,7 @@ const Profile = () => {
         showAlert(t('profile.addresses.defaultUpdatedSuccess'), 'success');
         // Refresh addresses to ensure consistency with server
         fetchAddresses();
+        updateLocation(); // Update location in navbar
       } else {
         // Revert the local state if API call fails
         fetchAddresses();
@@ -760,6 +775,7 @@ const Profile = () => {
       if (data.success) {
         showAlert(t('profile.addresses.createSuccess'), 'success');
         fetchAddresses(); // Refresh the list
+        updateLocation(); // Update location in navbar
         return true;
       } else {
         showAlert(data.message || t('profile.addresses.createError'), 'error');
@@ -801,6 +817,7 @@ const Profile = () => {
       if (data.success) {
         showAlert(t('profile.addresses.updateSuccess'), 'success');
         fetchAddresses(); // Refresh the list
+        updateLocation(); // Update location in navbar
         return true;
       } else {
         showAlert(data.message || t('profile.addresses.updateError'), 'error');
@@ -832,6 +849,7 @@ const Profile = () => {
       if (data.success) {
         showAlert(t('profile.addresses.deleteSuccess'), 'success');
         fetchAddresses(); // Refresh the list
+        updateLocation(); // Update location in navbar
       } else {
         throw new Error(data.message || 'Failed to delete address');
       }
@@ -1015,9 +1033,245 @@ const Profile = () => {
     });
   };
 
+  // Phone validation functions
+  const validatePhone = (phone) => {
+    if (!phone || phone.trim() === '') {
+      return { isValid: false, error: t('profile.phoneVerification.phoneFormat', 'Please enter a valid Kuwait phone number') };
+    }
+    
+    // Remove any spaces or special characters
+    const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+    
+    // Check if it's a valid Kuwait number
+    return validateKuwaitNumber(cleanPhone);
+  };
+
+  const validateKuwaitNumber = (phone) => {
+    // Kuwait phone number patterns
+    const patterns = [
+      /^(\+965|965)?(5[0-9]{7})$/, // Mobile: +965 5xxxxxxxx or 5xxxxxxxx
+      /^(\+965|965)?(6[0-9]{7})$/, // Mobile: +965 6xxxxxxxx or 6xxxxxxxx  
+      /^(\+965|965)?(9[0-9]{7})$/, // Mobile: +965 9xxxxxxxx or 9xxxxxxxx
+      /^(\+965|965)?([2-4][0-9]{6})$/, // Landline: +965 2xxxxxx, 3xxxxxx, 4xxxxxx
+    ];
+    
+    for (const pattern of patterns) {
+      if (pattern.test(phone)) {
+        return { isValid: true, error: '' };
+      }
+    }
+    
+    return { isValid: false, error: t('profile.phoneVerification.phoneFormat', 'Please enter a valid Kuwait phone number') };
+  };
+
+  // OTP generation and verification functions
+  const sendOTP = () => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOTP(otp);
+    setTimer(60);
+    setShowOtpModal(true);
+    showAlert(t('profile.phoneVerification.otpSent', 'OTP sent to your phone'), 'success');
+  };
+
+  const verifyOTP = (enteredOTP) => {
+    return enteredOTP === generatedOTP;
+  };
+
+  const startTimer = () => {
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const formattedTime = () => {
+    const minutes = Math.floor(timer / 60);
+    const seconds = timer % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) return;
+    
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = value;
+    setOtpValues(newOtpValues);
+    
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.querySelector(`input[data-index="${index + 1}"]`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
+      const prevInput = document.querySelector(`input[data-index="${index - 1}"]`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    const enteredOTP = otpValues.join('');
+    
+    if (enteredOTP.length !== 6) {
+      showAlert(t('profile.phoneVerification.completeOtpRequired', 'Please enter the complete OTP code.'), 'error');
+      return;
+    }
+    
+    setIsVerifyingPhone(true);
+    
+    try {
+      if (verifyOTP(enteredOTP)) {
+        showAlert(t('profile.phoneVerification.verificationSuccess', 'Phone number verified successfully! Updating profile...'), 'success');
+        
+        // Automatically update profile with new phone
+        await updateProfileData(true);
+        
+        // Close OTP modal and reset states
+        setShowOtpModal(false);
+        setIsEditingProfile(false);
+        setPhoneError('');
+        setPhoneValid(true);
+        setOtpValues(['', '', '', '', '', '']);
+        setPendingPhoneUpdate('');
+      } else {
+        showAlert(t('profile.phoneVerification.invalidOtp', 'Invalid OTP code'), 'error');
+      }
+    } catch (error) {
+      showAlert(t('profile.phoneVerification.verificationFailed', 'Verification failed'), 'error');
+    } finally {
+      setIsVerifyingPhone(false);
+    }
+  };
+
+  const handleResend = () => {
+    if (timer > 0) return;
+    sendOTP();
+    startTimer();
+  };
+
+  const closeOtpModal = () => {
+    setShowOtpModal(false);
+    setOtpValues(['', '', '', '', '', '']);
+    setPendingPhoneUpdate('');
+    setPhoneError('');
+    setPhoneValid(false);
+  };
+
+  // Update profile data function
+  const updateProfileData = async (isAfterOtpVerification = false) => {
+    if (updatingProfile) return;
+    
+    setProfileLoading(true);
+    setUpdatingProfile(true);
+    
+    try {
+      // Get userId from localStorage
+      let userId = null;
+      try {
+        const storedUser = localStorage.getItem("userData");
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          userId = parsed?._id || parsed?.id || null;
+        }
+        if (!userId) {
+          userId = localStorage.getItem("userId");
+        }
+      } catch {
+        throw new Error("Failed to parse user data from local storage");
+      }
+      
+      if (!userId) {
+        throw new Error("User not found in local storage");
+      }
+      
+      // Use pending phone update if available, otherwise use current phone
+      const phoneToUpdate = pendingPhoneUpdate || profileData.phone;
+      
+      let res;
+      
+      if (profilePicFile) {
+        // Handle image upload
+        const formData = new FormData();
+        formData.append("name", profileData.name || "");
+        formData.append("email", profileData.email || "");
+        formData.append("phoneNo", phoneToUpdate || "");
+        formData.append("pic", profilePicFile);
+        
+        res = await fetch(`${BaseUrl}/customer/update-profile/${userId}`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+          },
+          body: formData
+        });
+      } else {
+        // Handle text-only update
+        res = await fetch(`${BaseUrl}/customer/update-profile/${userId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            name: profileData.name || "",
+            email: profileData.email || "",
+            phoneNo: phoneToUpdate || ""
+          })
+        });
+      }
+      
+      if (res.ok) {
+        const data = await res.json();
+        console.log('Profile updated successfully:', data);
+        
+        // Update local profile data
+        setProfileData(prev => ({
+          ...prev,
+          phone: phoneToUpdate || prev.phone
+        }));
+        
+        // Clear pending phone update
+        setPendingPhoneUpdate('');
+        
+        // Only close edit mode if not after OTP verification
+        if (!isAfterOtpVerification) {
+          setIsEditingProfile(false);
+        }
+        
+        showAlert(t('profile.content.profileUpdated', 'Profile updated successfully!'), 'success');
+        
+        // Refresh user profile
+        await fetchUserProfile();
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to update profile (${res.status})`);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      showAlert(error.message || t('profile.content.updateError', 'Failed to update profile'), 'error');
+      
+      if (isAfterOtpVerification) {
+        showAlert(t('profile.phoneVerification.updateFailed', 'Phone verified but profile update failed'), 'error');
+      }
+    } finally {
+      setProfileLoading(false);
+      setUpdatingProfile(false);
+    }
+  };
+
   const handleEditProfile = async () => {
     if (!isEditingProfile) {
       setIsEditingProfile(true);
+      setPhoneError('');
+      setPhoneValid(false);
       return;
     }
   
@@ -1045,7 +1299,30 @@ const Profile = () => {
       if (!userId) {
         throw new Error("User not found in local storage");
       }
-  
+
+      // Check if phone number has changed and validate it
+      const originalPhone = userProfile?.phoneNo || '';
+      const newPhone = profileData.phone || '';
+      
+      if (newPhone !== originalPhone && newPhone.trim() !== '') {
+        const phoneValidation = validatePhone(newPhone);
+        if (!phoneValidation.isValid) {
+          setPhoneError(phoneValidation.error);
+          setPhoneValid(false);
+          throw new Error(phoneValidation.error);
+        }
+        
+        // Phone is valid, store it for OTP verification
+        setPendingPhoneUpdate(newPhone);
+        setPhoneValid(true);
+        setPhoneError('');
+        
+        // Send OTP and show modal
+        sendOTP();
+        startTimer();
+        return; // Don't proceed with profile update yet
+      }
+
       let res;
   
       if (profilePicFile) {
@@ -1677,9 +1954,9 @@ const Profile = () => {
         <div className="profile-header">
           <div className="container-md">
             <div className="header-row">
-              <h1 className="header-title ar-heading-bold">
-                <i className="fas fa-home home-icon"></i>
-                                {t('personalProfile.header.title', 'الملف الشخصي')}
+              <h1 className="header-title ar-heading-bold ps-3">
+              
+                Profile
               </h1>
             </div>
           </div>
@@ -1709,7 +1986,7 @@ const Profile = () => {
             />
           )}
                 </div>
-                <span className="sidebar-text">{item.text}</span>
+                <span className="sidebar-text pt-2">{item.text}</span>
               </div>
     );
   })}
@@ -1788,25 +2065,67 @@ const Profile = () => {
                   <div className="form-row full-width">
                     <div className="form-group">
                       <label className="form-label">{t('profile.content.phoneNumberLabel')}</label>
-                      <input
-                        type="tel"
-                        className="form-input"
-                        value={profileData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        disabled={!isEditingProfile}
-                      />
+                      <div className="input-with-icon">
+                        {/* <img src={PhoneIcon} alt="" className="input-icon" /> */}
+                        <input
+                          type="tel"
+                          className={`form-input ${phoneValid ? 'is-valid' : phoneError ? 'is-invalid' : ''}`}
+                          value={profileData.phone}
+                          onChange={(e) => {
+                            handleInputChange('phone', e.target.value);
+                            setPhoneError(''); // Clear error when typing
+                          }}
+                          disabled={!isEditingProfile}
+                          placeholder={t('profile.phoneVerification.phonePlaceholder', 'Kuwait Phone (e.g., 51234567)')}
+                        />
+                      </div>
+                      {phoneError && (
+                        <div className="invalid-feedback d-block">
+                          {phoneError}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 {/* Button Section */}
                 <div className="button-section d-flex gap-3">
-                  <button className="btn btn-secondary" onClick={() => setActiveTab('change-password')} disabled={isEditingProfile}>
-                    {t('profile.content.changePasswordButton')}
-                  </button>
-                  <button className="btn btn-primary" onClick={handleEditProfile}>
-                    {profileLoading ? t('common.saving') : isEditingProfile ? t('common.save') : t('profile.content.editProfileButton')}
-                  </button>
+                  {isEditingProfile ? (
+                    <>
+                      <button 
+                        className="btn btn-secondary d-flex align-items-center justify-content-center" 
+                        onClick={() => {
+                          setIsEditingProfile(false);
+                          setPhoneError('');
+                          setPhoneValid(false);
+                          setPendingPhoneUpdate('');
+                          // Reset profile data to original values
+                          if (userProfile) {
+                            setProfileData({
+                              name: userProfile.name || '',
+                              email: userProfile.email || '',
+                              phone: userProfile.phoneNo || '',
+                            });
+                          }
+                        }}
+                        disabled={profileLoading}
+                      >
+                        {t('common.cancel', 'Cancel')}
+                      </button>
+                      <button className="btn btn-primary d-flex align-items-center justify-content-center" onClick={handleEditProfile} disabled={profileLoading}>
+                        {profileLoading ? t('common.saving') : t('common.save')}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn btn-secondary d-flex align-items-center justify-content-center" onClick={() => setActiveTab('change-password')}>
+                        {t('profile.content.changePasswordButton')}
+                      </button>
+                      <button className="btn btn-primary d-flex align-items-center justify-content-center" onClick={handleEditProfile}>
+                        {t('profile.content.editProfileButton')}
+                      </button>
+                    </>
+                  )}
                 </div>
               </>
             )}
@@ -1815,8 +2134,11 @@ const Profile = () => {
               <div className="addresses-section">
                 {/* Add New Address Button */}
                 <div className="add-address-button-container">
-                  <button className="btn btn-primary add-address-btn" onClick={openAddAddressModal}>
+                  <button className="btn btn-primary add-address-btn d-flex align-items-center justify-content-center" onClick={openAddAddressModal}>
+                    <span className="pt-1">
                     {t('profile.addresses.addNewAddress')}
+                    </span>
+                   
                   </button>
                 </div>
 
@@ -1851,24 +2173,27 @@ const Profile = () => {
                             </p>
                         <div className="address-phone">
                           <img src={PhoneIcon} alt="" />
-  <span>{localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).phoneNo : ''}</span>
+  <span className="pt-1">{localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).phoneNo : ''}</span>
                         
                         </div>
                       </div>
                       <div className="address-actions">
                         <button
-                          className="btn btn-primary edit-btn"
+                          className="btn btn-primary pt-3  edit-btn d-flex align-items-center justify-content-center"
                           onClick={() => openEditAddressModal(address)}
                         >
                           <img src={''} alt="" />
                           {t('profile.addresses.edit')}
                         </button>
                         <button
-                          className="btn btn-danger delete-btn"
+                          className="btn btn-danger delete-btn d-flex align-items-center justify-content-center"
                               onClick={() => handleDeleteAddress(address._id)}
                         >
                           <img src={Bin} alt="" />
+                          <span className="pt-2">
                           {t('profile.addresses.delete')}
+                          </span>
+                          
                         </button>
                       </div>
                     </div>
@@ -1893,8 +2218,8 @@ const Profile = () => {
                   <h3 className="ar-heading-bold">{t('profile.sidebar.notifications')}</h3>
                   <div className="notifications-actions">
                     {notificationsCount > 0 && (
-                      <div className="">
-                        <span className="">
+                      <div className="pt-2">
+                        <span className="pt-2">
                           {loadingCount ? (
                             <i className="fas fa-spinner fa-spin"></i>
                           ) : (
@@ -1906,7 +2231,7 @@ const Profile = () => {
                     <div className="action-buttons">
                       {notificationsCount > 0 && (
                         <button 
-                          className="btn btn-success btn-sm"
+                          className="btn btn-success btn-sm d-flex align-items-center justify-content-center"
                           onClick={markAllNotificationsAsRead}
                           disabled={markingAllAsRead || loadingNotifications}
                         >
@@ -1915,11 +2240,14 @@ const Profile = () => {
                           ) : (
                             <i className="fas fa-check-double"></i>
                           )}
-                          {t('profile.notifications.markAllAsRead')}
+                        <span className="pt-2">
+                        {t('profile.notifications.markAllAsRead')}
+                        </span>
+                         
                         </button>
                       )}
                       <button 
-                        className="btn btn-outline-primary btn-sm"
+                        className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
                         onClick={() => {
                           fetchNotifications(currentNotificationsPage);
                           fetchNotificationCount();
@@ -1927,7 +2255,10 @@ const Profile = () => {
                         disabled={loadingNotifications || loadingCount}
                       >
                         <i className="fas fa-sync-alt"></i>
+                        <span className="pt-2">
                         {t('profile.notifications.refresh')}
+                        </span>
+                      
                       </button>
                     </div>
                   </div>
@@ -2072,7 +2403,7 @@ const Profile = () => {
                     <h5 className="text-muted">{t('profile.orders.noOrders')}</h5>
                     <p className="text-muted">{t('profile.orders.noOrdersDescription')}</p>
                     <button 
-                      className="btn btn-primary mt-3"
+                      className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
                       onClick={() => navigate('/products')}
                     >
                       {t('profile.orders.startShopping')}
@@ -2086,7 +2417,7 @@ const Profile = () => {
               <div className="payment-methods-section">
                 <div className="payment-header">
                  <div></div>
-                  <button className="add-payment-btn" onClick={openAddPaymentModal}>
+                  <button className="add-payment-btn d-flex align-items-center justify-content-center" onClick={openAddPaymentModal}>
                     {t('profile.paymentMethods.addNewPaymentMethod')}
                   </button>
                 </div>
@@ -2111,7 +2442,7 @@ const Profile = () => {
                         </div>
                       </div>
                       <button
-                        className="delete-payment-btn"
+                        className="delete-payment-btn d-flex align-items-center justify-content-center"
                         onClick={() => handleDeletePayment(payment.id)}
                       >
                         <img src={Bin} alt="Delete" />
@@ -2165,7 +2496,7 @@ const Profile = () => {
                     <h5 className="text-muted">{t('profile.favorites.noFavorites')}</h5>
                     <p className="text-muted">{t('profile.favorites.noFavoritesDescription')}</p>
                     <button 
-                      className="btn btn-primary mt-3"
+                      className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
                       onClick={() => navigate('/products')}
                     >
                       {t('profile.favorites.browseProducts')}
@@ -2267,7 +2598,7 @@ const Profile = () => {
                                       return <StarBorder key={index} sx={{ color: "#FFD700", fontSize: 18 }} />;
                                     }
                                   })}
-                                  <span style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
+                                  <span className='pt-1' style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
                                     {service.averageRating?.toFixed(1) || "0.0"}
                                   </span>
                                 </div>
@@ -2292,8 +2623,13 @@ const Profile = () => {
                                   transition: '0.2s ease-in-out',
                                 }}
                               />
-                              <button className='btn outlined-btn fs-12'>
-                                {service.specialization || t('pages.home.servicesSection.serviceProvider.category')}
+                              <button className='btn outlined-btn  fs-12 d-flex align-items-center justify-content-center'>
+
+                                <span className='pt-1'>
+
+                                  {service.specialization || t('pages.home.servicesSection.serviceProvider.category')}
+                                </span>
+
                               </button>
                             </div>
                           </div>
@@ -2309,7 +2645,7 @@ const Profile = () => {
                     <h5 className="text-muted">{likedServicesTranslations.noLikedServices}</h5>
                     <p className="text-muted">{likedServicesTranslations.noLikedServicesDescription}</p>
                     <button 
-                      className="btn btn-primary mt-3"
+                      className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
                       onClick={() => navigate('/service-list')}
                     >
                       {likedServicesTranslations.browseServices}
@@ -2394,7 +2730,7 @@ const Profile = () => {
                     <div className="button-section d-flex gap-3">
                       <button
                         type="submit"
-                        className="btn btn-primary"
+                        className="btn btn-primary d-flex align-items-center justify-content-center"
                         disabled={changingPassword}
                       >
                         {changingPassword ? (
@@ -2542,13 +2878,13 @@ const Profile = () => {
 
             <div className="modal-footer">
             <button
-                className="btn btn-primary rounded-1"
+                className="btn btn-primary rounded-1 d-flex align-items-center justify-content-center"
                 style={{ backgroundColor: '#21395D' }}
                 onClick={handleSaveAddress}
               >
                 {t('profile.addresses.saveChanges')}
               </button>
-              <button className="btn btn-secondary rounded-1" onClick={closeAddressModal}>
+              <button className="btn btn-secondary rounded-1 d-flex align-items-center justify-content-center" onClick={closeAddressModal}>
                 {t('profile.addresses.cancel')}
               </button>
             </div>
@@ -2632,6 +2968,75 @@ const Profile = () => {
               <button className="btn btn-secondary rounded-1" onClick={closePaymentModal}>
                 {t('profile.paymentMethods.cancel')}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OTP Verification Modal */}
+      {showOtpModal && (
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{t('otp.title')}</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeOtpModal}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>{t('otp.description')}</p>
+                <div className="otp-input-container">
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <input
+                      key={index}
+                      ref={(el) => (otpRefs.current[index] = el)}
+                      type="text"
+                      className="form-control otp-input"
+                      maxLength="1"
+                      value={otpValues[index] || ''}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      disabled={isVerifyingPhone}
+                    />
+                  ))}
+                </div>
+                {timer > 0 && (
+                  <p className="text-muted mt-2">
+                    {t('otp.timerPrefix')} {formattedTime()}
+                  </p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeOtpModal}
+                  disabled={isVerifyingPhone}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleOtpSubmit}
+                  disabled={isVerifyingPhone || otpValues.some(val => !val)}
+                >
+                  {isVerifyingPhone ? t('otp.verifying') : t('otp.submit')}
+                </button>
+                {timer === 0 && (
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={handleResend}
+                    disabled={isVerifyingPhone}
+                  >
+                    {t('otp.resend')}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

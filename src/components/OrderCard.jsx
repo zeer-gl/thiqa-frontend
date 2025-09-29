@@ -51,7 +51,7 @@ const OrderCard = ({ order }) => {
           </h3>
           <div className="order-meta">
             <div className="status-tag">
-              <span className="status-text">
+              <span className="status-text pt-1">
                 {order?.status === 'Processing' ? t('orderDetails.status.processing') :
                  order?.status === 'Cancelled' ? t('orderDetails.status.cancelled') :
                  order?.status === 'Delivered' ? t('orderDetails.status.delivered') :
@@ -95,15 +95,29 @@ const OrderCard = ({ order }) => {
 
           {/* Action Buttons */}
           <div className="action-buttons">
-            <button 
-              className="btn btn-primary order-details-btn" style={{background:"#21395D"}}
-              onClick={handleOrderDetailsClick}
-            >
-              {paymentStatus === 'pending' ? 
-                t('orderDetails.payNow') : 
-                t('orderDetails.orderDetails')
-              }
-            </button>
+            {paymentStatus === 'pending' || paymentStatus === 'unpaid' ? (
+              <button 
+                className="btn btn-primary pt-3 order-details-btn d-flex align-items-center justify-content-center" style={{background:"#21395D"}}
+                onClick={handleOrderDetailsClick}
+              >
+                {t('orderDetails.payNow')}
+              </button>
+            ) : (
+              <>
+                <button 
+                  className="btn btn-primary pt-3 order-details-btn d-flex align-items-center justify-content-center" style={{background:"#21395D"}}
+                  onClick={handleOrderDetailsClick}
+                >
+                  {t('orderDetails.orderDetails')}
+                </button>
+                {paymentStatus === 'paid' && (
+                  <div className="payment-success-indicator">
+                    <i className="fas fa-check-circle text-success me-2"></i>
+                    <span className="text-success">{t('orderDetails.status.paid')}</span>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -294,7 +294,7 @@ const Navbar = () => {
                 </button>
 
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul className="navbar-nav gap-4 mx-3 mb-3 mb-lg-0">
+                    <ul className="navbar-nav  pt-2 gap-4 mx-3 mb-3 mb-lg-0">
                         <li className="nav-item">
                             <Link className="nav-link" to="/">{t('nav.home')}</Link>
                         </li>
@@ -326,7 +326,11 @@ const Navbar = () => {
                             <div className='register-btn-wrapper w-100 w-lg-auto'>
                                 <Link className='btn register-btn-nav w-100 w-lg-auto' to='login-sp'>
                                     <img src={PersonLogo} alt=""/>
-                                    {t('nav.registerAsServiceProvider')}
+                                   <span className='pt-2'>
+
+                                   {t('nav.registerAsServiceProvider')}
+                                   </span>
+                                 
                                 </Link>
                             </div>
                         )}
@@ -340,7 +344,9 @@ const Navbar = () => {
                                         textDecoration: 'none',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        justifyContent: 'center'
+                                        justifyContent: 'center',
+                                        width: '32px',
+                                        height: '32px'
                                     }}
                                 >
                                     <img 
@@ -354,7 +360,7 @@ const Navbar = () => {
                                     />
                                     {cartCount > 0 && (
                                         <span 
-                                            className="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            className="cart-badge p-1 position-absolute  badge rounded-pill bg-danger"
                                             style={{
                                                 fontSize: '10px',
                                                 minWidth: '18px',
@@ -362,10 +368,17 @@ const Navbar = () => {
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                padding: '2px 6px'
+                                                padding: '2px 6px',
+                                                top: '-6px',
+                                                right: '-6px',
+                                                lineHeight: '1',
+                                                zIndex: '10'
                                             }}
                                         >
+                                            <span className='pt-1'>
                                             {cartCount}
+                                            </span>
+                                          
                                         </span>
                                     )}
                                 </Link>

@@ -431,11 +431,12 @@ function Login() {
                                             <label htmlFor="email" className='form-label'>{t('auth.login.email')}</label>
                                             <input 
                                                 type="email" 
-                                                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                                                className={`form-control  ${errors.email ? 'is-invalid' : ''}`}
                                                 id="email"
                                                 placeholder={t('auth.login.email')}
                                                 value={email}
                                                 onChange={(e) => handleInputChange('email', e.target.value)}
+                                                style={{ paddingTop: '12px' }}
                                             />
                                             {errors.email && (
                                                 <div className="text-danger mt-1">{errors.email}</div>
@@ -446,7 +447,7 @@ function Login() {
                                             <div className="position-relative">
                                                 <input 
                                                     type={showPassword ? "text" : "password"}
-                                                    className={`form-control ${showPassword ? 'password-field' : ''} ${errors.password ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-3 ${showPassword ? 'password-field' : ''} ${errors.password ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.login.password')}
                                                     value={password}
@@ -459,6 +460,7 @@ function Login() {
                                                 >
                                                     <img 
                                                         src={EyeIcon} 
+                                                        className="pt-1"
                                                         alt="Toggle password visibility"
                                                         style={{ width: '20px', height: '20px' }}
                                                     />
@@ -474,6 +476,7 @@ function Login() {
                                         <div>
                                                 <CustomCheckbox 
                                                     label={t('auth.login.rememberMe')} 
+                                                    className="pt-2"
                                                     checked={rememberMe}
                                                     onChange={(checked) => handleInputChange('rememberMe', checked)}
                                                 />
@@ -492,17 +495,19 @@ function Login() {
                                         <div className='mt-4'>
                                             <button 
                                                 type="submit" 
-                                                className='btn ev-submit-btn' 
+                                                className='btn pt-2 ev-submit-btn d-flex align-items-center justify-content-center' 
                                                 disabled={submitting}
                                             >
                                                 {submitting ? (t('common.sending') || "Logging in...") : (
                                                     <>
-                                                        {t('auth.login.loginButton')} <img src={ArrowRight} alt=""/>
+                                                        {t('auth.login.loginButton')} <img src={ArrowRight}
+                                                        className="pt-1"
+                                                        alt=""/>
                                                     </>
                                                 )}
                                             </button>
                                             <div className='text-center mt-3'>
-                                        <Link className='btn ev-submit-btn text-decoration-none' to='/login-sp'>
+                                        <Link className='btn pt-2  ev-submit-btn text-decoration-none d-flex align-items-center justify-content-center' to='/login-sp'>
                                             {t('auth.login.loginAsServiceProvider', 'Login as Service Provider')}
                                         </Link>
                                     </div>
@@ -518,7 +523,10 @@ function Login() {
                                                 onClick={handleGoogleLogin}
                                                 disabled={socialSubmitting}
                                             >
+                                                <span className="pt-2">
                                                 {t("auth.signup.google")}
+                                                </span>
+                                              
                                                 <img src={GoogleIcon} alt="" />
                                             </button>
                                             <button
@@ -527,7 +535,11 @@ function Login() {
                                                 onClick={handleAppleLogin}
                                                 disabled={socialSubmitting}
                                             >
+                                                <span className="pt-2">
+
                                                 {t("auth.signup.apple")}
+                                                </span>
+                                             
                                                 <img src={AppleIcon} alt="" />
                                             </button>
                                         </div>

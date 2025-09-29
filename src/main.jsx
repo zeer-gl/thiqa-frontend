@@ -12,6 +12,7 @@ import {UserProvider} from './context/Profile.jsx';
 import {LikesProvider} from './context/LikesContext.jsx';
 import {SPProfileProvider} from './context/SPProfileContext.jsx';
 import {CartProvider} from './context/CartContext.jsx';
+import {LocationProvider} from './context/LocationContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
@@ -20,8 +21,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <SPProfileProvider>
                     <LikesProvider>
                         <CartProvider>
-                            <App />
-                            <Alert /> 
+                            <LocationProvider>
+                                <App />
+                                <Alert /> 
+                            </LocationProvider>
                         </CartProvider>
                     </LikesProvider>
                 </SPProfileProvider>

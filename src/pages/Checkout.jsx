@@ -217,7 +217,7 @@ const Checkout = () => {
                         <h3>{t('payment.emptyCart')}</h3>
                         <p className="text-muted">{t('payment.addItemsToCart')}</p>
                         <button 
-                            className="btn btn-primary mt-3"
+                            className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
                             onClick={() => window.history.back()}
                         >
                             {t('payment.continueShopping')}
@@ -252,7 +252,7 @@ const Checkout = () => {
                                                                onChange={() => handleAddressSelect(address._id)}
                                                            />
                                                            <span className="checkmark"></span>
-                                                           <h5 className="address-name">{address.name}</h5>
+                                                           <h5 className="address-name pt-2">{address.name}</h5>
                                                      
                                                    
                                                             </div>
@@ -265,7 +265,7 @@ const Checkout = () => {
                                                     </p>
                                                     <div className="address-phone" style={{display:"flex", alignItems:"center", gap:"13px"}}>
                                                     <img src={PhoneIcon} alt="" />
-                                                        <span>{localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).phoneNo : ''}</span>
+                                                        <span className='pt-2'>{localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).phoneNo : ''}</span>
                                                      
                                                     </div>
                                                 </div>
@@ -276,7 +276,7 @@ const Checkout = () => {
                                     <div className="no-addresses text-center py-4">
                                         <p className="text-muted">{t('checkout.no-addresses')}</p>
                                         <button 
-                                            className="btn btn-outline-primary"
+                                            className="btn btn-outline-primary d-flex align-items-center justify-content-center"
                                             onClick={() => navigate('/profile?tab=addresses')}
                                         >
                                             {t('checkout.add-address')}

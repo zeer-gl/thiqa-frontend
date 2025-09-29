@@ -1,53 +1,26 @@
 // firebase.js
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// Environment-specific configuration
-const isProduction = window.location.hostname === 'thiqa-frontend.vercel.app';
-const isLocalhost = window.location.hostname === 'localhost';
-
-console.log('🔍 Firebase Environment Debug:', {
-  hostname: window.location.hostname,
-  isProduction,
-  isLocalhost,
-  currentUrl: window.location.href,
-  userAgent: navigator.userAgent
-});
-
+// Firebase config from env
 const firebaseConfig = {
-  apiKey: "AIzaSyDoW1sWRnxU90k29p2-d3J_l7TXTIXbwc4",
-  authDomain: "thigha-e3340.firebaseapp.com", // Updated to match your Firebase project
-  projectId: "thigha-e3340", // Updated to match your Firebase project
-  storageBucket: "thigha-e3340.firebasestorage.app", // Updated to match your Firebase project
-  messagingSenderId: "910321243694",
-  appId: "1:910321243694:web:4aca8a6cd18ca70cfef1bf",
-  measurementId: "G-76C8W4RX49"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 console.log('🔍 Firebase Config Debug:', firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
+
+// Firebase services
+const auth = getAuth(app);
 const messaging = getMessaging(app);
-const auth = getAuth(app); // export a single auth instance
+const googleProvider = new GoogleAuthProvider();
 
-// Debug Firebase configuration
-console.log('🔍 Firebase App Debug:', {
-  appName: app.name,
-  options: app.options,
-  authDomain: app.options.authDomain,
-  projectId: app.options.projectId,
-  currentUrl: window.location.href,
-  hostname: window.location.hostname,
-  isProduction: window.location.hostname === 'thiqa-frontend.vercel.app'
-});
-
-// Check if domain is authorized
-console.log('🔍 Domain Authorization Check:', {
-  currentDomain: window.location.hostname,
-  isVercelDomain: window.location.hostname === 'thiqa-frontend.vercel.app',
-  isLocalhost: window.location.hostname === 'localhost',
-  isFirebaseDomain: window.location.hostname === 'thigha-e3340.firebaseapp.com'
-});
-
-export { app, auth, messaging, getToken, onMessage };
+export { app, auth, messaging, googleProvider, getToken, onMessage };

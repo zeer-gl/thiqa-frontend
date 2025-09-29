@@ -13,12 +13,12 @@ const CustomCheckbox = ({ label }) => {
                 type="checkbox"
                 checked={checked}
                 onChange={() => setChecked(!checked)}
-                className="hidden-checkbox"
+                className=" hidden-checkbox"
             />
             <span className={`custom-box ${checked ? 'checked' : ''}`}>
         {checked && <span className="checkmark"><img src={Tick} alt=""/></span>}
       </span>
-            <span className="checkbox-label">{label || t('common.rememberMe', 'Remember me')}</span>
+            <span className="checkbox-label pt-2">{label || t('common.rememberMe', 'Remember me')}</span>
         </label>
     );
 };

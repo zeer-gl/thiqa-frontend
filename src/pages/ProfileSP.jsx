@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import { useAlert } from '../context/AlertContext';
 import { BaseUrl } from '../assets/BaseUrl';
@@ -146,6 +146,89 @@ const ProfileSP = () => {
         }
     ]);
 
+    // Notification translation functions
+    const getTranslatedNotificationContent = useCallback((notification) => {
+        if (!notification) return { title: '', message: '' };
+        
+        // Get current language
+        const currentLang = i18n.language || 'en';
+        
+        // Translate based on notification type or content keywords
+        let title = notification.title || '';
+        let message = notification.message || '';
+        
+        // Translate common notification types
+        if (notification.type === 'project_request') {
+            title = currentLang === 'ar' ? 'طلب مشروع جديد' : 'New Project Request';
+            message = currentLang === 'ar' ? 'تم إرسال طلب مشروع جديد لك' : 'A new project request has been sent to you';
+        } else if (notification.type === 'payment_received') {
+            title = currentLang === 'ar' ? 'تم استلام الدفع' : 'Payment Received';
+            message = currentLang === 'ar' ? 'تم استلام دفعة جديدة' : 'A new payment has been received';
+        } else if (notification.type === 'profile_update') {
+            title = currentLang === 'ar' ? 'تحديث الملف الشخصي' : 'Profile Update';
+            message = currentLang === 'ar' ? 'تم تحديث ملفك الشخصي بنجاح' : 'Your profile has been updated successfully';
+        } else if (notification.type === 'service_approved') {
+            title = currentLang === 'ar' ? 'تم الموافقة على الخدمة' : 'Service Approved';
+            message = currentLang === 'ar' ? 'تم الموافقة على إحدى خدماتك' : 'One of your services has been approved';
+        } else if (notification.type === 'review_received') {
+            title = currentLang === 'ar' ? 'تقييم جديد' : 'New Review';
+            message = currentLang === 'ar' ? 'تلقيت تقييماً جديداً' : 'You have received a new review';
+        }
+        
+        // If no specific translation found, try to translate common keywords
+        if (!title && notification.title) {
+            const titleLower = notification.title.toLowerCase();
+            if (titleLower.includes('project') || titleLower.includes('مشروع')) {
+                title = currentLang === 'ar' ? 'إشعار مشروع' : 'Project Notification';
+            } else if (titleLower.includes('payment') || titleLower.includes('دفع')) {
+                title = currentLang === 'ar' ? 'إشعار دفع' : 'Payment Notification';
+            } else {
+                title = notification.title;
+            }
+        }
+        
+        if (!message && notification.message) {
+            const messageLower = notification.message.toLowerCase();
+            if (messageLower.includes('new') || messageLower.includes('جديد')) {
+                message = currentLang === 'ar' ? 'إشعار جديد' : 'New notification';
+            } else {
+                message = notification.message;
+            }
+        }
+        
+        return { title, message };
+    }, [i18n.language]);
+
+    const formatNotificationDate = useCallback((dateString) => {
+        if (!dateString) return '';
+        
+        try {
+            const date = new Date(dateString);
+            const currentLang = i18n.language || 'en';
+            
+            // Format date according to language
+            if (currentLang === 'ar') {
+                return date.toLocaleDateString('ar-SA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return dateString;
+        }
+    }, [i18n.language]);
 
     // Fetch service provider profile data
     const fetchProfileData = async () => {
@@ -969,8 +1052,8 @@ const ProfileSP = () => {
                 <div className="profile-header">
                     <div className="container-md">
                         <div className="header-row">
-                            <h1 className="header-title ar-heading-bold">
-                                <i className="fas fa-home home-icon"></i>
+                            <h1 className="header-title ar-heading-bold pt-2">
+                              
                                 {t('profileSP.headerTitle')}
                             </h1>
                         
@@ -996,7 +1079,7 @@ const ProfileSP = () => {
                                             <span className="notification-badge">{item.badge}</span>
                                         )}
                                     </div>
-                                    <span className="sidebar-text">{item.text}</span>
+                                    <span className="sidebar-text pt-2">{item.text}</span>
                                 </div>
                             ))}
                         </div>
@@ -1008,7 +1091,7 @@ const ProfileSP = () => {
                         {!showSidebar && window.innerWidth <= 992 && (
                             <div className="mobile-back-button">
                                 <button 
-                                    className="btn btn-secondary mb-3"
+                                    className="btn btn-secondary mb-3 d-flex align-items-center justify-content-center"
                                     onClick={handleBackToSidebar}
                                 >
                                     <i className="fas fa-arrow-right me-2"></i>
@@ -1098,7 +1181,7 @@ const ProfileSP = () => {
                                                 className="form-label">{t('profileSP.content.professionLabel')}</label>
                                             <input
                                                 type="text"
-                                                className="form-control"
+                                                className="form-control pt-3"
                                                 value={profileData.workTitle}
                                                 onChange={(e) => handleInputChange('workTitle', e.target.value)}
                                                 disabled={!isEditing}
@@ -1109,7 +1192,7 @@ const ProfileSP = () => {
                                                 className="form-label">{t('profileSP.content.phoneNumberLabel')}</label>
                                             <input
                                                 type="text"
-                                                className="form-control"
+                                                className="form-control pt-3"
                                                 value={profileData.phoneNo}
                                                 onChange={(e) => handleInputChange('phoneNo', e.target.value)}
                                                 disabled={!isEditing}
@@ -1121,7 +1204,7 @@ const ProfileSP = () => {
                                             <label className="form-label">{t('profileSP.content.emailLabel')}</label>
                                             <input
                                                 type="email"
-                                                className="form-control"
+                                                className="form-control pt-3"
                                                 value={profileData.email}
                                                 onChange={(e) => handleInputChange('email', e.target.value)}
                                                 disabled={!isEditing}
@@ -1133,7 +1216,7 @@ const ProfileSP = () => {
                                             <label className="form-label">Experience (Years)</label>
                                             <input
                                                 type="number"
-                                                className="form-control"
+                                                className="form-control pt-3"
                                                 value={profileData.experience}
                                                 onChange={(e) => handleInputChange('experience', e.target.value)}
                                                 disabled={!isEditing}
@@ -1142,7 +1225,7 @@ const ProfileSP = () => {
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label">Bio</label>
                                             <textarea
-                                                className="form-control"
+                                                className=" form-control pt-3"
                                                 rows="3"
                                                 value={profileData.bio}
                                                 onChange={(e) => handleInputChange('bio', e.target.value)}
@@ -1201,10 +1284,10 @@ const ProfileSP = () => {
                                         </div>
                                         <div className="col-12 mb-3">
                                             <button
-                                                className="btn btn-primary w-100"
+                                                className="btn btn-primary pt-4 w-100 d-flex align-items-center justify-content-center"
                                                 onClick={handleEditProfile}
                                                         disabled={loading}
-                                                    >
+                                            >
                                                         {loading ? 'Loading...' : t('profileSP.content.editProfileButton')}
                                                     </button>
                                                 </div>
@@ -1213,7 +1296,7 @@ const ProfileSP = () => {
                                             <>
                                                 <div className="col-md-6 mb-3">
                                                     <button
-                                                        className="btn btn-secondary w-100"
+                                                        className="btn btn-secondary pt-4 w-100 d-flex align-items-center justify-content-center"
                                                         onClick={handleCancelEdit}
                                                     >
                                                         {t('common.cancel', 'Cancel')}
@@ -1221,7 +1304,7 @@ const ProfileSP = () => {
                                                 </div>
                                                 <div className="col-md-6 mb-3">
                                                     <button
-                                                        className="btn btn-primary w-100"
+                                                        className="btn pt-4   w-100 d-flex align-items-center justify-content-center"
                                                         onClick={handleSaveProfile}
                                                         disabled={saving}
                                                     >
@@ -1238,12 +1321,15 @@ const ProfileSP = () => {
                                             {t('profileSP.projects.participatedProjects', 'Projects you participated in completing')}
                                         </h3>
                                         <button 
-                                            className="btn btn-outline-primary btn-sm"
+                                            className="btn btn-outline-primary pt-2 btn-sm d-flex align-items-center justify-content-center"
                                             onClick={refreshPortfolio}
                                             disabled={loading}
                                         >
                                             <i className="fas fa-sync-alt me-1"></i>
+                                            <span className="pt-2">
                                             {loading ? 'Loading...' : 'Refresh'}
+                                            </span>
+                                         
                                         </button>
                                     </div>
                                     <div className="projects-full-width">
@@ -1292,7 +1378,7 @@ const ProfileSP = () => {
                                     <h3 className="section-title ar-heading-bold">{t('profile.notifications.title')}</h3>
                                     {notifications.length > 0 && (
                                         <button 
-                                            className="btn btn-outline-primary btn-sm"
+                                            className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
                                             onClick={markAllNotificationsAsRead}
                                             disabled={loadingNotifications}
                                         >
@@ -1327,7 +1413,7 @@ const ProfileSP = () => {
                                                     <div className="notification-content">
                                                         <div className="notification-header">
                                                             <h6 className={`notification-title ${!notification.isRead ? 'fw-bold' : ''}`}>
-                                                                {notification.title || t('profile.notifications.defaultTitle')}
+                                                                {getTranslatedNotificationContent(notification).title || t('profile.notifications.defaultTitle')}
                                                             </h6>
                                                             <div className="notification-actions">
                                                                 {markingAsRead === notification._id ? (
@@ -1336,24 +1422,24 @@ const ProfileSP = () => {
                                                                     </div>
                                                                 ) : (
                                                                     <button
-                                                                        className="btn btn-sm btn-outline-danger"
+                                                                        className="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center"
                                                                         onClick={(e) => {
                                                                             e.stopPropagation();
                                                                             deleteNotification(notification._id);
                                                                         }}
                                                                         title={t('profile.notifications.delete')}
                                                                     >
-                                                                        <i className="fas fa-trash"></i>
+                                                                        <i className=" p-1 fas fa-trash"></i>
                                                                     </button>
                                                                 )}
                                                             </div>
                                                         </div>
                                                         <p className="notification-message">
-                                                            {notification.message || notification.description || t('profile.notifications.noMessage')}
+                                                            {getTranslatedNotificationContent(notification).message || notification.description || t('profile.notifications.noMessage')}
                                                         </p>
                                                         <div className="notification-meta">
                                                             <small className="text-muted">
-                                                                {notification.createdAt ? new Date(notification.createdAt).toLocaleDateString() : t('profile.notifications.noDate')}
+                                                                {notification.createdAt ? formatNotificationDate(notification.createdAt) : t('profile.notifications.noDate')}
                                                             </small>
                                                             {!notification.isRead && (
                                                                 <span className="unread-indicator"></span>

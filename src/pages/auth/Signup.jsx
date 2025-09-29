@@ -695,7 +695,7 @@ function Signup() {
                         </div>
                         <input
                           type="text"
-                          className={`form-control ${i18n.dir() === "rtl" ? "pe-5" : "ps-5"} ${formSubmitted && !name ? 'is-invalid' : ''}`}
+                          className={`form-control  pt-2 ${i18n.dir() === "rtl" ? "pe-5" : "ps-5"} ${formSubmitted && !name ? 'is-invalid' : ''}`}
                           id="workTitle"
                           placeholder={t("auth.signupsp.Name", "Name")}
                           value={name}
@@ -714,7 +714,7 @@ function Signup() {
                         <input
                           type="tel"
                           min={0}
-                          className={`form-control ${i18n.dir() === "rtl" ? "pe-5" : "ps-5"} ${
+                          className={`form-control pt-2  ${i18n.dir() === "rtl" ? "pe-5" : "ps-5"} ${
                             formSubmitted && !phoneNo ? 'is-invalid' : 
                             phoneNo && phoneValid ? 'is-valid' : 
                             phoneNo && !phoneValid ? 'is-invalid' : ''
@@ -755,7 +755,7 @@ function Signup() {
                     <div className="form-group mb-3">
                       <input
                         type="email"
-                        className={`form-control ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                        className={`form-control  pt-3 ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                         id="fname"
                         placeholder={t("auth.signupsp.Email", "Email")}
                         value={email}
@@ -777,7 +777,7 @@ function Signup() {
                       <div className="position-relative">
                         <input
                           type={showPassword ? "text" : "password"}
-                          className={`form-control ${showPassword ? "password-field" : ""} ${formSubmitted && !password ? 'is-invalid' : ''}`}
+                          className={`form-control  pt-3 ${showPassword ? "password-field" : ""} ${formSubmitted && !password ? 'is-invalid' : ''}`}
                           id="password"
                           placeholder={t("auth.signup.password")}
                           value={password}
@@ -803,14 +803,14 @@ function Signup() {
                       <div className="position-relative">
                         <input
                           type={showConfirmPassword ? "text" : "password"}
-                          className={`form-control ${showConfirmPassword ? "password-field" : ""} ${formSubmitted && (!confirmPassword || password !== confirmPassword) ? 'is-invalid' : ''}`}
+                          className={`form-control pt-3 ${showConfirmPassword ? "password-field" : ""} ${formSubmitted && (!confirmPassword || password !== confirmPassword) ? 'is-invalid' : ''}`}
                           id="confirmpassword"
                           placeholder={t("auth.signup.confirmPassword")}
                           value={confirmPassword}
                           onChange={(e) => { setConfirmPassword(e.target.value)}}
                         />
                         <div
-                          className={`position-absolute top-50 translate-middle-y ${i18n.dir() === "rtl" ? "start-0 ps-3" : "end-0 pe-3"}`}
+                          className={`position-absolute pt-1 top-50 translate-middle-y ${i18n.dir() === "rtl" ? "start-0 ps-3" : "end-0 pe-3"}`}
                           style={{ cursor: "pointer" }}
                           onClick={toggleConfirmPasswordVisibility}
                         >
@@ -829,10 +829,10 @@ function Signup() {
 
                   <div>
                     <div className="mt-4">
-                      <button type="submit" className="btn fw-semibold ev-submit-btn" disabled={submitting}>
+                      <button type="submit" className="btn   pt-2 fw-semibold ev-submit-btn d-flex align-items-center justify-content-center" disabled={submitting}>
                         {submitting ? (t("common.sending") || "Submitting...") : t("auth.signup.createAccount")}
                       </button>
-                      <Link className="btn visitor-btn mt-4 fw-semibold" to="/login">
+                      <Link className="btn visitor-btn  pt-2 mt-4 pt-2 fw-semibold d-flex align-items-center justify-content-center" to="/login">
                      {t('auth.login.title', 'Login')}
                       </Link>
                     </div>
@@ -847,7 +847,11 @@ function Signup() {
                         onClick={handleGoogleRegister}
                         disabled={socialSubmitting}
                       >
-                        {t("auth.signup.google")}
+                      <span className="pt-2">
+                      {t("auth.signup.google")}
+                      </span>
+                    
+                      
                         <img src={GoogleIcon} alt="" />
                       </button>
                       <button
@@ -856,12 +860,15 @@ function Signup() {
                         onClick={handleAppleRegister}
                         disabled={socialSubmitting}
                       >
+                        <span className="pt-2"> 
                         {t("auth.signup.apple")}
+                        </span>
+                      
                         <img src={AppleIcon} alt="" />
                       </button>
                     </div>
                     <div className='mt-3'>
-                      <Link to="/signup-sp" className='btn seeker-auth-btn text-decoration-none'>
+                      <Link to="/signup-sp" className='btn seeker-auth-btn pt-2 text-decoration-none d-flex align-items-center justify-content-center'>
                         {t('auth.signup.registerAsServiceProvider')}
                       </Link>
                     </div>
@@ -912,7 +919,7 @@ function Signup() {
                   />
                 ))}
               </div>
-              <button type="submit" className="btn otp-submit-btn w-100">{t("auth.signup.otp.submit")}</button>
+              <button type="submit" className="btn otp-submit-btn w-100 d-flex align-items-center justify-content-center">{t("auth.signup.otp.submit")}</button>
             </form>
             <div className="text-center mt-3">
               <a href="#" onClick={handleResend} className="otp-resend-link navy text-decoration-none">

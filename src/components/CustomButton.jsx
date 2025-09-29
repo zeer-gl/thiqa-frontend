@@ -12,7 +12,7 @@ const CustomButton = ({ text, onClick, className = '', variant = 'primary', size
 
     return (
         <button 
-            className={buttonClasses}
+            className={`${buttonClasses} d-flex align-items-center justify-content-center`}
             onClick={onClick}
         >
             {text}

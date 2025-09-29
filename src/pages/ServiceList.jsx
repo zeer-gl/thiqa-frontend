@@ -702,9 +702,9 @@ const ServiceList = () => {
                                                             <div className='d-flex align-items-center justify-content-between'>
                                                                 <h3 className="company-name fw-bold">{provider.name}</h3>
                                                                 <div className="rating-section">
-                                                                    <div className="stars">
+                                                                    {/* <div className="stars">
                                                                         {renderStarRating(provider.rating)}
-                                                                    </div>
+                                                                    </div> */}
                   
                                                                 </div>
                                                             </div>

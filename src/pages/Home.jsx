@@ -52,6 +52,7 @@ const Home = () => {
     const [error, setError] = useState(null);
     const [likedStates, setLikedStates] = useState({});
     const navigate=useNavigate();
+    
     const { likedProfessionals, toggleProfessionalLike } = useLikes();
     const { isServiceProvider, userProfile, fetchUserProfile } = useUser();
     
@@ -74,6 +75,7 @@ const Home = () => {
         image: null,
         existingImage: null
     });
+    const [imageError, setImageError] = useState('');
     
     // Pagination states for professionals
     const [currentProfessionalsPage, setCurrentProfessionalsPage] = useState(1);
@@ -84,6 +86,11 @@ const Home = () => {
     // Filtering states
     const [currentFilter, setCurrentFilter] = useState(null); // 'interactive', 'nearby', or null
     const [isFilterActive, setIsFilterActive] = useState(false);
+    
+    // Customer reviews states
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(false);
+    const [reviewsError, setReviewsError] = useState(null);
     
     // Lock/unlock body scroll when modal is open/closed
     useEffect(() => {
@@ -294,7 +301,7 @@ const Home = () => {
             let response;
             if (isUpdate) {
                 // Update existing service
-                response = await axios.put(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
+                response = await axios.post(`${BaseUrl}/professional/update-service/${serviceId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -407,6 +414,11 @@ const Home = () => {
     const handleServiceSubmit = async (e) => {
         e.preventDefault();
         
+        // Validate image before submission
+        if (serviceForm.image && !validateImage(serviceForm.image)) {
+            return; // Stop submission if image validation fails
+        }
+        
         try {
             setServiceFormLoading(true);
             
@@ -484,6 +496,7 @@ const Home = () => {
                     image: null, // New image file (if user selects one)
                     existingImage: freshService.image || null // Keep reference to existing image
         });
+        setImageError(''); // Clear any previous image errors
         setShowServiceModal(true);
             } else {
                 showAlert(t('pages.home.serviceManagement.serviceError', 'Error') + ': Failed to load service details', 'error');
@@ -516,6 +529,31 @@ const Home = () => {
     const cancelDeleteService = () => {
         setShowDeleteModal(false);
         setServiceToDelete(null);
+    };
+
+    // Image validation function
+    const validateImage = (file) => {
+        if (!file) {
+            setImageError('');
+            return true;
+        }
+
+        // Check file size (1MB = 1024 * 1024 bytes)
+        const maxSize = 1024 * 1024; // 1MB in bytes
+        if (file.size > maxSize) {
+            setImageError(t('pages.home.serviceManagement.imageSizeError', 'Image size must be less than 1MB'));
+            return false;
+        }
+
+        // Check file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            setImageError(t('pages.home.serviceManagement.imageTypeError', 'Please select a valid image file (JPEG, PNG, GIF, WebP)'));
+            return false;
+        }
+
+        setImageError('');
+        return true;
     };
 
     // Mock product data
@@ -565,6 +603,16 @@ const Home = () => {
             fetchServices();
         }
     }, [isServiceProvider]);
+
+    // Fetch all customer reviews on component mount
+    useEffect(() => {
+        fetchAllCustomerReviews();
+    }, []);
+
+    // Function to refresh reviews (can be called manually if needed)
+    const refreshReviews = () => {
+        fetchAllCustomerReviews();
+    };
 
     // Refresh profile data when component mounts (useful after subscription changes)
     useEffect(() => {
@@ -765,6 +813,69 @@ const Home = () => {
         setCurrentFilter(null);
         await fetchProfessionals();
     };
+
+    // Function to fetch all customer reviews
+    const fetchAllCustomerReviews = async () => {
+        try {
+            setReviewsLoading(true);
+            setReviewsError(null);
+            
+            const response = await fetch(`${BaseUrl}/customer/get-all-reviews`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch reviews (${response.status})`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && Array.isArray(data.data)) {
+                setReviews(data.data);
+                console.log('✅ All reviews fetched successfully:', data.data);
+            } else {
+                setReviews([]);
+                console.warn('⚠️ No reviews data in response');
+            }
+        } catch (error) {
+            setReviewsError(error.message);
+            console.error('❌ Error fetching reviews:', error);
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
+
+    // Helper function to calculate average rating
+    const calculateAverageRating = (review) => {
+        const { efficiencyRating, priceRating, deliveryRating } = review;
+        return ((efficiencyRating + priceRating + deliveryRating) / 3).toFixed(1);
+    };
+
+    // Helper function to render stars
+    const renderStars = (rating) => {
+        const stars = [];
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        
+        for (let i = 0; i < fullStars; i++) {
+            stars.push(<Star key={i} sx={{ color: "#FFD700", fontSize: 18 }} />);
+        }
+        
+        if (hasHalfStar) {
+            stars.push(<StarHalf key="half" sx={{ color: "#FFD700", fontSize: 18 }} />);
+        }
+        
+        const emptyStars = 5 - Math.ceil(rating);
+        for (let i = 0; i < emptyStars; i++) {
+            stars.push(<StarBorder key={`empty-${i}`} sx={{ color: "#FFD700", fontSize: 18 }} />);
+        }
+        
+        return stars;
+    };
     useEffect(() => {
         const fetchProducts = async (categoryId) => {
             if (!categoryId) return;
@@ -775,7 +886,7 @@ const Home = () => {
                 const res = await fetch(`${BaseUrl}/customer/products/category/${categoryId}`, {
                     method: "GET",
                     headers: {
-                        "Authorization": `${localStorage.getItem('token')}`
+                        "Authorization": `Bearer ${localStorage.getItem('token')}`
                     }
                 });
                 
@@ -819,7 +930,7 @@ const Home = () => {
                 const res = await fetch(`${BaseUrl}/customer/products/category/${categoryId}`,{
                     method:"GET",
                     headers:{
-                        "Authorization":`${localStorage.getItem('token')}`
+                        "Authorization":`Bearer ${localStorage.getItem('token')}`
                     }
                 });
                 if (!res.ok) {
@@ -940,7 +1051,7 @@ const Home = () => {
                                     </h4>
                                     <div className="d-flex flex-column gap-3 align-items-center">
                                     <Link to={'/profile-sp?tab=packages'}>
-                                        <button className='btn hero-btn'>
+                                        <button className='btn hero-btn d-flex align-items-center justify-content-center'>
                                             {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
                                         </button>
                                     </Link>
@@ -977,14 +1088,14 @@ const Home = () => {
                                 {isServiceProvider ? (
                                     // Show packages button for service providers
                                         <Link to={'/profile-sp?tab=packages'}>
-                                            <button className='btn hero-btn'>
+                                            <button className='btn hero-btn pt-2 d-flex align-items-center justify-content-center'>
                                             {t('pages.home.heroSection.viewPackages', 'View Packages')}
                                             </button>
                                         </Link>
                                 ) : (
                                     // Show regular button for customers
-                                    <Link to={'/products'}>
-                                        <button className='btn hero-btn'>
+                                    <Link to={'/products'} style={{textDecoration: 'none'}}>
+                                        <button className='btn hero-btn pt-2 d-flex align-items-center justify-content-center' style={{textDecoration:"none"}}>
                                             {t('pages.home.heroSection.ctaButton')}
                                         </button>
                                     </Link>
@@ -1006,11 +1117,14 @@ const Home = () => {
                                         <div className="d-flex justify-content-between align-items-center mb-4">
                                             {/* <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2> */}
                                             <button 
-                                                className="btn btn-primary"
+                                                className="btn btn-primary d-flex align-items-center justify-content-center"
                                                 onClick={() => setShowServiceModal(true)}
                                             >
                                                 <i className="fas fa-plus me-2"></i>
+                                                <span className="pt-2">
                                                 {t('pages.home.serviceManagement.addService', 'Add Service')}
+                                                </span>
+                                              
                                             </button>
                                         </div>
                                         
@@ -1050,20 +1164,25 @@ const Home = () => {
                                                                     <strong>{t('pages.home.serviceManagement.delivery', 'Delivery')}:</strong> {service.deliveryTime}
                                                                 </div>
                                                                 <div className="mt-auto">
-                                                                    <div className="btn-group w-100" role="group">
+                                                                    <div className="btn-group w-100" role="group" style={{display: 'flex', justifyContent: 'center',alignItems: 'center',gap: '10px'}}>
                                                                         <button 
-                                                                            className="btn btn-outline-primary btn-sm"
+                                                                            className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
                                                                             onClick={() => handleEditService(service)}
                                                                         >
-                                                                            <i className="fas fa-edit me-1"></i>
+                                                                            <i className="fas fa-edit "></i>
+                                                                            <span className="pt-2">
                                                                             {t('common.edit', 'Edit')}
+                                                                            </span>
+                                                                           
                                                                         </button>
                                                                         <button 
-                                                                            className="btn btn-outline-danger btn-sm"
+                                                                            className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
                                                                             onClick={() => handleDeleteService(service)}
                                                                         >
                                                                             <i className="fas fa-trash me-1"></i>
+                                                                            <span className="pt-2">
                                                                             {t('common.delete', 'Delete')}
+                                                                            </span>
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1128,34 +1247,141 @@ const Home = () => {
                     <img className='w-100' src={HeroPattern2} alt=""/>
                 </div>
             </section>
+         
             {
                 !isServiceProvider &&(
                     <>
+                       <section className='product-section'>
+            <div className="container">
+                <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-3 mb-lg-5 gap-3">
+                    <div className="w-100">
+                        <ul className="nav nav-pills product-list-tabs mb-3 flex-wrap" id="pills-tab" role="tablist">
+                            {categoriesLoading && (
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" type="button" disabled>
+                                        {t('common.loading') || 'Loading...'}
+                                    </button>
+                                </li>
+                            )}
+                            {!categoriesLoading && categoriesError && (
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" type="button" disabled>
+                                        {categoriesError}
+                                    </button>
+                                </li>
+                            )}
+                            {!categoriesLoading && !categoriesError && categories.map((cat) => (
+                                <li className="nav-item" role="presentation" key={cat._id}>
+                                    <button
+                                        className={`nav-link ${activeCategoryId === cat._id ? 'active' : ''}`}
+                                        id={`pills-${cat._id}-tab`}
+                                        data-bs-toggle="pill"
+                                        data-bs-target={`#pills-${cat._id}`}
+                                        type="button"
+                                        role="tab"
+                                        aria-controls={`pills-${cat._id}`}
+                                        aria-selected={activeCategoryId === cat._id}
+                                        onClick={() => setActiveCategoryId(cat._id)}
+                                    >
+                                        {(i18n.language === 'ar' ? cat?.name?.ar : cat?.name?.en) || ''}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="w-100">
+                        <div className='d-flex flex-column flex-md-row align-items-start justify-content-end align-items-md-center gap-3'>
+                            <h4 className="mb-0 ar-heading-bold">
+                                {t('pages.home.productSection.title')}
+                            </h4>
+                            {/* <div className='d-flex align-items-center gap-2 flex-wrap'>
+                                <button className='btn mi-btn'>
+                                    <img src={MIP} alt=""/>{t('pages.home.productSection.buttons.mostInteractive')}
+                                </button>
+                                <button className='btn nearby-btn'>
+                                    <img src={NearbyIcon} alt=""/>{t('pages.home.productSection.buttons.nearby')}
+                                </button>
+                            </div> */}
+                        </div>
+                    </div>
+                </div>
+                <div className="tab-content" id="pills-tabContent">
+                    {!categoriesLoading && !categoriesError && categories.map((cat) => (
+                        <div
+                            className={`tab-pane fade ${activeCategoryId === cat._id ? 'show active' : ''}`}
+                            id={`pills-${cat._id}`}
+                            role="tabpanel"
+                            aria-labelledby={`pills-${cat._id}-tab`}
+                            key={cat._id}
+                        >
+                          <div className='row'>
+  {productsByCategory[cat._id]?.length > 0 ? (
+    productsByCategory[cat._id].map((product) => (
+        <ProductCard 
+        key={`${cat._id}-${product._id}`} 
+        product={{
+          id: product._id,
+          name: i18n.language === 'ar' ? product.name_ar : product.name_en,
+          categoryName: parseCategory(product?.categoryName)?.[i18n.language] 
+                       || parseCategory(product?.categoryName)?.en 
+                       || "",
+          price: product.price,
+          measurementUnit: product?.measurementUnit,
+          image: product.images?.[0],
+          isSkeleton: false
+        }} 
+      />
+    ))
+  ) : (
+    // Show empty state message
+    <div className="col-12 text-center py-5">
+      <h5>{t('No products available in this category')}</h5>
+    </div>
+  )}
+</div>
+
+                        </div>
+                    ))}
+                    {(categoriesLoading || categoriesError || categories.length === 0) && (
+                        <div className="tab-pane fade show active" id="pills-placeholder" role="tabpanel">
+                            <div className='row'>
+                                {skeletonProducts.map((product) => (
+                                    <ProductCard key={`placeholder-${product.id}`} product={product} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <div className='text-center mt-5'>
+                    <img className='max-100' src={ProductPattern} alt=""/>
+                </div>
+            </div>
+        </section>
         <section className='services-section'>
       <div className="container">
         <div className='d-flex align-items-center justify-content-between mb-5'>
-          <h2 className='ar-heading-bold'>
+          <h2 className='ar-heading-bold' style={{fontSize:'24px'}}>
             {t('pages.home.servicesSection.title')}
           </h2>
           <div className='d-flex align-items-center gap-2 services-buttons-container'>
             <div className="d-flex align-items-center gap-2 main-buttons-group">
-              <Link to={'service-list'}>
-                <button className='btn nearby-btn'>
+              <Link to={'service-list'} className='text-decoration-none'>
+                <button className='btn nearby-btn p-3 text-decoration-none d-flex align-items-center justify-content-center'>
                   {t('pages.home.servicesSection.buttons.seeAll', 'See All')}
                 </button>
               </Link>
        
               <button 
-                className={`btn mi-btn ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
+                className={`btn mi-btn p-3 d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
                 onClick={handleMostInteractiveClick}
               >
-                <img src={MIP} alt="Most Interactive Professionals"/>{t('pages.home.servicesSection.buttons.mostInteractive')}
+                <img src={MIP} className='pb-1' alt="Most Interactive Professionals"/>{t('pages.home.servicesSection.buttons.mostInteractive')}
               </button>
               <button 
-                className={`btn nearby-btn ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
+                className={`btn p-3 nearby-btn d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
                 onClick={handleNearbyClick}
               >
-                <img src={NearbyIcon} alt="Nearby Professionals"/>{t('pages.home.servicesSection.buttons.nearby')}
+                <img src={NearbyIcon}  className='pb-1' alt="Nearby Professionals"/>{t('pages.home.servicesSection.buttons.nearby')}
               </button>
             </div>
             
@@ -1163,7 +1389,7 @@ const Home = () => {
             {totalProfessionalsPages > 1 && (
               <div className="d-flex align-items-center gap-2 ms-3 pagination-buttons-group">
                 <button
-                  className="btn pagination-arrow-btn"
+                  className="btn pagination-arrow-btn d-flex align-items-center justify-content-center"
                   onClick={() => handleProfessionalsPageChange('prev')}
                   disabled={currentProfessionalsPage === 1}
                   style={{
@@ -1175,7 +1401,7 @@ const Home = () => {
                 </button>
                 
                 <button
-                  className="btn pagination-arrow-btn"
+                  className="btn pagination-arrow-btn d-flex align-items-center justify-content-center"
                   onClick={() => handleProfessionalsPageChange('next')}
                   disabled={currentProfessionalsPage === totalProfessionalsPages}
                   style={{
@@ -1204,11 +1430,14 @@ const Home = () => {
               </span>
             </div>
             <button 
-              className="btn btn-outline-secondary btn-sm"
+              className="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
               onClick={clearAllFilters}
             >
               <i className="fas fa-times me-1"></i>
+              <span className='pt-1'>
               Clear Filters
+              </span>
+             
             </button>
           </div>
         )}
@@ -1216,13 +1445,17 @@ const Home = () => {
       
       <div className="container">
 
-        <div className="row g-3">
+        <div className="row g-4">
             
           {professionals.map(professional => (
         <div
         key={professional._id}
-        className="col-lg-4 col-md-6"
-        style={{ cursor: "pointer" }}
+        className="col-lg-4 col-md-6 col-sm-6"
+        style={{ 
+          cursor: "pointer",
+          border: "1px solid lightgray",
+          marginBottom: "20px"
+        }}
         onClick={() => navigate(`/service/${professional._id}`)}
       >
               <div className="service-provider-card">
@@ -1266,7 +1499,7 @@ const Home = () => {
                 
                 <div className='d-flex align-items-center justify-content-between py-3'>
                   <div className='d-flex align-items-center gap-3'>
-                    <img src={BallPattern} alt="" width="40" height="40"/>
+                    {/* <img src={BallPattern} alt="" width="40" height="40"/> */}
                     <div className='d-flex align-items-start gap-3'>
                       <div>
                       <h6 className="fs-14 ar-heading-bold">
@@ -1274,9 +1507,14 @@ const Home = () => {
     ?.split(" ")
     .slice(0, 2)                // take first 2 words
     .join(" ") + 
-    (professional.name?.split(" ").length > 2 ? " ..." : "")}
+    (professional.name?.split(" ").length > 2 ? " ." : "")
+    
+    }
 </h6>
-                        <p className='fs-12'>{professional.bio || t('pages.home.servicesSection.serviceProvider.description')}</p>
+                        <p className='fs-12'>{ professional.bio?.split(" ")
+    .slice(0, 4)                // take first 2 words
+    .join(" ") + 
+    (professional.bio?.split(" ").length > 5 ? " ." : "")|| t('pages.home.servicesSection.serviceProvider.description')}</p>
                       </div>
                       <div className="ratings d-flex align-items-center">
   {[...Array(5)].map((_, index) => {
@@ -1294,7 +1532,7 @@ const Home = () => {
       return <StarBorder key={index} sx={{ color: "#FFD700", fontSize: 18 }} />;
     }
   })}
-  <span style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
+  <span className='pt-1' style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
     {professional.averageRating?.toFixed(1) || "0.0"}
   </span>
 </div>
@@ -1320,8 +1558,12 @@ const Home = () => {
       paddingRight:"20px"
     }}
   />
-                    <button className='btn outlined-btn fs-12'>
+                    <button className='btn outlined-btn fs-12 d-flex align-items-center justify-content-center'>
+                    <span className='pt-1'>
                       {professional.specialization || t('pages.home.servicesSection.serviceProvider.category')}
+                    </span>
+        
+
                     </button>
                   </div>
                 </div>
@@ -1333,6 +1575,7 @@ const Home = () => {
         
       </div>
     </section>
+  
             <section className='about-section'>
                 <div className="container">
                     <div className="row">
@@ -1374,83 +1617,124 @@ const Home = () => {
                             <h1 className='mb-3 ar-heading-bold'>
                                 {t('pages.home.customerSection.title')}
                             </h1>
+                            {!reviewsLoading && !reviewsError && reviews.length > 0 && (
+                                <div className="mb-3" style={{ fontSize: '14px', color: '#666' }}>
+                                    <span>Showing {reviews.length} customer review{reviews.length !== 1 ? 's' : ''}</span>
+                                </div>
+                            )}
+                            {reviewsLoading ? (
+                                <div className="text-center py-5">
+                                    <div className="spinner-border" role="status">
+                                        <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
+                                    </div>
+                                    <p className="mt-3">{t('pages.home.customerSection.loadingReviews', 'Loading reviews...')}</p>
+                                </div>
+                            ) : reviewsError ? (
+                                <div className="alert alert-danger">{reviewsError}</div>
+                            ) : reviews.length > 0 ? (
                             <div id="carouselExampleIndicators" className="carousel position-static slide">
                                 <div className="carousel-indicators mb-0">
-                                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                                            data-bs-slide-to="0" className="active" aria-current="true"
-                                            aria-label="Slide 1"></button>
-                                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                                            data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                    <button type="button" data-bs-target="#carouselExampleIndicators"
-                                            data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                        {reviews.map((_, index) => (
+                                            <button 
+                                                key={index}
+                                                type="button" 
+                                                data-bs-target="#carouselExampleIndicators"
+                                                data-bs-slide-to={index} 
+                                                className={index === 0 ? "active" : ""} 
+                                                aria-current={index === 0 ? "true" : "false"}
+                                                aria-label={`Slide ${index + 1}`}
+                                            ></button>
+                                        ))}
                                 </div>
                                 <div className="carousel-inner">
-                                    <div className="carousel-item active">
+                                        {reviews.map((review, index) => {
+                                            const averageRating = calculateAverageRating(review);
+                                            const customerName = review.customerId?.name || 'Customer';
+                                            const customerPic = review.customerId?.pic || null;
+                                            
+                                            return (
+                                                <div 
+                                                    key={review._id}
+                                                    className={`carousel-item ${index === 0 ? 'active' : ''}`}
+                                                >
                                         <div className='customer-content'>
                                             <p>
-                                                {t('pages.home.customerSection.testimonial.text')}
+                                                            {review.additionalNotes && review.additionalNotes.trim() !== '' 
+                                                                ? review.additionalNotes 
+                                                                : `Customer rated this product ${calculateAverageRating(review)}/5 stars based on efficiency, price, and delivery.`
+                                                            }
                                             </p>
+                                                        <div className="review-product-info" style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>
+                                                            <small>Product ID: {review.productId}</small>
+                                            </div>
                                             <div className='quote'>
                                                 <img src={QuoteImg} alt=""/>
                                             </div>
                                             <div className='customer-profile'>
-                                                <img src={CustomerImg2} alt=""/>
+                                                            {customerPic ? (
+                                                                <img 
+                                                                    src={customerPic} 
+                                                                    alt={customerName}
+                                                                    onError={(e) => {
+                                                                        e.target.style.display = 'none';
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <div 
+                                                                    className="customer-avatar-fallback"
+                                                                    style={{
+                                                                        width: '60px',
+                                                                        height: '60px',
+                                                                        borderRadius: '50%',
+                                                                        backgroundColor: '#e0e0e0',
+                                                                        color: '#666',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        fontSize: '24px',
+                                                                        fontWeight: 'bold',
+                                                                        textTransform: 'uppercase'
+                                                                    }}
+                                                                >
+                                                                    {customerName.charAt(0)}
+                                                </div>
+                                                            )}
                                                 <div>
                                                     <h5 className='fw-semibold ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerName')}
+                                                                    {customerName}
                                                     </h5>
-                                                    <h5 className='ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerType')}
-                                                    </h5>
+                                                                <div className="d-flex align-items-center gap-2">
+                                                                    <div className="ratings d-flex align-items-center">
+                                                                        {renderStars(parseFloat(averageRating))}
+                                                </div>
+                                                                    <span className='pt-1' style={{ marginLeft: 4, fontWeight: "bold", color: "#000" }}>
+                                                                        {averageRating}
+                                                                    </span>
+                                            </div>
+                                                                <div className="mt-2" style={{ fontSize: '12px', color: '#666' }}>
+                                                                    <div className="d-flex justify-content-between mb-1">
+                                                                        <span>Efficiency: {review.efficiencyRating}/5</span>
+                                                                        <span>Price: {review.priceRating}/5</span>
+                                                                        <span>Delivery: {review.deliveryRating}/5</span>
+                                        </div>
+                                                                    <div className="text-center" style={{ fontSize: '11px', color: '#999' }}>
+                                                                        {new Date(review.createdAt).toLocaleDateString()}
+                                    </div>
+                                            </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="carousel-item">
-                                        <div className='customer-content'>
-                                            <p>
-                                                {t('pages.home.customerSection.testimonial.text')}
-                                            </p>
-                                            <div className='quote'>
-                                                <img src={QuoteImg} alt=""/>
-                                            </div>
-                                            <div className='customer-profile'>
-                                                <img src={CustomerImg2} alt=""/>
-                                                <div>
-                                                    <h5 className='fw-semibold ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerName')}
-                                                    </h5>
-                                                    <h5 className='ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerType')}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="carousel-item">
-                                        <div className='customer-content'>
-                                            <p>
-                                                {t('pages.home.customerSection.testimonial.text')}
-                                            </p>
-                                            <div className='quote'>
-                                                <img src={QuoteImg} alt=""/>
-                                            </div>
-
-                                            <div className='customer-profile'>
-                                                <img src={CustomerImg2} alt=""/>
-                                                <div>
-                                                    <h5 className='fw-semibold ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerName')}
-                                                    </h5>
-                                                    <h5 className='ar-heading-bold'>
-                                                        {t('pages.home.customerSection.testimonial.customerType')}
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                            );
+                                        })}
                                 </div>
                             </div>
+                            ) : (
+                                <div className="text-center py-5">
+                                    <h5 className="text-muted mb-3">{t('pages.home.customerSection.noReviews', 'No reviews available')}</h5>
+                                    <p className="text-muted">{t('pages.home.customerSection.noReviewsDescription', 'Be the first to review our products')}</p>
+                            </div>
+                            )}
 
                         </div>
                         <div className="col-lg-6 col-12">
@@ -1517,6 +1801,7 @@ const Home = () => {
                                             image: null,
                                             existingImage: null
                                         });
+                                        setImageError('');
                                     }}
                                     style={{
                                         margin: '0',
@@ -1681,11 +1966,25 @@ const Home = () => {
                                             )}
                                             <input 
                                                 type="file" 
-                                                className="form-control"
+                                                className={`form-control ${imageError ? 'is-invalid' : ''}`}
                                                 accept="image/*"
-                                                onChange={(e) => setServiceForm({...serviceForm, image: e.target.files[0]})}
+                                                onChange={(e) => {
+                                                    const file = e.target.files[0];
+                                                    setServiceForm({...serviceForm, image: file});
+                                                    validateImage(file);
+                                                }}
                                                 disabled={serviceFormLoading}
                                             />
+                                            {imageError && (
+                                                <div className="invalid-feedback d-block" style={{
+                                                    color: '#dc3545',
+                                                    fontSize: '0.875rem',
+                                                    marginTop: '0.25rem',
+                                                    textAlign: i18n.language === 'ar' ? 'right' : 'left'
+                                                }}>
+                                                    {imageError}
+                                        </div>
+                                            )}
                                             <small className="form-text text-muted" style={{
                                                 textAlign: i18n.language === 'ar' ? 'right' : 'left', 
                                                 display: 'block', 
@@ -1695,8 +1994,8 @@ const Home = () => {
                                             }}>
                                                 {serviceForm.existingImage ? t('pages.home.serviceManagement.replaceImage', 'Select a new image to replace the current one, or leave empty to keep the current image.') : t('pages.home.serviceManagement.selectImage', 'Select an image for your service.')}
                                             </small>
-                                        </div>
                                     </div>
+                                </div>
                                 </div>
                                 <div className="modal-footer" style={{
                                     display: 'flex',
@@ -1707,34 +2006,9 @@ const Home = () => {
                                     backgroundColor: '#f8f9fa',
                                     direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
                                 }}>
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-secondary" 
-                                        disabled={serviceFormLoading}
-                                        onClick={() => {
-                                            setShowServiceModal(false);
-                                            setEditingService(null);
-                                            setServiceForm({
-                                                name: '',
-                                                nameEn: '',
-                                                nameAr: '',
-                                                price: '',
-                                                unit: '',
-                                                deliveryTime: '',
-                                                image: null,
-                                                existingImage: null
-                                            });
-                                        }}
-                                        style={{
-                                            minWidth: '100px',
-                                            opacity: serviceFormLoading ? 0.6 : 1
-                                        }}
-                                    >
-                                        {t('common.cancel', 'Cancel')}
-                                    </button>
-                                    <button 
+                                          <button 
                                         type="submit" 
-                                        className="btn btn-primary" 
+                                        className="btn btn-primary pt-2 d-flex align-items-center justify-content-center" 
                                         disabled={serviceFormLoading}
                                         style={{
                                             minWidth: '120px',
@@ -1750,6 +2024,33 @@ const Home = () => {
                                             editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
                                         )}
                                     </button>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-secondary pt-2 d-flex align-items-center justify-content-center" 
+                                        disabled={serviceFormLoading}
+                                        onClick={() => {
+                                            setShowServiceModal(false);
+                                            setEditingService(null);
+                                            setServiceForm({
+                                                name: '',
+                                                nameEn: '',
+                                                nameAr: '',
+                                                price: '',
+                                                unit: '',
+                                                deliveryTime: '',
+                                                image: null,
+                                                existingImage: null
+                                            });
+                                            setImageError('');
+                                        }}
+                                        style={{
+                                            minWidth: '100px',
+                                            opacity: serviceFormLoading ? 0.6 : 1
+                                        }}
+                                    >
+                                        {t('common.cancel', 'Cancel')}
+                                    </button>
+                              
                                 </div>
                             </form>
                         </div>
@@ -1771,20 +2072,21 @@ const Home = () => {
                             <div className="modal-footer justify-content-center">
                                 <button 
                                     type="button" 
-                                    className="btn btn-secondary" 
-                                    onClick={cancelDeleteService}
-                                    style={{width: '100%'}}
-                                >
-                                    {t('common.cancel', 'Cancel')}
-                                </button>
-                                <button 
-                                    type="button" 
-                                    className="btn btn-danger" 
+                                    className="btn btn-danger d-flex align-items-center justify-content-center" 
                                     onClick={confirmDeleteService}
                                     style={{width: '100%'}}
                                 >
                                     {t('pages.home.serviceManagement.deleteService', 'Delete')}
                                 </button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-secondary d-flex align-items-center justify-content-center" 
+                                    onClick={cancelDeleteService}
+                                    style={{width: '100%'}}
+                                >
+                                    {t('common.cancel', 'Cancel')}
+                                </button>
+                             
                             </div>
                         </div>
                     </div>
