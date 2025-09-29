@@ -820,7 +820,10 @@ const Home = () => {
             setReviewsLoading(true);
             setReviewsError(null);
             
-            const response = await fetch(`${BaseUrl}/customer/get-all-reviews`, {
+            // Option 1: Use a specific product ID (replace with actual product ID)
+            const productId = '685421475a9d09fcc2379f60'; // Replace with actual product ID
+            
+            const response = await fetch(`${BaseUrl}/customer/get-product-reviews/${productId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -836,7 +839,7 @@ const Home = () => {
             
             if (data.success && Array.isArray(data.data)) {
                 setReviews(data.data);
-                console.log('✅ All reviews fetched successfully:', data.data);
+                console.log('✅ Product reviews fetched successfully:', data.data);
             } else {
                 setReviews([]);
                 console.warn('⚠️ No reviews data in response');
@@ -1607,9 +1610,10 @@ const Home = () => {
        
 
 
-        
-     
-            <section className='customer-section'>
+        {
+            !isServiceProvider && (
+                <>
+                  <section className='customer-section'>
                 <div className="container">
                     <div className="row g-5">
                         <div className="col-lg-6 col-12 position-relative">
@@ -1745,6 +1749,12 @@ const Home = () => {
                     </div>
                 </div>
                     </section>
+                
+                </>
+            )
+        }
+     
+          
                 </>
             )}
 
