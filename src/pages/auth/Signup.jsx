@@ -16,6 +16,7 @@ import { BaseUrl } from "../../assets/BaseUrl.jsx";
 import {AlertContext} from '../../context/AlertContext.jsx'
 import { GoogleAuthProvider, signInWithPopup, OAuthProvider } from "firebase/auth";
 import {useAlert} from '../../context/AlertContext.jsx';
+import { FaEyeSlash } from "react-icons/fa";
 
 function Signup() {
   const { t, i18n } = useTranslation();
@@ -788,12 +789,10 @@ function Signup() {
                           onClick={togglePasswordVisibility}
                         >
                           {showPassword ? (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
-                              <path d="M12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
-                            </svg>
+                                                     <img src={EyeIcon} alt="Toggle password visibility" style={{ width: "20px", height: "20px" }} />
                           ) : (
-                            <img src={EyeIcon} alt="Toggle password visibility" style={{ width: "20px", height: "20px" }} />
+                            <FaEyeSlash  style={{ width: "20px", height: "20px" }}/>
+
                           )}
                         </div>
                       </div>
@@ -816,14 +815,10 @@ function Signup() {
                           onClick={toggleConfirmPasswordVisibility}
                         >
                           {showConfirmPassword ? (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/>
-                              <path d="M12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"
-                              className="pt-1"
-                              />
-                            </svg>
+                          <img src={EyeIcon} alt="Toggle confirm password visibility" style={{ width: "20px", height: "20px" }} />
                           ) : (
-                            <img src={EyeIcon} className="pt-1" alt="Toggle confirm password visibility" style={{ width: "20px", height: "20px" }} />
+                            <FaEyeSlash  style={{ width: "20px", height: "20px" }}/>
+                           
                           )}
                         </div>
                       </div>
