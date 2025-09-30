@@ -1357,7 +1357,12 @@
     "email-required": "البريد الإلكتروني مطلوب",
     "email-invalid": "يرجى إدخال بريد إلكتروني صحيح",
     "message-required": "الرسالة مطلوبة",
-    "cityscape-placeholder": "منظر المدينة الحديثة"
+    "cityscape-placeholder": "منظر المدينة الحديثة",
+    "form-submitted-successfully": "تم إرسال النموذج بنجاح!",
+    "thank-you-message": "شكراً لتواصلك معنا. لقد تلقينا رسالتك وسنرد عليك قريباً.",
+    "your-message-details": "تفاصيل رسالتك",
+    "contact-options": "خيارات التواصل",
+    "close": "إغلاق"
   },
   "faq": {
     "headerTitle": "الملف الشخصي",

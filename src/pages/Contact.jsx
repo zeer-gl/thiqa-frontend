@@ -1,15 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import RequestForm from '../components/RequestForm';
+import ContactFormModal from '../components/ContactFormModal';
 import * as Yup from 'yup';
 import '../css/pages/contact.scss';
+import '../css/components/contact-form-modal.scss';
 import BannerPattern from '../assets/payment/layer-image.svg';
 import Cityscape from '../assets/payment/dubai-skyline-sunset-time-united.svg';
 
 const Contact = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    
+    // Modal state management
+    const [showModal, setShowModal] = useState(false);
+    const [formData, setFormData] = useState(null);
 
     // Form configuration
     const formFields = [
@@ -45,8 +52,34 @@ const Contact = () => {
 
     const handleSubmit = (values, formikBag) => {
         console.log('Contact form submitted:', values);
-        // Handle form submission here
+        
+        // Store form data and show modal
+        setFormData(values);
+        setShowModal(true);
+        
+        // Reset form after showing modal
         formikBag.resetForm();
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setFormData(null);
+    };
+
+    // Handle contact button clicks
+    const handleCallClick = () => {
+        console.log('📞 Call button clicked');
+        window.open('tel:+96512345678', '_self');
+    };
+
+    const handleWhatsAppClick = () => {
+        console.log('💬 WhatsApp button clicked');
+        window.open('https://wa.me/96512345678?text=Hello, I would like to get in touch.', '_blank');
+    };
+
+    const handleEmailClick = () => {
+        console.log('📧 Email button clicked');
+        window.open('mailto:info@thiqa.com?subject=Contact Form Inquiry&body=Hello, I would like to get in touch.', '_blank');
     };
 
     return (
@@ -82,22 +115,35 @@ const Contact = () => {
                                         validationSchema={validationSchema}
                                         onSubmit={handleSubmit}
                                         formFields={formFields}
-                                        showSubmitButton={false}
+                                        showSubmitButton={true}
+                                        submitButtonText={t('contact.send-message')}
                                     />
 
                                     {/* Contact Buttons */}
                                     <div className="contact-buttons">
-                                        <button className="contact-btn call-btn">
+                                        <button 
+                                            type="button"
+                                            className="contact-btn call-btn"
+                                            onClick={handleCallClick}
+                                        >
                                             <i className="fas fa-phone-alt"></i>
                                             <span>{t('contact.call-us')}</span>
                                         </button>
                                         
-                                        <button className="contact-btn whatsapp-btn">
+                                        <button 
+                                            type="button"
+                                            className="contact-btn whatsapp-btn"
+                                            onClick={handleWhatsAppClick}
+                                        >
                                             <i className="fab fa-whatsapp"></i>
                                             <span>{t('contact.chat-whatsapp')}</span>
                                         </button>
                                         
-                                        <button className="contact-btn email-btn">
+                                        <button 
+                                            type="button"
+                                            className="contact-btn email-btn"
+                                            onClick={handleEmailClick}
+                                        >
                                             <i className="fas fa-envelope"></i>
                                             <span>{t('contact.email-us')}</span>
                                         </button>
@@ -116,6 +162,13 @@ const Contact = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Contact Form Modal */}
+            <ContactFormModal 
+                isOpen={showModal}
+                onClose={handleCloseModal}
+                formData={formData}
+            />
         </div>
     );
 };

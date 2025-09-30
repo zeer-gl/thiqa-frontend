@@ -74,6 +74,7 @@ const ServiceRequest = () => {
             if (!response.ok) {
                 throw new Error('Failed to fetch categories');
             }
+            // add token to the request
             const data = await response.json();
             console.log('Categories fetched:', data.data);
             

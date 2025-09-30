@@ -201,7 +201,7 @@ const ServiceDetail = () => {
                                         {/* Rating Section */}
                                         <div className="rating-section">
                                             <span className="rating-value pt-2">{contractor.rating}</span>
-                                            <div className="stars pb-2">
+                                            <div className="stars">
                                                 {[...Array(5)].map((_, index) => (
                                                     <i
                                                         key={index}
