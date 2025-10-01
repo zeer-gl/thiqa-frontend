@@ -510,9 +510,10 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                         <div className="row justify-content-center">
                             <div className="col-lg-6 col-md-8 col-sm-12">
                                 <button 
-                                    className="btn btn-primary w-100 btn-lg"
+                                    className="btn  w-100 btn-lg"
                                     onClick={handleProceedToPayment}
                                     disabled={!selectedPaymentMethod || processing}
+                                    style={{backgroundColor: '#21395D',color: 'white'}}
                                 >
                                     {processing ? (
                                         <>

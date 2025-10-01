@@ -2109,19 +2109,28 @@ const Profile = () => {
                           }
                         }}
                         disabled={profileLoading}
+
                       >
                         {t('common.cancel', 'Cancel')}
                       </button>
-                      <button className="btn btn-primary d-flex align-items-center justify-content-center" onClick={handleEditProfile} disabled={profileLoading}>
+                      <button className="btn d-flex align-items-center justify-content-center"
+                       onClick={handleEditProfile} 
+                       disabled={profileLoading}
+                       style={{backgroundColor: '#21395D',color: 'white'}}
+                       >
                         {profileLoading ? t('common.saving') : t('common.save')}
                       </button>
                     </>
                   ) : (
                     <>
-                      <button className="btn btn-secondary d-flex align-items-center justify-content-center" onClick={() => setActiveTab('change-password')}>
+                      <button className="btn btn-secondary d-flex align-items-center justify-content-center"
+                      
+                      onClick={() => setActiveTab('change-password')}>
                         {t('profile.content.changePasswordButton')}
                       </button>
-                      <button className="btn btn-primary d-flex align-items-center justify-content-center" onClick={handleEditProfile}>
+                      <button className="btn d-flex align-items-center justify-content-center" onClick={handleEditProfile} style={{backgroundColor: '#21395D',color: 'white'}}
+                      
+                      >
                         {t('profile.content.editProfileButton')}
                       </button>
                     </>
@@ -2134,7 +2143,7 @@ const Profile = () => {
               <div className="addresses-section">
                 {/* Add New Address Button */}
                 <div className="add-address-button-container">
-                  <button className="btn btn-primary add-address-btn d-flex align-items-center justify-content-center" onClick={openAddAddressModal}>
+                  <button className="btn  add-address-btn d-flex align-items-center justify-content-center" onClick={openAddAddressModal} style={{backgroundColor: '#21395D',color: 'white'}}>
                     <span className="pt-1">
                     {t('profile.addresses.addNewAddress')}
                     </span>
@@ -2179,8 +2188,9 @@ const Profile = () => {
                       </div>
                       <div className="address-actions">
                         <button
-                          className="btn btn-primary pt-3  edit-btn d-flex align-items-center justify-content-center"
+                          className="btn  pt-3  edit-btn d-flex align-items-center justify-content-center"
                           onClick={() => openEditAddressModal(address)}
+                          style={{backgroundColor: '#21395D',color: 'white'}}
                         >
                           <img src={''} alt="" />
                           {t('profile.addresses.edit')}
@@ -2730,8 +2740,9 @@ const Profile = () => {
                     <div className="button-section d-flex gap-3">
                       <button
                         type="submit"
-                        className="btn btn-primary d-flex align-items-center justify-content-center"
+                        className="btn  d-flex align-items-center justify-content-center"
                         disabled={changingPassword}
+                        style={{backgroundColor: '#21395D',color: 'white'}}
                       >
                         {changingPassword ? (
                           <>
@@ -2878,8 +2889,8 @@ const Profile = () => {
 
             <div className="modal-footer">
             <button
-                className="btn btn-primary rounded-1 d-flex align-items-center justify-content-center"
-                style={{ backgroundColor: '#21395D' }}
+                className="btn  rounded-1 d-flex align-items-center justify-content-center"
+                style={{ backgroundColor: '#21395D',color: 'white' }}
                 onClick={handleSaveAddress}
               >
                 {t('profile.addresses.saveChanges')}

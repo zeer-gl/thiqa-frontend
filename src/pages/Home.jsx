@@ -1120,8 +1120,9 @@ const Home = () => {
                                         <div className="d-flex justify-content-between align-items-center mb-4">
                                             {/* <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2> */}
                                             <button 
-                                                className="btn btn-primary d-flex align-items-center justify-content-center"
+                                                className="btn  d-flex align-items-center justify-content-center"
                                                 onClick={() => setShowServiceModal(true)}
+                                                style={{backgroundColor: '#21395D',color: 'white',width:'100%'}}
                                             >
                                                 <i className="fas fa-plus me-2"></i>
                                                 <span className="pt-2">
@@ -1760,7 +1761,9 @@ const Home = () => {
 
             {/* Service Modal */}
             {showServiceModal && (
-                <div className="modal show d-block" style={{
+                <div className="modal show d-block" 
+                
+                style={{
                     backgroundColor: 'rgba(0,0,0,0.5)',
                     position: 'fixed',
                     top: '0',
@@ -1773,7 +1776,9 @@ const Home = () => {
                     overflow: 'auto',
                     width: '100%',
                     height: '100%'
-                }}>
+                }}
+                
+                >
                     <div className="modal-dialog modal-lg service-modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header" style={{
@@ -1794,49 +1799,7 @@ const Home = () => {
                                 }}>
                                     {editingService ? t('pages.home.serviceManagement.editService', 'Edit Service') : t('pages.home.serviceManagement.addService', 'Add New Service')}
                                 </h5>
-                                <button 
-                                    type="button" 
-                                    className="btn-close" 
-                                    disabled={serviceFormLoading}
-                                    onClick={() => {
-                                        setShowServiceModal(false);
-                                        setEditingService(null);
-                                        setServiceForm({
-                                            name: '',
-                                            nameEn: '',
-                                            nameAr: '',
-                                            price: '',
-                                            unit: '',
-                                            deliveryTime: '',
-                                            image: null,
-                                            existingImage: null
-                                        });
-                                        setImageError('');
-                                    }}
-                                    style={{
-                                        margin: '0',
-                                        padding: '0.75rem',
-                                      
-                                        border: 'none',
-                                        borderRadius: '50%',
-                                        fontSize: '1.25rem',
-                                        cursor: 'pointer',
-                                        opacity: serviceFormLoading ? 0.5 : 1,
-                                        color: '#000',
-                                        fontWeight: 'bold',
-                                        width: '40px',
-                                        height: '40px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                       
-                                    }}
-                                 
-                                 
-                                    aria-label={t('common.close', 'Close')}
-                                >
-                              
-                                </button>
+                          
                             </div>
                             <form onSubmit={handleServiceSubmit}>
                                 <div className="modal-body" style={{
@@ -2018,11 +1981,12 @@ const Home = () => {
                                 }}>
                                           <button 
                                         type="submit" 
-                                        className="btn btn-primary pt-2 d-flex align-items-center justify-content-center" 
+                                        className="btn  pt-2 d-flex align-items-center justify-content-center" 
                                         disabled={serviceFormLoading}
                                         style={{
                                             minWidth: '120px',
-                                            opacity: serviceFormLoading ? 0.6 : 1
+                                            opacity: serviceFormLoading ? 0.6 : 1,
+                                            backgroundColor: '#21395D',color: 'white',width:'100%'
                                         }}
                                     >
                                         {serviceFormLoading ? (

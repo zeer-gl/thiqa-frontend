@@ -510,7 +510,7 @@ const ServiceCard = ({
     return (
         <>
             {!showContactForm && !showProjectRequests ? (
-                <div className="service-card">
+                <div className="">
       <div className="main-container">
         <div className="service-card-content">
             <div className="service-card-header">
@@ -518,16 +518,7 @@ const ServiceCard = ({
                     <p className="service-card-header-left-title">{t('serviceCard.title', 'Project Price requests')}</p>
                     <p className="service-card-header-left-subtitle">{t('serviceCard.subtitle', 'Application customer project price requests')}</p>
                 </div>
-                <div className="service-card-header-right">
-                    <button 
-                        className="btn btn-outline-primary btn-sm"
-                        onClick={handleRefresh}
-                        disabled={loading}
-                        title="Refresh project requests"
-                    >
-                        <i className={`fas pt-2 fa-sync-alt ${loading ? 'fa-spin' : ''}`}></i>
-                    </button>
-                </div>
+             
             </div>
         </div>
       <div className="service-card-content-bottom">
@@ -583,7 +574,7 @@ const ServiceCard = ({
               {t('serviceCard.subscriptionRequired.message', 'You need an active subscription to view project requests. Please purchase a package to access demand quotes.')}
             </p>
             <button 
-              className="btn btn-primary"
+              className="btn"
               onClick={() => {
                 // Navigate to packages tab while preserving language
                 const currentLanguage = i18n.language;
@@ -596,6 +587,7 @@ const ServiceCard = ({
                 // Use navigate instead of window.location.href to preserve language
                 navigate(url.pathname + url.search);
               }}
+            style={{backgroundColor: '#21395D',color: 'white'}}
             >
               <i className="fas fa-shopping-cart me-2"></i>
               {t('serviceCard.subscriptionRequired.viewPackages', 'View Packages')}
@@ -698,14 +690,14 @@ const ServiceCard = ({
                   </>
                 ) : project.status === 'inProgress' ? (
                   <>
-                    <button className="btn-primary" onClick={() => handleDownloadProjectFile(project)}>
+                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
                     {/* Price Quote button is hidden when status is inProgress */}
                   </>
                 ) : (
                   <>
-                    <button className="btn-primary" onClick={() => handleDownloadProjectFile(project)}>
+                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
                     <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
@@ -716,7 +708,7 @@ const ServiceCard = ({
                 )}
                 {
                     project?.status==='open' && project?.proposals[0]?.status==='accepted' && (
-                        <button className="btn-primary" onClick={() => handleStartProject(project)}>
+                        <button style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"12px"}} onClick={() => handleStartProject(project)}>
                             {t('serviceCard.buttons.startProject', 'Start Project')}
                         </button>
                     )

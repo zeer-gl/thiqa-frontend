@@ -110,12 +110,7 @@ const OrderCard = ({ order }) => {
                 >
                   {t('orderDetails.orderDetails')}
                 </button>
-                {paymentStatus === 'paid' && (
-                  <div className="payment-success-indicator">
-                    <i className="fas fa-check-circle text-success me-2"></i>
-                    <span className="text-success">{t('orderDetails.status.paid')}</span>
-                  </div>
-                )}
+            
               </>
             )}
           </div>

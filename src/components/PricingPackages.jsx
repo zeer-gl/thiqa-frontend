@@ -523,7 +523,7 @@ const PricingPackages = () => {
                                     </div>
                                     {!pkg.isCurrentPlan && (
                                         <div className="package-action mt-3">
-                                            <button className="btn btn-primary pt-3  w-100">
+                                            <button className="btn  pt-3  w-100" style={{backgroundColor: '#21395D',color: 'white'}}>
                                                 {t('pricingPackages.selectPlan', 'Select Plan')}
                                             </button>
                                         </div>

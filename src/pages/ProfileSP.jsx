@@ -1284,9 +1284,10 @@ const ProfileSP = () => {
                                         </div>
                                         <div className="col-12 mb-3">
                                             <button
-                                                className="btn btn-primary pt-4 w-100 d-flex align-items-center justify-content-center"
+                                                className="btn  pt-4 w-100 d-flex align-items-center justify-content-center"
                                                 onClick={handleEditProfile}
                                                         disabled={loading}
+                                                        style={{backgroundColor: '#21395D',color: 'white'}}
                                             >
                                                         {loading ? 'Loading...' : t('profileSP.content.editProfileButton')}
                                                     </button>
@@ -1307,6 +1308,7 @@ const ProfileSP = () => {
                                                         className="btn pt-4   w-100 d-flex align-items-center justify-content-center"
                                                         onClick={handleSaveProfile}
                                                         disabled={saving}
+                                                        style={{backgroundColor: '#21395D',color: 'white'}}
                                                     >
                                                         {saving ? t('common.saving', 'Saving...') : t('common.saveChanges', 'Save Changes')}
                                             </button>
@@ -1320,17 +1322,7 @@ const ProfileSP = () => {
                                         <h3 className='ar-heading-bold mb-0'>
                                             {t('profileSP.projects.participatedProjects', 'Projects you participated in completing')}
                                         </h3>
-                                        <button 
-                                            className="btn btn-outline-primary pt-2 btn-sm d-flex align-items-center justify-content-center"
-                                            onClick={refreshPortfolio}
-                                            disabled={loading}
-                                        >
-                                            <i className="fas fa-sync-alt me-1"></i>
-                                            <span className="pt-2">
-                                            {loading ? 'Loading...' : 'Refresh'}
-                                            </span>
-                                         
-                                        </button>
+                                     
                                     </div>
                                     <div className="projects-full-width">
                                         <div className="container-fluid p-0">
@@ -1378,9 +1370,10 @@ const ProfileSP = () => {
                                     <h3 className="section-title ar-heading-bold">{t('profile.notifications.title')}</h3>
                                     {notifications.length > 0 && (
                                         <button 
-                                            className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
+                                            className="btn  btn-sm d-flex align-items-center justify-content-center"
                                             onClick={markAllNotificationsAsRead}
                                             disabled={loadingNotifications}
+                                            style={{backgroundColor: '#21395D',color: 'white',paddingTop:"10px"}}
                                         >
                                             {t('profile.notifications.markAllAsRead')}
                                         </button>
