@@ -1970,7 +1970,7 @@ const Home = () => {
                                     </div>
                                 </div>
                                 </div>
-                                <div className="modal-footer" style={{
+                                <div className="" style={{
                                     display: 'flex',
                                     justifyContent: i18n.language === 'ar' ? 'flex-start' : 'flex-end',
                                     gap: '0.75rem',

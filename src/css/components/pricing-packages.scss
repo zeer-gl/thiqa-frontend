@@ -29,6 +29,10 @@
       border-color: #21395D;
       box-shadow: 0 4px 12px rgba(33, 57, 93, 0.2);
     }
+
+    &.subscribed-plan {
+      cursor: default;
+    }
   }
 
   .package-header {

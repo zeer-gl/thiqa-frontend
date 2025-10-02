@@ -25,7 +25,14 @@ const LanguageSwitcher = ({ authStyle = false }) => {
                 checked={(i18n.resolvedLanguage || i18n.language).startsWith('en')}
                 onChange={handleRadioChange}
             />
-            <label htmlFor="on">{t('nav.langEn', 'EN')}</label>
+            <label htmlFor="on">
+                <span>
+                {t('nav.langEn', 'EN')}
+                </span>
+                
+          
+                
+                </label>
             <input
                 name="switch"
                 id="off"
@@ -33,7 +40,13 @@ const LanguageSwitcher = ({ authStyle = false }) => {
                 checked={(i18n.resolvedLanguage || i18n.language).startsWith('ar')}
                 onChange={handleRadioChange}
             />
-            <label htmlFor="off">{t('nav.langAr', 'AR')}</label>
+            <label htmlFor="off" >
+                <span>
+                {t('nav.langAr', 'AR')}
+                </span>
+        
+                
+                </label>
         </fieldset>
     );
 };

@@ -523,8 +523,9 @@ const ServiceCard = ({
         </div>
       <div className="service-card-content-bottom">
       <button 
-                         className={`filter-tag  pt-3 ${selectedFilter === 'all' ? 'active' : ''}`}
+                         className={`filter-tag  pe-4  pt-3 ${selectedFilter === 'all' ? 'active' : ''}`}
                          onClick={() => handleFilterClick('all')}
+                         style={{display: 'flex',alignItems: 'center',justifyContent: 'center'}}
                      >
                          <div className="status-dot all"></div>
                          {t('serviceCard.buttons.allProjects')}
@@ -532,9 +533,10 @@ const ServiceCard = ({
       <button 
                          className={`filter-tag ${selectedFilter === 'open' ? 'active' : ''}`}
                          onClick={() => handleFilterClick('open')}
+                        style={{padding:'9px 26px'}}
                      >
                          <div className="status-dot open"></div>
-                         <span className="pt-2">
+                         <span style={{paddingTop: '5px'}}>
                          {t('projectPriceRequest.status.open', 'مفتوح')}
                          </span>
                        
@@ -542,9 +544,10 @@ const ServiceCard = ({
                      <button 
                          className={`filter-tag ${selectedFilter === 'inProgress' ? 'active' : ''}`}
                          onClick={() => handleFilterClick('inProgress')}
+                         style={{padding:'11px 26px'}}
                      >
                          <div className="status-dot in-progress"></div>
-                         <span className="pt-2">
+                         <span  style={{paddingTop: '5px'}}>
                          {t('projectPriceRequest.status.inProgress', 'في طور الإنجاز')}
                          </span>
                       
@@ -639,11 +642,15 @@ const ServiceCard = ({
                         <div className="content-container">
                         <button 
                              className={`filter-tag ${project.status === 'open' ? 'active' : ''}`}
+                             style={{padding:'11px 30px'}}
                          >
                              <div className={`status-dot ${project.status}`}></div>
+                             <span className="pt-1">
                              {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') : 
                               project.status === 'inProgress' ? t('projectPriceRequest.status.inProgress', 'في طور الإنجاز') : 
                               project.status}
+                             </span>
+                           
                          </button>
                          
                       
@@ -682,7 +689,7 @@ const ServiceCard = ({
                 {project.status === 'open' ? (
                   <>
                     {/* Submit Proposal button is hidden when status is open */}
-                    <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
+                    <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
                       {t('serviceCard.buttons.priceQuote')}
                     </button>
                   
@@ -697,7 +704,7 @@ const ServiceCard = ({
                   </>
                 ) : (
                   <>
-                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
+                    <button  className='p-3 pt-4' style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
                     <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
@@ -708,7 +715,7 @@ const ServiceCard = ({
                 )}
                 {
                     project?.status==='open' && project?.proposals[0]?.status==='accepted' && (
-                        <button style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"12px"}} onClick={() => handleStartProject(project)}>
+                        <button className="p-2 pt-3" style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"12px"}} onClick={() => handleStartProject(project)}>
                             {t('serviceCard.buttons.startProject', 'Start Project')}
                         </button>
                     )

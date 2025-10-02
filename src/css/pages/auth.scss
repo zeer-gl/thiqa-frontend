@@ -344,7 +344,7 @@ font-weight: 500;
 }
 
 .auth-switcher label {
-  padding: 6px 18px;
+  padding: 13px 18px;
   border-radius: 20px;
   cursor: pointer;
   color: $navy;
@@ -358,6 +358,9 @@ font-weight: 500;
 .auth-switcher input#off:checked + label {
   background: $cream;
   color: $navy;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .auth-switcher label[for="on"] {
@@ -366,6 +369,68 @@ font-weight: 500;
 
 .auth-switcher label[for="off"] {
   margin-left: 4px;
+}
+
+// RTL placeholder alignment for phone input
+[dir="rtl"] .form-control[type="tel"]::placeholder {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .form-control[type="tel"] {
+  text-align: right;
+  direction: rtl;
+}
+
+// Additional RTL styles for auth form inputs
+[dir="rtl"] .login-form-container input[type="tel"] {
+  text-align: right;
+  direction: rtl;
+  padding-left: 12px;
+  padding-right: 50px;
+}
+
+[dir="rtl"] .login-form-container input[type="tel"]::placeholder {
+  text-align: right;
+  direction: rtl;
+}
+
+// RTL styles for experience input
+[dir="rtl"] .form-control[type="number"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .form-control[type="number"]::placeholder {
+  text-align: right;
+  direction: rtl;
+}
+
+// Specialization field text alignment
+.form-control .text-muted {
+  text-align: left !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+[dir="rtl"] .form-control .text-muted {
+  text-align: right !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+// Specialization field container alignment
+.form-control[style*="height: 50px"] {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.form-control[style*="height: 50px"] > div {
+  justify-content: flex-start !important;
+}
+
+[dir="rtl"] .form-control[style*="height: 50px"] > div {
+  justify-content: flex-end !important;
 }
 .seeker-auth-btn{
   border: 1px solid  #21395D !important;

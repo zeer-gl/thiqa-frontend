@@ -10,12 +10,13 @@ import AuthMockup from "/public/images/auth/auth-mockup.png";
 import Logo from "/public/images/favicon.png";
 import EyeIcon from '/public/images/eye.svg';
 import GoogleIcon from '/public/images/auth/google-icon.svg';
+import AppleIcon from '/public/images/auth/apple-icon.svg';
 import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
 import PersonIcon from '/public/images/person-icon.svg';
 import PhoneIcon from '/public/images/profile/phone-icon.svg';
 import EmailIcon from '/public/images/auth/sms.svg';
 import { auth } from '../../firbase';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, OAuthProvider } from 'firebase/auth';
 
 function LoginSP() {
     const {t, i18n} = useTranslation();
@@ -288,6 +289,166 @@ function LoginSP() {
         }
     }, [showAlert, navigate, t]);
 
+    // APPLE LOGIN FOR SERVICE PROVIDER
+    const handleAppleLogin = useCallback(async () => {
+        setSocialSubmitting(true);
+        
+        try {
+            const provider = new OAuthProvider("apple.com");
+            provider.addScope('email');
+            provider.addScope('name');
+            
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            console.log("Apple login success:", user);
+
+            const credential = OAuthProvider.credentialFromResult(result);
+            if (!credential) {
+                throw new Error("No credential returned from Apple sign-in");
+            }
+            
+            const idToken = credential.idToken;
+            const accessToken = credential.accessToken;
+            const nameFromProvider = result.user.displayName || undefined;
+            
+            if (!idToken) throw new Error("Apple authentication failed - no ID token");
+        
+            const requestBody = { 
+                idToken, 
+                accessToken,
+                token: 'device_token_here', 
+                role: 'professional',
+                registrationType: 'professional',
+                userType: 'service_provider',
+                providerId: 'apple.com',
+                professionalId: user.uid,
+                email: user.email,
+                name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                password: 'apple_signin_' + user.uid,
+                // Try multiple password field variations that backend might expect
+                userPassword: 'apple_signin_' + user.uid,
+                user_password: 'apple_signin_' + user.uid,
+                pwd: 'apple_signin_' + user.uid,
+                pass: 'apple_signin_' + user.uid,
+                // Try nested password structure
+                user: {
+                    password: 'apple_signin_' + user.uid,
+                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                    email: user.email
+                },
+                // Try professional object structure
+                professional: {
+                    password: 'apple_signin_' + user.uid,
+                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                    email: user.email,
+                    phone: '',
+                    workTitle: '',
+                    specializations: [],
+                    experience: '0',
+                    bio: '',
+                    latitude: '',
+                    longitude: ''
+                },
+                // Try different root-level field names
+                professionalPassword: 'apple_signin_' + user.uid,
+                professional_password: 'apple_signin_' + user.uid,
+                professionalPwd: 'apple_signin_' + user.uid,
+                professionalPass: 'apple_signin_' + user.uid,
+                // Try different field structures
+                credentials: {
+                    password: 'apple_signin_' + user.uid
+                },
+                auth: {
+                    password: 'apple_signin_' + user.uid
+                },
+                profile: {
+                    password: 'apple_signin_' + user.uid
+                },
+                pic: user.photoURL || '',
+                federatedId: user.providerData?.[0]?.uid || user.uid,
+                firstName: nameFromProvider?.split(' ')[0] || user.email?.split('@')[0] || 'Apple',
+                lastName: nameFromProvider?.split(' ').slice(1).join(' ') || 'User',
+                fullName: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                photoUrl: user.photoURL || '',
+                emailVerified: user.emailVerified || false,
+                localId: user.uid,
+                rawId: user.providerData?.[0]?.uid || user.uid,
+                appleUserId: user.providerData?.[0]?.uid || user.uid,
+                // Additional fields that might be required by backend
+                username: user.email?.split('@')[0] || 'apple_user',
+                phone: '', // Apple doesn't provide phone number
+                workTitle: '', // Apple doesn't provide work title
+                specializations: [], // Apple doesn't provide specializations
+                experience: '0', // Default experience
+                bio: '', // Apple doesn't provide bio
+                latitude: '', // Apple doesn't provide location
+                longitude: '', // Apple doesn't provide location
+                isActive: true,
+                isVerified: true,
+                loginMethod: 'apple',
+                socialProvider: 'apple.com'
+            };
+            
+            console.log('🔍 Apple Sign-In Request Body:', requestBody);
+            
+            const res = await fetch(`${BaseUrl}/professional/apple-professional-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData?.message || `Apple authentication failed (${res.status})`);
+            }
+            
+            const data = await res.json();
+            console.log('Apple authentication data:', data);
+            
+            // Store service provider data from Apple authentication
+            if (data.professional && data.professional._id) {
+                localStorage.setItem('serviceProviderId', data.professional._id);
+                localStorage.setItem('spUserData', JSON.stringify(data.professional));
+            } else if (data._id) {
+                localStorage.setItem('serviceProviderId', data._id);
+                localStorage.setItem('spUserData', JSON.stringify(data));
+            }
+            
+            // Store user role and token
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', 'sp');
+            if (data.token) {
+                localStorage.setItem('token-sp', data.token);
+            }
+            
+            // Set default payment status to true for service providers
+            localStorage.setItem('spPaymentStatus', 'true');
+            localStorage.setItem('spHasActiveSubscription', 'true');
+            localStorage.setItem('spSubscriptionStatus', 'active');
+            
+            const successMessage = data.message || t('auth.loginsp.appleLoginSuccess', 'Apple login successful!');
+            showAlert(successMessage, 'success');
+            navigate("/profile-sp?tab=packages");
+            
+        } catch (err) {
+            console.error("Apple sign-in error:", err);
+            
+            let errorMessage = "auth.loginsp.genericError";
+            
+            if (err.code === "auth/configuration-not-found") {
+                errorMessage = "auth.loginsp.appleConfigMissing";
+            } else if (err.code === "auth/invalid-credential") {
+                errorMessage = "auth.loginsp.appleInvalidCredential";
+            } else if (err.message.includes("redirect_uri")) {
+                errorMessage = "auth.loginsp.redirectUriMismatch";
+            }
+            
+            showAlert(t(errorMessage), 'error');
+        } finally {
+            setSocialSubmitting(false);
+        }
+    }, [showAlert, navigate, t]);
 
     const startTimer = () => {
         const interval = setInterval(() => {
@@ -478,6 +639,7 @@ function LoginSP() {
 
                                                 <img src={GoogleIcon} alt="" />
                                             </button>
+                                      
                                         
                                         </div>
                                     </div>

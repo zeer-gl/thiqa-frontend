@@ -419,11 +419,14 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                 {/* Header */}
                 <div className="payment-header mb-4">
                     <button 
-                        className="btn btn-outline-secondary mb-3"
+                        className="btn btn-outline-secondary d-flex mb-3"
                         onClick={onBack}
                     >
                         <i className="fas fa-arrow-left me-2"></i>
+                        <span className='pt-2'>
                         {t('common.back', 'Back to Plans')}
+                        </span>
+                     
                     </button>
                     
                     <h2 className="payment-title ar-heading-bold">
@@ -476,11 +479,11 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                                                     {t('paymentMethods.serviceCharge', 'Service Charge')}: {method.serviceCharge} {method.currencyIso}
                                                 </p>
                                             )}
-                                            {method.isEmbeddedSupported && (
+                                            {/* {method.isEmbeddedSupported && (
                                                 <div className="embedded-badge">
                                                     <span className="badge-text pt-2">{t('paymentMethods.embeddedSupported', 'Embedded Supported')}</span>
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 </div>
@@ -490,7 +493,7 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                 ) : (
                     <div className="text-center py-5">
                         <div className="empty-payment-methods">
-                            <i className="fas fa-credit-card fa-3x text-muted mb-3"></i>
+                            <i className="fas fa-credit-card fa-3x text-muted d-flex  mb-3"></i>
                             <h5 className="text-muted">{t('paymentMethods.noMethodsAvailable', 'No payment methods available')}</h5>
                             <p className="text-muted">{t('paymentMethods.contactSupport', 'Please contact support for more information')}</p>
                             <button 
@@ -508,9 +511,9 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                 {paymentMethods.length > 0 && (
                     <div className="payment-actions mt-4">
                         <div className="row justify-content-center">
-                            <div className="col-lg-6 col-md-8 col-sm-12">
+                            <div className="col-md-8 col-12">
                                 <button 
-                                    className="btn  w-100 btn-lg"
+                                    className="btn  w-100  pt-3 btn-lg"
                                     onClick={handleProceedToPayment}
                                     disabled={!selectedPaymentMethod || processing}
                                     style={{backgroundColor: '#21395D',color: 'white'}}
@@ -543,11 +546,12 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                                                 }
                                             </p>
                                             
-                                            <div className="d-flex gap-2 flex-wrap">
+                                            <div className="d-flex gap-2 justify-content-start align-items-center" style={{ flexWrap: 'nowrap' }}>
                                                 {retryCount < 3 && (
                                                     <button 
-                                                        className="btn btn-outline-danger btn-sm"
+                                                        className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
                                                         onClick={handleRetryPayment}
+                                                        style={{ minWidth: '120px' }}
                                                     >
                                                         <i className="fas fa-redo me-1"></i>
                                                         {t('paymentMethods.retry', 'Retry')} ({3 - retryCount} {t('paymentMethods.attemptsLeft', 'attempts left')})
@@ -555,16 +559,18 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                                                 )}
                                                 
                                                 <button 
-                                                    className="btn btn-outline-secondary pt-2 btn-sm"
+                                                    className="btn btn-outline-secondary  btn-sm "
                                                     onClick={handleResetPayment}
+                                                    style={{ minWidth: '120px' }}
                                                 >
                                                     <i className="fas fa-refresh me-1"></i>
                                                     {t('paymentMethods.tryDifferentMethod', 'Try Different Method')}
                                                 </button>
                                                 
                                                 <button 
-                                                    className="btn btn-outline-primary btn-sm"
+                                                    className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
                                                     onClick={() => window.open('mailto:support@thiqa.com?subject=Payment Issue&body=Payment failed for plan: ' + selectedPlan?.title, '_blank')}
+                                                    style={{ minWidth: '120px' }}
                                                 >
                                                     <i className="fas fa-envelope me-1"></i>
                                                     {t('paymentMethods.contactSupport', 'Contact Support')}

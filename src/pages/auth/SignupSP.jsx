@@ -5,13 +5,14 @@ import { useAlert } from '../../context/AlertContext';
 import { BaseUrl } from '../../assets/BaseUrl';
 import GoogleMapAddressPicker from '../../components/GoogleMapAddressPicker';
 import { auth } from '../../firbase';
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, OAuthProvider } from "firebase/auth";
 import "/src/css/pages/auth.scss";
 import AuthUpper from "/public/images/auth/auth-upper.svg";
 import AuthMockup from "/public/images/auth/auth-mockup.png";
 import Logo from "/public/images/favicon.png";
 import EyeIcon from '/public/images/eye.svg';
 import GoogleIcon from '/public/images/auth/google-icon.svg';
+import AppleIcon from '/public/images/auth/apple-icon.svg';
 import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
 import SpUserIcon from '../../assets/payment/sp-user.svg';
 import PhoneIcon from '/public/images/profile/phone-icon.svg';
@@ -672,6 +673,190 @@ const validateForm = () => {
         }
     };
 
+    // APPLE REGISTER FOR PROFESSIONAL
+    const handleAppleRegister = async () => {
+        setErrorMsg("");
+        setSocialSubmitting(true);
+        
+        try {
+            const provider = new OAuthProvider("apple.com");
+            provider.addScope('email');
+            provider.addScope('name');
+            
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            console.log("Apple login success:", user);
+
+            const credential = OAuthProvider.credentialFromResult(result);
+            if (!credential) {
+                throw new Error("No credential returned from Apple sign-in");
+            }
+            
+            const idToken = credential.idToken;
+            const accessToken = credential.accessToken;
+            const nameFromProvider = result.user.displayName || undefined;
+            
+            if (!idToken) throw new Error("Apple authentication failed - no ID token");
+        
+            const requestBody = { 
+                idToken, 
+                accessToken,
+                token: 'device_token_here', 
+                role: 'professional',
+                registrationType: 'professional',
+                userType: 'service_provider',
+                providerId: 'apple.com',
+                professionalId: user.uid,
+                email: user.email,
+                name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                password: 'apple_signin_' + user.uid,
+                // Try multiple password field variations that backend might expect
+                userPassword: 'apple_signin_' + user.uid,
+                user_password: 'apple_signin_' + user.uid,
+                pwd: 'apple_signin_' + user.uid,
+                pass: 'apple_signin_' + user.uid,
+                // Try nested password structure
+                user: {
+                    password: 'apple_signin_' + user.uid,
+                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                    email: user.email
+                },
+                // Try professional object structure
+                professional: {
+                    password: 'apple_signin_' + user.uid,
+                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                    email: user.email,
+                    phone: '',
+                    workTitle: '',
+                    specializations: [],
+                    experience: '0',
+                    bio: '',
+                    latitude: '',
+                    longitude: ''
+                },
+                // Try different root-level field names
+                professionalPassword: 'apple_signin_' + user.uid,
+                professional_password: 'apple_signin_' + user.uid,
+                professionalPwd: 'apple_signin_' + user.uid,
+                professionalPass: 'apple_signin_' + user.uid,
+                // Try different field structures
+                credentials: {
+                    password: 'apple_signin_' + user.uid
+                },
+                auth: {
+                    password: 'apple_signin_' + user.uid
+                },
+                profile: {
+                    password: 'apple_signin_' + user.uid
+                },
+                pic: user.photoURL || '',
+                federatedId: user.providerData?.[0]?.uid || user.uid,
+                firstName: nameFromProvider?.split(' ')[0] || user.email?.split('@')[0] || 'Apple',
+                lastName: nameFromProvider?.split(' ').slice(1).join(' ') || 'User',
+                fullName: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
+                photoUrl: user.photoURL || '',
+                emailVerified: user.emailVerified || false,
+                localId: user.uid,
+                rawId: user.providerData?.[0]?.uid || user.uid,
+                appleUserId: user.providerData?.[0]?.uid || user.uid,
+                // Additional fields that might be required by backend
+                username: user.email?.split('@')[0] || 'apple_user',
+                phone: '', // Apple doesn't provide phone number
+                workTitle: '', // Apple doesn't provide work title
+                specializations: [], // Apple doesn't provide specializations
+                experience: '0', // Default experience
+                bio: '', // Apple doesn't provide bio
+                latitude: '', // Apple doesn't provide location
+                longitude: '', // Apple doesn't provide location
+                isActive: true,
+                isVerified: true,
+                loginMethod: 'apple',
+                socialProvider: 'apple.com'
+            };
+            
+            console.log('🔍 Apple Sign-In Request Body:', requestBody);
+            
+            // First try to login with Apple (in case user already exists)
+            let res = await fetch(`${BaseUrl}/professional/apple-professional-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            });
+            
+            let data;
+            let isLogin = true;
+            
+            // If login fails, try registration
+            if (!res.ok) {
+                console.log('Apple login failed, trying registration...');
+                isLogin = false;
+                
+                res = await fetch(`${BaseUrl}/professional/apple-professional-registration`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err?.message || `Apple authentication failed (${res.status})`);
+                }
+            }
+            
+            if(res.ok){
+                data = await res.json();
+                console.log('Apple authentication data:', data);
+                
+                // Store service provider data from Apple authentication
+                if (data.professional && data.professional._id) {
+                    localStorage.setItem('serviceProviderId', data.professional._id);
+                    localStorage.setItem('spUserData', JSON.stringify(data.professional));
+                } else if (data._id) {
+                    localStorage.setItem('serviceProviderId', data._id);
+                    localStorage.setItem('spUserData', JSON.stringify(data));
+                }
+                
+                // Store user role and token
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', 'sp');
+                if (data.token) {
+                    localStorage.setItem('token-sp', data.token);
+                }
+                
+                // Set default payment status to true for new service providers
+                localStorage.setItem('spPaymentStatus', 'true');
+                localStorage.setItem('spHasActiveSubscription', 'true');
+                localStorage.setItem('spSubscriptionStatus', 'active');
+                
+                // Show appropriate success message
+                const successMessage = isLogin 
+                    ? t('auth.loginsp.appleLoginSuccess', 'Apple login successful!')
+                    : t('auth.signupsp.appleRegistrationSuccess', 'Apple registration successful!');
+                
+                showAlert(successMessage, 'success');
+                navigate("/profile-sp?tab=packages");
+            }
+            
+        } catch (err) {
+            console.error("Apple sign-in error:", err);
+            
+            let errorMessage = "auth.signupsp.genericError";
+            
+            if (err.code === "auth/configuration-not-found") {
+                errorMessage = "auth.signupsp.appleConfigMissing";
+            } else if (err.code === "auth/invalid-credential") {
+                errorMessage = "auth.signupsp.appleInvalidCredential";
+            } else if (err.message.includes("redirect_uri")) {
+                errorMessage = "auth.signupsp.redirectUriMismatch";
+            }
+            
+            setErrorMsg(errorMessage);
+            showAlert(t(errorMessage), 'error');
+        } finally {
+            setSocialSubmitting(false);
+        }
+    };
 
     // Location handling function (similar to Profile page)
     const handleLocationSelect = async (location) => {
@@ -878,11 +1063,11 @@ const validateForm = () => {
                                 </div>
                                 <div className="my-4">
                                     <h2 className={`pb-3 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t('auth.signupsp.title')}</h2>
-                                    <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
+                                    {/* <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
                                         <Link to="/login-sp" className='text-decoration-none'>
                                             {t('auth.signupsp.subtitle')}
                                         </Link>
-                                    </h5>
+                                    </h5> */}
                                 </div>
                                 <form onSubmit={handleCreateAccount} className='signup-form' style={{ maxHeight: '90vh', overflowY: 'auto', paddingTop: '2rem' }}>
                                     <div className="d-flex flex-column justify-content-center">
@@ -950,7 +1135,9 @@ const validateForm = () => {
       style={{ 
         height: '50px',
         paddingLeft: i18n.dir() === 'rtl' ? '12px' : '50px',
-        paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px'
+        paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px',
+        textAlign: i18n.dir() === 'rtl' ? 'right' : 'left',
+        direction: i18n.dir() === 'rtl' ? 'rtl' : 'ltr'
       }}
     />
   </div>
@@ -1070,7 +1257,7 @@ const validateForm = () => {
                                                 <div 
                                                     className={`form-control pt-2 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && selectedSpecializations.length === 0 ? 'is-invalid' : ''}`}
                                                     style={{ 
-                                                        height: '80px', 
+                                                        height: '50px', 
                                                         cursor: 'pointer',
                                                         display: 'flex',
                                                         flexDirection: 'column',
@@ -1086,10 +1273,11 @@ const validateForm = () => {
                                                         flexWrap: 'wrap', 
                                                         gap: '4px', 
                                                         alignItems: 'center',
-                                                        justifyContent: 'flex-start',
+                                                        justifyContent: i18n.dir() === 'rtl' ? 'flex-end' : 'flex-start',
                                                         height: '100%',
                                                         overflow: 'hidden',
-                                                        padding: '4px 0'
+                                                        padding: '2px 0',
+                                                        width: '100%'
                                                     }}>
                                                         {selectedSpecializations.length > 0 ? (
                                                             <>
@@ -1098,13 +1286,13 @@ const validateForm = () => {
                                                                     return (
                                                                         <span 
                                                                             key={specId}
-                                                                            className="badge bg-primary"
+                                                                            className="badge bg-secondary"
                                                                             style={{ 
-                                                                                fontSize: '10px',
+                                                                                fontSize: '12px',
                                                                                 display: 'flex',
                                                                                 alignItems: 'center',
                                                                                 gap: '2px',
-                                                                                padding: '2px 6px'
+                                                                                padding: '1px 4px'
                                                                             }}
                                                                         >
                                                                             {spec?.name || 'Unknown'}
@@ -1130,13 +1318,18 @@ const validateForm = () => {
                                                                     );
                                                                 })}
                                                                 {selectedSpecializations.length > 3 && (
-                                                                    <span className="badge bg-secondary" style={{ fontSize: '10px', padding: '2px 6px' }}>
+                                                                    <span className="badge bg-secondary" style={{ fontSize: '12px', padding: '1px 4px' }}>
                                                                         +{selectedSpecializations.length - 3} {t('common.more', 'more')}
                                                                     </span>
                                                                 )}
                                                             </>
                                                         ) : (
-                                                            <span className="text-muted" style={{ fontSize: '14px' }}>
+                                                            <span className="text-muted" style={{ 
+                                                                fontSize: '16px',
+                                                                textAlign: i18n.dir() === 'rtl' ? 'right' : 'left',
+                                                                display: 'block',
+                                                                width: '100%'
+                                                            }}>
                                                                 {loadingSpecializations ? t('common.loading', 'Loading...') : t('auth.signupsp.selectSpecializations', 'Select specializations...')}
                                                             </span>
                                                         )}
@@ -1178,7 +1371,7 @@ const validateForm = () => {
                                                             specializations.map((spec) => (
                                                                 <div
                                                                     key={spec._id}
-                                                                    className={`p-2 ${selectedSpecializations.includes(spec._id) ? 'bg-primary text-white' : 'hover:bg-light'}`}
+                                                                    className={`p-2 ${selectedSpecializations.includes(spec._id) ? 'bg-secondary text-white' : 'hover:bg-light'}`}
                                                                     style={{ cursor: 'pointer', borderBottom: '1px solid #f8f9fa' }}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
@@ -1222,7 +1415,7 @@ const validateForm = () => {
                                                 type="number" 
                                                 min="0"
                                                 inputMode="numeric"
-                                                dir="ltr"
+                                                dir={i18n.dir() === 'rtl' ? 'rtl' : 'ltr'}
                                                 className={`form-control pt-3 ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
                                                 id="experience"
                                                 placeholder={t('auth.signupsp.experience')} 
@@ -1231,7 +1424,8 @@ const validateForm = () => {
                                                 required
                                                 style={{ 
                                                     height: '50px',
-                                                    ...(i18n.dir() === 'rtl' ? { textAlign: 'left' } : {})
+                                                    textAlign: i18n.dir() === 'rtl' ? 'right' : 'left',
+                                                    direction: i18n.dir() === 'rtl' ? 'rtl' : 'ltr'
                                                 }}
                                             />
                                             {formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) && (
@@ -1370,6 +1564,18 @@ const validateForm = () => {
                                                 </span>
                                               
                                                 <img src={GoogleIcon} alt=""/>
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                className='btn d-flex align-items-center gap-3 justify-content-between register-socials'
+                                                onClick={handleAppleRegister}
+                                                disabled={socialSubmitting}
+                                            >
+                                                <span className="pt-2">
+                                                {t('auth.signupsp.apple')}
+                                                </span>
+                                              
+                                                <img src={AppleIcon} alt=""/>
                                             </button>
                                         </div>
                                     

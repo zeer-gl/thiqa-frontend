@@ -18,6 +18,27 @@ const PricingPackages = () => {
     const [currentPlan, setCurrentPlan] = useState(null);
     const [showPaymentMethods, setShowPaymentMethods] = useState(false);
     const [paymentMethods, setPaymentMethods] = useState([]);
+    const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+
+    // Check for active subscription in localStorage
+    useEffect(() => {
+        const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+        const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+        const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
+        
+        // Check if any of these indicate an active subscription
+        const isActive = spHasActiveSubscription === 'true' || 
+                        spPaymentStatus === 'true' || 
+                        spSubscriptionStatus === 'active';
+        
+        setHasActiveSubscription(isActive);
+        console.log('Subscription status check:', {
+            spHasActiveSubscription,
+            spPaymentStatus,
+            spSubscriptionStatus,
+            isActive
+        });
+    }, []);
 
     // Fetch subscription plans from API
     const fetchSubscriptionPlans = async () => {
@@ -485,11 +506,17 @@ const PricingPackages = () => {
             <div className="container-fluid">
                 {packages.length > 0 ? (
                     <div className="row justify-content-center g-3">
-                        {packages.map((pkg) => (
+                        {packages.map((pkg) => {
+                            // Check if this is the "Basic" plan and user has active subscription
+                            const isBasicPlan = pkg.title === 'Basic' || pkg.name === 'Basic';
+                            const isSubscribed = hasActiveSubscription && isBasicPlan;
+                            
+                            return (
                             <div key={pkg.id} className="col-lg-6 col-md-6 col-sm-12 mb-3 mt-0">
                                 <div 
-                                    className={`package-card ${selectedPackage === pkg.id ? 'selected' : ''} ${pkg.isCurrentPlan ? 'current-plan' : ''} h-100`}
-                                    onClick={() => handlePackageClick(pkg.id)}
+                                    className={`package-card ${selectedPackage === pkg.id ? 'selected' : ''} ${pkg.isCurrentPlan ? 'current-plan' : ''} ${isSubscribed ? 'subscribed-plan' : ''} h-100`}
+                                    onClick={() => !isSubscribed && handlePackageClick(pkg.id)}
+                                    style={{ cursor: isSubscribed ? 'default' : 'pointer' }}
                                 >
                                     <div className="package-header">
                                         <div className={`radio-button ${selectedPackage === pkg.id ? 'selected' : ''}`}>
@@ -523,14 +550,28 @@ const PricingPackages = () => {
                                     </div>
                                     {!pkg.isCurrentPlan && (
                                         <div className="package-action mt-3">
-                                            <button className="btn  pt-3  w-100" style={{backgroundColor: '#21395D',color: 'white'}}>
-                                                {t('pricingPackages.selectPlan', 'Select Plan')}
-                                            </button>
+                                            {isSubscribed ? (
+                                                <button 
+                                                    className="btn pt-3 w-100" 
+                                                    style={{
+                                                        backgroundColor: '#21395D', 
+                                                        color: 'white'
+                                                    }}
+                                                    disabled
+                                                >
+                                                    {t('pricingPackages.subscribed', 'Subscribed')}
+                                                </button>
+                                            ) : (
+                                                <button className="btn pt-3 w-100" style={{backgroundColor: '#21395D',color: 'white'}}>
+                                                    {t('pricingPackages.selectPlan', 'Select Plan')}
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 ) : (
                     <div className="text-center py-5">
