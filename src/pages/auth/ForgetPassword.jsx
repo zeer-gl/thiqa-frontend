@@ -280,17 +280,17 @@ function ForgetPassword() {
                                         <div>
                                             {/* Toggle between email and phone */}
                                             <div className="mb-3">
-                                                <div className="btn-group w-100" role="group">
+                                                <div className="auth-toggle-container">
                                                     <button
                                                         type="button"
-                                                        className={`btn  pt-2 ${!usePhone ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                        className={`auth-toggle-btn ${!usePhone ? 'active' : ''}`}
                                                         onClick={() => setUsePhone(false)}
                                                     >
                                                         {t('auth.forgotPassword.email', 'Email')}
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        className={`btn pt-2 ${usePhone ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                        className={`auth-toggle-btn ${usePhone ? 'active' : ''}`}
                                                         onClick={() => setUsePhone(true)}
                                                     >
                                                         {t('auth.forgotPassword.phone', 'Phone')}

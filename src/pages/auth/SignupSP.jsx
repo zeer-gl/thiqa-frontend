@@ -974,7 +974,7 @@ const validateForm = () => {
                                                 </div>
                                                 <input 
                                                     type="email" 
-                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-3' : 'ps-3'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                                                     id="email"
                                                     placeholder={t('auth.signupsp.email')} 
                                                     value={email}
@@ -1000,7 +1000,7 @@ const validateForm = () => {
                                               
                                                 <input 
                                                     type={showPassword ? "text" : "password"}
-                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-3' : 'ps-3'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.signupsp.password')} 
                                                     value={password}
@@ -1068,13 +1068,13 @@ const validateForm = () => {
                                                 
                                                 {/* Custom Multi-Select Component */}
                                                 <div 
-                                                    className={`form-control pt-2 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && selectedSpecializations.length === 0 ? 'is-invalid' : ''}`}
+                                                    className={`form-control pt-2 ${i18n.dir() === 'rtl' ? 'pe-3' : 'ps-3'} ${formSubmitted && selectedSpecializations.length === 0 ? 'is-invalid' : ''}`}
                                                     style={{ 
-                                                        height: '80px', 
+                                                        height: '50px', 
                                                         cursor: 'pointer',
                                                         display: 'flex',
-                                                        flexDirection: 'column',
-                                                        justifyContent: 'center',
+                                                        // flexDirection: 'column',
+                                                        // justifyContent: 'center',
                                                         padding: '8px 12px',
                                                         overflow: 'hidden'
                                                     }}
@@ -1098,17 +1098,18 @@ const validateForm = () => {
                                                                     return (
                                                                         <span 
                                                                             key={specId}
-                                                                            className="badge bg-primary"
+                                                                            className="badge bg-secondary"
                                                                             style={{ 
-                                                                                fontSize: '10px',
+                                                                                fontSize: '11px',
                                                                                 display: 'flex',
                                                                                 alignItems: 'center',
                                                                                 gap: '2px',
-                                                                                padding: '2px 6px'
+                                                                                padding: '6px 10px'
                                                                             }}
                                                                         >
-                                                                            {spec?.name || 'Unknown'}
+                                                                            <p className='m-0 pt-1'>{spec?.name || 'Unknown'}</p>
                                                                             <button
+                                                                                className='pt-1'
                                                                                 type="button"
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
@@ -1130,14 +1131,14 @@ const validateForm = () => {
                                                                     );
                                                                 })}
                                                                 {selectedSpecializations.length > 3 && (
-                                                                    <span className="badge bg-secondary" style={{ fontSize: '10px', padding: '2px 6px' }}>
-                                                                        +{selectedSpecializations.length - 3} {t('common.more', 'more')}
+                                                                    <span className="badge bg-secondary" style={{ fontSize: '11px', padding: '7px 10px'  }}>
+                                                                        <p className='m-0 pt-1'>+{selectedSpecializations.length - 3} {t('common.more', 'more')}</p>
                                                                     </span>
                                                                 )}
                                                             </>
                                                         ) : (
-                                                            <span className="text-muted" style={{ fontSize: '14px' }}>
-                                                                {loadingSpecializations ? t('common.loading', 'Loading...') : t('auth.signupsp.selectSpecializations', 'Select specializations...')}
+                                                            <span className=" " style={{ fontSize: '16px' ,color:'lightslategray'}}>
+                                                                {loadingSpecializations ? t('common.loading', 'Loading') : t('auth.signupsp.selectSpecializations', 'Select specializations')}
                                                             </span>
                                                         )}
                                                     </div>
@@ -1151,7 +1152,8 @@ const validateForm = () => {
                                                         pointerEvents: 'none',
                                                         display: 'flex',
                                                         alignItems: 'center',
-                                                        height: '100%'
+                                                        height: '100%',
+                                                        color:'gray'
                                                     }}>
                                                         <i className={`fas fa-chevron-${showSpecializationDropdown ? 'up' : 'down'}`}></i>
                                                     </div>
@@ -1223,7 +1225,7 @@ const validateForm = () => {
                                                 min="0"
                                                 inputMode="numeric"
                                                 dir="ltr"
-                                                className={`form-control pt-3 ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
+                                                className={`form-control ps-3 pe-3 pt-3 ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
                                                 id="experience"
                                                 placeholder={t('auth.signupsp.experience')} 
                                                 value={experience}
@@ -1244,7 +1246,7 @@ const validateForm = () => {
                                         {/* Bio */}
                                         <div className="form-group mb-3">
                                             <textarea
-                                                className={`form-control ${formSubmitted && (!bio.trim() || bio.trim().length < 10) ? 'is-invalid' : ''}`}
+                                                className={`form-control ps-3 pe-3 ${formSubmitted && (!bio.trim() || bio.trim().length < 10) ? 'is-invalid' : ''}`}
                                                 id="bio"
                                                 rows="3"
                                                 placeholder={t('auth.signupsp.bio')} 
@@ -1263,11 +1265,11 @@ const validateForm = () => {
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
                                                 <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`} style={{ zIndex: 10 }}>
-                                                    <img src={FileIcon} alt="Resume" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} />
+                                                    {/* <img src={FileIcon} alt="Resume" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} /> */}
                                                 </div>
                                                 <input 
                                                     type="file" 
-                                                    className="form-control"
+                                                    className="form-control ps-3 pe-3"
                                                     id="resume"
                                                     accept=".pdf"
                                                     onChange={(e) => {
@@ -1298,14 +1300,14 @@ const validateForm = () => {
                                                     className={`form-control d-flex align-items-center ${formSubmitted && !resume ? 'is-invalid' : ''}`}
                                                     style={{ 
                                                         minHeight: '50px',
-                                                        backgroundColor: resume ? '#fff' : '#f8f9fa',
+                                                        // backgroundColor: resume ? '#fff' : '#f8f9fa',
                                                         border: '1px solid #ced4da',
                                                         borderRadius: '0.375rem',
                                                         cursor: 'pointer',
-                                                        color: resume ? '#000' : '#6c757d',
-                                                        fontSize: '14px',
-                                                        paddingLeft: i18n.dir() === 'rtl' ? '12px' : '50px',
-                                                        paddingRight: i18n.dir() === 'rtl' ? '50px' : '12px'
+                                                        color:'lightslategray',
+                                                        fontSize: '16px',
+                                                        paddingLeft: i18n.dir() === 'rtl' ? '12px' : '10px',
+                                                        paddingRight: i18n.dir() === 'rtl' ? '10px' : '12px'
                                                     }}
                                                 >
                                                     <span>
@@ -1382,7 +1384,7 @@ const validateForm = () => {
                                             <a href="#" className='text-decoration-none fw-semibold'>
                                                 {t('auth.signupsp.terms')}
                                             </a>
-                                            <p>{t('auth.signupsp.and')}</p>
+                                            <p className='m-0'>{t('auth.signupsp.and')}</p>
                                             <a href="#" className='text-decoration-none fw-semibold'>
                                                 {t('auth.signupsp.privacy')}
                                             </a>
