@@ -320,6 +320,9 @@ const ProjectOffers = () => {
             </div>
 
             {/* Pagination */}
+            {filteredOffers.length === 0 ? (
+                   <></>
+                ) : (
             <div className="row my-4">
                 <div className="col-12">
                     <div className="pagination-section">
@@ -331,6 +334,7 @@ const ProjectOffers = () => {
                     </div>
                 </div>
             </div>
+            )}
         </div>
     );
 };

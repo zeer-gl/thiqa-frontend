@@ -4,15 +4,15 @@
 $ar-font-normal: 'FF Shamel Family Sans One Book';
 $ar-font-bold: 'FF Shamel Family Sans One Bold';
 
-@font-face {
-  font-family: 'FF Shamel Family Sans One Book';
-  src: url('/src/assets/fonts/FF-Shamel-Family-Sans-One-Book.ttf');
-}
+// @font-face {
+//   font-family: 'FF Shamel Family Sans One Book';
+//   src: url('/src/assets/fonts/FF-Shamel-Family-Sans-One-Book.ttf');
+// }
 
-@font-face {
-  font-family: 'FF Shamel Family Sans One Bold';
-  src: url('/src/assets/fonts/FF-Shamel-Family-Sans-One-Bold.ttf');
-}
+// @font-face {
+//   font-family: 'FF Shamel Family Sans One Bold';
+//   src: url('/src/assets/fonts/FF-Shamel-Family-Sans-One-Bold.ttf');
+// }
 
 
 html[dir="rtl"] {
@@ -22,12 +22,12 @@ html[dir="rtl"] {
   body {
     text-align: right;
     direction: rtl;
-    font-family: $font-family-primary !important;
+    // font-family: $font-family-primary !important;
   }
 
   // Arabic bold font for headings only in RTL
   .ar-heading-bold {
-    font-family: $font-family-bold !important;
+    // font-family: $font-family-bold !important;
   }
 
   .navbar-nav {

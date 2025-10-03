@@ -375,7 +375,7 @@ const Navbar = () => {
                                                 zIndex: '10'
                                             }}
                                         >
-                                            <span className='pt-1'>
+                                            <span className=''>
                                             {cartCount}
                                             </span>
                                           

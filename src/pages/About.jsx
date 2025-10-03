@@ -10,7 +10,7 @@ const About = () => {
                 <div className="row">
                     <div className="col-md-8 mx-auto">
                         <h1 className="fw-bold">{t('pages.about.title')}</h1>
-                        <p className="lead">{t('pages.about.description')}</p>
+                        {/* <p className="lead">{t('pages.about.description')}</p> */}
 
                         <div className="mt-4">
                             <h3 className="fw-bold">Our Mission</h3>

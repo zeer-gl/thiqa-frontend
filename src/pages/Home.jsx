@@ -1374,7 +1374,7 @@ const Home = () => {
             <div className="d-flex align-items-center gap-2 main-buttons-group">
               <Link to={'service-list'} className='text-decoration-none'>
                 <button className='btn nearby-btn p-3 text-decoration-none d-flex align-items-center justify-content-center'>
-                  <p className='m-0 pt-1'>
+                  <p className='m-0 '>
                   {t('pages.home.servicesSection.buttons.seeAll', 'See All')}
                   </p>
                 </button>
@@ -1385,13 +1385,13 @@ const Home = () => {
                 onClick={handleMostInteractiveClick}
               >
                 <img src={MIP} className='pb-1' alt="Most Interactive Professionals"/>
-                <p className='m-0 pt-1'>{t('pages.home.servicesSection.buttons.mostInteractive')}</p>
+                <p className='m-0'>{t('pages.home.servicesSection.buttons.mostInteractive')}</p>
               </button>
               <button 
                 className={`btn p-3 nearby-btn d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
                 onClick={handleNearbyClick}
               >
-                <img src={NearbyIcon}  className='pb-1' alt="Nearby Professionals"/> <p className='m-0 pt-1'>{t('pages.home.servicesSection.buttons.nearby')}</p>
+                <img src={NearbyIcon}  className='pb-1' alt="Nearby Professionals"/> {t('pages.home.servicesSection.buttons.nearby')}
               </button>
             </div>
             
@@ -1507,10 +1507,10 @@ const Home = () => {
                   })()}
                 </div>
                 
-                <div className='d-flex align-items-center justify-content-between py-3'>
+                <div className='d-flex  justify-content-between py-3'>
                   <div className='d-flex align-items-center gap-3'>
                     {/* <img src={BallPattern} alt="" width="40" height="40"/> */}
-                    <div className='d-flex align-items-start gap-3'>
+                    <div className='d-flex align-items-start gap-3 flex-column '>
                       <div>
                       <h6 className="fs-14 ar-heading-bold">
   {professional.name
@@ -1549,7 +1549,7 @@ const Home = () => {
                     </div>
                   </div>
                   
-                  <div className='d-flex align-items-end flex-column gap-3'>
+                  <div className='d-flex align-items-end flex-column gap-3 justify-content-between'>
                   <FontAwesomeIcon
     icon={likedProfessionals[professional._id] ? solidHeart : regularHeart}
     onClick={async (e) => {
