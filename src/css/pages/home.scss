@@ -428,7 +428,8 @@ fieldset {
 }
 
 .radio input[type="radio"]:checked + label {
-  padding: 11px 20px 5px 20px;
+  padding: 10px 20px 10px 20px;
+  font-size: 15px;
 }
 
 .radio input[type="radio"]:checked + label::before {
@@ -583,11 +584,20 @@ fieldset {
   justify-content: center;
   transition: all 0.3s ease;
   
+  // Keep border consistent and remove box shadow on hover
   &:hover:not(:disabled) {
-    border-color: #007bff;
-    color: #007bff;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    border-color: #e0e0e0;
+    color: #21395D;
+    background-color: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+  &:focus,
+  &:active {
+    outline: none;
+    box-shadow: none !important;
+    border-color: #e0e0e0 !important;
+    background-color: transparent !important;
   }
   
   &:disabled {
@@ -894,6 +904,27 @@ fieldset {
   @media (max-width: 768px) {
     margin-left: 0 !important;
     justify-content: center;
+  }
+
+  // Unify borders for both prev/next buttons regardless of individual classes
+  .btn,
+  button,
+  .pagination-arrow-btn {
+    border: 1px solid #21395D !important;
+    box-shadow: none !important;
+  }
+  .btn:hover,
+  button:hover,
+  .pagination-arrow-btn:hover {
+    border-color: #e0e0e0 !important;
+    box-shadow: none !important;
+  }
+  .btn:focus,
+  button:focus,
+  .pagination-arrow-btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #21395D !important;
   }
 }
 

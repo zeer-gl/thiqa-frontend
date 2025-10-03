@@ -1052,7 +1052,7 @@ const ProfileSP = () => {
                 <div className="profile-header">
                     <div className="container-md">
                         <div className="header-row">
-                            <h1 className="header-title ar-heading-bold pt-2">
+                            <h1 className="header-title ar-heading-bold">
                               
                                 {t('profileSP.headerTitle')}
                             </h1>
@@ -1079,7 +1079,7 @@ const ProfileSP = () => {
                                             <span className="notification-badge">{item.badge}</span>
                                         )}
                                     </div>
-                                    <span className="sidebar-text pt-2">{item.text}</span>
+                                    <span className="sidebar-text">{item.text}</span>
                                 </div>
                             ))}
                         </div>
@@ -1091,10 +1091,10 @@ const ProfileSP = () => {
                         {!showSidebar && window.innerWidth <= 992 && (
                             <div className="mobile-back-button">
                                 <button 
-                                    className="btn btn-secondary mb-3 d-flex align-items-center justify-content-center"
+                                    className="btn btn-outline-secondary d-flex mb-3"
                                     onClick={handleBackToSidebar}
                                 >
-                                    <i className="fas fa-arrow-right me-2"></i>
+                                    <i className="fas fa-arrow-left"></i>
                                     {t('common.back', 'Back')}
                                 </button>
                             </div>
@@ -1181,7 +1181,7 @@ const ProfileSP = () => {
                                                 className="form-label">{t('profileSP.content.professionLabel')}</label>
                                             <input
                                                 type="text"
-                                                className="form-control pt-3"
+                                                className="form-control"
                                                 value={profileData.workTitle}
                                                 onChange={(e) => handleInputChange('workTitle', e.target.value)}
                                                 disabled={!isEditing}
@@ -1192,7 +1192,7 @@ const ProfileSP = () => {
                                                 className="form-label">{t('profileSP.content.phoneNumberLabel')}</label>
                                             <input
                                                 type="text"
-                                                className="form-control pt-3"
+                                                className="form-control"
                                                 value={profileData.phoneNo}
                                                 onChange={(e) => handleInputChange('phoneNo', e.target.value)}
                                                 disabled={!isEditing}
@@ -1204,7 +1204,7 @@ const ProfileSP = () => {
                                             <label className="form-label">{t('profileSP.content.emailLabel')}</label>
                                             <input
                                                 type="email"
-                                                className="form-control pt-3"
+                                                className="form-control"
                                                 value={profileData.email}
                                                 onChange={(e) => handleInputChange('email', e.target.value)}
                                                 disabled={!isEditing}
@@ -1216,7 +1216,7 @@ const ProfileSP = () => {
                                             <label className="form-label">Experience (Years)</label>
                                             <input
                                                 type="number"
-                                                className="form-control pt-3"
+                                                className="form-control"
                                                 value={profileData.experience}
                                                 onChange={(e) => handleInputChange('experience', e.target.value)}
                                                 disabled={!isEditing}
@@ -1225,7 +1225,7 @@ const ProfileSP = () => {
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label">Bio</label>
                                             <textarea
-                                                className=" form-control pt-3"
+                                                className=" form-control"
                                                 rows="3"
                                                 value={profileData.bio}
                                                 onChange={(e) => handleInputChange('bio', e.target.value)}
@@ -1372,8 +1372,8 @@ const ProfileSP = () => {
                                         <button 
                                             className="btn  btn-sm d-flex align-items-center justify-content-center"
                                             onClick={markAllNotificationsAsRead}
-                                            disabled={loadingNotifications}
-                                            style={{backgroundColor: '#21395D',color: 'white',paddingTop:"10px"}}
+                                            disabled={loadingNotifications || !notifications.some(n => !n.isRead)}
+                                            style={{backgroundColor: '#21395D',color: 'white'}}
                                         >
                                             {t('profile.notifications.markAllAsRead')}
                                         </button>
@@ -1409,22 +1409,22 @@ const ProfileSP = () => {
                                                                 {getTranslatedNotificationContent(notification).title || t('profile.notifications.defaultTitle')}
                                                             </h6>
                                                             <div className="notification-actions">
-                                                                {markingAsRead === notification._id ? (
-                                                                    <div className="spinner-border spinner-border-sm" role="status">
-                                                                        <span className="visually-hidden">{t('common.loading')}</span>
+                                                                {(notification.isRead || markingAsRead === notification._id) && (
+                                                                    <div className="d-flex align-items-center justify-content-center text-success me-2 mb-3">
+                                                                        <i className="fas fa-check-circle me-1"></i>
+                                                                        <small>{t('profile.notifications.read', 'Read')}</small>
                                                                     </div>
-                                                                ) : (
-                                                                    <button
-                                                                        className="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            deleteNotification(notification._id);
-                                                                        }}
-                                                                        title={t('profile.notifications.delete')}
-                                                                    >
-                                                                        <i className=" p-1 fas fa-trash"></i>
-                                                                    </button>
                                                                 )}
+                                                                <button
+                                                                    className="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        deleteNotification(notification._id);
+                                                                    }}
+                                                                    title={t('profile.notifications.delete')}
+                                                                >
+                                                                    <i className=" p-1 fas fa-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </div>
                                                         <p className="notification-message">

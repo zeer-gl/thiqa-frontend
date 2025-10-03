@@ -18,8 +18,7 @@ const OrderRequest = () => {
     const [projectTypes, setProjectTypes] = useState([]);
     const [loadingTypes, setLoadingTypes] = useState(true);
     const [formValues, setFormValues] = useState({
-        budget: '',
-        price: ''
+        budget: ''
     });
 
     // Get service name from localStorage
@@ -63,11 +62,10 @@ const OrderRequest = () => {
         }
     };
 
-    // Calculate total amount from budget and price
+    // Calculate total amount from budget
     const calculateTotal = () => {
         const budget = parseFloat(formValues.budget) || 0;
-        const price = parseFloat(formValues.price) || 0;
-        return budget + price;
+        return budget;
     };
 
     // Handle form value changes to update total
@@ -152,8 +150,7 @@ const OrderRequest = () => {
       return value.size <= 1 * 1024 * 1024;
   }),
         address: Yup.string().required(t('order-request.address-required')),
-        projectName: Yup.string().required(t('order-request.project-name-required', 'Project name is required')),
-        price: Yup.number().typeError(t('order-request.price-number', 'Price must be a number')).required(t('order-request.price-required', 'Price is required'))
+        projectName: Yup.string().required(t('order-request.project-name-required', 'Project name is required'))
     });
 
     // Get professional data from localStorage
@@ -178,7 +175,6 @@ const OrderRequest = () => {
         description: '',
         address: '',
         projectName: getProfessionalData()?.name || '',
-        price: ''
     };
 
     // Form fields configuration (order and names per backend)
@@ -206,13 +202,6 @@ const OrderRequest = () => {
             }))
         },
         { name: 'projectName', type: 'text', placeholder: t('order-request.project-name', 'Project Name'), icon: 'fas fa-project-diagram' },
-        { 
-            name: 'price', 
-            type: 'text', 
-            placeholder: t('order-request.price', 'Price'), 
-            icon: 'fas fa-money-bill',
-            onChange: (value) => handleFormValueChange('price', value)
-        },
         { name: 'description', type: 'textarea', placeholder: t('order-request.request-description'), rows: 4 },
     ];
 
@@ -254,7 +243,6 @@ const OrderRequest = () => {
                 if (values.dateOfRequest) formData.append('dateOfRequest', values.dateOfRequest);
                 if (values.typeOfProject) formData.append('typeOfProject', values.typeOfProject);
                 if (values.projectName) formData.append('projectName', values.projectName);
-                if (values.price) formData.append('price', String(values.price));
                 formData.append('projectDesign', values.projectDesign);
 
                 res = await fetch(`${BaseUrl}/customer/create-demand-quote`, {
@@ -274,8 +262,7 @@ const OrderRequest = () => {
                     address: values.address,
                     dateOfRequest: values.dateOfRequest,
                     typeOfProject: values.typeOfProject,
-                    projectName: values.projectName,
-                    price: Number(values.price)
+                    projectName: values.projectName
                 };
                 res = await fetch(`${BaseUrl}/customer/create-demand-quote`, {
                     method: 'POST',

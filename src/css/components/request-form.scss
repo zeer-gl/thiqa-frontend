@@ -50,6 +50,19 @@
                     color: $light-gray-text-color;
                 }
 
+                // Normalize placeholder color across browsers (including date placeholder UI)
+                &::-webkit-input-placeholder { color: $light-gray-text-color; }
+                &::-moz-placeholder { color: $light-gray-text-color; opacity: 1; }
+                &:-ms-input-placeholder { color: $light-gray-text-color; }
+                &::-ms-input-placeholder { color: $light-gray-text-color; }
+                // WebKit date input pieces
+                &::-webkit-datetime-edit { color: $light-gray-text-color; }
+                &::-webkit-datetime-edit-fields-wrapper { color: $light-gray-text-color; }
+                &::-webkit-datetime-edit-text { color: $light-gray-text-color; }
+                &::-webkit-datetime-edit-month-field { color: $light-gray-text-color; }
+                &::-webkit-datetime-edit-day-field { color: $light-gray-text-color; }
+                &::-webkit-datetime-edit-year-field { color: $light-gray-text-color; }
+
                 &:focus {
                     outline: none;
                     border-color: $primary-color;
@@ -131,6 +144,32 @@
                 
                 &::-webkit-clear-button {
                     display: none !important;
+                }
+
+                // When empty/invalid (e.g., required but not selected) use gray placeholder-like color
+                &:invalid {
+                    color: $light-gray-text-color;
+                    &::-webkit-datetime-edit,
+                    &::-webkit-datetime-edit-fields-wrapper,
+                    &::-webkit-datetime-edit-text,
+                    &::-webkit-datetime-edit-month-field,
+                    &::-webkit-datetime-edit-day-field,
+                    &::-webkit-datetime-edit-year-field {
+                        color: $light-gray-text-color;
+                    }
+                }
+
+                // When a date is selected, switch to normal text color
+                &:valid {
+                    color: $secondary-color;
+                    &::-webkit-datetime-edit,
+                    &::-webkit-datetime-edit-fields-wrapper,
+                    &::-webkit-datetime-edit-text,
+                    &::-webkit-datetime-edit-month-field,
+                    &::-webkit-datetime-edit-day-field,
+                    &::-webkit-datetime-edit-year-field {
+                        color: $secondary-color;
+                    }
                 }
             }
             

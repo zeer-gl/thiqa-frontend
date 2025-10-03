@@ -52,8 +52,8 @@
         "currentImage": "الصورة الحالية",
         "currentServiceImage": "صورة الخدمة الحالية",
         "replaceImage": "اختر صورة جديدة لاستبدال الصورة الحالية، أو اتركها فارغة للاحتفاظ بالصورة الحالية.",
-        "selectImage": "اختر صورة لخدمتك.",
-        "loadingServices": "جاري تحميل الخدمات...",
+        "selectImage": "يجب ألا يزيد حجم الصورة المعروضة عن 2 ميجابايت",
+        "loadingServices": "جاري تحميل الخدمات",
         "startAdding": "ابدأ بإضافة خدمتك الأولى",
         "delivery": "التسليم",
         "unitPlaceholder": "مثال: كيلو، لتر، ساعة",
@@ -108,7 +108,7 @@
       "customerSection": {
         "subtitle": "مراجعات العملاء __",
         "title": "ماذا يقول عملاؤنا",
-        "loadingReviews": "جاري تحميل المراجعات...",
+        "loadingReviews": "جاري تحميل المراجعات",
         "noReviews": "لا توجد مراجعات متاحة",
         "noReviewsDescription": "كن أول من يقيّم منتجاتنا",
         "testimonial": {
@@ -209,7 +209,7 @@
           "efficiencyRating": "تقييم الكفاءة",
           "priceRating": "تقييم السعر",
           "deliveryRating": "تقييم التوصيل",
-          "submitting": "جاري الإرسال...",
+          "submitting": "جاري الإرسال",
           "loginRequired": "يرجى تسجيل الدخول لإرسال تقييم",
           "reviewSubmitted": "تم إرسال التقييم بنجاح!",
           "outOfStock": "نفد المخزون",
@@ -541,7 +541,7 @@
     "request-date": "تاريخ الطلب",
     "request-description": "وصف الطلب",
     "notes": "ملحوظات",
-    "sending": "جاري الإرسال...",
+    "sending": "جاري الإرسال",
     "total": "المجموع",
     "kwd": "د.ك",
     "address-min-length": "يجب أن يكون العنوان 5 أحرف على الأقل",
@@ -555,7 +555,7 @@
   },
 
   "service-list": {
-    "loading": "جاري تحميل المحترفين...",
+    "loading": "جاري تحميل المحترفين",
     "title": "مقدمي الخدمات",
     "subtitle": "ابحث عن أفضل مقدمي الخدمات في منطقتك",
     "categories": "الفئات",
@@ -625,7 +625,7 @@
     "view-quote": "عرض السعر",
     "call": "اتصال",
     "accept": "قبول",
-    "accepting": "جاري القبول...",
+    "accepting": "جاري القبول",
     "proposal-accepted": "تم قبول العرض بنجاح!",
     "accept-error": "فشل في قبول العرض. يرجى المحاولة مرة أخرى.",
     "project-started": "تم بدء المشروع بنجاح!",
@@ -775,7 +775,7 @@
         "painting": "الدهان",
         "carpentry": "النجارة"
       },
-      "loadingSpecializations": "جاري تحميل التخصصات...",
+      "loadingSpecializations": "جاري تحميل التخصصات",
       "noSpecializationsAvailable": "لا توجد تخصصات متاحة",
       "usingDefaultSpecializations": "استخدام التخصصات الافتراضية - مشكلة في تنسيق استجابة API",
       "usingDefaultSpecializationsConnection": "استخدام التخصصات الافتراضية - مشكلة في الاتصال بـ API",
@@ -1108,7 +1108,7 @@
       "title": "الإشعارات",
       "content": "محتوى الإشعارات سيظهر هنا",
       "totalNotifications": "إشعارات",
-      "markAllAsRead": "تعيين الكل كمقروء",
+      "markAllAsRead": "اقرأ الكل",
       "allMarkedAsRead": "تم تعيين جميع الإشعارات كمقروءة",
       "refresh": "تحديث",
       "unreadNotifications": "إشعارات غير مقروءة",
@@ -1253,15 +1253,15 @@
     "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح!"
   },
   "common": {
-    "sending": "جاري الإرسال...",
-    "submitting": "جاري الإرسال...",
-    "saving": "جاري الحفظ...",
+    "sending": "جاري الإرسال",
+    "submitting": "جاري الإرسال",
+    "saving": "جاري الحفظ",
     "changing": "جاري التغيير...",
     "saveChanges": "حفظ التغييرات",
     "total": "المجموع",
     "kwd": "د.ك",
     "rememberMe": "تذكرني",
-    "loading": "جاري التحميل...",
+    "loading": "جاري التحميل",
     "userNotFound": "المستخدم غير موجود",
     "back": "رجوع",
     "unableToLoadProducts": "غير قادر على تحميل المنتجات",
@@ -1493,8 +1493,8 @@
         "description": "مجمع سكني متعدد الطوابق"
       }
     },
-    "loadingProjectRequests": "جاري تحميل طلبات المشاريع...",
-    "checkingSubscription": "جاري التحقق من حالة الاشتراك...",
+    "loadingProjectRequests": "جاري تحميل طلبات المشاريع",
+    "checkingSubscription": "جاري التحقق من حالة الاشتراك",
     "subscriptionRequired": {
       "title": "اشتراك مطلوب",
       "message": "تحتاج إلى اشتراك نشط لعرض طلبات المشاريع. يرجى شراء باقة للوصول إلى عروض الطلبات.",
@@ -1532,7 +1532,7 @@
     },
     "buttons": {
       "submitProposal": "إرسال العرض",
-      "submitting": "جاري الإرسال...",
+      "submitting": "جاري الإرسال",
       "priceQuote": "عرض السعر",
       "projectCompletionFile": "ملف إنجاز المشروع",
       "allProjects": "جميع المشاريع",
@@ -1580,7 +1580,7 @@
     "acceptedBy": "مقبول من قبل"
   },
   "paymentMethods": {
-    "loading": "جاري تحميل طرق الدفع...",
+    "loading": "جاري تحميل طرق الدفع",
     "loginRequired": "يرجى تسجيل الدخول لعرض طرق الدفع",
     "noPlanSelected": "لم يتم اختيار خطة",
     "fetchFailed": "فشل في جلب طرق الدفع",
@@ -1620,7 +1620,7 @@
     "fetchFailed": "فشل في جلب خطط الاشتراك",
     "loadFailed": "فشل في تحميل خطط الاشتراك",
     "subscriptionActivated": "تم تفعيل الاشتراك بنجاح!",
-    "loading": "جاري تحميل خطط الاشتراك...",
+    "loading": "جاري تحميل خطط الاشتراك",
     "currentPlan": "الخطة الحالية",
     "noFeaturesListed": "لا توجد ميزات مدرجة",
     "noPlansAvailable": "لا توجد خطط اشتراك متاحة",

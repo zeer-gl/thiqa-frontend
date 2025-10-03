@@ -33,7 +33,7 @@ const Breadcrumb = ({ items }) => {
                             {/* Separator - don't show after last item */}
                             {index < items.length - 1 && (
                                 <li className="breadcrumb-separator">
-                                    <span className="arrow">‹</span>
+                                    <span className="arrow">&gt;</span>
                                 </li>
                             )}
                         </React.Fragment>

@@ -2,12 +2,19 @@
 .profile-dropdown-container {
   position: relative;
   cursor: pointer;
+  /* Keep dropdown open when hovering container or dropdown */
+  &:hover .profile-dropdown-menu {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
   
   .profile-dropdown-menu {
     position: absolute !important;
-    top: 100% !important;
-    right: 0 !important;
-    left: auto !important;
+    top: calc(100% + 6px) !important; // slight gap under trigger
+    left: 0 !important; // LTR: align to left edge of trigger (name/avatar)
+    right: auto !important;
     width: auto !important;
     min-width: 160px !important;
     max-width: 200px !important;
@@ -22,6 +29,7 @@
     opacity: 1 !important;
     visibility: visible !important;
     display: block !important;
+    pointer-events: auto !important; // allow clicks
     
     .profile-dropdown-item {
       color: white !important;
@@ -89,8 +97,9 @@
     .profile-dropdown-menu {
       min-width: 120px !important;
       max-width: 160px !important;
-      margin-top: 0px !important; // Remove gap for small screens
-      right: -10px !important; // Adjust position for small screens
+      margin-top: 0px !important; // Remove extra gap for small screens
+      left: 0 !important; // keep anchored to trigger on small screens LTR
+      right: auto !important;
       
       .profile-dropdown-item {
         padding: 0.5rem 0.7rem !important;
@@ -120,16 +129,16 @@
 [dir="rtl"] {
   .profile-dropdown-container {
     .profile-dropdown-menu {
-      right: auto !important;
-      left: 0 !important;
+      right: 0 !important; // RTL: align to right edge of trigger
+      left: auto !important;
     }
   }
   
   @media (max-width: 576px) {
     .profile-dropdown-container {
       .profile-dropdown-menu {
-        left: -10px !important;
-        right: auto !important;
+        right: 0 !important; // keep anchored to trigger on small screens RTL
+        left: auto !important;
       }
     }
   }
@@ -137,8 +146,8 @@
   @media (max-width: 480px) {
     .profile-dropdown-container {
       .profile-dropdown-menu {
-        left: -15px !important;
-        right: auto !important;
+        right: 0 !important;
+        left: auto !important;
       }
     }
   }
@@ -176,4 +185,13 @@
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
+}
+
+@media (max-width: 576px) {
+  .nav-icons-wrapper .cart-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+  }
 }

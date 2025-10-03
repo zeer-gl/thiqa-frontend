@@ -229,7 +229,7 @@ const ServiceDetail = () => {
 >
   <i className={isCurrentProfessionalLiked ? 'fas fa-heart' : 'far fa-heart'}></i>
   <span className={`${i18n.language === 'ar' ? 'me-2' : 'ms-2'}`}>
-    {isCurrentProfessionalLiked ? t('Favourite') : t('Unfavourite')}
+    {isCurrentProfessionalLiked ? t('Unfavourite') :  t('Favourite')}
   </span>
 </button>
 
@@ -285,7 +285,7 @@ const ServiceDetail = () => {
                                                         className="btn btn-request-service w-100 mt-2 d-flex align-items-center justify-content-center"
                                                         onClick={() => handleRequestService(service)}
                                                     >
-                                                        <span className="pt-1">
+                                                        <span>
                                                         {t('pages.service-detail.request-service')}
                                                         </span>
                                                       
@@ -302,7 +302,7 @@ const ServiceDetail = () => {
                                                 onClick={() => setShowAllServices(!showAllServices)}
                                                 style={{backgroundColor: '#21395D', color: 'white'}}
                                             >
-                                                <span className="pt-1">
+                                                <span>
                                                 {showAllServices 
                                                     ? t('pages.service-detail.see-less', 'See Less')
                                                     : t('pages.service-detail.see-more', 'See More')

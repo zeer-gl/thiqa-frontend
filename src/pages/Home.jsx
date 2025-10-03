@@ -414,6 +414,12 @@ const Home = () => {
     const handleServiceSubmit = async (e) => {
         e.preventDefault();
         
+        // Client-side validation: Arabic name is required
+        if (!serviceForm.nameAr || serviceForm.nameAr.trim() === '') {
+            showAlert(t('pages.home.serviceManagement.nameArRequired', 'Service name in Arabic is required'), 'error');
+            return;
+        }
+        
         // Validate image before submission
         if (serviceForm.image && !validateImage(serviceForm.image)) {
             return; // Stop submission if image validation fails
@@ -1054,7 +1060,7 @@ const Home = () => {
                                     </h4>
                                     <div className="d-flex flex-column gap-3 align-items-center">
                                     <Link to={'/profile-sp?tab=packages'}>
-                                        <button className='btn hero-btn d-flex align-items-center justify-content-center'>
+                                        <button className='btn hero-btn d-flex align-items-center justify-content-center m-auto m-md-0'>
                                             {t('pages.home.heroSection.upgradePackage', 'Upgrade Package')}
                                         </button>
                                     </Link>
@@ -1091,14 +1097,14 @@ const Home = () => {
                                 {isServiceProvider ? (
                                     // Show packages button for service providers
                                         <Link to={'/profile-sp?tab=packages'}>
-                                            <button className='btn hero-btn pt-2 d-flex align-items-center justify-content-center'>
+                                            <button className='btn hero-btn d-flex align-items-center justify-content-center m-auto m-md-0'>
                                             {t('pages.home.heroSection.viewPackages', 'View Packages')}
                                             </button>
                                         </Link>
                                 ) : (
                                     // Show regular button for customers
                                     <Link to={'/products'} style={{textDecoration: 'none'}}>
-                                        <button className='btn hero-btn pt-2 d-flex align-items-center justify-content-center' style={{textDecoration:"none"}}>
+                                        <button className='btn hero-btn d-flex align-items-center justify-content-center m-auto m-md-0' style={{textDecoration:"none"}}>
                                             {t('pages.home.heroSection.ctaButton')}
                                         </button>
                                     </Link>
@@ -1117,15 +1123,15 @@ const Home = () => {
                             <div className="container">
                                 <div className="row">
                                     <div className="col-12">
-                                        <div className="d-flex justify-content-between align-items-center mb-4">
+                                        <div className="d-flex justify-content-end align-items-center mb-4">
                                             {/* <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2> */}
                                             <button 
                                                 className="btn  d-flex align-items-center justify-content-center"
                                                 onClick={() => setShowServiceModal(true)}
-                                                style={{backgroundColor: '#21395D',color: 'white',width:'100%'}}
+                                                style={{backgroundColor: '#21395D',color: 'white'}}
                                             >
                                                 <i className="fas fa-plus me-2"></i>
-                                                <span className="pt-2">
+                                                <span>
                                                 {t('pages.home.serviceManagement.addService', 'Add Service')}
                                                 </span>
                                               
@@ -1174,7 +1180,7 @@ const Home = () => {
                                                                             onClick={() => handleEditService(service)}
                                                                         >
                                                                             <i className="fas fa-edit "></i>
-                                                                            <span className="pt-2">
+                                                                            <span>
                                                                             {t('common.edit', 'Edit')}
                                                                             </span>
                                                                            
@@ -1184,7 +1190,7 @@ const Home = () => {
                                                                             onClick={() => handleDeleteService(service)}
                                                                         >
                                                                             <i className="fas fa-trash me-1"></i>
-                                                                            <span className="pt-2">
+                                                                            <span >
                                                                             {t('common.delete', 'Delete')}
                                                                             </span>
                                                                         </button>
@@ -1384,14 +1390,14 @@ const Home = () => {
                 className={`btn mi-btn p-3 d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'interactive' ? 'active' : ''}`}
                 onClick={handleMostInteractiveClick}
               >
-                <img src={MIP} className='pb-1' alt="Most Interactive Professionals"/>
+                <img src={MIP} alt="Most Interactive Professionals"/>
                 <p className='m-0'>{t('pages.home.servicesSection.buttons.mostInteractive')}</p>
               </button>
               <button 
                 className={`btn p-3 nearby-btn d-flex align-items-center justify-content-center ${isFilterActive && currentFilter === 'nearby' ? 'active' : ''}`}
                 onClick={handleNearbyClick}
               >
-                <img src={NearbyIcon}  className='pb-1' alt="Nearby Professionals"/> {t('pages.home.servicesSection.buttons.nearby')}
+                <img src={NearbyIcon} alt="Nearby Professionals"/> {t('pages.home.servicesSection.buttons.nearby')}
               </button>
             </div>
             
@@ -1407,7 +1413,7 @@ const Home = () => {
                     cursor: currentProfessionalsPage === 1 ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  <i className="fas fa-chevron-left"></i>
+                  <i className="fas fa-chevron-left" style={{fontSize:'14px'}}></i>
                 </button>
                 
                 <button
@@ -1419,7 +1425,7 @@ const Home = () => {
                     cursor: currentProfessionalsPage === totalProfessionalsPages ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  <i className="fas fa-chevron-right"></i>
+                  <i className="fas fa-chevron-right"  style={{fontSize:'14px'}}></i>
                 </button>
               </div>
             )}
@@ -1430,7 +1436,7 @@ const Home = () => {
         {isFilterActive && (
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="filter-status">
-              <span className="badge bg-primary me-2">
+              <span className="badge bg-primary me-2" style={{fontSize:'16px', fontWeight:'600'}}>
                 <i className="fas fa-filter me-1"></i>
                 {currentFilter === 'interactive' ? 'Most Interactive (Score: 4)' : 
                  currentFilter === 'nearby' ? 'Nearby Professionals' : 'Filtered'}
@@ -1444,7 +1450,7 @@ const Home = () => {
               onClick={clearAllFilters}
             >
               <i className="fas fa-times me-1"></i>
-              <span className='pt-1'>
+              <span>
               Clear Filters
               </span>
              
@@ -1463,7 +1469,6 @@ const Home = () => {
         className="col-lg-4 col-md-6 col-sm-6"
         style={{ 
           cursor: "pointer",
-          border: "1px solid lightgray",
           marginBottom: "20px"
         }}
         onClick={() => navigate(`/service/${professional._id}`)}
@@ -1569,7 +1574,7 @@ const Home = () => {
     }}
   />
                     <button className='btn outlined-btn fs-12 d-flex align-items-center justify-content-center'>
-                    <span className='pt-1'>
+                    <span>
                       {professional.specialization || t('pages.home.servicesSection.serviceProvider.category')}
                     </span>
         
@@ -1971,7 +1976,7 @@ const Home = () => {
                                                 color: '#666',
                                                 fontSize: '0.875rem'
                                             }}>
-                                                {serviceForm.existingImage ? t('pages.home.serviceManagement.replaceImage', 'Select a new image to replace the current one, or leave empty to keep the current image.') : t('pages.home.serviceManagement.selectImage', 'Select an image for your service.')}
+                                                {serviceForm.existingImage ? t('pages.home.serviceManagement.replaceImage', 'Select a new image to replace the current one, or leave empty to keep the current image.') : t('pages.home.serviceManagement.selectImage', ' image size should not be more than 2 MB')}
                                             </small>
                                     </div>
                                 </div>
@@ -2044,25 +2049,25 @@ const Home = () => {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-body text-center py-4">
-                                <h5 className="mb-3">{t('pages.home.serviceManagement.confirmDelete', 'Are you sure you want to delete this service?')}</h5>
-                                <p className="text-muted mb-0">
+                                <h5>{t('pages.home.serviceManagement.confirmDelete', 'Are you sure you want to delete this service?')}</h5>
+                                {/* <p className="text-muted mb-0">
                                     {serviceToDelete.nameEn || serviceToDelete.name || 'This service'} will be permanently deleted.
-                                </p>
+                                </p> */}
                             </div>
-                            <div className="modal-footer justify-content-center">
+                            <div className="modal-footer d-flex flex-nowrap gap-3 border-0">
                                 <button 
                                     type="button" 
-                                    className="btn btn-danger d-flex align-items-center justify-content-center" 
+                                    className="btn btn-danger flex-1 w-100" 
                                     onClick={confirmDeleteService}
-                                    style={{width: '100%'}}
+                                    
                                 >
                                     {t('pages.home.serviceManagement.deleteService', 'Delete')}
                                 </button>
                                 <button 
                                     type="button" 
-                                    className="btn btn-secondary d-flex align-items-center justify-content-center" 
+                                    className="btn btn-secondary flex-1" 
                                     onClick={cancelDeleteService}
-                                    style={{width: '100%'}}
+                                    
                                 >
                                     {t('common.cancel', 'Cancel')}
                                 </button>

@@ -105,6 +105,10 @@
     justify-content: end;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
+    & > *{
+      flex:1
+    }
 }
 
 .heart-container {
@@ -137,7 +141,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 13px;
+    padding: 8px 20px !important;
     border: 1px solid Beige;
     border-radius: 40px;
     background: white;

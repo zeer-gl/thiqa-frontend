@@ -27,7 +27,13 @@
             cursor: pointer;
             text-decoration: none;
 
-
+            // Ensure Previous and Next have equal widths
+            &.prev-btn,
+            &.next-btn {
+                min-width: 120px;
+                justify-content: center;
+                width: 100%;
+            }
 
             .btn-text {
                 font-weight: 600;
@@ -128,6 +134,9 @@
         .pagination {
             .pagination-btn {
                 font-size: 12px;
+
+                &.prev-btn,
+                &.next-btn { min-width: 120px; }
             }
 
             .page-numbers {
@@ -148,6 +157,9 @@
         .pagination {
             .pagination-btn {
                 font-size: 11px;
+
+                &.prev-btn,
+                &.next-btn { min-width: 44px; padding: 0.6rem; }
             }
 
             .page-numbers {

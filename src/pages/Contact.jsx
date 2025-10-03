@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useAlert } from '../context/AlertContext';
 import PageHeader from '../components/PageHeader';
 import RequestForm from '../components/RequestForm';
 import ContactFormModal from '../components/ContactFormModal';
@@ -13,6 +14,7 @@ import Cityscape from '../assets/payment/dubai-skyline-sunset-time-united.svg';
 const Contact = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { showAlert } = useAlert();
     
     // Modal state management
     const [showModal, setShowModal] = useState(false);
@@ -52,12 +54,8 @@ const Contact = () => {
 
     const handleSubmit = (values, formikBag) => {
         console.log('Contact form submitted:', values);
-        
-        // Store form data and show modal
-        setFormData(values);
-        setShowModal(true);
-        
-        // Reset form after showing modal
+        // Show only toaster notification and do not open modal
+        showAlert(t('contact.form-submitted-successfully', 'Form Submitted Successfully'), 'success');
         formikBag.resetForm();
     };
 
@@ -163,12 +161,7 @@ const Contact = () => {
                 </div>
             </div>
 
-            {/* Contact Form Modal */}
-            <ContactFormModal 
-                isOpen={showModal}
-                onClose={handleCloseModal}
-                formData={formData}
-            />
+            {/* Contact Form Modal disabled per requirement to only show toaster */}
         </div>
     );
 };

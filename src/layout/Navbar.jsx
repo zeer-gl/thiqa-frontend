@@ -10,6 +10,8 @@ import ProfileBanner from '../components/ProfileBanner.jsx';
 import { useUser } from '../context/Profile.jsx';
 import { useSPProfile } from '../context/SPProfileContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
+import '../css/components/profile-dropdown.scss';
+import { BaseUrl } from '../assets/BaseUrl.jsx';
 
 const Navbar = () => {
     const { t, i18n } = useTranslation();
@@ -31,6 +33,8 @@ const Navbar = () => {
     } = useSPProfile();
     
     const { cartCount } = useCart();
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [loadingNotifCount, setLoadingNotifCount] = useState(false);
     
     const changeLanguage = (lng) => {
         i18n.changeLanguage(lng);
@@ -117,6 +121,42 @@ const Navbar = () => {
         timestamp: new Date().toISOString()
     });
 
+    // Fetch notification count (same logic as profile pages)
+    useEffect(() => {
+        const fetchNotificationCount = async () => {
+            if (!isLoggedIn) {
+                setNotificationCount(0);
+                return;
+            }
+            try {
+                setLoadingNotifCount(true);
+                const role = (localStorage.getItem('userRole') || '').toLowerCase();
+                const isSP = role === 'sp' || isServiceProvider;
+                const url = isSP 
+                    ? `${BaseUrl}/professional/notification/count` 
+                    : `${BaseUrl}/customer/notification/count`;
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem(isSP ? 'token-sp' : 'token') || ''}`
+                };
+                const res = await fetch(url, { method: 'GET', headers });
+                if (!res.ok) throw new Error(`Failed to fetch notification count: ${res.status}`);
+                const data = await res.json();
+                if (data && typeof data.count === 'number') {
+                    setNotificationCount(data.count);
+                } else {
+                    setNotificationCount(0);
+                }
+            } catch (e) {
+                console.warn('Navbar notification count error:', e);
+                setNotificationCount(0);
+            } finally {
+                setLoadingNotifCount(false);
+            }
+        };
+        fetchNotificationCount();
+    }, [isLoggedIn, isServiceProvider]);
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light">
             <div className="container-fluid px-3 px-md-5">
@@ -125,15 +165,8 @@ const Navbar = () => {
                         ref={dropdownRef}
                         className="profile-dropdown-container"
                         onMouseEnter={() => {
-                            // Only show on hover for desktop, not mobile
                             if (window.innerWidth > 768) {
                                 setShowProfileMenu(true);
-                            }
-                        }}
-                        onMouseLeave={() => {
-                            // Only hide on hover for desktop, not mobile
-                            if (window.innerWidth > 768) {
-                                setShowProfileMenu(false);
                             }
                         }}
                         onClick={(e) => {
@@ -153,32 +186,11 @@ const Navbar = () => {
                             <div 
                                 className="dropdown-menu show profile-dropdown-menu" 
                                 onMouseEnter={() => {
-                                    // Keep dropdown open when hovering over it
                                     if (window.innerWidth > 768) {
                                         setShowProfileMenu(true);
                                     }
                                 }}
-                                onMouseLeave={() => {
-                                    // Hide dropdown when leaving it
-                                    if (window.innerWidth > 768) {
-                                        setShowProfileMenu(false);
-                                    }
-                                }}
-                                style={{ 
-                                    position: 'absolute', 
-                                    top: '100%', 
-                                    right: 0, 
-                                    zIndex: 1050,
-                                    display: 'block',
-                                    opacity: 1,
-                                    visibility: 'visible',
-                                    minWidth: '160px',
-                                    backgroundColor: '#21395D',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                                    backdropFilter: 'blur(10px)'
-                                }}
+                                style={{ zIndex: 1050 }}
                             >
                                 <Link 
                                     className="dropdown-item profile-dropdown-item" 
@@ -294,7 +306,7 @@ const Navbar = () => {
                 </button>
 
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul className="navbar-nav  pt-2 gap-4 mx-3 mb-3 mb-lg-0">
+                    <ul className="navbar-nav gap-4 mx-3 mb-3 mb-lg-0">
                         <li className="nav-item">
                             <Link className="nav-link" to="/">{t('nav.home')}</Link>
                         </li>
@@ -326,7 +338,7 @@ const Navbar = () => {
                             <div className='register-btn-wrapper w-100 w-lg-auto'>
                                 <Link className='btn register-btn-nav w-100 w-lg-auto' to='login-sp'>
                                     <img src={PersonLogo} alt=""/>
-                                   <span className='pt-2'>
+                                   <span>
 
                                    {t('nav.registerAsServiceProvider')}
                                    </span>
@@ -335,7 +347,53 @@ const Navbar = () => {
                             </div>
                         )}
                         
-                        <div className='nav-icons-wrapper d-flex align-items-center gap-2 justify-content-center'>
+                        <div className='nav-icons-wrapper d-flex align-items-center gap-2 justify-content-center w-100'>
+                            {/* Notifications bell - navigates to role-specific notifications tab */}
+                            {isLoggedIn && (
+                                <button
+                                    type="button"
+                                    aria-label={t('nav.notifications', 'Notifications')}
+                                    className="cart-icon-wrapper position-relative"
+                                    onClick={() => {
+                                        const role = (localStorage.getItem('userRole') || '').toLowerCase();
+                                        const target = role === 'sp' || isServiceProvider ? '/profile-sp?tab=notifications' : '/profile?tab=notifications';
+                                        navigate(target);
+                                    }}
+                                    style={{ 
+                                        textDecoration: 'none',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        width: '32px',
+                                        height: '32px',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        padding: 0,
+                                        marginRight: '6px',
+                                        verticalAlign: 'middle'
+                                    }}
+                                >
+                                    <i className="fas fa-bell" style={{ color: '#ffffff', fontSize: '18px' }}></i>
+                                    <span 
+                                        className="cart-badge p-1 position-absolute badge rounded-pill bg-danger"
+                                        style={{
+                                            fontSize: '10px',
+                                            minWidth: '18px',
+                                            height: '18px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            padding: '2px 6px',
+                                            top: '-6px',
+                                            right: '-6px',
+                                            lineHeight: '1',
+                                            zIndex: '10'
+                                        }}
+                                    >
+                                        {notificationCount || 0}
+                                    </span>
+                                </button>
+                            )}
                             {!isServiceProvider && isLoggedIn && (
                                 <Link 
                                     to="/payment" 

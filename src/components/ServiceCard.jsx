@@ -523,11 +523,11 @@ const ServiceCard = ({
         </div>
       <div className="service-card-content-bottom">
       <button 
-                         className={`filter-tag  pe-4  pt-3 ${selectedFilter === 'all' ? 'active' : ''}`}
+                         className={`filter-tag  pe-4  ${selectedFilter === 'all' ? 'active' : ''}`}
                          onClick={() => handleFilterClick('all')}
                          style={{display: 'flex',alignItems: 'center',justifyContent: 'center'}}
                      >
-                         <div className="status-dot all"></div>
+                         {/* <div className="status-dot all"></div> */}
                          {t('serviceCard.buttons.allProjects')}
                      </button>
       <button 
@@ -536,7 +536,7 @@ const ServiceCard = ({
                         style={{padding:'9px 26px'}}
                      >
                          <div className="status-dot open"></div>
-                         <span style={{paddingTop: '5px'}}>
+                         <span>
                          {t('projectPriceRequest.status.open', 'مفتوح')}
                          </span>
                        
@@ -547,7 +547,7 @@ const ServiceCard = ({
                          style={{padding:'11px 26px'}}
                      >
                          <div className="status-dot in-progress"></div>
-                         <span  style={{paddingTop: '5px'}}>
+                         <span>
                          {t('projectPriceRequest.status.inProgress', 'في طور الإنجاز')}
                          </span>
                       
@@ -644,7 +644,7 @@ const ServiceCard = ({
                              className={`filter-tag ${project.status === 'open' ? 'active' : ''}`}
                              style={{padding:'11px 30px'}}
                          >
-                             <div className={`status-dot ${project.status}`}></div>
+                             <div className={`status-dot ${project.status === 'inProgress' ? 'in-progress' : project.status}`}></div>
                              <span className="pt-1">
                              {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') : 
                               project.status === 'inProgress' ? t('projectPriceRequest.status.inProgress', 'في طور الإنجاز') : 
