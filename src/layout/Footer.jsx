@@ -90,7 +90,7 @@ const Footer = () => {
                         </a>
                     </div>
                     <div>
-                        <p className='text-white'>
+                        <p className='text-white m-0'>
                             {t('footer.allRightsReserved')}
                         </p>
                     </div>

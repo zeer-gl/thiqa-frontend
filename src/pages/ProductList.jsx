@@ -45,21 +45,21 @@ const ProductList = () => {
       };
 
     // Don't render until translations are ready
-    if (!ready) {
-        return (
-            <div className="page-container">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-12 text-center">
-                            <h1 className="fw-bold">
-                                {i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
-                            </h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // if (!ready) {
+    //     return (
+    //         <div className="page-container">
+    //             <div className="container">
+    //                 <div className="row">
+    //                     <div className="col-12 text-center">
+    //                         <h1 className="fw-bold">
+    //                             {i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
+    //                         </h1>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="page-container">
@@ -70,7 +70,7 @@ const ProductList = () => {
                         <p className="lead">{t('pages.products.description')}</p>
 
                         <div className="row mt-4">
-                            {loading && [1,2,3,4].map(s => (
+                            {/* {loading && [1,2,3,4].map(s => (
                                 <div key={`s-${s}`} className="col-md-3 mb-3">
                                     <div className="card">
                                         <div className="card-body">
@@ -84,7 +84,7 @@ const ProductList = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            ))} */}
                             {!loading && error && (
                                 <div className="col-12">
                                     <div className="alert alert-danger">{error}</div>
@@ -110,23 +110,27 @@ const ProductList = () => {
      
     ))
   ) : (
-    [1,2,3,4].map(item => (
-      <div key={`e-${item}`} className="col-lg-4 col-md-6 col-sm-12 mb-3">
-        <div className="card h-100">
-          <div className="card-body">
-            <h5 className="card-title fw-bold">
-                {ready ? t('common.product') : (i18n.language === 'ar' ? 'منتج' : 'Product')} {item}
-            </h5>
-            <p className="card-text">
-                {ready ? t('common.productDescription') : (i18n.language === 'ar' ? 'وصف المنتج هنا.' : 'Product description here.')}
-            </p>
-            <button className="btn btn-primary d-flex align-items-center justify-content-center">
-                {ready ? t('common.viewDetails') : (i18n.language === 'ar' ? 'عرض التفاصيل' : 'View Details')}
-            </button>
-          </div>
-        </div>
-      </div>
-    ))
+    <div className="col-12 text-center py-5">
+      <h5>{t('No products available in this category')}</h5>
+    </div>
+
+    // [1,2,3,4].map(item => (
+    //   <div key={`e-${item}`} className="col-lg-4 col-md-6 col-sm-12 mb-3">
+    //     <div className="card h-100">
+    //       <div className="card-body">
+    //         <h5 className="card-title fw-bold">
+    //             {ready ? t('common.product') : (i18n.language === 'ar' ? 'منتج' : 'Product')} {item}
+    //         </h5>
+    //         <p className="card-text">
+    //             {ready ? t('common.productDescription') : (i18n.language === 'ar' ? 'وصف المنتج هنا.' : 'Product description here.')}
+    //         </p>
+    //         <button className="btn btn-primary d-flex align-items-center justify-content-center">
+    //             {ready ? t('common.viewDetails') : (i18n.language === 'ar' ? 'عرض التفاصيل' : 'View Details')}
+    //         </button>
+    //       </div>
+    //     </div>
+    //   </div>
+    // ))
   ))}
   
 </div>
