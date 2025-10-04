@@ -21,9 +21,9 @@ const AuthWrapper = ({ children }) => {
                 setIsAuthenticated(authenticated);
                 
                 // If not authenticated, show alert but don't redirect
-                if (!authenticated) {
-                    showAlertFunction(t('auth.registerFirst', 'Please register first to access this feature'), 'warning');
-                }
+                // if (!authenticated) {
+                //     showAlertFunction(t('auth.registerFirst', 'Please register first to access this feature'), 'warning');
+                // }
             } catch (error) {
                 console.error('Error checking authentication:', error);
                 setIsAuthenticated(false);
@@ -60,11 +60,11 @@ const AuthWrapper = ({ children }) => {
     return (
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
             <div className="text-center">
-                <div className="alert alert-warning" role="alert">
+                <div className="" role="alert">
                     <h4 className="alert-heading">Access Restricted</h4>
-                    <p>Please register first to access this feature.</p>
-                    <hr />
-                    <p className="mb-0">You need to be logged in to view this content.</p>
+                    <p className='mt-2'>Please Sign Up / Sign In first to access this feature.</p>
+                    {/* <hr /> */}
+                    {/* <p className="mb-0">You need to be logged in to view this content.</p> */}
                 </div>
             </div>
         </div>

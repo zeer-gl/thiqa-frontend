@@ -512,7 +512,7 @@ function Login() {
                                                     onChange={(e) => handleInputChange('password', e.target.value)}
                                                 />
                                                 <div 
-                                                    className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'start-0 ps-3' : 'end-0 pe-3'}`}
+                                                    className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'start-0 ps-5' : 'end-0 pe-3'}`}
                                                     style={{ cursor: 'pointer' }}
                                                     onClick={togglePasswordVisibility}
                                                 >
@@ -534,7 +534,7 @@ function Login() {
                                         <div>
                                                 <CustomCheckbox 
                                                     label={t('auth.login.rememberMe')} 
-                                                    className="pt-2"
+                                                    // className="pt-2"
                                                     checked={rememberMe}
                                                     onChange={(checked) => handleInputChange('rememberMe', checked)}
                                                 />
@@ -581,7 +581,7 @@ function Login() {
                                                 onClick={handleGoogleLogin}
                                                 disabled={socialSubmitting}
                                             >
-                                                <span className="pt-2">
+                                                <span className="">
                                                 {t("auth.signup.google")}
                                                 </span>
                                               
@@ -593,7 +593,7 @@ function Login() {
                                                 onClick={handleAppleLogin}
                                                 disabled={socialSubmitting}
                                             >
-                                                <span className="pt-2">
+                                                <span className="">
 
                                                 {t("auth.signup.apple")}
                                                 </span>

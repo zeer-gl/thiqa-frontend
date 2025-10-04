@@ -647,17 +647,17 @@ function LoginSP() {
                                     <div className='text-center mt-4'>
                                         <div className='mt-3'>
                                             <Link to="/signup-sp" className='btn seeker-auth-btn text-decoration-none d-flex align-items-center justify-content-center'>
-                                                {t('auth.loginsp.registerAsSeeker', 'Register as Service Provider')}
+                                            <p className='m-0 mt-2'>{t('auth.loginsp.registerAsSeeker', 'Register as Service Provider')}</p>
                                             </Link>
                                         </div>
                                         
                                         {/* Cross-navigation to Customer Login */}
                                      
                                         <div className='d-flex align-items-center gap-2 justify-content-center mt-4'>
-                                            <a href="#" className='text-decoration-none pt-2 fw-semibold'>
+                                            <a href="#" className='text-decoration-none  fw-semibold'>
                                                 {t('auth.loginsp.terms', 'Terms of Service')}
                                             </a>
-                                            <p>{t('auth.loginsp.and', 'and')}</p>
+                                            <p className='m-0'>{t('auth.loginsp.and', 'and')}</p>
                                             <a href="#" className='text-decoration-none fw-semibold'>
                                                 {t('auth.loginsp.privacy', 'Privacy Policy')}
                                             </a>

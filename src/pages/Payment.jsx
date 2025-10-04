@@ -213,9 +213,9 @@ const Payment = () => {
                                                                         className="quantity-btn minus-btn me-2 d-flex align-items-center justify-content-center"
                                                                         onClick={() => handleQuantityChange(item._id, -1)}
                                                                     >
-                                                                        <span className="minus-icon pt-2">−</span>
+                                                                        <span className="minus-icon">−</span>
                                                                     </button>
-                                                                    <div className="quantity-display pt-2">
+                                                                    <div className="quantity-display">
                                                                         {(item.quantity || 1).toString().padStart(2, '0')}
                                                                     </div>
                                                                     <button 
@@ -223,7 +223,7 @@ const Payment = () => {
                                                                         onClick={() => handleQuantityChange(item._id, 1)}
                                                                         disabled={item.quantity >= (item.stockQuantity || 99)}
                                                                     >
-                                                                        <span className="plus-icon pt-2">+</span>
+                                                                        <span className="plus-icon ">+</span>
                                                                     </button>
                                                                 </div>
                                                                 </div>

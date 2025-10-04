@@ -531,7 +531,7 @@ const ProductDetail = () => {
     className={`heart-icon ${isProductLiked ? 'liked' : ''}`}
     style={{ color: isProductLiked ? 'red' : 'inherit' }} // ✅ only heart turns red
   />
-  <span className="pt-2">
+  <span className="">
   {isProductLiked
             ? t('Favourite')
             : t('Unfavourite')}
@@ -650,7 +650,7 @@ const ProductDetail = () => {
                                         disabled={products?.stockQuantity === 0}
                                     >
                                         <img src={CartIcon} alt=""/>
-                                        <span className="pt-2">
+                                        <span className="">
                                         {products?.stockQuantity === 0 ? t('pages.detail-page.section3.evaluationForm.outOfStock') : t('pages.detail-page.section1.addToCart')}
                                         </span>
                                       

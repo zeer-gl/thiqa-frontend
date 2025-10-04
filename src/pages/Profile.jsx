@@ -1986,7 +1986,7 @@ const Profile = () => {
             />
           )}
                 </div>
-                <span className="sidebar-text pt-2">{item.text}</span>
+                <span className="sidebar-text">{item.text}</span>
               </div>
     );
   })}
@@ -2265,7 +2265,7 @@ const Profile = () => {
                         disabled={loadingNotifications || loadingCount}
                       >
                         <i className="fas fa-sync-alt"></i>
-                        <span className="pt-2">
+                        <span className="">
                         {t('profile.notifications.refresh')}
                         </span>
                       
@@ -2413,7 +2413,8 @@ const Profile = () => {
                     <h5 className="text-muted">{t('profile.orders.noOrders')}</h5>
                     <p className="text-muted">{t('profile.orders.noOrdersDescription')}</p>
                     <button 
-                      className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
+                      className="btn  mt-3 d-flex align-items-center justify-content-center"
+                      style={{backgroundColor: '#21395D',color: 'white' ,width: '100%'}}
                       onClick={() => navigate('/products')}
                     >
                       {t('profile.orders.startShopping')}
@@ -2506,8 +2507,9 @@ const Profile = () => {
                     <h5 className="text-muted">{t('profile.favorites.noFavorites')}</h5>
                     <p className="text-muted">{t('profile.favorites.noFavoritesDescription')}</p>
                     <button 
-                      className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
+                      className="btn  mt-3 d-flex align-items-center justify-content-center"
                       onClick={() => navigate('/products')}
+                      style={{backgroundColor: '#21395D',color: 'white' ,width: '100%'}}
                     >
                       {t('profile.favorites.browseProducts')}
                     </button>
@@ -2655,8 +2657,9 @@ const Profile = () => {
                     <h5 className="text-muted">{likedServicesTranslations.noLikedServices}</h5>
                     <p className="text-muted">{likedServicesTranslations.noLikedServicesDescription}</p>
                     <button 
-                      className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
+                      className="btn  mt-3 d-flex align-items-center justify-content-center"
                       onClick={() => navigate('/service-list')}
+                      style={{backgroundColor: '#21395D',color: 'white' ,width: '100%'}}
                     >
                       {likedServicesTranslations.browseServices}
                     </button>

@@ -58,7 +58,7 @@ const Pagination = ({
                         aria-label={t('pagination.previous')}
                     >
                         <i className={`fas fa-chevron-${isRTL ? 'right' : 'left'}`}></i>
-                        {!showArrows && <span className="btn-text pt-2">{t('pagination.previous')}</span>}
+                        {!showArrows && <span className="btn-text d-none d-md-block">{t('pagination.previous')}</span>}
                     </button>
                 )}
 
@@ -90,7 +90,7 @@ const Pagination = ({
                         disabled={currentPage === totalPages}
                         aria-label={t('pagination.next')}
                     >
-                        {!showArrows && <span className="btn-text pt-1">{t('pagination.next')}</span>}
+                        {!showArrows && <span className="btn-text d-none d-md-block">{t('pagination.next')}</span>}
                         <i className={`fas fa-chevron-${isRTL ? 'left' : 'right'}`}></i>
                     </button>
                 )}

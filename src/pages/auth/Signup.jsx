@@ -821,7 +821,7 @@ function Signup() {
                     <div className="form-group mb-3">
                       <input
                         type="email"
-                        className={`form-control  pt-3 ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                        className={`form-control   ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                         id="fname"
                         placeholder={t("auth.signupsp.Email", "Email")}
                         value={email}
@@ -843,7 +843,7 @@ function Signup() {
                       <div className="position-relative">
                         <input
                           type={showPassword ? "text" : "password"}
-                          className={`form-control  pt-3 ${showPassword ? "password-field" : ""} ${formSubmitted && !password ? 'is-invalid' : ''}`}
+                          className={`form-control   ${showPassword ? "password-field" : ""} ${formSubmitted && !password ? 'is-invalid' : ''}`}
                           id="password"
                           placeholder={t("auth.signup.password")}
                           value={password}
@@ -869,7 +869,7 @@ function Signup() {
                       <div className="position-relative">
                         <input
                           type={showConfirmPassword ? "text" : "password"}
-                          className={`form-control pt-3 ${showConfirmPassword ? "password-field" : ""} ${formSubmitted && (!confirmPassword || password !== confirmPassword) ? 'is-invalid' : ''}`}
+                          className={`form-control ${showConfirmPassword ? "password-field" : ""} ${formSubmitted && (!confirmPassword || password !== confirmPassword) ? 'is-invalid' : ''}`}
                           id="confirmpassword"
                           placeholder={t("auth.signup.confirmPassword")}
                           value={confirmPassword}
