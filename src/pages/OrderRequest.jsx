@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useContext, useState ,useEffect} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -14,9 +14,13 @@ import { AlertContext } from '../context/AlertContext.jsx';
 const OrderRequest = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { providerId } = useParams();
+    const location = useLocation();
     const { showAlert } = useContext(AlertContext);
     const [projectTypes, setProjectTypes] = useState([]);
     const [loadingTypes, setLoadingTypes] = useState(true);
+    const [professionalData, setProfessionalData] = useState(null);
+    const [loadingProfessional, setLoadingProfessional] = useState(false);
     const [formValues, setFormValues] = useState({
         budget: '',
         price: ''
@@ -60,6 +64,41 @@ const OrderRequest = () => {
         } catch (error) {
             console.error('Error getting first specialization:', error);
             return '';
+        }
+    };
+
+    // Fetch professional data by ID from URL parameters
+    const fetchProfessionalById = async (professionalId) => {
+        if (!professionalId) return null;
+        
+        try {
+            setLoadingProfessional(true);
+            const response = await fetch(`${BaseUrl}/professional/get-professsional/${professionalId}`);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Error fetching professional:', errorData);
+                return null;
+            }
+            
+            const data = await response.json();
+            const professional = data?.professional || data;
+            
+            // Save professional data to localStorage for consistency
+            // Only update if we have valid professional data
+            if (professional && professional._id) {
+                localStorage.setItem('professionalData', JSON.stringify(professional));
+                if (professional.specializations && professional.specializations.length > 0) {
+                    localStorage.setItem('firstSpecialization', JSON.stringify(professional.specializations[0]));
+                }
+            }
+            
+            return professional;
+        } catch (error) {
+            console.error('Error fetching professional data:', error);
+            return null;
+        } finally {
+            setLoadingProfessional(false);
         }
     };
 
@@ -112,6 +151,29 @@ const OrderRequest = () => {
 
         fetchProjectTypes();
     }, []);
+
+    // Fetch professional data if providerId exists in URL or query params
+    useEffect(() => {
+        const fetchProfessionalData = async () => {
+            // Check for providerId in URL params first, then query params as fallback
+            const professionalId = providerId || new URLSearchParams(location.search).get('professionalId');
+            
+            if (professionalId) {
+                const professional = await fetchProfessionalById(professionalId);
+                setProfessionalData(professional);
+            } else {
+                // Only clear professional data state, don't clear localStorage
+                // localStorage should be preserved for other components
+                setProfessionalData(null);
+                
+                // Don't clear localStorage data when there's no provider ID
+                // This allows the form to use localStorage data for auto-fill
+                console.log('No provider ID - preserving localStorage data for auto-fill');
+            }
+        };
+
+        fetchProfessionalData();
+    }, [providerId, location.search]);
 
     // Form validation schema (aligned with backend keys)
     const validationSchema = Yup.object().shape({
@@ -167,19 +229,34 @@ const OrderRequest = () => {
         }
     };
 
+    // Get the current provider ID from URL or query params
+    const getCurrentProviderId = () => {
+        return providerId || new URLSearchParams(location.search).get('professionalId');
+    };
+
     // Initial form values (aligned with backend keys)
     const initialValues = {
-        title: getServiceName(),
-        typeOfProject: getFirstSpecialization(),
+        title: getCurrentProviderId() && professionalData ? professionalData.name : (getCurrentProviderId() ? '' : ''),
+        typeOfProject: getCurrentProviderId() && professionalData?.specializations?.[0]?._id ? professionalData.specializations[0]._id : (getCurrentProviderId() ? '' : ''),
         projectDesign: null,
         budget: '',
         dateOfRequest: '',
         deadline: '',
         description: '',
         address: '',
-        projectName: getProfessionalData()?.name || '',
+        projectName: getCurrentProviderId() && professionalData ? professionalData.name : (getCurrentProviderId() ? '' : ''),
         price: ''
     };
+
+    // Debug logging
+    console.log('OrderRequest Debug:', {
+        providerId: getCurrentProviderId(),
+        professionalData: professionalData,
+        localStorageData: getProfessionalData(),
+        serviceName: getServiceName(),
+        firstSpecialization: getFirstSpecialization(),
+        initialValues: initialValues
+    });
 
     // Form fields configuration (order and names per backend)
     const formFields = [
@@ -240,6 +317,9 @@ const OrderRequest = () => {
                 throw new Error(t('common.userNotFound') || 'User not found');
             }
 
+            // Get professional ID from URL if exists
+            const professionalId = getCurrentProviderId();
+            
             // Build payload (supports optional file)
             const hasFile = values?.projectDesign instanceof File;
             let res;
@@ -255,6 +335,8 @@ const OrderRequest = () => {
                 if (values.typeOfProject) formData.append('typeOfProject', values.typeOfProject);
                 if (values.projectName) formData.append('projectName', values.projectName);
                 if (values.price) formData.append('price', String(values.price));
+                // Add professional ID if exists (for specific professional targeting)
+                if (professionalId) formData.append('professionalId', professionalId);
                 formData.append('projectDesign', values.projectDesign);
 
                 res = await fetch(`${BaseUrl}/customer/create-demand-quote`, {
@@ -277,6 +359,11 @@ const OrderRequest = () => {
                     projectName: values.projectName,
                     price: Number(values.price)
                 };
+                
+                // Add professional ID if exists (for specific professional targeting)
+                if (professionalId) {
+                    payload.professionalId = professionalId;
+                }
                 res = await fetch(`${BaseUrl}/customer/create-demand-quote`, {
                     method: 'POST',
                     headers: {
@@ -322,14 +409,23 @@ const OrderRequest = () => {
                              
 
                                 {/* RequestForm Component */}
-                                <RequestForm
-                                    initialValues={initialValues}
-                                    validationSchema={validationSchema}
-                                    onSubmit={handleSubmit}
-                                    formFields={formFields}
-                                    submitButtonText={t("order-request.send-request")}
-                                    showFileUpload={true}
-                                            />
+                                {loadingProfessional ? (
+                                    <div className="text-center py-4">
+                                        <div className="spinner-border text-primary" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p className="mt-2">{t('common.loading', 'Loading professional data...')}</p>
+                                    </div>
+                                ) : (
+                                    <RequestForm
+                                        initialValues={initialValues}
+                                        validationSchema={validationSchema}
+                                        onSubmit={handleSubmit}
+                                        formFields={formFields}
+                                        submitButtonText={t("order-request.send-request")}
+                                        showFileUpload={true}
+                                    />
+                                )}
 
                                 {/* Total Section */}
                                 <TotalSection amount={calculateTotal()} currency="kwd" />
