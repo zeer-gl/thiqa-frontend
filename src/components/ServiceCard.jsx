@@ -641,11 +641,11 @@ const ServiceCard = ({
                         </div>
                         <div className="content-container">
                         <button 
-                             className={`filter-tag ${project.status === 'open' ? 'active' : ''}`}
+                             className={`filter-tag ${project.status === 'open' ? 'active' :''}`}
                              style={{padding:'11px 30px'}}
                          >
                              <div className={`status-dot ${project.status === 'inProgress' ? 'in-progress' : project.status}`}></div>
-                             <span className="pt-1">
+                             <span>
                              {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') : 
                               project.status === 'inProgress' ? t('projectPriceRequest.status.inProgress', 'في طور الإنجاز') : 
                               project.status}
@@ -665,31 +665,32 @@ const ServiceCard = ({
           {expandedCards[project.id] && (
          
             <>
+            <p className="card-detail-heading mb-0 mt-4 mb-3">{t('projectDetails.title', 'Project Details')}</p>
               <div className="card-detail">
-                <p className="card-detail-heading">{t('projectDetails.title', 'Project Details')}</p>
-                <p className="card-detail-subheading">
+            
+                <p className="card-detail-subheading mb-0">
                   <b>{t('projectDetails.description', 'Description')}:</b> {project.description}
                 </p>
-                <p className="card-detail-subheading">
+                <p className="card-detail-subheading mb-0">
                   <b>{t('projectDetails.address', 'Address')}:</b> {project.address}
                 </p>
-                <p className="card-detail-subheading">
+                <p className="card-detail-subheading mb-0">
                   <b>{t('projectDetails.projectType', 'Project Type')}:</b> {project.typeOfProject}
                 </p>
-                <p className="card-detail-subheading">
+                <p className="card-detail-subheading mb-0">
                   <b>{t('projectDetails.budget', 'Budget')}:</b> {project.price} KWD
                 </p>
                 {project.isAccepted && (
-                  <p className="card-detail-subheading text-success">
+                  <p className="card-detail-subheading text-success mb-0">
                     <b>{t('projectDetails.status', 'Status')}:</b> {t('projectDetails.acceptedBy', 'Accepted by')} {project?.clientName}
                   </p>
                 )}
               </div>
-              <div className="button-container">
+              <div className="button-container mt-3">
                 {project.status === 'open' ? (
                   <>
                     {/* Submit Proposal button is hidden when status is open */}
-                    <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
+                    <button className="btn-secondary p-2" onClick={() => handleContactCustomer(project)}>
                       {t('serviceCard.buttons.priceQuote')}
                     </button>
                   
@@ -697,7 +698,7 @@ const ServiceCard = ({
                   </>
                 ) : project.status === 'inProgress' ? (
                   <>
-                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
+                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%', padding:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
                     {/* Price Quote button is hidden when status is inProgress */}
@@ -715,7 +716,7 @@ const ServiceCard = ({
                 )}
                 {
                     project?.status==='open' && project?.proposals[0]?.status==='accepted' && (
-                        <button className="p-2 pt-3" style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"12px"}} onClick={() => handleStartProject(project)}>
+                        <button className="p-2" style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"12px"}} onClick={() => handleStartProject(project)}>
                             {t('serviceCard.buttons.startProject', 'Start Project')}
                         </button>
                     )
@@ -771,3 +772,4 @@ const ServiceCard = ({
 };
 
 export default ServiceCard;
+ 

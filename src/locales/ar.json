@@ -53,6 +53,8 @@
         "currentServiceImage": "صورة الخدمة الحالية",
         "replaceImage": "اختر صورة جديدة لاستبدال الصورة الحالية، أو اتركها فارغة للاحتفاظ بالصورة الحالية.",
         "selectImage": "يجب ألا يزيد حجم الصورة المعروضة عن 2 ميجابايت",
+        "chooseFile": "اختر ملف",
+        "noFileChosen": "لم يتم اختيار ملف",
         "loadingServices": "جاري تحميل الخدمات",
         "startAdding": "ابدأ بإضافة خدمتك الأولى",
         "delivery": "التسليم",
@@ -108,6 +110,12 @@
       "customerSection": {
         "subtitle": "مراجعات العملاء __",
         "title": "ماذا يقول عملاؤنا",
+        "showingReviews": "عرض {{count}} مراجعة عميل",
+        "loadingReviews": "جاري تحميل المراجعات...",
+        "slideAria": "الشريحة {{num}}",
+        "customerFallback": "عميل",
+        "defaultReview": "قيّم العميل هذا المنتج {{rating}}/5 بناءً على الكفاءة والسعر والتسليم.",
+        "productId": "رقم المنتج",
         "loadingReviews": "جاري تحميل المراجعات",
         "noReviews": "لا توجد مراجعات متاحة",
         "noReviewsDescription": "كن أول من يقيّم منتجاتنا",
@@ -1109,6 +1117,7 @@
       "content": "محتوى الإشعارات سيظهر هنا",
       "totalNotifications": "إشعارات",
       "markAllAsRead": "اقرأ الكل",
+      "read": "مقروء",
       "allMarkedAsRead": "تم تعيين جميع الإشعارات كمقروءة",
       "refresh": "تحديث",
       "unreadNotifications": "إشعارات غير مقروءة",
@@ -1116,6 +1125,7 @@
       "noNotificationsDescription": "ليس لديك أي إشعارات في الوقت الحالي.",
       "showing": "عرض",
       "of": "من",
+      "newDemandQuoteFor": "طلب تسعير جديد لـ {{name}}",
       "categories": {
         "order_update": "تحديث الطلب",
         "payment": "الدفع",
@@ -1154,6 +1164,8 @@
       "emailValue": "+91 95744 68870",
       "phoneNumberLabel": "رقم الهاتف",
       "phoneNumberValue": "احمد محمد",
+      "bio": "نبذة",
+      "experienceYears": "الخبرة (بالسنوات)",
       "currentMembership": "العضوية الحالية",
       "freeMembership": "مجاني",
       "upgradeButton": "ترقية",
@@ -1224,6 +1236,8 @@
       "advancedAnalytics": "لوحة تحليلات متقدمة",
       "customBranding": "خيارات علامة تجارية مخصصة",
       "dedicatedManager": "مدير حساب مخصص",
+      "allFeaturesIncluded": "جميع المزايا متضمنة",
+      "basicFeaturesForProfessionals": "ميزات أساسية للمحترفين",
       "selectPackage": "اختر الباقة",
       "noPaymentMethods": "لا توجد طرق دفع متاحة لهذه الباقة",
       "paymentMethodsFailed": "فشل في تحميل طرق الدفع: "
@@ -1262,6 +1276,7 @@
     "kwd": "د.ك",
     "rememberMe": "تذكرني",
     "loading": "جاري التحميل",
+    "kwd": "د.ك",
     "userNotFound": "المستخدم غير موجود",
     "back": "رجوع",
     "unableToLoadProducts": "غير قادر على تحميل المنتجات",
@@ -1616,6 +1631,19 @@
     "mobileTooShort": "رقم الهاتف المحمول قصير جداً. يرجى تقديم رقم هاتف صحيح."
   },
   "pricingPackages": {
+    "planNames": {
+      "basic": "أساسية",
+      "golden": "ذهبية",
+      "platinum": "بلاتينية",
+      "premium": "مميزة",
+      "enterprise": "المؤسسات"
+    },
+    "period": {
+      "monthly": "شهري",
+      "quarterly": "ربع سنوي",
+      "semiAnnual": "نصف سنوي",
+      "annual": "سنوي"
+    },
     "loginRequired": "يرجى تسجيل الدخول لعرض خطط الاشتراك",
     "fetchFailed": "فشل في جلب خطط الاشتراك",
     "loadFailed": "فشل في تحميل خطط الاشتراك",

@@ -23,7 +23,7 @@ const Footer = () => {
                     <div className="container">
                         <nav className="navbar custom-navbar">
                             <div
-                                className="navbar-nav pt-2 d-flex justify-content-between flex-row flex-grow-1 gap-4 nav-container flex-wrap">
+                                className="navbar-nav d-flex justify-content-between flex-row flex-grow-1 gap-4 nav-container flex-wrap mb-0">
                                 <Link 
                                     className={`nav-link px-4 py-2 nav-item ${location.pathname === '/' ? 'active' : ''}`} 
                                     to="/"

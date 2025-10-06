@@ -53,6 +53,8 @@
         "currentServiceImage": "Current service image",
         "replaceImage": "Select a new image to replace the current one, or leave empty to keep the current image.",
         "selectImage": "Display image size should not be more than 2 MB",
+        "chooseFile": "Choose File",
+        "noFileChosen": "No file chosen",
         "loadingServices": "Loading services",
         "startAdding": "Start by adding your first service",
         "delivery": "Delivery",
@@ -108,7 +110,12 @@
       "customerSection": {
         "subtitle": "Customer reviews __",
         "title": "What our customers say",
-        "loadingReviews": "Loading reviews",
+        "showingReviews": "Showing {{count}} customer review{{count, plural, one {} other {s}}}",
+        "loadingReviews": "Loading reviews...",
+        "slideAria": "Slide {{num}}",
+        "customerFallback": "Customer",
+        "defaultReview": "Customer rated this product {{rating}}/5 stars based on efficiency, price, and delivery.",
+        "productId": "Product ID",
         "noReviews": "No reviews available",
         "noReviewsDescription": "Be the first to review our products",
         "testimonial": {
@@ -1127,6 +1134,7 @@
       "content": "Notifications content will go here",
       "totalNotifications": "notifications",
       "markAllAsRead": "Read All",
+      "read": "Read",
       "allMarkedAsRead": "All notifications marked as read",
       "refresh": "Refresh",
       "unreadNotifications": "Unread Notifications",
@@ -1140,6 +1148,7 @@
       "defaultTitle": "Notification",
       "noMessage": "No message available",
       "noDate": "No date available",
+      "newDemandQuoteFor": "New demand quote for {{name}}",
       "categories": {
         "order_update": "Order Update",
         "payment": "Payment",
@@ -1178,6 +1187,8 @@
       "emailValue": "+91 95744 68870",
       "phoneNumberLabel": "Phone Number",
       "phoneNumberValue": "Ahmed Mohamed",
+      "bio": "Bio",
+      "experienceYears": "Experience (Years)",
       "currentMembership": "Current Membership",
       "freeMembership": "Free",
       "upgradeButton": "Upgrade",
@@ -1246,6 +1257,8 @@
       "advancedAnalytics": "Advanced Analytics Dashboard",
       "customBranding": "Custom Branding Options",
       "dedicatedManager": "Dedicated Account Manager",
+    "allFeaturesIncluded": "All Features included",
+    "basicFeaturesForProfessionals": "Basic features for professionals",
       "selectPackage": "Select Plan",
       "noPaymentMethods": "No payment methods available for this plan",
       "paymentMethodsFailed": "Failed to load payment methods: "
@@ -1255,6 +1268,7 @@
   "common": {
     "sending": "Sending",
     "submitting": "Submitting",
+    "kwd": "KWD",
     "saving": "Saving",
     "changing": "Changing...",
     "saveChanges": "Save Changes",
@@ -1315,6 +1329,21 @@
     "requestTimeout": "Request timeout. Please try again with a smaller file.",
     "networkError": "Network error. Please check your connection and try again.",
     "requestFailed": "Request failed. Please try again."
+  },
+  "pricingPackages": {
+    "planNames": {
+      "basic": "Basic",
+      "golden": "Golden",
+      "platinum": "Platinum",
+      "premium": "Premium",
+      "enterprise": "Enterprise"
+    },
+    "period": {
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "semiAnnual": "Semi-Annual",
+      "annual": "Annual"
+    }
   },
   "requestForm": {
     "fileTypeError": "Please upload only image files (JPEG, PNG, GIF) or PDF files.",

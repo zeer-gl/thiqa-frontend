@@ -521,7 +521,7 @@ function Login() {
                                                     onChange={(e) => handleInputChange('password', e.target.value)}
                                                 />
                                                 <div 
-                                                    className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'start-0 ps-5' : 'end-0 pe-3'}`}
+                                                    className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'start-0 ps-3' : 'end-0 pe-3'}`}
                                                     style={{ cursor: 'pointer' }}
                                                     onClick={togglePasswordVisibility}
                                                 >
@@ -567,9 +567,7 @@ function Login() {
                                             >
                                                 {submitting ? (t('common.sending') || "Logging in...") : (
                                                     <>
-                                                        {t('auth.login.loginButton')} <img src={ArrowRight}
-                                                        className="pt-1"
-                                                        alt=""/>
+                                                        {t('auth.login.loginButton')}
                                                     </>
                                                 )}
                                             </button>

@@ -232,9 +232,10 @@
             }
 
             .decorative-elements {
-                position: relative;
+                position: absolute;
                 height: 200px;
                 margin-top: 2rem;
+                left: 30%;
 
                 .circle {
                     position: absolute;

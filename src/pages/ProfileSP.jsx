@@ -175,6 +175,23 @@ const ProfileSP = () => {
             message = currentLang === 'ar' ? 'تلقيت تقييماً جديداً' : 'You have received a new review';
         }
         
+        // Normalize common backend strings
+        // Title like "New Service Request"
+        if (!title || /new\s+service\s+request/i.test(title)) {
+            title = currentLang === 'ar' ? 'طلب خدمة جديد' : 'New Service Request';
+        }
+
+        // Message like "New demand quote for <Name>"
+        if (message && /new\s+demand\s+quote\s+for\s+/i.test(message)) {
+            try {
+                const nameMatch = message.split(/new\s+demand\s+quote\s+for\s+/i)[1]?.trim();
+                const name = nameMatch || '';
+                message = t('profile.notifications.newDemandQuoteFor', { name });
+            } catch (_) {
+                // fallback to original message
+            }
+        }
+        
         // If no specific translation found, try to translate common keywords
         if (!title && notification.title) {
             const titleLower = notification.title.toLowerCase();
@@ -1213,7 +1230,7 @@ const ProfileSP = () => {
                                     </div>
                                     <div className="row">
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Experience (Years)</label>
+                                            <label className="form-label">{t('profileSP.content.experienceYears')}</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
@@ -1223,7 +1240,7 @@ const ProfileSP = () => {
                                             />
                                         </div>
                                         <div className="col-md-6 mb-3">
-                                            <label className="form-label">Bio</label>
+                                            <label className="form-label">{t('profileSP.content.bio')}</label>
                                             <textarea
                                                 className=" form-control"
                                                 rows="3"
@@ -1284,7 +1301,7 @@ const ProfileSP = () => {
                                         </div>
                                         <div className="col-12 mb-3">
                                             <button
-                                                className="btn  pt-4 w-100 d-flex align-items-center justify-content-center"
+                                                className="btn w-100 d-flex align-items-center justify-content-center"
                                                 onClick={handleEditProfile}
                                                         disabled={loading}
                                                         style={{backgroundColor: '#21395D',color: 'white'}}

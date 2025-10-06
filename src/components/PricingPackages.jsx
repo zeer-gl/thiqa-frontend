@@ -20,6 +20,53 @@ const PricingPackages = () => {
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
 
+    // Helpers to localize API-provided text
+    const translatePlanName = (name) => {
+        if (!name) return '';
+        const key = String(name).trim().toLowerCase();
+        if (key === 'basic' || key.includes('basic')) return t('pricingPackages.planNames.basic', 'Basic');
+        if (key === 'golden' || key === 'gold' || key.includes('gold')) return t('pricingPackages.planNames.golden', 'Golden');
+        if (key === 'platinum' || key.includes('platinum')) return t('pricingPackages.planNames.platinum', 'Platinum');
+        if (key === 'premium' || key.includes('premium')) return t('pricingPackages.planNames.premium', 'Premium');
+        if (key === 'enterprise' || key.includes('enterprise')) return t('pricingPackages.planNames.enterprise', 'Enterprise');
+        return name; // fallback
+    };
+
+    const translatePeriod = (period) => {
+        if (!period) return '';
+        const key = String(period).toLowerCase();
+        switch (key) {
+            case 'monthly':
+                return t('pricingPackages.period.monthly', 'Monthly');
+            case 'quarterly':
+                return t('pricingPackages.period.quarterly', 'Quarterly');
+            case 'semi-annual':
+            case 'semi annual':
+            case 'semiannual':
+                return t('pricingPackages.period.semiAnnual', 'Semi-Annual');
+            case 'annual':
+            case 'yearly':
+                return t('pricingPackages.period.annual', 'Annual');
+            default:
+                return period; // fallback
+        }
+    };
+
+    const translateFeature = (feature) => {
+        if (!feature) return '';
+        const key = String(feature).toLowerCase();
+        // Common features mapping
+        if (key.includes('advanced analytics')) return t('profileSP.pricingPackages.advancedAnalytics');
+        if (key.includes('receive quotation') || key.includes('receive quotations') || key.includes('price offer')) return t('profileSP.pricingPackages.priceOffer');
+        if (key.includes('contact') && key.includes('client')) return t('profileSP.pricingPackages.contactClient');
+        if (key.includes('priority support')) return t('profileSP.pricingPackages.prioritySupport');
+        if (key.includes('custom branding')) return t('profileSP.pricingPackages.customBranding');
+        if (key.includes('dedicated') && key.includes('manager')) return t('profileSP.pricingPackages.dedicatedManager');
+        if (key.includes('all features')) return t('profileSP.pricingPackages.allFeaturesIncluded', 'All Features included');
+        if (key.startsWith('basic features')) return t('profileSP.pricingPackages.basicFeaturesForProfessionals', 'Basic features for professionals');
+        return feature; // fallback
+    };
+
     // Check for active subscription in localStorage
     useEffect(() => {
         const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
@@ -92,11 +139,14 @@ const PricingPackages = () => {
 
                     return {
                         id: plan.id,
-                        title: plan.name,
+                        title: translatePlanName(plan.name),
+                        originalName: plan.name,
                         price: plan.price.toString(),
-                        currency: 'KWD',
-                        period: plan.duration,
-                        features: features,
+                        currency: t('common.kwd', 'KWD'),
+                        period: translatePeriod(plan.duration),
+                        originalPeriod: plan.duration,
+                        features: features.map(translateFeature),
+                        originalFeatures: features,
                         isCurrentPlan: plan.isCurrentPlan,
                         status: plan.status,
                         description: plan.description
@@ -135,7 +185,7 @@ const PricingPackages = () => {
             id: 'safety',
             title: t('profileSP.pricingPackages.safetyPackage'),
             price: '25',
-            currency: 'KWD',
+            currency: t('common.kwd', 'KWD'),
             period: t('profileSP.pricingPackages.monthly'),
             features: [
                 t('profileSP.pricingPackages.priceOffer'),
@@ -146,7 +196,7 @@ const PricingPackages = () => {
             id: 'confidence',
             title: t('profileSP.pricingPackages.confidencePackage'),
             price: '15',
-            currency: 'KWD',
+            currency: t('common.kwd', 'KWD'),
             period: t('profileSP.pricingPackages.monthly'),
             features: [
                 t('profileSP.pricingPackages.priceOffer'),
@@ -157,7 +207,7 @@ const PricingPackages = () => {
             id: 'premium',
             title: t('profileSP.pricingPackages.premiumPackage'),
             price: '50',
-            currency: 'KWD',
+            currency: t('common.kwd', 'KWD'),
             period: t('profileSP.pricingPackages.monthly'),
             features: [
                 t('profileSP.pricingPackages.priceOffer'),
@@ -170,7 +220,7 @@ const PricingPackages = () => {
             id: 'enterprise',
             title: t('profileSP.pricingPackages.enterprisePackage'),
             price: '100',
-            currency: 'KWD',
+            currency: t('common.kwd', 'KWD'),
             period: t('profileSP.pricingPackages.monthly'),
             features: [
                 t('profileSP.pricingPackages.priceOffer'),
@@ -187,6 +237,18 @@ const PricingPackages = () => {
     useEffect(() => {
         fetchSubscriptionPlans();
     }, []);
+
+    // Re-localize already loaded packages when language changes
+    useEffect(() => {
+        if (!packages || packages.length === 0) return;
+        setPackages(prev => prev.map(p => ({
+            ...p,
+            title: p.originalName ? translatePlanName(p.originalName) : p.title,
+            period: p.originalPeriod ? translatePeriod(p.originalPeriod) : p.period,
+            currency: t('common.kwd', 'KWD'),
+            features: Array.isArray(p.originalFeatures) ? p.originalFeatures.map(translateFeature) : p.features
+        })));
+    }, [i18n.language]);
 
     const handlePackageSelect = (packageId) => {
         setSelectedPackage(packageId);
@@ -508,7 +570,7 @@ const PricingPackages = () => {
                     <div className="row justify-content-center g-3">
                         {packages.map((pkg) => {
                             // Check if this is the "Basic" plan and user has active subscription
-                            const isBasicPlan = pkg.title === 'Basic' || pkg.name === 'Basic';
+                            const isBasicPlan = pkg.title === 'Basic' || pkg.originalName === 'Basic';
                             const isSubscribed = hasActiveSubscription && isBasicPlan;
                             
                             return (
@@ -588,3 +650,5 @@ const PricingPackages = () => {
 };
 
 export default PricingPackages;
+
+

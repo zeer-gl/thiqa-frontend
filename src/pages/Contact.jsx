@@ -99,7 +99,7 @@ const Contact = () => {
             {/* Main Content Area */}
             <div className="main-content">
                 <div className="container">
-                    <div className="row">
+                    <div className="row g-4">
                      
                         {/* Left Column - Contact Form */}
                         <div className="col-lg-6">
