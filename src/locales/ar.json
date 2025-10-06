@@ -832,6 +832,7 @@
       "loginFailed": "فشل في تسجيل الدخول",
       "invalidCredentials": "بيانات الدخول غير صحيحة",
       "professionalNotFound": "مقدم الخدمة غير موجود",
+      "appleLoginSuccess": "تم تسجيل الدخول بنجاح عبر آبل!",
       "accountNotVerified": "الحساب غير مفعل",
       "accountBlocked": "الحساب محظور",
       "networkError": "خطأ في الشبكة",

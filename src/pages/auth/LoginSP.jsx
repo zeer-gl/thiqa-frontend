@@ -313,89 +313,18 @@ function LoginSP() {
             const nameFromProvider = result.user.displayName || undefined;
             
             if (!idToken) throw new Error("Apple authentication failed - no ID token");
-        
-            const requestBody = { 
-                idToken, 
-                accessToken,
-                token: 'device_token_here', 
-                role: 'professional',
-                registrationType: 'professional',
-                userType: 'service_provider',
-                providerId: 'apple.com',
-                professionalId: user.uid,
-                email: user.email,
-                name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
-                password: 'apple_signin_' + user.uid,
-                // Try multiple password field variations that backend might expect
-                userPassword: 'apple_signin_' + user.uid,
-                user_password: 'apple_signin_' + user.uid,
-                pwd: 'apple_signin_' + user.uid,
-                pass: 'apple_signin_' + user.uid,
-                // Try nested password structure
-                user: {
-                    password: 'apple_signin_' + user.uid,
-                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
-                    email: user.email
-                },
-                // Try professional object structure
-                professional: {
-                    password: 'apple_signin_' + user.uid,
-                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
-                    email: user.email,
-                    phone: '',
-                    workTitle: '',
-                    specializations: [],
-                    experience: '0',
-                    bio: '',
-                    latitude: '',
-                    longitude: ''
-                },
-                // Try different root-level field names
-                professionalPassword: 'apple_signin_' + user.uid,
-                professional_password: 'apple_signin_' + user.uid,
-                professionalPwd: 'apple_signin_' + user.uid,
-                professionalPass: 'apple_signin_' + user.uid,
-                // Try different field structures
-                credentials: {
-                    password: 'apple_signin_' + user.uid
-                },
-                auth: {
-                    password: 'apple_signin_' + user.uid
-                },
-                profile: {
-                    password: 'apple_signin_' + user.uid
-                },
-                pic: user.photoURL || '',
-                federatedId: user.providerData?.[0]?.uid || user.uid,
-                firstName: nameFromProvider?.split(' ')[0] || user.email?.split('@')[0] || 'Apple',
-                lastName: nameFromProvider?.split(' ').slice(1).join(' ') || 'User',
-                fullName: nameFromProvider || user.email?.split('@')[0] || 'Apple User',
-                photoUrl: user.photoURL || '',
-                emailVerified: user.emailVerified || false,
-                localId: user.uid,
-                rawId: user.providerData?.[0]?.uid || user.uid,
-                appleUserId: user.providerData?.[0]?.uid || user.uid,
-                // Additional fields that might be required by backend
-                username: user.email?.split('@')[0] || 'apple_user',
-                phone: '', // Apple doesn't provide phone number
-                workTitle: '', // Apple doesn't provide work title
-                specializations: [], // Apple doesn't provide specializations
-                experience: '0', // Default experience
-                bio: '', // Apple doesn't provide bio
-                latitude: '', // Apple doesn't provide location
-                longitude: '', // Apple doesn't provide location
-                isActive: true,
-                isVerified: true,
-                loginMethod: 'apple',
-                socialProvider: 'apple.com'
-            };
             
-            console.log('🔍 Apple Sign-In Request Body:', requestBody);
+            console.log('🔍 Apple Sign-In successful, preparing registration request...');
             
-            const res = await fetch(`${BaseUrl}/professional/apple-professional-login`, {
+            // Use the apple-professional-registration endpoint as specified
+            const res = await fetch(`${BaseUrl}/professional/apple-professional-registration`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestBody)
+                body: JSON.stringify({
+                    idToken: idToken,
+                    token: 'device-token-optional',
+                    name: nameFromProvider || user.email?.split('@')[0] || 'Apple Pro'
+                })
             });
             
             if (!res.ok) {
@@ -635,12 +564,20 @@ function LoginSP() {
                                                 <span>
                                                 {t("auth.signup.google")}
                                                 </span>
-                                             
-
                                                 <img src={GoogleIcon} alt="" />
                                             </button>
-                                      
-                                        
+                                            
+                                            <button
+                                                type="button"
+                                                className="btn d-flex align-items-center gap-3 justify-content-between register-socials"
+                                                onClick={handleAppleLogin}
+                                                disabled={socialSubmitting}
+                                            >
+                                                <span>
+                                                {t("auth.signup.apple")}
+                                                </span>
+                                                <img src={AppleIcon} alt="" />
+                                            </button>
                                         </div>
                                     </div>
                                     

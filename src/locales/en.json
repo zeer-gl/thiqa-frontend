@@ -847,6 +847,7 @@
       "loginFailed": "Login failed",
       "invalidCredentials": "Invalid credentials",
       "professionalNotFound": "Professional not found",
+      "appleLoginSuccess": "Apple login successful!",
       "accountNotVerified": "Account not verified",
       "accountBlocked": "Account blocked",
       "networkError": "Network error",
