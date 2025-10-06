@@ -39,6 +39,21 @@ const ServiceCard = ({
     // Subscription state
     const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
     const [subscriptionChecked, setSubscriptionChecked] = useState(false);
+    
+    // Get current professional ID from localStorage
+    const getCurrentProfessionalId = () => {
+        try {
+            const spUserData = localStorage.getItem('spUserData');
+            if (spUserData) {
+                const userData = JSON.parse(spUserData);
+                return userData._id;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error getting professional ID:', error);
+            return null;
+        }
+    };
 
     // Check if user has active subscription/package using localStorage payment status
     const checkUserSubscription = () => {
@@ -114,6 +129,9 @@ const ServiceCard = ({
             console.log('Demand quotes API response:', data);
             
             if (data.data && Array.isArray(data.data)) {
+                // Get current professional ID
+                const currentProfessionalId = getCurrentProfessionalId();
+                
                 // Map API data to component structure
                 const mappedProjects = data.data.map((quote) => ({
                     id: quote._id,
@@ -131,21 +149,32 @@ const ServiceCard = ({
                     isAccepted: quote.isAccepted,
                     acceptedByType: quote.acceptedByType,
                     proposals: quote.proposals || [],
-                    originalData: quote // Keep original data for reference
+                    originalData: quote, // Keep original data for reference
+                    targetedProfessionalId: quote.professionalId // Add targeted professional ID
                 }));
                 
-                setProjects(mappedProjects);
+                // Filter projects based on professional targeting
+                const filteredProjects = mappedProjects.filter(project => {
+                    // If project has a targeted professional ID, only show it to that professional
+                    if (project.targetedProfessionalId) {
+                        return project.targetedProfessionalId === currentProfessionalId;
+                    }
+                    // If no targeted professional ID, show to all professionals (general requests)
+                    return true;
+                });
+                
+                setProjects(filteredProjects);
                 
                 // Handle pagination data
                 if (data.pagination) {
                     setTotalPages(data.pagination.totalPages || 1);
-                    setTotalCount(data.pagination.totalCount || data.data.length);
+                    setTotalCount(filteredProjects.length); // Use filtered count
                     setCurrentPage(data.pagination.currentPage || page);
                     console.log('Pagination data:', data.pagination);
                 } else {
                     // Fallback if no pagination data
                     setTotalPages(1);
-                    setTotalCount(data.data.length);
+                    setTotalCount(filteredProjects.length); // Use filtered count
                     setCurrentPage(1);
                 }
             } else {
@@ -516,7 +545,7 @@ const ServiceCard = ({
             <div className="service-card-header">
                 <div className="service-card-header-left">
                     <p className="service-card-header-left-title">{t('serviceCard.title', 'Project Price requests')}</p>
-                    <p className="service-card-header-left-subtitle">{t('serviceCard.subtitle', 'Application customer project price requests')}</p>
+
                 </div>
              
             </div>
@@ -689,10 +718,12 @@ const ServiceCard = ({
               <div className="button-container mt-3">
                 {project.status === 'open' ? (
                   <>
-                    {/* Submit Proposal button is hidden when status is open */}
-                    <button className="btn-secondary p-2" onClick={() => handleContactCustomer(project)}>
-                      {t('serviceCard.buttons.priceQuote')}
-                    </button>
+                    {/* Only show Request Quote button if no proposals are accepted */}
+                    {!project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
+                      <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
+                        {t('serviceCard.buttons.priceQuote')}
+                      </button>
+                    )}
                   
                  
                   </>
@@ -708,9 +739,12 @@ const ServiceCard = ({
                     <button  className='p-3 pt-4' style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
-                    <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
-                      {t('serviceCard.buttons.priceQuote')}
-                    </button>
+                    {/* Only show Request Quote button if no proposals are accepted */}
+                    {!project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
+                      <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
+                        {t('serviceCard.buttons.priceQuote')}
+                      </button>
+                    )}
                  
                   </>
                 )}
