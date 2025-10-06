@@ -91,7 +91,7 @@ const PaymentSuccessModal = ({ isOpen, onClose }) => {
                 {/* Action Buttons */}
                 <div className="action-buttons">
                     <CustomButton text={t('payment-success-modal.download-invoice')} className="download-btn" />
-                    <Link to="/payment-success" className="home-btn text-black" onClick={() => { onClose(); navigate('/payment-success'); }}>
+                    <Link to="/payment-success" className="home-btn  pt-2 text-black" onClick={() => { onClose(); navigate('/payment-success'); }}>
                         {t('payment-success-modal.home')}
                     </Link>
                 </div>

@@ -212,7 +212,7 @@ function AppContent() {
                                 <OrderDetails />
                             </AuthWrapper>
                         } />
-                        <Route path="/request-quote/create" element={
+                        <Route path="/request-quote/create/:providerId?" element={
                             <AuthWrapper>
                                 <OrderRequest />
                             </AuthWrapper>
