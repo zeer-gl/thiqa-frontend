@@ -17,6 +17,8 @@ import { auth } from '../../firbase';
 import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth';
 import GoogleIcon from '/public/images/auth/google-icon.svg';
 import AppleIcon from '/public/images/auth/apple-icon.svg';
+import EmailIcon from '/public/images/auth/sms.svg';
+import PersonIcon from '/public/images/person-icon.svg';
 
 function Login() {
     const {t, i18n} = useTranslation();
@@ -487,15 +489,19 @@ function Login() {
                                     <div>
                                         <div className="form-group mb-3">
                                             <label htmlFor="email" className='form-label'>{t('auth.login.email')}</label>
-                                            <input 
-                                                type="email" 
-                                                className={`form-control  ${errors.email ? 'is-invalid' : ''}`}
-                                                id="email"
-                                                placeholder={t('auth.login.email')}
-                                                value={email}
-                                                onChange={(e) => handleInputChange('email', e.target.value)}
-                                                style={{ paddingTop: '12px' }}
-                                            />
+                                            <div className="position-relative">
+                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                    <img src={EmailIcon} alt="Email" style={{ width: '20px', height: '20px' }} />
+                                                </div>
+                                                <input 
+                                                    type="email" 
+                                                    className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${errors.email ? 'is-invalid' : ''}`}
+                                                    id="email"
+                                                    placeholder={t('auth.login.email')}
+                                                    value={email}
+                                                    onChange={(e) => handleInputChange('email', e.target.value)}
+                                                />
+                                            </div>
                                             {errors.email && (
                                                 <div className="text-danger mt-1">{errors.email}</div>
                                             )}
@@ -503,9 +509,12 @@ function Login() {
                                         <div className="form-group mb-3">
                                             <label htmlFor="password" className='form-label'>{t('auth.login.password')}</label>
                                             <div className="position-relative">
+                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                    <img src={PersonIcon} alt="Password" style={{ width: '20px', height: '20px' }} />
+                                                </div>
                                                 <input 
                                                     type={showPassword ? "text" : "password"}
-                                                    className={`form-control pt-3 ${showPassword ? 'password-field' : ''} ${errors.password ? 'is-invalid' : ''}`}
+                                                    className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${showPassword ? 'password-field' : ''} ${errors.password ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.login.password')}
                                                     value={password}
@@ -518,7 +527,7 @@ function Login() {
                                                 >
                                                     <img 
                                                         src={EyeIcon} 
-                                                        className="pt-1"
+                                                    
                                                         alt="Toggle password visibility"
                                                         style={{ width: '20px', height: '20px' }}
                                                     />
@@ -553,7 +562,7 @@ function Login() {
                                         <div className='mt-4'>
                                             <button 
                                                 type="submit" 
-                                                className='btn pt-2 ev-submit-btn d-flex align-items-center justify-content-center' 
+                                                className='btn ev-submit-btn d-flex align-items-center justify-content-center' 
                                                 disabled={submitting}
                                             >
                                                 {submitting ? (t('common.sending') || "Logging in...") : (

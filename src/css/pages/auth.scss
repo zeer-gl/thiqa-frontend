@@ -71,22 +71,11 @@
     }
   }
 
-  input[type="email"] {
-    background-image: url('/public/images/auth/sms.svg') !important;
-    background-repeat: no-repeat;
-    background-position: 10px center;
-  }
-
+  // Icons are now inserted as inline elements; remove background images
+  input[type="email"],
   input[type="password"],
   input.password-field {
-    background-image: url('/public/images/auth/reg-lock.svg') !important;
-    background-repeat: no-repeat;
-    background-position: 10px center;
-    
-    // RTL support for lock icon positioning
-    [dir="rtl"] & {
-      background-position: calc(100% - 10px) center;
-    }
+    background-image: none !important;
   }
 
   input#fname {
@@ -98,14 +87,7 @@
   .signup-form {
     input[type="password"],
     input.password-field {
-      background-image: url('/public/images/auth/reg-lock.svg') !important;
-      background-repeat: no-repeat;
-      background-position: 10px center;
-      
-      // RTL support for lock icon positioning
-      [dir="rtl"] & {
-        background-position: calc(100% - 10px) center;
-      }
+      background-image: none !important;
     }
   }
 
@@ -116,6 +98,7 @@
     display: flex;
     align-items: center;
     line-height: 1.5;
+    position: relative;
     
     &::placeholder {
       color: #001C4180;
@@ -220,6 +203,18 @@
     }
   }
 }
+
+// Keep icons visible and neutralize browser autofill styles
+input.form-control,
+input.form-control:-webkit-autofill,
+input.form-control:-webkit-autofill:hover,
+input.form-control:-webkit-autofill:focus,
+input.form-control:-internal-autofill-selected {
+  -webkit-text-fill-color: inherit;
+  transition: background-color 9999s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+}
+
 
 .register-socials {
   max-width: 120px;

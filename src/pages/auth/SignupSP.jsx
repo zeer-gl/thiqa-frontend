@@ -1156,12 +1156,12 @@ const validateForm = () => {
                                         {/* Email */}
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
-                                                <div className={` ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`} style={{ zIndex: 10 }}>
-                                                    {/* <img src={EmailIcon} alt="Email" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} /> */}
+                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`} style={{ zIndex: 10 }}>
+                                                    <img src={EmailIcon} alt="Email" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} />
                                                 </div>
                                                 <input 
                                                     type="email" 
-                                                    className={`form-control  ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                                                    className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                                                     id="email"
                                                     placeholder={t('auth.signupsp.email')} 
                                                     value={email}
@@ -1184,10 +1184,12 @@ const validateForm = () => {
                                         {/* Password */}
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
-                                              
+                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`} style={{ zIndex: 10 }}>
+                                                    <img src={LockIcon} alt="Password" style={{ width: '20px', height: '20px', pointerEvents: 'none' }} />
+                                                </div>
                                                 <input 
                                                     type={showPassword ? "text" : "password"}
-                                                    className={`form-control  ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
+                                                    className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.signupsp.password')} 
                                                     value={password}
@@ -1368,7 +1370,7 @@ const validateForm = () => {
                                                             specializations.map((spec) => (
                                                                 <div
                                                                     key={spec._id}
-                                                                    className={`p-2 ${selectedSpecializations.includes(spec._id) ? 'bg-secondary text-white' : 'hover:bg-light'}`}
+                                                                    className={`p-2 ${selectedSpecializations.includes(spec._id) ? '' : ''}`}
                                                                     style={{ cursor: 'pointer', borderBottom: '1px solid #f8f9fa' }}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
@@ -1413,7 +1415,7 @@ const validateForm = () => {
                                                 min="0"
                                                 inputMode="numeric"
                                                 dir="ltr"
-                                                className={`form-control ps-3 pe-3 pt-3 ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
+                                                className={`form-control ps-3 pe-3 ${formSubmitted && (!experience || isNaN(experience) || parseInt(experience) < 0) ? 'is-invalid' : ''}`}
                                                 id="experience"
                                                 placeholder={t('auth.signupsp.experience')} 
                                                 value={experience}
@@ -1538,7 +1540,12 @@ const validateForm = () => {
                                     <div>
                                         <div className='mt-4'>
                                             <button type='submit' className='btn pt-2  ev-submit-btn d-flex align-items-center justify-content-center' disabled={submitting}>
-                                                {submitting ? t('auth.signupsp.creating') : t('auth.signupsp.createAccount')}
+                                                {submitting ? (
+                                                    <>
+                                                        <span className='spinner-border spinner-border-sm me-2' role='status' aria-hidden='true'></span>
+                                                        {t('auth.signupsp.creating')}
+                                                    </>
+                                                ) : t('auth.signupsp.createAccount')}
                                             </button>
                                         </div>
                                     </div>

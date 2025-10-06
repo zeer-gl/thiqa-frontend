@@ -546,12 +546,12 @@ function LoginSP() {
                                         {/* Email Field */}
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
-                                                {/* <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
                                                     <img src={EmailIcon} alt="Email" style={{ width: '20px', height: '20px' }} />
-                                                </div> */}
+                                                </div>
                                                 <input 
                                                     type="email" 
-                                                    className={`form-control  pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
+                                                    className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!email || !validateEmail(email)) ? 'is-invalid' : ''}`}
                                                     id="email"
                                                     placeholder={t('auth.loginsp.email', 'Email Address')} 
                                                     value={email}
@@ -570,12 +570,12 @@ function LoginSP() {
                                         {/* Password Field */}
                                         <div className="form-group mb-3">
                                             <div className="position-relative">
-                                                {/* <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
                                                     <img src={PersonIcon} alt="Password" style={{ width: '20px', height: '20px' }} />
-                                                </div> */}
+                                                </div>
                                                 <input 
                                                     type={showPassword ? "text" : "password"} 
-                                                    className={`form-control pt-3 ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
+                                                    className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${formSubmitted && (!password || password.length < 6) ? 'is-invalid' : ''}`}
                                                     id="password"
                                                     placeholder={t('auth.loginsp.password', 'Password')} 
                                                     value={password}
@@ -591,7 +591,7 @@ function LoginSP() {
                                                 >
                                                     <img 
                                                         src={EyeIcon} 
-                                                        className="pt-2"
+                                                
                                                         alt="Toggle password visibility"
                                                         style={{ width: '20px', height: '20px' }}
                                                     />
@@ -632,7 +632,7 @@ function LoginSP() {
                                                 onClick={handleGoogleLogin}
                                                 disabled={socialSubmitting}
                                             >
-                                                <span className="pt-2">
+                                                <span>
                                                 {t("auth.signup.google")}
                                                 </span>
                                              
@@ -647,7 +647,7 @@ function LoginSP() {
                                     <div className='text-center mt-4'>
                                         <div className='mt-3'>
                                             <Link to="/signup-sp" className='btn seeker-auth-btn text-decoration-none d-flex align-items-center justify-content-center'>
-                                            <p className='m-0 mt-2'>{t('auth.loginsp.registerAsSeeker', 'Register as Service Provider')}</p>
+                                            <p className='m-0'>{t('auth.loginsp.registerAsSeeker', 'Register as Service Provider')}</p>
                                             </Link>
                                         </div>
                                         

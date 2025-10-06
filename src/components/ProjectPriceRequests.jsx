@@ -221,7 +221,7 @@ const ProjectPriceRequests = ({ onBack, selectedProject }) => {
                               <img 
                                 src={currentProject.clientImage || currentProject.customerId?.pic} 
                                 alt="Customer Profile"
-                                style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius:"50%"}}
+                                style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius:"50%"}}
                                 onError={(e) => {
                                   e.target.style.display = 'none';
                                   e.target.nextSibling.style.display = 'flex';

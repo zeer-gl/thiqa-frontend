@@ -608,14 +608,14 @@ const ServiceList = () => {
                                     ))}
                                 </div>
                 
-                <Pagination
+                {/* <Pagination
                   currentPage={categoryCurrentPage}
                   totalPages={categoryTotalPages}
                   onPageChange={handleCategoryPageChange}
                   hideNavigation={false}
                   showArrows={true}
                   className="sidebar-pagination"
-                />
+                /> */}
 
                                 <div className="decorative-elements">
                                     <div className="circle"></div>

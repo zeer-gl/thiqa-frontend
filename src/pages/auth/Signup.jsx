@@ -17,6 +17,7 @@ import {AlertContext} from '../../context/AlertContext.jsx'
 import { GoogleAuthProvider, signInWithPopup, OAuthProvider } from "firebase/auth";
 import {useAlert} from '../../context/AlertContext.jsx';
 import { FaEyeSlash } from "react-icons/fa";
+import LockIcon from '/public/images/auth/lock.svg';
 
 function Signup() {
   const { t, i18n } = useTranslation();
@@ -841,9 +842,12 @@ function Signup() {
 
                     <div className="form-group mb-3">
                       <div className="position-relative">
+                        <div className={`position-absolute top-50 translate-middle-y ${i18n.language === 'ar' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                          <img src={LockIcon} alt="Password" style={{ width: "20px", height: "20px" }} />
+                        </div>
                         <input
                           type={showPassword ? "text" : "password"}
-                          className={`form-control   ${showPassword ? "password-field" : ""} ${formSubmitted && !password ? 'is-invalid' : ''}`}
+                          className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'}  ${showPassword ? "password-field" : ""} ${formSubmitted && !password ? 'is-invalid' : ''}`}
                           id="password"
                           placeholder={t("auth.signup.password")}
                           value={password}
@@ -867,9 +871,12 @@ function Signup() {
 
                     <div className="form-group mb-3">
                       <div className="position-relative">
+                        <div className={`position-absolute top-50 translate-middle-y ${i18n.language === 'ar' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                          <img src={LockIcon} alt="Confirm Password" style={{ width: "20px", height: "20px" }} />
+                        </div>
                         <input
                           type={showConfirmPassword ? "text" : "password"}
-                          className={`form-control ${showConfirmPassword ? "password-field" : ""} ${formSubmitted && (!confirmPassword || password !== confirmPassword) ? 'is-invalid' : ''}`}
+                          className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${showConfirmPassword ? "password-field" : ""} ${formSubmitted && (!confirmPassword || password !== confirmPassword) ? 'is-invalid' : ''}`}
                           id="confirmpassword"
                           placeholder={t("auth.signup.confirmPassword")}
                           value={confirmPassword}
@@ -896,7 +903,12 @@ function Signup() {
                   <div>
                     <div className="mt-4">
                       <button type="submit" className="btn   pt-2 fw-semibold ev-submit-btn d-flex align-items-center justify-content-center" disabled={submitting}>
-                        {submitting ? (t("common.sending") || "Submitting...") : t("auth.signup.createAccount")}
+                        {submitting ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            {t("common.sending") || "Submitting..."}
+                          </>
+                        ) : t("auth.signup.createAccount")}
                       </button>
                       <Link className="btn visitor-btn  pt-2 mt-4 pt-2 fw-semibold d-flex align-items-center justify-content-center" to="/login">
                      {t('auth.login.title', 'Login')}

@@ -147,6 +147,7 @@ const RequestForm = ({
                                             name={field.name}
                                             className={`form-control ${errors[field.name] && touched[field.name] ? 'is-invalid' : ''}`}
                                             placeholder={field.placeholder}
+                                            required
                                         />
                                     </>
                                 ) : field.type === 'select' ? (

@@ -22,8 +22,7 @@ const OrderRequest = () => {
     const [professionalData, setProfessionalData] = useState(null);
     const [loadingProfessional, setLoadingProfessional] = useState(false);
     const [formValues, setFormValues] = useState({
-        budget: '',
-        price: ''
+        budget: ''
     });
 
     // Get service name from localStorage
@@ -67,6 +66,7 @@ const OrderRequest = () => {
         }
     };
 
+    // Calculate total amount from budget
     // Fetch professional data by ID from URL parameters
     const fetchProfessionalById = async (professionalId) => {
         if (!professionalId) return null;
@@ -105,8 +105,7 @@ const OrderRequest = () => {
     // Calculate total amount from budget and price
     const calculateTotal = () => {
         const budget = parseFloat(formValues.budget) || 0;
-        const price = parseFloat(formValues.price) || 0;
-        return budget + price;
+        return budget;
     };
 
     // Handle form value changes to update total
@@ -214,8 +213,7 @@ const OrderRequest = () => {
       return value.size <= 1 * 1024 * 1024;
   }),
         address: Yup.string().required(t('order-request.address-required')),
-        projectName: Yup.string().required(t('order-request.project-name-required', 'Project name is required')),
-        price: Yup.number().typeError(t('order-request.price-number', 'Price must be a number')).required(t('order-request.price-required', 'Price is required'))
+        projectName: Yup.string().required(t('order-request.project-name-required', 'Project name is required'))
     });
 
     // Get professional data from localStorage
@@ -244,6 +242,7 @@ const OrderRequest = () => {
         deadline: '',
         description: '',
         address: '',
+        projectName: getProfessionalData()?.name || '',
         projectName: getCurrentProviderId() && professionalData ? professionalData.name : (getCurrentProviderId() ? '' : ''),
         price: ''
     };
@@ -283,13 +282,6 @@ const OrderRequest = () => {
             }))
         },
         { name: 'projectName', type: 'text', placeholder: t('order-request.project-name', 'Project Name'), icon: 'fas fa-project-diagram' },
-        { 
-            name: 'price', 
-            type: 'text', 
-            placeholder: t('order-request.price', 'Price'), 
-            icon: 'fas fa-money-bill',
-            onChange: (value) => handleFormValueChange('price', value)
-        },
         { name: 'description', type: 'textarea', placeholder: t('order-request.request-description'), rows: 4 },
     ];
 
@@ -356,8 +348,7 @@ const OrderRequest = () => {
                     address: values.address,
                     dateOfRequest: values.dateOfRequest,
                     typeOfProject: values.typeOfProject,
-                    projectName: values.projectName,
-                    price: Number(values.price)
+                    projectName: values.projectName
                 };
                 
                 // Add professional ID if exists (for specific professional targeting)

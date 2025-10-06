@@ -52,8 +52,8 @@
         "currentImage": "Current Image",
         "currentServiceImage": "Current service image",
         "replaceImage": "Select a new image to replace the current one, or leave empty to keep the current image.",
-        "selectImage": "Select an image for your service.",
-        "loadingServices": "Loading services...",
+        "selectImage": "Display image size should not be more than 2 MB",
+        "loadingServices": "Loading services",
         "startAdding": "Start by adding your first service",
         "delivery": "Delivery",
         "unitPlaceholder": "e.g., Kg, Ltr, Hour",
@@ -108,7 +108,7 @@
       "customerSection": {
         "subtitle": "Customer reviews __",
         "title": "What our customers say",
-        "loadingReviews": "Loading reviews...",
+        "loadingReviews": "Loading reviews",
         "noReviews": "No reviews available",
         "noReviewsDescription": "Be the first to review our products",
         "testimonial": {
@@ -209,7 +209,7 @@
           "efficiencyRating": "Efficiency Rating",
           "priceRating": "Price Rating",
           "deliveryRating": "Delivery Rating",
-          "submitting": "Submitting...",
+          "submitting": "Submitting",
           "loginRequired": "Please login to submit a review",
           "reviewSubmitted": "Review submitted successfully!",
           "outOfStock": "Out of Stock",
@@ -552,7 +552,7 @@
       "request-date": "Request Date",
       "request-description": "Request Description",
       "notes": "Notes",
-      "sending": "Sending...",
+      "sending": "Sending",
       "total": "Total",
       "kwd": "KWD",
       "address-min-length": "Address must be at least 5 characters",
@@ -566,7 +566,7 @@
   },
 
   "service-list": {
-    "loading": "Loading professionals...",
+    "loading": "Loading professionals",
     "title": "Service Providers",
     "subtitle": "Find the best service providers in your area",
     "categories": "Categories",
@@ -578,7 +578,7 @@
     "carpentry": "Carpentry",
     "painting": "Painting",
     "create-request": "Create Request",
-    "search-placeholder": "Search service providers...",
+    "search-placeholder": "Search service providers",
     "request-service": "Request Service",
     "service-providers": "Service Providers",
     "find-the-best-service-providers": "Find the best service providers in your area",
@@ -636,7 +636,7 @@
     "view-quote": "View Quote",
     "call": "Call",
     "accept": "Accept",
-    "accepting": "Accepting...",
+    "accepting": "Accepting",
     "proposal-accepted": "Proposal accepted successfully!",
     "accept-error": "Failed to accept proposal. Please try again.",
     "project-started": "Project started successfully!",
@@ -785,7 +785,7 @@
         "painting": "Painting",
         "carpentry": "Carpentry"
       },
-      "loadingSpecializations": "Loading specializations...",
+      "loadingSpecializations": "Loading specializations",
       "noSpecializationsAvailable": "No specializations available",
       "usingDefaultSpecializations": "Using default specializations - API response format issue",
       "usingDefaultSpecializationsConnection": "Using default specializations - API connection issue",
@@ -937,7 +937,7 @@
       "paymentMethod": "Payment Method",
       "service": "Service",
       "favorites": "Favorites",
-      "likedServices": "Liked Services",
+      "likedServices": "Liked Services Provider",
       "changePassword": "Change Password"
     },
     "content": {
@@ -1126,7 +1126,7 @@
       "title": "Notifications",
       "content": "Notifications content will go here",
       "totalNotifications": "notifications",
-      "markAllAsRead": "Mark All as Read",
+      "markAllAsRead": "Read All",
       "allMarkedAsRead": "All notifications marked as read",
       "refresh": "Refresh",
       "unreadNotifications": "Unread Notifications",
@@ -1253,15 +1253,15 @@
     "profileUpdatedSuccessfully": "Profile updated successfully!"
   },
   "common": {
-    "sending": "Sending...",
-    "submitting": "Submitting...",
-    "saving": "Saving...",
+    "sending": "Sending",
+    "submitting": "Submitting",
+    "saving": "Saving",
     "changing": "Changing...",
     "saveChanges": "Save Changes",
     "total": "Total",
     "kwd": "KWD",
     "rememberMe": "Remember me",
-    "loading": "Loading...",
+    "loading": "Loading",
     "userNotFound": "User not found",
     "back": "Back",
     "unableToLoadProducts": "Unable to load products",
@@ -1271,7 +1271,7 @@
     "noProjectRequestsFound": "No project requests found",
     "noProjectRequestsAvailable": "No project requests available at the moment",
     "optional": "Optional",
-    "search": "Search...",
+    "search": "Search",
     "error": "Error",
     "success": "Success",
     "cancel": "Cancel",
@@ -1493,8 +1493,8 @@
         "description": "Multi-story residential complex"
       }
     },
-    "loadingProjectRequests": "Loading project requests...",
-    "checkingSubscription": "Checking subscription status...",
+    "loadingProjectRequests": "Loading project requests",
+    "checkingSubscription": "Checking subscription status",
     "subscriptionRequired": {
       "title": "Subscription Required",
       "message": "You need an active subscription to view project requests. Please purchase a package to access demand quotes.",
@@ -1532,7 +1532,7 @@
     },
     "buttons": {
       "submitProposal": "Submit Proposal",
-      "submitting": "Submitting...",
+      "submitting": "Submitting",
       "priceQuote": "Price Quote",
       "projectCompletionFile": "Project Completion File",
       "allProjects": "All Projects",
@@ -1580,7 +1580,7 @@
     "acceptedBy": "Accepted by"
   },
   "paymentMethods": {
-    "loading": "Loading payment methods...",
+    "loading": "Loading payment methods",
     "loginRequired": "Please login to view payment methods",
     "noPlanSelected": "No plan selected",
     "fetchFailed": "Failed to fetch payment methods",
@@ -1620,7 +1620,7 @@
     "fetchFailed": "Failed to fetch subscription plans",
     "loadFailed": "Failed to load subscription plans",
     "subscriptionActivated": "Subscription activated successfully!",
-    "loading": "Loading subscription plans...",
+    "loading": "Loading subscription plans",
     "currentPlan": "Current Plan",
     "noFeaturesListed": "No features listed",
     "noPlansAvailable": "No subscription plans available",

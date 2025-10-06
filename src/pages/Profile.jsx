@@ -2144,7 +2144,7 @@ const Profile = () => {
                 {/* Add New Address Button */}
                 <div className="add-address-button-container">
                   <button className="btn  add-address-btn d-flex align-items-center justify-content-center" onClick={openAddAddressModal} style={{backgroundColor: '#21395D',color: 'white'}}>
-                    <span className="pt-1">
+                    <span >
                     {t('profile.addresses.addNewAddress')}
                     </span>
                    
@@ -2413,8 +2413,8 @@ const Profile = () => {
                     <h5 className="text-muted">{t('profile.orders.noOrders')}</h5>
                     <p className="text-muted">{t('profile.orders.noOrdersDescription')}</p>
                     <button 
-                      className="btn  mt-3 d-flex align-items-center justify-content-center"
-                      style={{backgroundColor: '#21395D',color: 'white' ,width: '100%'}}
+                      className="btn  mt-3 d-flex align-items-center justify-content-center mx-auto"
+                      style={{backgroundColor: '#21395D',color: 'white'}}
                       onClick={() => navigate('/products')}
                     >
                       {t('profile.orders.startShopping')}
@@ -2507,7 +2507,7 @@ const Profile = () => {
                     <h5 className="text-muted">{t('profile.favorites.noFavorites')}</h5>
                     <p className="text-muted">{t('profile.favorites.noFavoritesDescription')}</p>
                     <button 
-                      className="btn  mt-3 d-flex align-items-center justify-content-center"
+                      className="btn  mt-3 d-flex align-items-center justify-content-center mx-auto"
                       onClick={() => navigate('/products')}
                       style={{backgroundColor: '#21395D',color: 'white' ,width: '100%'}}
                     >
@@ -2580,7 +2580,7 @@ const Profile = () => {
                             })()}
                           </div>
                           
-                          <div className='d-flex align-items-center justify-content-between py-3'>
+                          <div className='d-flex align-items-center justify-content-between py-3 flex-wrap'>
                             <div className='d-flex align-items-center gap-3'>
                               <img src={BallPattern} alt="" width="40" height="40"/>
                               <div className='d-flex align-items-start gap-3'>
@@ -2617,7 +2617,7 @@ const Profile = () => {
                               </div>
                             </div>
                             
-                            <div className='d-flex align-items-end flex-column gap-3'>
+                            <div className='d-flex align-items-center gap-3'>
                               <FontAwesomeIcon
                                 icon={likedProfessionals[service._id] ? solidHeart : regularHeart}
                                 onClick={async (e) => {
@@ -2637,7 +2637,7 @@ const Profile = () => {
                               />
                               <button className='btn outlined-btn  fs-12 d-flex align-items-center justify-content-center'>
 
-                                <span className='pt-1'>
+                                <span>
 
                                   {service.specialization || t('pages.home.servicesSection.serviceProvider.category')}
                                 </span>
@@ -2657,9 +2657,9 @@ const Profile = () => {
                     <h5 className="text-muted">{likedServicesTranslations.noLikedServices}</h5>
                     <p className="text-muted">{likedServicesTranslations.noLikedServicesDescription}</p>
                     <button 
-                      className="btn  mt-3 d-flex align-items-center justify-content-center"
+                      className="btn mt-3 d-flex align-items-center justify-content-center"
                       onClick={() => navigate('/service-list')}
-                      style={{backgroundColor: '#21395D',color: 'white' ,width: '100%'}}
+                      style={{backgroundColor: '#21395D',color: 'white'}}
                     >
                       {likedServicesTranslations.browseServices}
                     </button>

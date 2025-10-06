@@ -153,7 +153,8 @@ const Payment = () => {
                         <h3>{t('payment.emptyCart')}</h3>
                         <p className="text-muted">{t('payment.addItemsToCart')}</p>
                         <button 
-                            className="btn btn-primary mt-3 d-flex align-items-center justify-content-center"
+                            className="btn mt-3 d-flex align-items-center justify-content-center m-auto"
+                            style={{maxWidth: '200px', backgroundColor:'#21395D', color:'white'}}
                             onClick={() => navigate('/')}
                         >
                             {t('payment.continueShopping')}
@@ -264,20 +265,20 @@ const Payment = () => {
             {showDeleteModal && (
                 <div className="delete-confirmation-overlay" onClick={handleCancelDelete}>
                     <div className="delete-confirmation-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-content">
+                        <div className="modal-content p-4">
                             <div className="modal-body text-center">
                                 <h5 className="mb-3">{t('payment.modal.simpleDeleteTitle', 'Are you sure you want to delete this item?')}</h5>
                             </div>
                             
-                            <div className="modal-footer justify-content-center">
+                            <div className="modal-footer d-flex justify-content-between align-items-center flex-nowrap">
                                 <button 
-                                    className="btn btn-secondary me-3 d-flex align-items-center justify-content-center" 
+                                    className="btn btn-secondary d-flex align-items-center justify-content-center flex-1 w-100" 
                                     onClick={handleCancelDelete}
                                 >
                                     {t('common.cancel', 'Cancel')}
                                 </button>
                                 <button 
-                                    className="btn btn-danger d-flex align-items-center justify-content-center" 
+                                    className="btn btn-danger d-flex align-items-center justify-content-center flex-1 w-100" 
                                     onClick={handleConfirmDelete}
                                 >
                                     {t('payment.modal.removeButton', 'Remove')}

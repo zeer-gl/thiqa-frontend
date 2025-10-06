@@ -533,8 +533,8 @@ const ProductDetail = () => {
   />
   <span className="">
   {isProductLiked
-            ? t('Favourite')
-            : t('Unfavourite')}
+            ? t('Unfavourite')
+            :  t('Favourite')}
             </span>
 </button>
                                     {!localStorage.getItem('token') && (
