@@ -72,10 +72,11 @@ function SignupSP() {
     const [showOtpModal, setShowOtpModal] = useState(false);
     const [otpValues, setOtpValues] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(59);
-    const [generatedOTP, setGeneratedOTP] = useState(null);
     const [timerInterval, setTimerInterval] = useState(null);
     const [phoneError, setPhoneError] = useState('');
     const [phoneValid, setPhoneValid] = useState(false);
+    const [professionalId, setProfessionalId] = useState(null);
+    const [registrationData, setRegistrationData] = useState(null);
     
     
     const otpRefs = useRef([]);
@@ -92,42 +93,105 @@ function SignupSP() {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    // OTP generation and verification
-    const sendOTP = async (phoneNumber) => {
+    // Function to register professional and get OTP via email
+    const registerProfessionalAndGetOTP = async (professionalData) => {
         try {
-            console.log("Generating OTP...");
+            console.log('Registering professional and requesting OTP via email:', professionalData);
             
-            // Generate 4-digit OTP
-            const otp = Math.floor(1000 + Math.random() * 9000).toString();
-            setGeneratedOTP(otp);
+            const formData = new FormData();
+            formData.append('name', professionalData.name);
+            formData.append('phoneNo', professionalData.phoneNo);
+            formData.append('email', professionalData.email);
+            formData.append('password', professionalData.password);
+            formData.append('workTitle', professionalData.workTitle);
+            // Add multiple specializations
+            professionalData.selectedSpecializations.forEach((specId, index) => {
+                formData.append(`specializations[${index}]`, specId);
+            });
+            formData.append('experience', professionalData.experience);
+            formData.append('bio', professionalData.bio);
+            formData.append('latitude', professionalData.latitude);
+            formData.append('longitude', professionalData.longitude);
+            formData.append('token', 'device_token_here');
             
-            console.log('📨 Generated OTP:', otp, 'for phone:', phoneNumber);
+            if (professionalData.resume) {
+                formData.append('resume', professionalData.resume);
+            }
             
-            // SMS service disabled due to CORS issues - OTP generated locally for testing
-            console.log('📨 OTP generated locally:', otp, 'for phone:', phoneNumber);
-            showAlert(t('auth.signup.otpSent'), 'success');
+            const response = await fetch(`${BaseUrl}/professional/register`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: formData
+            });
             
-            return true;
+            const data = await response.json();
+            console.log('Professional registration API response:', data);
+            
+            if (response.ok) {
+                // Registration successful, OTP sent to email
+                // Store professionalId from response for OTP verification
+                if (data.professionalId || data._id || data.professional?._id) {
+                    const id = data.professionalId || data._id || data.professional._id;
+                    setProfessionalId(id);
+                    console.log('Professional ID stored for OTP verification:', id);
+                }
+                
+                // Store the registration data for use after OTP verification
+                // (Backend returns token and professional data during registration)
+                return { 
+                    success: true, 
+                    message: data.message || 'OTP sent to your email', 
+                    professionalId: data.professionalId || data._id || data.professional?._id,
+                    registrationData: {
+                        token: data.token,
+                        professional: data.professional || data,
+                        professionalId: data.professionalId || data._id || data.professional?._id
+                    }
+                };
+            } else {
+                // Registration failed
+                const errorMessage = data.message || data.error || 'Registration failed';
+                return { success: false, message: errorMessage };
+            }
         } catch (error) {
-            console.error('⚠️ Error while generating OTP:', error);
-            showAlert(t('auth.signup.otpSendFailed'), 'error');
-            return false;
+            console.error('Error during professional registration:', error);
+            return { success: false, message: 'Network error. Please try again.' };
         }
     };
 
-    const verifyOTP = async (enteredOtp) => {
-        if (!generatedOTP) {
-            console.error('❌ No generated OTP found!');
-            return false;
+    // Function to verify OTP via API for professionals
+    const verifyOTP = async (professionalId, otpCode) => {
+        try {
+            console.log('Verifying OTP via API for professional ID:', professionalId);
+            
+            const response = await fetch(`${BaseUrl}/professional/verify-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    professionalId: professionalId,
+                    otp: otpCode
+                })
+            });
+            
+            const data = await response.json();
+            console.log('Professional OTP verification API response:', data);
+            
+            if (response.ok) {
+                // OTP verification successful
+                console.log('✅ Professional OTP Verified successfully!');
+                return { success: true, data: data };
+            } else {
+                // OTP verification failed
+                const errorMessage = data.message || data.error || 'Invalid OTP code';
+                console.log('❌ Professional OTP Verification Failed:', errorMessage);
+                return { success: false, message: errorMessage };
+            }
+        } catch (error) {
+            console.error('Error during professional OTP verification:', error);
+            return { success: false, message: 'Network error. Please try again.' };
         }
-        
-        // Simulate verification delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const isValid = enteredOtp === generatedOTP;
-        console.log(isValid ? '✅ OTP Verified!' : '❌ OTP Verification Failed');
-        
-        return isValid;
     };
 
  // ... existing code ...
@@ -248,58 +312,6 @@ const validateForm = () => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
     };
 
-    // Function to check if professional already exists via API
-    const checkProfessionalExistence = async (email, phoneNo) => {
-        try {
-            console.log('Checking professional existence for email:', email, 'phone:', phoneNo);
-            
-            const response = await fetch(`${BaseUrl}/professional/check-email-or-phone`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: email,
-                    phoneNo: phoneNo
-                })
-            });
-            
-            const data = await response.json();
-            console.log('Professional existence check API response:', data);
-            
-            if (response.ok && data.success) {
-                // API returned success, check if email or phone exists
-                const emailExists = data.results?.email?.exists || false;
-                const phoneExists = data.results?.phoneNo?.exists || false;
-                const exists = emailExists || phoneExists;
-                
-                let message = '';
-                if (emailExists && phoneExists) {
-                    message = t('auth.signupsp.emailAndPhoneExist', 'Email and phone number already exist. Please use different credentials or try logging in.');
-                } else if (emailExists) {
-                    message = t('auth.signupsp.emailAlreadyExists', 'Email already exists. Please use a different email or try logging in.');
-                } else if (phoneExists) {
-                    message = t('auth.signupsp.phoneAlreadyExists', 'Phone number already exists. Please use a different phone number or try logging in.');
-                }
-                
-                console.log('Professional existence check result:', { 
-                    emailExists, 
-                    phoneExists, 
-                    exists, 
-                    message,
-                    apiResponse: data 
-                });
-                
-                return { exists, message };
-            } else {
-                // API returned error, but we'll proceed with OTP to avoid blocking users
-                console.warn('API check failed, proceeding with OTP generation');
-                return { exists: false, message: 'Unable to verify professional existence' };
-            }
-        } catch (error) {
-            console.error('Error checking professional existence:', error);
-            // If API fails, we'll proceed with OTP generation to avoid blocking users
-            return { exists: false, message: 'Unable to verify professional existence' };
-        }
-    };
 
     const handleCreateAccount = async (e) => {
         e.preventDefault();
@@ -311,33 +323,43 @@ const validateForm = () => {
         }
         
         setSubmitting(true);
-        console.log('Starting professional existence check...');
+        console.log('Starting professional registration process...');
 
         try {
-            // Step 1: Check if professional already exists via API
-            const existenceCheck = await checkProfessionalExistence(email, phoneNo);
+            // Step 1: Register professional and get OTP via email
+            const professionalData = {
+                name: name,
+                email: email,
+                phoneNo: phoneNo,
+                password: password,
+                workTitle: workTitle,
+                selectedSpecializations: selectedSpecializations,
+                experience: experience,
+                bio: bio,
+                latitude: latitude,
+                longitude: longitude,
+                resume: resume
+            };
             
-            if (existenceCheck.exists) {
-                // Professional already exists, show error and don't proceed with OTP
-                showAlert(existenceCheck.message, 'error');
-                setSubmitting(false);
-                return;
-            }
+            const registrationResult = await registerProfessionalAndGetOTP(professionalData);
             
-            // Step 2: Professional doesn't exist, proceed with OTP generation
-            console.log('Professional does not exist, proceeding with OTP generation...');
-            const otpSent = await sendOTP(phoneNo);
-            
-            if (otpSent) {
-                // Step 3: Show OTP modal for verification
+            if (registrationResult.success) {
+                // Step 2: Registration successful, OTP sent to email - show OTP modal
+                // Store registration data (token and professional info) for use after OTP
+                if (registrationResult.registrationData) {
+                    setRegistrationData(registrationResult.registrationData);
+                    console.log('✅ Registration data stored for later use:', registrationResult.registrationData);
+                }
+                showAlert(registrationResult.message, 'success');
                 setShowOtpModal(true);
                 startTimer();
-            } else {
-                showAlert(t('auth.signup.otpSendFailed'), 'error');
+            } else{
+                // Registration failed, show error
+                showAlert(registrationResult.message, 'error');
             }
         } catch (error) {
-            console.error('Registration flow error:', error);
-            showAlert(t('auth.signup.otpSendFailed'), 'error');
+            console.error('Professional registration flow error:', error);
+            showAlert(t('auth.signupsp.registrationFailed', 'Registration failed. Please try again.'), 'error');
         } finally {
             setSubmitting(false);
         }
@@ -363,100 +385,6 @@ const validateForm = () => {
         setTimerInterval(interval);
     };
 
-    // Function to register professional after OTP verification
-    const registerProfessional = async () => {
-        try {
-            console.log('Calling professional registration API after OTP verification...');
-            console.log('Current coordinates:', { latitude, longitude });
-            console.log('Selected specializations:', selectedSpecializations);
-            
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('phoneNo', phoneNo);
-            formData.append('email', email);
-            formData.append('password', password);
-            formData.append('workTitle', workTitle);
-            // Add multiple specializations
-            selectedSpecializations.forEach((specId, index) => {
-                formData.append(`specializations[${index}]`, specId);
-            });
-            formData.append('experience', experience);
-            formData.append('bio', bio);
-            formData.append('latitude', latitude);
-            formData.append('longitude', longitude);
-            formData.append('token', 'device_token_here');
-            
-            if (resume) {
-                formData.append('resume', resume);
-            }
-            
-            const res = await fetch(`${BaseUrl}/professional/register`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-                },
-                body: formData
-            });
-            
-            const result = await res.json();
-            console.log('Professional registration result:', result);
-            
-            if (res.ok) {
-                // Store registration data in session storage
-                const registrationData = {
-                    name,
-                    phoneNo,
-                    email,
-                    workTitle,
-                    specializations: selectedSpecializations,
-                    experience,
-                    bio,
-                    latitude,
-                    longitude,
-                    role: 'service_provider'
-                };
-                localStorage.setItem('registrationData', JSON.stringify(registrationData));
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userRole', 'sp');
-                localStorage.setItem('token-sp', result.token);
-                
-                // Store service provider ID from API response
-                if (result.professional && result.professional._id) {
-                    localStorage.setItem('serviceProviderId', result.professional._id);
-                    localStorage.setItem('spUserData', JSON.stringify(result.professional));
-                } else if (result._id) {
-                    // Fallback if the professional data is at root level
-                    localStorage.setItem('serviceProviderId', result._id);
-                    localStorage.setItem('spUserData', JSON.stringify(result));
-                }
-                
-                // Set default payment status to true for new service providers
-                localStorage.setItem('spPaymentStatus', 'true');
-                localStorage.setItem('spHasActiveSubscription', 'true');
-                localStorage.setItem('spSubscriptionStatus', 'active');
-                
-                showAlert(t('auth.signupsp.registrationSuccess', 'Professional registration successful!'), 'success');
-                navigate('/profile-sp?tab=packages');
-            } else {
-                const backendMessage = result?.message || result?.error || t('auth.signupsp.registrationFailed', 'Registration failed. Please try again.');
-                
-                // Translate common backend error messages
-                let translatedMessage = backendMessage;
-                if (backendMessage.toLowerCase().includes('email') && backendMessage.toLowerCase().includes('exist')) {
-                    translatedMessage = t('auth.signupsp.emailAlreadyExists', 'Email already exists. Please use a different email.');
-                } else if (backendMessage.toLowerCase().includes('phone') && backendMessage.toLowerCase().includes('exist')) {
-                    translatedMessage = t('auth.signupsp.phoneAlreadyExists', 'Phone number already exists. Please use a different phone number.');
-                } else if (backendMessage.toLowerCase().includes('email') && backendMessage.toLowerCase().includes('phone') && backendMessage.toLowerCase().includes('exist')) {
-                    translatedMessage = t('auth.signupsp.emailOrPhoneExists', 'Email or phone number already exists. Please use different credentials.');
-                }
-                
-                showAlert(translatedMessage, 'error');
-            }
-        } catch (error) {
-            console.error('Professional registration error:', error);
-            showAlert(t('auth.signupsp.registrationFailed', 'Registration failed. Please try again.'), 'error');
-        }
-    };
 
     const handleOtpChange = (index, value) => {
         if (value === '' || (value.length === 1 && /^\d$/.test(value))) {
@@ -490,17 +418,76 @@ const validateForm = () => {
             return;
         }
         
-        // Step 1: Verify OTP locally
+        if (!professionalId) {
+            showAlert('Professional ID not found. Please try registering again.', 'error');
+            return;
+        }
+        
+        // Step 1: Verify OTP via API
         const otpCode = otpValues.join('');
         
-        const verificationSuccess = await verifyOTP(otpCode);
+        const verificationResult = await verifyOTP(professionalId, otpCode);
         
-        if (verificationSuccess) {
-            // Step 2: Show verification success, then call registration API
+        if (verificationResult.success) {
+            // Step 2: OTP verification successful - use stored registration data
+            console.log('✅ OTP Verification successful, using stored registration data...');
+            console.log('Stored registration data:', registrationData);
+            
+            // Set login status FIRST
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userRole', 'sp');
+            
+            // Use stored registration data (from registration API response)
+            if (registrationData) {
+                // Store token from registration
+                if (registrationData.token) {
+                    localStorage.setItem('token-sp', registrationData.token);
+                    console.log('✅ Token stored from registration:', registrationData.token);
+                } else {
+                    console.warn('⚠️ No token in stored registration data');
+                }
+                
+                // Store professional data from registration
+                if (registrationData.professional) {
+                    localStorage.setItem('spUserData', JSON.stringify(registrationData.professional));
+                    const profId = registrationData.professional._id || registrationData.professionalId;
+                    if (profId) {
+                        localStorage.setItem('serviceProviderId', profId);
+                        console.log('✅ Professional data stored:', profId);
+                    }
+                } else if (registrationData.professionalId) {
+                    // Minimal data if professional object not available
+                    localStorage.setItem('serviceProviderId', registrationData.professionalId);
+                    console.log('✅ Professional ID stored:', registrationData.professionalId);
+                }
+            } else {
+                console.error('❌ No registration data available! This should not happen.');
+            }
+            
+            // Set default payment status to true for new service providers
+            localStorage.setItem('spPaymentStatus', 'true');
+            localStorage.setItem('spHasActiveSubscription', 'true');
+            localStorage.setItem('spSubscriptionStatus', 'active');
+            
+            // Debug: Log all stored values
+            console.log('📦 Final localStorage state:', {
+                isLoggedIn: localStorage.getItem('isLoggedIn'),
+                userRole: localStorage.getItem('userRole'),
+                'token-sp': !!localStorage.getItem('token-sp'),
+                'token-sp-value': localStorage.getItem('token-sp'),
+                serviceProviderId: localStorage.getItem('serviceProviderId'),
+                spUserData: !!localStorage.getItem('spUserData')
+            });
+            
             showAlert(t('auth.signup.verificationSuccess'), 'success');
-            await registerProfessional();
+            
+            // Small delay to ensure localStorage is updated before navigation
+            setTimeout(() => {
+                console.log('🔄 Navigating to profile-sp...');
+                navigate("/profile-sp?tab=packages");
+            }, 100);
         } else {
-            showAlert(t('auth.signup.invalidOtp'), 'error');
+            showAlert(verificationResult.message || t('auth.signup.invalidOtp'), 'error');
         }
     };
 
@@ -510,13 +497,37 @@ const validateForm = () => {
         // Clear existing OTP input fields
         setOtpValues(["", "", "", ""]);
         
-        // Send OTP again
-        const otpSent = await sendOTP(phoneNo);
+        // Resend OTP by calling registration API again
+        const professionalData = {
+            name: name,
+            email: email,
+            phoneNo: phoneNo,
+            password: password,
+            workTitle: workTitle,
+            selectedSpecializations: selectedSpecializations,
+            experience: experience,
+            bio: bio,
+            latitude: latitude,
+            longitude: longitude,
+            resume: resume
+        };
         
-        if (otpSent) {
-        setTimer(59);
-        startTimer();
-            showAlert(t('auth.signup.otpResent'), 'success');
+        const registrationResult = await registerProfessionalAndGetOTP(professionalData);
+        
+        if (registrationResult.success) {
+            // Store professionalId and registration data from resend response
+            if (registrationResult.professionalId) {
+                setProfessionalId(registrationResult.professionalId);
+            }
+            if (registrationResult.registrationData) {
+                setRegistrationData(registrationResult.registrationData);
+                console.log('✅ Updated registration data after resend:', registrationResult.registrationData);
+            }
+            setTimer(59);
+            startTimer();
+            showAlert(registrationResult.message || t('auth.signup.otpResent'), 'success');
+        } else {
+            showAlert(registrationResult.message || t('auth.signup.otpSendFailed'), 'error');
         }
     };
 
@@ -524,7 +535,7 @@ const validateForm = () => {
         setShowOtpModal(false);
         setOtpValues(['', '', '', '']);
         setTimer(59);
-        setGeneratedOTP(null);
+        setProfessionalId(null);
         
         // Clear timer interval
         if (timerInterval) {
@@ -1617,7 +1628,7 @@ const validateForm = () => {
                             </div>
                             <h3 className="otp-title mb-2 ar-heading-bold">{t('auth.signupsp.otp.title', 'Enter OTP')}</h3>
                             <p className="otp-description navy">
-                                {t('auth.signupsp.otp.description', 'Enter the code sent to your phone to verify your account.')}
+                                {t('auth.signupsp.otp.emailDescription', 'Enter the code sent to your email to verify your account.')}
                             </p>
                         </div>
 
