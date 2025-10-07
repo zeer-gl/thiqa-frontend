@@ -613,7 +613,7 @@ const validateForm = () => {
             console.log('Google authentication request:', requestBody);
             
             // First try to login with Google (in case user already exists)
-            let res = await fetch(`${BaseUrl}/professional/google-professional-login`, {
+            let res = await fetch(`${BaseUrl}/professional/google-professional-registration`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestBody)
