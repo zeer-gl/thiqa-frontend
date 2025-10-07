@@ -634,15 +634,21 @@
     "call": "اتصال",
     "accept": "قبول",
     "accepting": "جاري القبول",
+    "decline": "رفض",
+    "declining": "جاري الرفض",
     "proposal-accepted": "تم قبول العرض بنجاح!",
+    "proposal-declined": "تم رفض العرض بنجاح!",
     "accept-error": "فشل في قبول العرض. يرجى المحاولة مرة أخرى.",
+    "decline-error": "فشل في رفض العرض. يرجى المحاولة مرة أخرى.",
     "project-started": "تم بدء المشروع بنجاح!",
     "start-error": "فشل في بدء المشروع. يرجى المحاولة مرة أخرى.",
     "noOffers": "لم يتم العثور على عروض مشاريع",
     "price": "السعر",
     "duration": "المدة",
     "professional": "محترف",
-    "noPhoneNumber": "رقم الهاتف غير متوفر"
+    "noPhoneNumber": "رقم الهاتف غير متوفر",
+    "status-accepted": "مقبول",
+    "status-declined": "مرفوض"
   },
 
   "request-quote": {
@@ -1554,7 +1560,11 @@
       "allProjects": "جميع المشاريع",
       "accepted": "مقبول",
       "startProject": "بدء المشروع",
-      "starting": "جاري البدء..."
+      "starting": "جاري البدء...",
+      "alreadyApplied": "لقد تقدمت بطلب لهذه الوظيفة بالفعل"
+    },
+    "status": {
+      "rejected": "تم رفض المشروع أو العرض"
     }
   },
   "otpModal": {

@@ -15,6 +15,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const [showPhoneModal, setShowPhoneModal] = useState(false);
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [acceptingProposal, setAcceptingProposal] = useState(null);
+    const [decliningProposal, setDecliningProposal] = useState(null);
 
     // Handle phone button click
     const handlePhoneClick = (professional) => {
@@ -175,6 +176,122 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
         }
     };
 
+    // Handle declining a proposal
+    const handleDeclineProposal = async (proposalId, professionalId) => {
+        try {
+            setDecliningProposal(proposalId);
+            
+            console.log('=== DECLINING PROPOSAL ===');
+            console.log('Proposal ID:', proposalId);
+            console.log('Professional ID:', professionalId);
+            console.log('Project ID:', project.id);
+            
+            // Get customer authentication data
+            const customerToken = localStorage.getItem('token');
+            const customerData = localStorage.getItem('userData');
+            const userRole = localStorage.getItem('userRole');
+            
+            console.log('=== CUSTOMER AUTHENTICATION CHECK ===');
+            console.log('User Role:', userRole);
+            console.log('Customer Token:', !!customerToken);
+            console.log('Customer Data:', !!customerData);
+            
+            // Validate customer authentication
+            if (!customerToken || !customerData) {
+                throw new Error('Customer authentication required. Please login as a customer.');
+            }
+            
+            if (userRole !== 'user' && userRole !== 'customer') {
+                throw new Error(`Access denied. Only customers can decline proposals. Current role: ${userRole}`);
+            }
+            
+            const customer = JSON.parse(customerData);
+            console.log('Customer ID:', customer._id);
+            
+            // Validate required parameters
+            if (!project.id) {
+                throw new Error('Project ID (demandId) is missing');
+            }
+            
+            if (!professionalId) {
+                throw new Error('Professional ID is missing');
+            }
+            
+            // Extract professional ID from object if it's an object
+            let finalProfessionalId = professionalId;
+            console.log('🔍 DEBUGGING PROFESSIONAL ID EXTRACTION:');
+            console.log('Professional ID type:', typeof professionalId);
+            console.log('Professional ID value:', professionalId);
+            
+            if (typeof professionalId === 'object' && professionalId._id) {
+                finalProfessionalId = professionalId._id;
+                console.log('✅ Extracted Professional ID from object:', finalProfessionalId);
+            }
+            
+            // Validate that we have the final professional ID after extraction
+            if (!finalProfessionalId) {
+                throw new Error('Professional ID could not be extracted from the proposal data');
+            }
+            
+            console.log('=== SENDING DECLINE API REQUEST ===');
+            console.log('Timestamp:', new Date().toISOString());
+            console.log('Demand ID (Project ID):', project.id);
+            console.log('Professional ID (final):', finalProfessionalId);
+            console.log('Action: reject');
+            console.log('Customer ID:', customer._id);
+            
+            const response = await fetch(`${BaseUrl}/customer/acceptReject-proposal`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${customerToken}`,
+                },
+                body: JSON.stringify({
+                    demandId: project.id,
+                    professionalId: finalProfessionalId,
+                    action: "reject"
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('❌ API Error Response:', errorData);
+                
+                // Handle specific authorization errors
+                if (errorData.message?.includes('not authorized')) {
+                    throw new Error('You are not authorized to decline this proposal. Please ensure you are the customer who created this project and the proposal is valid.');
+                } else if (errorData.message?.includes('Demand ID, action, and either Professional ID or Vendor ID are required')) {
+                    throw new Error('Missing required information. Please refresh the page and try again.');
+                } else if (errorData.message?.includes('not found')) {
+                    throw new Error('Proposal or project not found. Please refresh the page and try again.');
+                } else if (errorData.message?.includes('already accepted') || errorData.message?.includes('already rejected')) {
+                    throw new Error('This proposal has already been processed.');
+                } else {
+                    throw new Error(errorData?.message || `Failed to decline proposal (${response.status})`);
+                }
+            }
+
+            const data = await response.json();
+            console.log('✅ Proposal declined successfully:', data);
+            
+            // Show success message using showAlert
+            showAlert(t('project-offers.proposal-declined') || 'Proposal declined successfully!', 'success');
+            
+            // Call the callback to update parent state with the proposal ID and project ID
+            if (onProposalAccepted) {
+                onProposalAccepted(proposalId, project.id);
+            }
+            
+            // Stay on current page - no navigation needed
+            
+        } catch (error) {
+            console.error('❌ Error declining proposal:', error);
+            showAlert(error.message || t('project-offers.decline-error') || 'Failed to decline proposal. Please try again.', 'error');
+        } finally {
+            setDecliningProposal(null);
+        }
+    };
+
     // Handle escape key to close modal
     useEffect(() => {
         const handleEscapeKey = (event) => {
@@ -232,63 +349,132 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                         </div>
                                     </div>
                                     <div className="offer-actions">
-                                        {/* <button 
-                                            className="btn-quote"
-                                            onClick={() => navigate('/request-quote/create', { 
-                                                state: { 
-                                                    project: project, 
-                                                    offer: offer 
-                                                } 
-                                            })}
-                                        >
-                                            <span>{t('project-offers.view-quote')}</span>
-                                        </button> */}
                                         {(() => {
                                             const isLocallyAccepted = acceptedProposals.has(offer._id || offer.id);
                                             const isApiAccepted = offer.isAccepted;
-                                            const shouldShowButton = !isLocallyAccepted && !isApiAccepted;
+                                            const isApiRejected = offer.status === 'rejected';
+                                            const shouldShowButtons = !isLocallyAccepted && !isApiAccepted && !isApiRejected;
                                             
                                             console.log('🔍 Button Rendering Debug:', {
                                                 proposalId: offer._id || offer.id,
                                                 isLocallyAccepted,
                                                 isApiAccepted,
-                                                shouldShowButton,
+                                                isApiRejected,
+                                                shouldShowButtons,
+                                                offerStatus: offer.status,
                                                 offer: offer
                                             });
                                             
-                                            return shouldShowButton;
-                                        })() && (
-                                        <button 
-                                            className="btn-call pt-2"
-                                                onClick={() => {
-                                                    console.log('=== BUTTON CLICK DEBUG (UPDATED VERSION) ===');
-                                                    console.log('Timestamp:', new Date().toISOString());
-                                                    console.log('Offer object:', offer);
-                                                    console.log('Offer ID:', offer._id || offer.id);
-                                                    console.log('Professional ID (raw):', offer.professionalId);
-                                                    console.log('Professional ID type:', typeof offer.professionalId);
-                                                    
-                                                    // Extract professional ID before passing to function
-                                                    let professionalIdToPass = offer.professionalId;
-                                                    if (typeof offer.professionalId === 'object' && offer.professionalId._id) {
-                                                        professionalIdToPass = offer.professionalId._id;
-                                                        console.log('✅ Extracted professional ID for button click:', professionalIdToPass);
-                                                    }
-                                                    
-                                                    handleAcceptProposal(offer._id || offer.id, professionalIdToPass);
-                                                }}
-                                            disabled={acceptingProposal === (offer._id || offer.id)}
-                                        >
-                                            {acceptingProposal === (offer._id || offer.id) ? (
-                                                <>
-                                                    <i className="fas fa-spinner fa-spin"></i>
-                                                    {t('project-offers.accepting') || 'Accepting...'}
-                                                </>
-                                            ) : (
-                                                t('project-offers.accept') || 'Accept'
-                                            )}
-                                        </button>
-                                        )}
+                                            // Show status text if accepted or rejected
+                                            if (isApiAccepted || isLocallyAccepted) {
+                                                return (
+                                                    <div className="offer-status accepted" style={{
+                                                        padding: '10px 20px',
+                                                        backgroundColor: '#28a745',
+                                                        color: 'white',
+                                                        borderRadius: '5px',
+                                                        fontWeight: 'bold',
+                                                        textAlign: 'center'
+                                                    }}>
+                                                        {t('project-offers.status-accepted')}
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            if (isApiRejected) {
+                                                return (
+                                                    <div className="offer-status declined" style={{
+                                                        padding: '10px 20px',
+                                                        backgroundColor: '#dc3545',
+                                                        color: 'white',
+                                                        borderRadius: '5px',
+                                                        fontWeight: 'bold',
+                                                        textAlign: 'center'
+                                                    }}>
+                                                        {t('project-offers.status-declined')}
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            // Show both Accept and Decline buttons
+                                            if (shouldShowButtons) {
+                                                return (
+                                                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                                        <button 
+                                                            className="btn-call pt-2"
+                                                            onClick={() => {
+                                                                console.log('=== ACCEPT BUTTON CLICK DEBUG ===');
+                                                                console.log('Timestamp:', new Date().toISOString());
+                                                                console.log('Offer object:', offer);
+                                                                console.log('Offer ID:', offer._id || offer.id);
+                                                                console.log('Professional ID (raw):', offer.professionalId);
+                                                                
+                                                                // Extract professional ID before passing to function
+                                                                let professionalIdToPass = offer.professionalId;
+                                                                if (typeof offer.professionalId === 'object' && offer.professionalId._id) {
+                                                                    professionalIdToPass = offer.professionalId._id;
+                                                                    console.log('✅ Extracted professional ID for button click:', professionalIdToPass);
+                                                                }
+                                                                
+                                                                handleAcceptProposal(offer._id || offer.id, professionalIdToPass);
+                                                            }}
+                                                            disabled={acceptingProposal === (offer._id || offer.id) || decliningProposal === (offer._id || offer.id)}
+                                                            style={{ 
+                                                                backgroundColor: acceptingProposal === (offer._id || offer.id) ? '#6c757d' : '#28a745',
+                                                                border: 'none',
+                                                                minWidth: '100px'
+                                                            }}
+                                                        >
+                                                            {acceptingProposal === (offer._id || offer.id) ? (
+                                                                <>
+                                                                    <i className="fas fa-spinner fa-spin"></i>
+                                                                    {t('project-offers.accepting') || 'Accepting...'}
+                                                                </>
+                                                            ) : (
+                                                                t('project-offers.accept') || 'Accept'
+                                                            )}
+                                                        </button>
+                                                        
+                                                        <button 
+                                                            className="btn-call pt-2"
+                                                            onClick={() => {
+                                                                console.log('=== DECLINE BUTTON CLICK DEBUG ===');
+                                                                console.log('Timestamp:', new Date().toISOString());
+                                                                console.log('Offer object:', offer);
+                                                                console.log('Offer ID:', offer._id || offer.id);
+                                                                console.log('Professional ID (raw):', offer.professionalId);
+                                                                
+                                                                // Extract professional ID before passing to function
+                                                                let professionalIdToPass = offer.professionalId;
+                                                                if (typeof offer.professionalId === 'object' && offer.professionalId._id) {
+                                                                    professionalIdToPass = offer.professionalId._id;
+                                                                    console.log('✅ Extracted professional ID for decline:', professionalIdToPass);
+                                                                }
+                                                                
+                                                                handleDeclineProposal(offer._id || offer.id, professionalIdToPass);
+                                                            }}
+                                                            disabled={acceptingProposal === (offer._id || offer.id) || decliningProposal === (offer._id || offer.id)}
+                                                            style={{ 
+                                                                backgroundColor: decliningProposal === (offer._id || offer.id) ? '#6c757d' : '#dc3545',
+                                                                border: 'none',
+                                                                minWidth: '100px'
+                                                            }}
+                                                        >
+                                                            {decliningProposal === (offer._id || offer.id) ? (
+                                                                <>
+                                                                    <i className="fas fa-spinner fa-spin"></i>
+                                                                    {t('project-offers.declining') || 'Declining...'}
+                                                                </>
+                                                            ) : (
+                                                                t('project-offers.decline') || 'Decline'
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            return null;
+                                        })()}
                                     </div>
                                 </div>
                             ))

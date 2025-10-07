@@ -644,15 +644,21 @@
     "call": "Call",
     "accept": "Accept",
     "accepting": "Accepting",
+    "decline": "Decline",
+    "declining": "Declining",
     "proposal-accepted": "Proposal accepted successfully!",
+    "proposal-declined": "Proposal declined successfully!",
     "accept-error": "Failed to accept proposal. Please try again.",
+    "decline-error": "Failed to decline proposal. Please try again.",
     "project-started": "Project started successfully!",
     "start-error": "Failed to start project. Please try again.",
     "noOffers": "No project offers found",
     "price": "Price",
     "duration": "Duration",
     "professional": "Professional",
-    "noPhoneNumber": "No phone number available"
+    "noPhoneNumber": "No phone number available",
+    "status-accepted": "Accepted",
+    "status-declined": "Declined"
   },
 
   "request-quote": {
@@ -1568,7 +1574,11 @@
       "allProjects": "All Projects",
       "accepted": "Accepted",
       "startProject": "Start Project",
-      "starting": "Starting..."
+      "starting": "Starting...",
+      "alreadyApplied": "You have already applied to this job"
+    },
+    "status": {
+      "rejected": "Project or Offer is Rejected"
     }
   },
   "otpModal": {

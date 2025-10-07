@@ -55,6 +55,36 @@ const ServiceCard = ({
         }
     };
 
+    // Check if the current professional has already applied to a project
+    const hasAlreadyApplied = (project) => {
+        const currentProfessionalId = getCurrentProfessionalId();
+        if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
+            return false;
+        }
+        
+        // Check if current professional's ID exists in any of the proposals
+        return project.proposals.some(proposal => {
+            const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
+            return proposalProfessionalId === currentProfessionalId;
+        });
+    };
+
+    // Check if the current professional's proposal is rejected
+    const isProposalRejected = (project) => {
+        const currentProfessionalId = getCurrentProfessionalId();
+        if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
+            return false;
+        }
+        
+        // Find the proposal for current professional and check if it's rejected
+        const professionalProposal = project.proposals.find(proposal => {
+            const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
+            return proposalProfessionalId === currentProfessionalId;
+        });
+        
+        return professionalProposal && professionalProposal.status === 'rejected';
+    };
+
     // Check if user has active subscription/package using localStorage payment status
     const checkUserSubscription = () => {
         try {
@@ -718,11 +748,44 @@ const ServiceCard = ({
               <div className="button-container mt-3">
                 {project.status === 'open' ? (
                   <>
-                    {/* Only show Request Quote button if no proposals are accepted */}
-                    {!project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
-                      <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
-                        {t('serviceCard.buttons.priceQuote')}
+                    {/* Check if professional's proposal is rejected */}
+                    {isProposalRejected(project) ? (
+                      <div 
+                        className="alert alert-danger" 
+                        style={{
+                          backgroundColor: '#f8d7da',
+                          color: '#721c24',
+                          padding: '15px',
+                          borderRadius: '5px',
+                          textAlign: 'center',
+                          border: '1px solid #f5c6cb',
+                          width: '100%',
+                          margin: '0'
+                        }}
+                      >
+                        <i className="fas fa-times-circle me-2"></i>
+                        {t('serviceCard.status.rejected', 'Project or Offer is Rejected')}
+                      </div>
+                    ) : hasAlreadyApplied(project) && !project.isAccepted ? (
+                      /* Check if professional has already applied */
+                      <button 
+                        className="btn-secondary p-3" 
+                        style={{
+                          backgroundColor: '#6c757d',
+                          cursor: 'not-allowed',
+                          opacity: 0.7
+                        }}
+                        disabled
+                      >
+                        {t('serviceCard.buttons.alreadyApplied')}
                       </button>
+                    ) : (
+                      /* Only show Request Quote button if no proposals are accepted and professional hasn't applied */
+                      !project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
+                        <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
+                          {t('serviceCard.buttons.priceQuote')}
+                        </button>
+                      )
                     )}
                   
                  
@@ -734,7 +797,7 @@ const ServiceCard = ({
                     </button>
                     {/* Price Quote button is hidden when status is inProgress */}
                   </>
-                ) : (
+                ): (
                   <>
                     <button  className='p-3 pt-4' style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
