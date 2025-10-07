@@ -333,10 +333,10 @@ const Navbar = () => {
                         )}
                     </ul>
                     
-                    <div className='navbar-actions-container d-flex align-items-start gap-3 flex-column flex-lg-row mb-3 mb-lg-0'>
+                    <div className='navbar-actions-container mb-3 mb-lg-0'>
                         {!isLoggedIn && !isServiceProvider && (
-                            <div className='register-btn-wrapper w-100 w-lg-auto'>
-                                <Link className='btn register-btn-nav w-100 w-lg-auto' to='login-sp'>
+                            <div className='register-btn-wrapper'>
+                                <Link className='btn register-btn-nav' to='login-sp'>
                                     <img src={PersonLogo} alt=""/>
                                    <span>
 
@@ -374,24 +374,26 @@ const Navbar = () => {
                                     }}
                                 >
                                     <i className="fas fa-bell" style={{ color: '#ffffff', fontSize: '18px' }}></i>
-                                    <span 
-                                        className="cart-badge p-1 position-absolute badge rounded-pill bg-danger"
-                                        style={{
-                                            fontSize: '10px',
-                                            minWidth: '18px',
-                                            height: '18px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            padding: '2px 6px',
-                                            top: '-6px',
-                                            right: '-6px',
-                                            lineHeight: '1',
-                                            zIndex: '10'
-                                        }}
-                                    >
-                                        {notificationCount || 0}
-                                    </span>
+                                    {notificationCount > 0 && (
+                                        <span 
+                                            className="cart-badge p-1 position-absolute badge rounded-pill bg-danger"
+                                            style={{
+                                                fontSize: '10px',
+                                                minWidth: '18px',
+                                                height: '18px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: '2px 6px',
+                                                top: '-6px',
+                                                right: '-6px',
+                                                lineHeight: '1',
+                                                zIndex: '10'
+                                            }}
+                                        >
+                                            {notificationCount}
+                                        </span>
+                                    )}
                                 </button>
                             )}
                             {!isServiceProvider && isLoggedIn && (

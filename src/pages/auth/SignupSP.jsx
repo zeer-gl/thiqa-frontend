@@ -1262,10 +1262,11 @@ const validateForm = () => {
                                                         height: '50px', 
                                                         cursor: 'pointer',
                                                         display: 'flex',
-                                                        // flexDirection: 'column',
-                                                        // justifyContent: 'center',
                                                         padding: '8px 12px',
-                                                        overflow: 'hidden'
+                                                        overflow: 'hidden',
+                                                        // add extra padding on the arrow side so placeholder doesn't overlap it
+                                                        paddingRight: i18n.dir() === 'rtl' ? '12px' : '36px',
+                                                        paddingLeft: i18n.dir() === 'rtl' ? '36px' : '12px'
                                                     }}
                                                     onClick={() => setShowSpecializationDropdown(!showSpecializationDropdown)}
                                                 >
@@ -1327,7 +1328,7 @@ const validateForm = () => {
                                                                 )}
                                                             </>
                                                         ) : (
-                                                            <span className=" " style={{ fontSize: '16px' ,color:'lightslategray'}}>
+                                                            <span className=" " style={{ fontSize: '16px' ,color:'lightslategray', display:'block', width:'100%', textAlign: i18n.dir() === 'rtl' ? 'right' : 'left', pointerEvents:'none' }}>
                                                                 {loadingSpecializations ? t('common.loading', 'Loading') : t('auth.signupsp.selectSpecializations', 'Select specializations')}
                                                             </span>
                                                         )}
@@ -1336,7 +1337,8 @@ const validateForm = () => {
                                                     {/* Dropdown Arrow */}
                                                     <div style={{ 
                                                         position: 'absolute', 
-                                                        right: '12px', 
+                                                        right: i18n.dir() === 'rtl' ? 'auto' : '12px', 
+                                                        left: i18n.dir() === 'rtl' ? '12px' : 'auto', 
                                                         top: '50%', 
                                                         transform: 'translateY(-50%)',
                                                         pointerEvents: 'none',
@@ -1559,7 +1561,7 @@ const validateForm = () => {
                                         <div className='d-flex justify-content-center gap-3 align-items-center mt-4'>
                                             <button 
                                                 type="button" 
-                                                className='btn d-flex align-items-center gap-3 justify-content-between register-socials'
+                                                className='btn d-flex align-items-center gap-2 md-gap-3 justify-content-center md:justify-content-between register-socials'
                                                 onClick={handleGoogleRegister}
                                                 disabled={socialSubmitting}
                                             >
@@ -1571,7 +1573,7 @@ const validateForm = () => {
                                             </button>
                                             <button 
                                                 type="button" 
-                                                className='btn d-flex align-items-center gap-3 justify-content-between register-socials'
+                                                className='btn d-flex align-items-center gap-2 md-gap-3 justify-content-center md:justify-content-between register-socials'
                                                 onClick={handleAppleRegister}
                                                 disabled={socialSubmitting}
                                             >

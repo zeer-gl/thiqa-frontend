@@ -205,14 +205,21 @@
     gap: 10px;
 }
 .card-detail{
-    display: flex;
-    flex-direction: column;
-    padding-top: 70px;
-    padding-bottom: 70px;
-   
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+
     justify-content: center;
-    align-items: center;
-    text-align: center;
+    align-items: start;
+    padding: 20px;
+    background-color: rgb(241, 241, 241);
+    border: 1px solid rgb(230, 230, 230);
+    border-radius: 6px;
+}
+@media (max-width: 576px){
+    .card-detail{
+        grid-template-columns: 1fr;
+    }
 }
 .button-container{
     width: 100%;

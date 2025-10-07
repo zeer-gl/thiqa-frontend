@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../../components/LanguageSwitcher.jsx';
 import { BaseUrl } from '../../assets/BaseUrl.jsx';
 import { AlertContext } from '../../context/AlertContext.jsx';
+import EmailIcon from '/public/images/auth/sms.svg';
 
 function ForgetPasswordSP() {
     const {t, i18n} = useTranslation();
@@ -279,7 +280,7 @@ function ForgetPasswordSP() {
                                     {currentStep === 1 && (
                                         <div>
                                             {/* Toggle between email and phone */}
-                                            <div className="mb-3">
+                                            {/* <div className="mb-3">
                                                 <div className="btn-group w-100" role="group">
                                                     <button
                                                         type="button"
@@ -296,19 +297,24 @@ function ForgetPasswordSP() {
                                                         {t('auth.forgotPassword.phone', 'Phone')}
                                                     </button>
                                                 </div>
-                                            </div>
+                                            </div> */}
 
                                             {!usePhone ? (
                                                 <div className="form-group mb-3">
                                                     <label htmlFor="email" className='form-label'>{t('auth.forgotPassword.email', 'Email')}</label>
-                                                    <input 
-                                                        type="email" 
-                                                        className={`form-control  pt-2 ${errors.email ? 'is-invalid' : ''}`}
-                                                        id="email"
-                                                        placeholder={t('auth.forgotPassword.emailPlaceholder', 'professional@example.com')}
-                                                        value={email}
-                                                        onChange={(e) => handleInputChange('email', e.target.value)}
-                                                    />
+                                                    <div className="position-relative">
+                                                        <div className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'end-0 pe-3' : 'start-0 ps-3'}`}>
+                                                            <img src={EmailIcon} alt="Email" style={{ width: '20px', height: '20px' }} />
+                                                        </div>
+                                                        <input 
+                                                            type="email" 
+                                                            className={`form-control no-bg-icon ${i18n.dir() === 'rtl' ? 'pe-5' : 'ps-5'} ${errors.email ? 'is-invalid' : ''}`}
+                                                            id="email"
+                                                            placeholder={t('auth.forgotPassword.emailPlaceholder', 'professional@example.com')}
+                                                            value={email}
+                                                            onChange={(e) => handleInputChange('email', e.target.value)}
+                                                        />
+                                                    </div>
                                                     {errors.email && (
                                                         <div className="text-danger mt-1">{errors.email}</div>
                                                     )}
@@ -400,7 +406,7 @@ function ForgetPasswordSP() {
                                                         {currentStep === 1 && t('auth.forgotPassword.sendOtp', 'Send OTP')}
                                                         {currentStep === 2 && t('auth.forgotPassword.verifyOtp', 'Verify OTP')}
                                                         {currentStep === 3 && t('auth.forgotPassword.resetPassword', 'Reset Password')}
-                                                        <img src={ArrowRight} alt="" className="pt-2"/>
+                                                        {/* <img src={ArrowRight} alt="" className="pt-2"/> */}
                                                     </>
                                                 )}
                                             </button>

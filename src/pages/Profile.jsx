@@ -1955,8 +1955,7 @@ const Profile = () => {
           <div className="container-md">
             <div className="header-row">
               <h1 className="header-title ar-heading-bold ps-3">
-              
-                Profile
+                {t('profile.headerTitle', 'Personal Profile')}
               </h1>
             </div>
           </div>
@@ -2077,6 +2076,7 @@ const Profile = () => {
                           }}
                           disabled={!isEditingProfile}
                           placeholder={t('profile.phoneVerification.phonePlaceholder', 'Kuwait Phone (e.g., 51234567)')}
+                          style={i18n.dir() === 'rtl' ? { textAlign: 'right' } : {}}
                         />
                       </div>
                       {phoneError && (
@@ -2686,11 +2686,11 @@ const Profile = () => {
                             value={changePasswordForm.currentPassword}
                             onChange={(e) => handleChangePasswordFormChange('currentPassword', e.target.value)}
                             placeholder={t('profile.changePassword.currentPasswordPlaceholder', 'Enter your current password')}
-                            style={{ paddingRight: '45px' }}
+                            style={i18n.dir() === 'rtl' ? { paddingLeft: '45px' } : { paddingRight: '45px' }}
                           />
                           <button
                             type="button"
-                            className="position-absolute top-50 translate-middle-y end-0 me-3 bg-transparent border-0"
+                            className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'start-0 ms-3' : 'end-0 me-3'} bg-transparent border-0`}
                             onClick={toggleCurrentPasswordVisibility}
                             style={{ cursor: 'pointer', zIndex: 10 }}
                           >
@@ -2719,11 +2719,11 @@ const Profile = () => {
                             value={changePasswordForm.newPassword}
                             onChange={(e) => handleChangePasswordFormChange('newPassword', e.target.value)}
                             placeholder={t('profile.changePassword.newPasswordPlaceholder', 'Enter your new password')}
-                            style={{ paddingRight: '45px' }}
+                            style={i18n.dir() === 'rtl' ? { paddingLeft: '45px' } : { paddingRight: '45px' }}
                           />
                           <button
                             type="button"
-                            className="position-absolute top-50 translate-middle-y end-0 me-3 bg-transparent border-0"
+                            className={`position-absolute top-50 translate-middle-y ${i18n.dir() === 'rtl' ? 'start-0 ms-3' : 'end-0 me-3'} bg-transparent border-0`}
                             onClick={toggleNewPasswordVisibility}
                             style={{ cursor: 'pointer', zIndex: 10 }}
                           >
