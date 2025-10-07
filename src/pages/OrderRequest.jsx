@@ -328,6 +328,8 @@ const OrderRequest = () => {
                 if (values.typeOfProject) formData.append('typeOfProject', values.typeOfProject);
                 if (values.projectName) formData.append('projectName', values.projectName);
                 if (values.price) formData.append('price', String(values.price));
+                // Add serviceId (selected service/category)
+                if (values.typeOfProject) formData.append('serviceId', values.typeOfProject);
                 // Add professional ID if exists (for specific professional targeting)
                 if (professionalId) formData.append('professionalId', professionalId);
                 formData.append('projectDesign', values.projectDesign);
@@ -352,6 +354,11 @@ const OrderRequest = () => {
                     typeOfProject: values.typeOfProject,
                     projectName: values.projectName
                 };
+                
+                // Add serviceId (selected service/category)
+                if (values.typeOfProject) {
+                    payload.serviceId = values.typeOfProject;
+                }
                 
                 // Add professional ID if exists (for specific professional targeting)
                 if (professionalId) {

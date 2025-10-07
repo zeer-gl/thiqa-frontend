@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useAlert } from '../context/AlertContext';
 import PageHeader from '../components/PageHeader';
@@ -11,6 +11,7 @@ import { BaseUrl } from '../assets/BaseUrl.jsx';
 const ServiceRequest = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
     const { showAlert } = useAlert();
     const [selectedService, setSelectedService] = useState('');
     const [serviceCategories, setServiceCategories] = useState([]);
@@ -114,6 +115,25 @@ const ServiceRequest = () => {
 
     // Get selected category
     const selectedCategory = serviceCategories.find(cat => cat._id === selectedService);
+
+    // Get professionalId from URL params or localStorage
+    const getProfessionalId = () => {
+        // Check URL query params
+        const professionalId = new URLSearchParams(location.search).get('professionalId');
+        if (professionalId) return professionalId;
+        
+        // Fallback to localStorage if available
+        try {
+            const professionalData = localStorage.getItem('professionalData');
+            if (professionalData) {
+                const parsed = JSON.parse(professionalData);
+                return parsed?._id || null;
+            }
+        } catch (error) {
+            console.error('Error getting professional ID:', error);
+        }
+        return null;
+    };
 
     // Update form when category is selected
     useEffect(() => {
@@ -312,6 +332,17 @@ const ServiceRequest = () => {
             formData.append('projectName', cleanString(values.projectName));
             formData.append('price', cleanString(values.price));
             
+            // Add serviceId (selected category/service ID)
+            if (selectedCategory && selectedCategory._id) {
+                formData.append('serviceId', cleanString(selectedCategory._id));
+            }
+            
+            // Add professionalId if available from URL params or localStorage
+            const professionalId = getProfessionalId();
+            if (professionalId) {
+                formData.append('professionalId', cleanString(professionalId));
+            }
+            
             // Debug: Log all form values to ensure they're strings
             console.log('Form values being sent (all converted to strings):');
             console.log('customerId:', String(customerId));
@@ -323,6 +354,8 @@ const ServiceRequest = () => {
             console.log('typeOfProject:', String(selectedCategory._id));
             console.log('projectName:', String(values.projectName));
             console.log('price:', String(values.price));
+            console.log('serviceId:', selectedCategory?._id ? String(selectedCategory._id) : 'Not provided');
+            console.log('professionalId:', getProfessionalId() || 'Not provided');
             
             // Add file if selected (with size validation)
             if (values.projectDesign) {
