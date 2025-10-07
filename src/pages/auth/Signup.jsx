@@ -45,6 +45,7 @@ function Signup() {
   const[emailError,setEmailError]=useState('');
   const[phoneError,setPhoneError]=useState('')
   const[phoneValid,setPhoneValid]=useState(false)
+  const [registrationData, setRegistrationData] = useState(null);
 
   const navigate = useNavigate();
   const otpRefs = useRef([]);
@@ -145,100 +146,80 @@ function Signup() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  // Mobile-style OTP generation and verification
-  const [generatedOTP, setGeneratedOTP] = useState(null);
 
-  // Function to generate and send OTP via SMS service
-  const sendOTP = async (phoneNumber) => {
+  // Function to verify OTP via API
+  const verifyOTP = async (email, otpCode) => {
     try {
-      console.log("Generating OTP...");
+      console.log('Verifying OTP via API for email:', email);
       
-      // Generate 4-digit OTP
-      const otp = Math.floor(1000 + Math.random() * 9000).toString();
-      setGeneratedOTP(otp);
-      
-      console.log('📨 Generated OTP:', otp, 'for phone:', phoneNumber);
-      console.log('🔑 For testing - OTP is:', otp);
-      
-      // SMS service disabled due to CORS issues - OTP generated locally for testing
-      console.log('📨 OTP generated locally:', otp, 'for phone:', phoneNumber);
-      showAlert(t('auth.signup.otpSent'), 'success');
-      
-      // Always return true since OTP is generated and stored locally
-      return true;
-    } catch (error) {
-      console.error('⚠️ Error while generating OTP:', error);
-      showAlert(t('auth.signup.otpSendFailed'), 'error');
-      return false;
-    }
-  };
-
-  // Function to verify OTP locally
-  const verifyOTP = async (enteredOtp) => {
-    if (!generatedOTP) {
-      console.error('❌ No generated OTP found!');
-      return false;
-    }
-    
-    // Simulate verification delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const isValid = enteredOtp === generatedOTP;
-    console.log(isValid ? '✅ OTP Verified!' : '❌ OTP Verification Failed');
-    
-    return isValid;
-  };
-
-  // Function to check if user already exists via API
-  const checkUserExistence = async (email, phoneNo) => {
-    try {
-      console.log('Checking user existence for email:', email, 'phone:', phoneNo);
-      
-      const response = await fetch(`${BaseUrl}/customer/check-email-or-phone`, {
+      const response = await fetch(`${BaseUrl}/customer/verifyOtp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: email,
-          phoneNo: phoneNo
+          otp: otpCode
         })
       });
       
       const data = await response.json();
-      console.log('User existence check API response:', data);
+      console.log('OTP verification API response:', data);
       
-      if (response.ok && data.success) {
-        // API returned success, check if email or phone exists
-        const emailExists = data.results?.email?.exists || false;
-        const phoneExists = data.results?.phoneNo?.exists || false;
-        const exists = emailExists || phoneExists;
-        
-        let message = '';
-        if (emailExists && phoneExists) {
-          message = t('auth.signup.emailAndPhoneExist', 'Email and phone number already exist. Please use different credentials or try logging in.');
-        } else if (emailExists) {
-          message = t('auth.signup.emailAlreadyExists', 'Email already exists. Please use a different email or try logging in.');
-        } else if (phoneExists) {
-          message = t('auth.signup.phoneAlreadyExists', 'Phone number already exists. Please use a different phone number or try logging in.');
-        }
-        
-        console.log('User existence check result:', { 
-          emailExists, 
-          phoneExists, 
-          exists, 
-          message,
-          apiResponse: data 
-        });
-        
-        return { exists, message };
+      if (response.ok) {
+        // OTP verification successful
+        console.log('✅ OTP Verified successfully!');
+        return { success: true, data: data };
       } else {
-        // API returned error, but we'll proceed with OTP to avoid blocking users
-        console.warn('API check failed, proceeding with OTP generation');
-        return { exists: false, message: 'Unable to verify user existence' };
+        // OTP verification failed
+        const errorMessage = data.message || data.error || 'Invalid OTP code';
+        console.log('❌ OTP Verification Failed:', errorMessage);
+        return { success: false, message: errorMessage };
       }
     } catch (error) {
-      console.error('Error checking user existence:', error);
-      // If API fails, we'll proceed with OTP generation to avoid blocking users
-      return { exists: false, message: 'Unable to verify user existence' };
+      console.error('Error during OTP verification:', error);
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  // Function to register user and get OTP via email
+  const registerUserAndGetOTP = async (userData) => {
+    try {
+      console.log('Registering user and requesting OTP via email:', userData);
+      
+      const response = await fetch(`${BaseUrl}/customer/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: userData.name,
+          email: userData.email,
+          phoneNo: userData.phoneNo,
+          password: userData.password
+        })
+      });
+      
+      const data = await response.json();
+      console.log('Registration API response:', data);
+      
+      if (response.ok) {
+        // Registration successful, OTP sent to email
+        // Store the registration data for use after OTP verification
+        // (Backend returns token and customer data during registration)
+        return { 
+          success: true, 
+          message: data.message || 'OTP sent to your email',
+          registrationData: {
+            token: data.token,
+            customer: data.customer || data,
+            customerId: data.customerId || data._id || data.customer?._id
+          }
+        };
+      } else {
+        // Registration failed
+        const errorMessage = data.message || data.error || 'Registration failed';
+        return { success: false, message: errorMessage };
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      return { success: false, message: 'Network error. Please try again.' };
     }
   };
 
@@ -252,34 +233,36 @@ function Signup() {
     }
     
     setSubmitting(true);
-    console.log('Starting user existence check...');
+    console.log('Starting registration process...');
 
     try {
-      // Step 1: Check if user already exists via API
-      const existenceCheck = await checkUserExistence(email, phoneNo);
+      // Step 1: Register user and get OTP via email
+      const userData = {
+        name: name,
+        email: email,
+        phoneNo: phoneNo,
+        password: password
+      };
       
-      if (existenceCheck.exists) {
-        // User already exists, show error and don't proceed with OTP
-        showAlert(existenceCheck.message, 'error');
-        setSubmitting(false);
-        return;
-      }
+      const registrationResult = await registerUserAndGetOTP(userData);
       
-      // Step 2: User doesn't exist, proceed with OTP generation
-      console.log('User does not exist, proceeding with OTP generation...');
-      const otpSent = await sendOTP(phoneNo);
-      
-      if (otpSent) {
-        // Step 3: Show OTP modal for verification
+      if (registrationResult.success) {
+        // Step 2: Registration successful, OTP sent to email - show OTP modal
+        // Store registration data (token and customer info) for use after OTP
+        if (registrationResult.registrationData) {
+          setRegistrationData(registrationResult.registrationData);
+          console.log('✅ Registration data stored for later use:', registrationResult.registrationData);
+        }
+        showAlert(registrationResult.message, 'success');
         setShowOtpModal(true);
         startTimer();
-        // Don't show registration success here - only after OTP verification
       } else {
-        showAlert(t('auth.signup.otpSendFailed'), 'error');
+        // Registration failed, show error
+        showAlert(registrationResult.message, 'error');
       }
     } catch (error) {
       console.error('Registration flow error:', error);
-      showAlert(t('auth.signup.otpSendFailed'), 'error');
+      showAlert(t('auth.signup.registrationFailed', 'Registration failed. Please try again.'), 'error');
     } finally {
       setSubmitting(false);
     }
@@ -316,7 +299,7 @@ function Signup() {
         role: 'customer', // Indicate this is for customer registration
         registrationType: 'customer',
         userType: 'customer',
-        providerId: 'google.com', // Add required providerId for Google authentication
+        providerId: googleUserId || result.user.uid, // Send actual Google User ID (required by backend)
         customerId: googleUserId || result.user.uid, // Use Google user ID as customerId
         email: result.user.email, // Add email from Google user
         name: result.user.displayName || result.user.email.split('@')[0], // Add name from Google user
@@ -607,61 +590,62 @@ function Signup() {
       return;
     }
     
-    // Step 1: Verify OTP locally
+    // Step 1: Verify OTP via API
     const otpCode = otpValues.join('');
     
-    const verificationSuccess = await verifyOTP(otpCode);
+    const verificationResult = await verifyOTP(email, otpCode);
     
-    if (verificationSuccess) {
-      // Step 2: Show verification success, then call registration API
+    if (verificationResult.success) {
+      // Step 2: OTP verification successful - use stored registration data
+      console.log('✅ OTP Verification successful, using stored registration data...');
+      console.log('Stored registration data:', registrationData);
+      
+      // Set login status FIRST
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', 'user');
+      
+      // Use stored registration data (from registration API response)
+      if (registrationData) {
+        // Store token from registration
+        if (registrationData.token) {
+          localStorage.setItem('token', registrationData.token);
+          console.log('✅ Token stored from registration:', registrationData.token);
+        } else {
+          console.warn('⚠️ No token in stored registration data');
+        }
+        
+        // Store customer data from registration
+        if (registrationData.customer) {
+          localStorage.setItem('userData', JSON.stringify(registrationData.customer));
+          console.log('✅ Customer data stored');
+        } else {
+          console.warn('⚠️ No customer data in stored registration data');
+        }
+      } else {
+        console.error('❌ No registration data available! This should not happen.');
+      }
+      
+      // Debug: Log all stored values
+      console.log('📦 Final localStorage state:', {
+        isLoggedIn: localStorage.getItem('isLoggedIn'),
+        userRole: localStorage.getItem('userRole'),
+        'token': !!localStorage.getItem('token'),
+        'token-value': localStorage.getItem('token'),
+        userData: !!localStorage.getItem('userData')
+      });
+      
       showAlert(t('auth.signup.verificationSuccess'), 'success');
-      await registerUser();
+      
+      // Small delay to ensure localStorage is updated before navigation
+      setTimeout(() => {
+        console.log('🔄 Navigating to home...');
+        navigate("/");
+      }, 100);
     } else {
-      showAlert(t('auth.signup.invalidOtp'), 'error');
+      showAlert(verificationResult.message || t('auth.signup.invalidOtp'), 'error');
     }
   };
 
-  // Function to register user after OTP verification
-  const registerUser = async () => {
-    try {
-      console.log('Calling registration API after OTP verification...');
-      
-      const res = await fetch(`${BaseUrl}/customer/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phoneNo: phoneNo,
-          password: password,
-          name: name,
-          email: email,
-          token: deviceToken || undefined
-        })
-      });
-      
-      const resultt = await res.json();
-      console.log('Registration result:', resultt);
-      
-      if (res.ok) {
-        if (resultt.customer) {
-          localStorage.setItem('userData', JSON.stringify(resultt.customer));
-        }
-        
-        // Set login status
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole', 'user');
-        localStorage.setItem('token', resultt.token);
-        
-        showAlert(t('auth.signup.registrationSuccess'), 'success');
-        navigate("/");
-      } else {
-        const backendMessage = resultt?.message || resultt?.error || t('auth.signup.genericError');
-        showAlert(backendMessage, "error");
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      showAlert(t('auth.signup.genericError'), 'error');
-    }
-  };
 
   const handleResend = async (e) => {
     e.preventDefault();
@@ -669,13 +653,27 @@ function Signup() {
     // Clear existing OTP input fields
     setOtpValues(["", "", "", ""]);
     
-    // Send OTP again
-    const otpSent = await sendOTP(phoneNo);
+    // Resend OTP by calling registration API again
+    const userData = {
+      name: name,
+      email: email,
+      phoneNo: phoneNo,
+      password: password
+    };
     
-    if (otpSent) {
+    const registrationResult = await registerUserAndGetOTP(userData);
+    
+    if (registrationResult.success) {
+      // Update stored registration data from resend response
+      if (registrationResult.registrationData) {
+        setRegistrationData(registrationResult.registrationData);
+        console.log('✅ Updated registration data after resend:', registrationResult.registrationData);
+      }
       setTimer(59);
       startTimer();
-      showAlert(t('auth.signup.otpResent'), 'success');
+      showAlert(registrationResult.message || t('auth.signup.otpResent'), 'success');
+    } else {
+      showAlert(registrationResult.message || t('auth.signup.otpSendFailed'), 'error');
     }
   };
 
@@ -683,7 +681,7 @@ function Signup() {
     setShowOtpModal(false);
     setOtpValues(["", "", "", ""]);
     setTimer(59);
-    setGeneratedOTP(null);
+    setRegistrationData(null);
     
     // Clear timer interval
     if (timerInterval) {
@@ -976,7 +974,7 @@ function Signup() {
                 <img style={{ maxWidth: "100px" }} src={Logo} alt="" />
               </div>
               <h3 className="otp-title mb-2 ar-heading-bold">{t("auth.signup.otp.title")}</h3>
-              <p className="otp-description navy">{t("auth.signup.otp.description")}</p>
+              <p className="otp-description navy">{t("auth.signup.otp.emailDescription", "Enter the code sent to your email to verify your account.")}</p>
             </div>
             <div className="otp-timer mb-4">
               <span className="otp-timer-text">{t("auth.signup.otp.timerPrefix")} {formattedTime}</span>

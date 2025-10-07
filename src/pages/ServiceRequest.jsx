@@ -304,6 +304,7 @@ const ServiceRequest = () => {
             formData.append('title', cleanString(values.title));
             formData.append('description', cleanString(values.description));
             formData.append('budget', cleanString(values.budget));
+            formData.append('price', cleanString(values.budget));
             formData.append('deadline', cleanString(values.deadline));
             formData.append('dateOfRequest', new Date().toISOString());
             formData.append('address', cleanString(values.address));

@@ -321,6 +321,7 @@ const OrderRequest = () => {
                 if (values.title) formData.append('title', values.title);
                 if (values.description) formData.append('description', values.description);
                 if (values.budget) formData.append('budget', String(values.budget));
+                if (values.budget) formData.append('price', String(values.budget));
                 if (values.deadline) formData.append('deadline', values.deadline);
                 if (values.address) formData.append('address', values.address);
                 if (values.dateOfRequest) formData.append('dateOfRequest', values.dateOfRequest);
@@ -344,6 +345,7 @@ const OrderRequest = () => {
                     title: values.title,
                     description: values.description,
                     budget: Number(values.budget),
+                    price: Number(values.budget),
                     deadline: values.deadline || undefined,
                     address: values.address,
                     dateOfRequest: values.dateOfRequest,
