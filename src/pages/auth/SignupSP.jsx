@@ -584,7 +584,7 @@ const validateForm = () => {
                 role: 'professional', // Indicate this is for professional registration
                 registrationType: 'professional',
                 userType: 'service_provider',
-                providerId: 'google.com', // Add required providerId for Google authentication
+                providerId: googleUserId || result.user.uid, // Send actual Google User ID (required by backend)
                 professionalId: googleUserId || result.user.uid, // Use Google user ID as professionalId
                 email: result.user.email, // Add email from Google user
                 name: result.user.displayName || result.user.email.split('@')[0], // Add name from Google user
