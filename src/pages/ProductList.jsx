@@ -69,7 +69,7 @@ const ProductList = () => {
                         <h1 className="fw-bold">{t('pages.products.title')}</h1>
                         <p className="lead">{t('pages.products.description')}</p>
 
-                        <div className="row mt-4">
+                        <div className="row mt-4 justify-content-center">
                             {/* {loading && [1,2,3,4].map(s => (
                                 <div key={`s-${s}`} className="col-md-3 mb-3">
                                     <div className="card">

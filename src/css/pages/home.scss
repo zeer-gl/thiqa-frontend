@@ -1,8 +1,8 @@
 @import "../utilities";
 
-//*{
+// *{
 //  border: 1px solid red !important;
-//}
+// }
 .hero-section {
   padding: 50px 0 0 0;
   background-color: $navy;
@@ -480,6 +480,15 @@ fieldset {
 @media (max-width: 992px) {
   .hero-content{
     text-align: center;
+    h2 {
+      font-size: 30px;
+      line-height: 1.2;
+    }
+    h4 {
+      font-size: 18px;
+      line-height: 28px;
+      padding: 12px 0;
+    }
   }
   .hero-img{
     width: 300px;
@@ -491,6 +500,11 @@ fieldset {
     top: -25px;
     right: 170px;
     height: 400px;
+  }
+  .hero-btn {
+    font-size: 18px !important;
+    height: 50px !important;
+    min-height: 50px !important;
   }
 }
 @media (max-width: 768px) {
@@ -534,6 +548,23 @@ fieldset {
 @media (max-width: 576px) {
   .thiqa-footer .custom-navbar {
     padding: 8px 12px !important;
+  }
+  .hero-content {
+    h2 {
+      font-size: 24px;
+      line-height: 1.2;
+    }
+    h4 {
+      font-size: 16px;
+      line-height: 24px;
+      padding: 10px 0;
+    }
+  }
+  .hero-btn {
+    font-size: 16px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 0 18px !important;
   }
   
   .product-list-tabs {
@@ -869,6 +900,16 @@ fieldset {
     .pagination-buttons-group {
       margin-left: 0 !important;
       margin-top: 10px;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      .btn,
+      button {
+        width: auto !important;
+        display: inline-flex !important;
+      }
     }
   }
   
@@ -904,6 +945,9 @@ fieldset {
   @media (max-width: 768px) {
     margin-left: 0 !important;
     justify-content: center;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px;
   }
 
   // Unify borders for both prev/next buttons regardless of individual classes

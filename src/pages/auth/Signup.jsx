@@ -919,11 +919,11 @@ function Signup() {
                     <div className="d-flex justify-content-center gap-3 align-items-center mt-4">
                       <button
                         type="button"
-                        className="btn d-flex align-items-center gap-3 justify-content-between register-socials"
+                        className="btn d-flex align-items-center gap-2 md-gap-3 justify-content-center md:justify-content-between register-socials"
                         onClick={handleGoogleRegister}
                         disabled={socialSubmitting}
                       >
-                      <span className="pt-2">
+                      <span >
                       {t("auth.signup.google")}
                       </span>
                     
@@ -932,11 +932,11 @@ function Signup() {
                       </button>
                       <button
                         type="button"
-                        className="btn d-flex align-items-center gap-3 justify-content-between register-socials"
+                        className="btn d-flex align-items-center gap-2 md-gap-3 justify-content-center md:justify-content-between register-socials"
                         onClick={handleAppleRegister}
                         disabled={socialSubmitting}
                       >
-                        <span className="pt-2"> 
+                        <span> 
                         {t("auth.signup.apple")}
                         </span>
                       

@@ -1635,7 +1635,7 @@ const Home = () => {
                             </h1>
                             {!reviewsLoading && !reviewsError && reviews.length > 0 && (
                                 <div className="mb-3" style={{ fontSize: '14px', color: '#666' }}>
-                                    <span>Showing {reviews.length} customer review{reviews.length !== 1 ? 's' : ''}</span>
+                                    <span>{t('pages.home.customerSection.showingReviews', { count: reviews.length })}</span>
                                 </div>
                             )}
                             {reviewsLoading ? (
@@ -1658,14 +1658,14 @@ const Home = () => {
                                                 data-bs-slide-to={index} 
                                                 className={index === 0 ? "active" : ""} 
                                                 aria-current={index === 0 ? "true" : "false"}
-                                                aria-label={`Slide ${index + 1}`}
+                                                aria-label={t('pages.home.customerSection.slideAria', { num: index + 1 })}
                                             ></button>
                                         ))}
                                 </div>
                                 <div className="carousel-inner">
                                         {reviews.map((review, index) => {
                                             const averageRating = calculateAverageRating(review);
-                                            const customerName = review.customerId?.name || 'Customer';
+                                            const customerName = review.customerId?.name || t('pages.home.customerSection.customerFallback');
                                             const customerPic = review.customerId?.pic || null;
                                             
                                             return (
@@ -1677,11 +1677,11 @@ const Home = () => {
                                             <p>
                                                             {review.additionalNotes && review.additionalNotes.trim() !== '' 
                                                                 ? review.additionalNotes 
-                                                                : `Customer rated this product ${calculateAverageRating(review)}/5 stars based on efficiency, price, and delivery.`
+                                                                : t('pages.home.customerSection.defaultReview', { rating: calculateAverageRating(review) })
                                                             }
                                             </p>
                                                         <div className="review-product-info" style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>
-                                                            <small>Product ID: {review.productId}</small>
+                                                            <small>{t('pages.home.customerSection.productId')}: {review.productId}</small>
                                             </div>
                                             <div className='quote'>
                                                 <img src={QuoteImg} alt=""/>
@@ -1949,8 +1949,9 @@ const Home = () => {
                                                 </div>
                                             )}
                                             <input 
+                                                id="service-image-input"
                                                 type="file" 
-                                                className={`form-control ${imageError ? 'is-invalid' : ''}`}
+                                                className={`form-control d-none ${imageError ? 'is-invalid' : ''}`}
                                                 accept="image/*"
                                                 onChange={(e) => {
                                                     const file = e.target.files[0];
@@ -1959,6 +1960,19 @@ const Home = () => {
                                                 }}
                                                 disabled={serviceFormLoading}
                                             />
+                                            <div className="form-control d-flex align-items-center justify-content-between gap-2" style={{minHeight: '46px'}}>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-outline-secondary"
+                                                    onClick={() => document.getElementById('service-image-input').click()}
+                                                    disabled={serviceFormLoading}
+                                                >
+                                                    {t('pages.home.serviceManagement.chooseFile', 'Choose File')}
+                                                </button>
+                                                <span className="text-muted" style={{direction: i18n.language === 'ar' ? 'rtl' : 'ltr'}}>
+                                                    {serviceForm.image?.name || t('pages.home.serviceManagement.noFileChosen', 'No file chosen')}
+                                                </span>
+                                            </div>
                                             {imageError && (
                                                 <div className="invalid-feedback d-block" style={{
                                                     color: '#dc3545',
@@ -1990,52 +2004,103 @@ const Home = () => {
                                     backgroundColor: '#f8f9fa',
                                     direction: i18n.language === 'ar' ? 'rtl' : 'ltr'
                                 }}>
-                                          <button 
-                                        type="submit" 
-                                        className="btn  pt-2 d-flex align-items-center justify-content-center" 
-                                        disabled={serviceFormLoading}
-                                        style={{
-                                            minWidth: '120px',
-                                            opacity: serviceFormLoading ? 0.6 : 1,
-                                            backgroundColor: '#21395D',color: 'white',width:'100%'
-                                        }}
-                                    >
-                                        {serviceFormLoading ? (
-                                            <>
-                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                {t('common.saving', 'Saving...')}
-                                            </>
-                                        ) : (
-                                            editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
-                                        )}
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-secondary pt-2 d-flex align-items-center justify-content-center" 
-                                        disabled={serviceFormLoading}
-                                        onClick={() => {
-                                            setShowServiceModal(false);
-                                            setEditingService(null);
-                                            setServiceForm({
-                                                name: '',
-                                                nameEn: '',
-                                                nameAr: '',
-                                                price: '',
-                                                unit: '',
-                                                deliveryTime: '',
-                                                image: null,
-                                                existingImage: null
-                                            });
-                                            setImageError('');
-                                        }}
-                                        style={{
-                                            minWidth: '100px',
-                                            opacity: serviceFormLoading ? 0.6 : 1
-                                        }}
-                                    >
-                                        {t('common.cancel', 'Cancel')}
-                                    </button>
-                              
+                                    {i18n.language === 'ar' ? (
+                                        <>
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-secondary pt-2 d-flex align-items-center justify-content-center" 
+                                                disabled={serviceFormLoading}
+                                                onClick={() => {
+                                                    setShowServiceModal(false);
+                                                    setEditingService(null);
+                                                    setServiceForm({
+                                                        name: '',
+                                                        nameEn: '',
+                                                        nameAr: '',
+                                                        price: '',
+                                                        unit: '',
+                                                        deliveryTime: '',
+                                                        image: null,
+                                                        existingImage: null
+                                                    });
+                                                    setImageError('');
+                                                }}
+                                                style={{
+                                                    minWidth: '100px',
+                                                    opacity: serviceFormLoading ? 0.6 : 1
+                                                }}
+                                            >
+                                                {t('common.cancel', 'Cancel')}
+                                            </button>
+                                            <button 
+                                                type="submit" 
+                                                className="btn  pt-2 d-flex align-items-center justify-content-center" 
+                                                disabled={serviceFormLoading}
+                                                style={{
+                                                    minWidth: '120px',
+                                                    opacity: serviceFormLoading ? 0.6 : 1,
+                                                    backgroundColor: '#21395D',color: 'white',width:'100%'
+                                                }}
+                                            >
+                                                {serviceFormLoading ? (
+                                                    <>
+                                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                        {t('common.saving', 'Saving...')}
+                                                    </>
+                                                ) : (
+                                                    editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
+                                                )}
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button 
+                                                type="submit" 
+                                                className="btn  pt-2 d-flex align-items-center justify-content-center" 
+                                                disabled={serviceFormLoading}
+                                                style={{
+                                                    minWidth: '120px',
+                                                    opacity: serviceFormLoading ? 0.6 : 1,
+                                                    backgroundColor: '#21395D',color: 'white',width:'100%'
+                                                }}
+                                            >
+                                                {serviceFormLoading ? (
+                                                    <>
+                                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                        {t('common.saving', 'Saving...')}
+                                                    </>
+                                                ) : (
+                                                    editingService ? t('pages.home.serviceManagement.updateService', 'Update Service') : t('pages.home.serviceManagement.addService', 'Add Service')
+                                                )}
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-secondary pt-2 d-flex align-items-center justify-content-center" 
+                                                disabled={serviceFormLoading}
+                                                onClick={() => {
+                                                    setShowServiceModal(false);
+                                                    setEditingService(null);
+                                                    setServiceForm({
+                                                        name: '',
+                                                        nameEn: '',
+                                                        nameAr: '',
+                                                        price: '',
+                                                        unit: '',
+                                                        deliveryTime: '',
+                                                        image: null,
+                                                        existingImage: null
+                                                    });
+                                                    setImageError('');
+                                                }}
+                                                style={{
+                                                    minWidth: '100px',
+                                                    opacity: serviceFormLoading ? 0.6 : 1
+                                                }}
+                                            >
+                                                {t('common.cancel', 'Cancel')}
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </form>
                         </div>

@@ -589,7 +589,7 @@ const ServiceList = () => {
 
             <div className="main-content">
                 <div className="container">
-                    <div className="row">
+                    <div className="row g-4">
                         {/* Sidebar - Service Categories */}
                         <div className="col-lg-2">
                             <div className="sidebar-section">
