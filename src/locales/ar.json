@@ -648,7 +648,11 @@
     "professional": "محترف",
     "noPhoneNumber": "رقم الهاتف غير متوفر",
     "status-accepted": "مقبول",
-    "status-declined": "مرفوض"
+    "status-declined": "مرفوض",
+    "status-completed": "تم إكمال المشروع",
+    "status-approved": "تمت الموافقة على المشروع",
+    "view-completion-details": "عرض تفاصيل الإكمال",
+    "view-details-and-payment": "عرض التفاصيل والدفع"
   },
 
   "request-quote": {
@@ -1557,6 +1561,11 @@
       "submitting": "جاري الإرسال",
       "priceQuote": "عرض السعر",
       "projectCompletionFile": "ملف إنجاز المشروع",
+      "projectCompleted": "تم إكمال المشروع",
+      "projectCompletedAwaitingPayment": "تم إكمال المشروع - في انتظار الدفع",
+      "projectCompletedPaymentCompleted": "تم إكمال المشروع - تم الدفع",
+      "viewCompletionDetails": "عرض تفاصيل الإكمال",
+      "viewDetailsAndPayment": "عرض التفاصيل والدفع",
       "allProjects": "جميع المشاريع",
       "accepted": "مقبول",
       "startProject": "بدء المشروع",
@@ -1741,5 +1750,42 @@
     "errorRedirectMessage": "سيتم التوجيه إلى صفحة الدفع خلال {{count}} ثانية...",
     "goToProducts": "الذهاب إلى المنتجات",
     "goToCheckout": "الذهاب إلى الدفع"
+  },
+  "projectCompletion": {
+    "title": "إكمال المشروع",
+    "selectImages": "اختر صور الإكمال",
+    "chooseFiles": "اختر الصور",
+    "fileRequirements": "الصيغ المدعومة: JPG، PNG، GIF، WebP. الحد الأقصى للحجم: 5 ميجابايت لكل ملف",
+    "selectedFiles": "الملفات المختارة",
+    "completionNote": "ملاحظة الإكمال",
+    "notePlaceholder": "اوصف العمل المكتمل...",
+    "submit": "إرسال الإكمال",
+    "noFilesSelected": "يرجى اختيار صورة واحدة على الأقل",
+    "noteRequired": "يرجى إضافة ملاحظة الإكمال",
+    "authRequired": "المصادقة مطلوبة",
+    "submitFailed": "فشل في إرسال ملفات الإكمال",
+    "success": "تم إرسال ملفات إكمال المشروع بنجاح",
+    "invalidFiles": "ملفات غير صالحة: {{files}}"
+  },
+  "projectCompletionDetails": {
+    "title": "تفاصيل إكمال المشروع",
+    "status": {
+      "completed": "تم إكمال المشروع"
+    },
+    "completedOn": "تم الإكمال في",
+    "completionNote": "ملاحظة الإكمال",
+    "completionImages": "صور الإكمال",
+    "noImages": "لا توجد صور إكمال متاحة",
+    "approve": "الموافقة والدفع",
+    "approving": "جاري الموافقة...",
+    "errors": {
+      "projectIdMissing": "معرف المشروع مفقود",
+      "authRequired": "المصادقة مطلوبة",
+      "approveFailed": "فشل في الموافقة على إكمال المشروع"
+    },
+    "success": {
+      "approved": "تمت الموافقة على إكمال المشروع بنجاح! جاري فتح صفحة الدفع...",
+      "approvedNoLink": "تمت الموافقة على إكمال المشروع بنجاح! سيتم إنشاء رابط الدفع."
+    }
   }
 }

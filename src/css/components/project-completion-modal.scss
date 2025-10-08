@@ -1,0 +1,365 @@
+// Project Completion Modal Styles
+.project-completion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 20px;
+}
+
+.project-completion-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e9ecef;
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #21395D;
+      margin: 0;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6c757d;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .project-info {
+    padding: 16px 24px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+
+    .project-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #21395D;
+      margin: 0 0 4px 0;
+    }
+
+    .project-client {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin: 0;
+    }
+  }
+
+  .file-upload-section {
+    padding: 20px 24px;
+
+    .form-label {
+      font-weight: 600;
+      color: #21395D;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .file-upload-container {
+      position: relative;
+      margin-bottom: 8px;
+
+      .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        z-index: 2;
+
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
+
+      .file-upload-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 16px 20px;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #6c757d;
+        font-weight: 500;
+
+        &:hover {
+          border-color: #21395D;
+          background-color: #e3f2fd;
+          color: #21395D;
+        }
+
+        i {
+          font-size: 1.2rem;
+        }
+      }
+    }
+
+    .form-text {
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+  }
+
+  .selected-files {
+    padding: 0 24px 20px;
+
+    h6 {
+      font-weight: 600;
+      color: #21395D;
+      margin-bottom: 12px;
+    }
+
+    .files-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .file-preview {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #e9ecef;
+      }
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+
+        i {
+          color: #28a745;
+          font-size: 1.1rem;
+        }
+
+        .file-name {
+          font-weight: 500;
+          color: #495057;
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .file-size {
+          color: #6c757d;
+          font-size: 0.875rem;
+        }
+      }
+
+      .remove-file-btn {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: #f8d7da;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .note-section {
+    padding: 0 24px 20px;
+
+    .form-label {
+      font-weight: 600;
+      color: #21395D;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+      &:focus {
+        outline: none;
+        border-color: #21395D;
+        box-shadow: 0 0 0 0.2rem rgba(33, 57, 93, 0.25);
+      }
+
+      &:disabled {
+        background-color: #e9ecef;
+        opacity: 1;
+      }
+
+      &::placeholder {
+        color: #6c757d;
+        opacity: 1;
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+
+      &.btn-secondary {
+        background-color: #6c757d;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #5a6268;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      &.btn-primary {
+        background-color: #21395D;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #1a2f4a;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .project-completion-modal-overlay {
+    padding: 10px;
+  }
+
+  .project-completion-modal {
+    max-height: 95vh;
+
+    .modal-header {
+      padding: 16px 20px 12px;
+
+      .modal-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    .project-info {
+      padding: 12px 20px;
+    }
+
+    .file-upload-section,
+    .selected-files,
+    .note-section {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .modal-actions {
+      padding: 16px 20px;
+      flex-direction: column;
+
+      .btn {
+        flex: none;
+      }
+    }
+  }
+}
+
+// RTL Support
+[dir="rtl"] {
+  .project-completion-modal {
+    .modal-header {
+      .modal-close-btn {
+        margin-left: auto;
+        margin-right: 0;
+      }
+    }
+
+    .file-preview {
+      .file-info {
+        flex-direction: row-reverse;
+      }
+    }
+
+    .modal-actions {
+      flex-direction: row-reverse;
+    }
+  }
+}

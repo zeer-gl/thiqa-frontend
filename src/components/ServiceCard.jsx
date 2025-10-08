@@ -10,6 +10,8 @@ import { FaHeart, FaRegHeart, FaChevronDown, FaChevronUp } from "react-icons/fa"
 import ContactCustomerForm from './ContactCustomerForm';
 import ProjectPriceRequests from './ProjectPriceRequests';
 import Pagination from './Pagination';
+import ProjectCompletionModal from './ProjectCompletionModal';
+import ProjectCompletionDetailsModal from './ProjectCompletionDetailsModal';
 
 const ServiceCard = ({ 
     title, 
@@ -25,6 +27,9 @@ const ServiceCard = ({
     const [showContactForm, setShowContactForm] = useState(false);
     const [showProjectRequests, setShowProjectRequests] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
+    const [showCompletionModal, setShowCompletionModal] = useState(false);
+    const [showCompletionDetails, setShowCompletionDetails] = useState(false);
+    const [selectedCompletionData, setSelectedCompletionData] = useState(null);
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submittingProposal, setSubmittingProposal] = useState(null);
@@ -167,7 +172,7 @@ const ServiceCard = ({
                     id: quote._id,
                     clientName: quote.customerId?.name || 'Unknown Client',
                     projectName: quote.projectName || 'Untitled Project',
-                    status: quote.status === 'in progress' ? 'inProgress' : quote.status || 'open',
+                    status: quote.status === 'in progress' ? 'inProgress' : quote.status,
                     date: new Date(quote.dateOfRequest).toLocaleDateString('en-GB'),
                     description: quote.description || 'No description available',
                     clientImage: quote.customerId?.pic || null,
@@ -192,6 +197,9 @@ const ServiceCard = ({
                     // If no targeted professional ID, show to all professionals (general requests)
                     return true;
                 });
+
+                console.log("filteredProjects....",filteredProjects);
+                
                 
                 setProjects(filteredProjects);
                 
@@ -354,34 +362,49 @@ const ServiceCard = ({
     };
 
 
-    const handleDownloadProjectFile = (project) => {
-        try {
-            // Check if project has a design file
-            if (project.projectDesign && project.projectDesign.trim() !== '') {
-                // Create a temporary link element to trigger download
-                const link = document.createElement('a');
-                link.href = project.projectDesign;
-                link.download = `project-${project.projectName || 'design'}-${project.id}.pdf`;
-                link.target = '_blank';
-                
-                // Append to body, click, and remove
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showAlert(t('common.success'), 'success');
-            } else {
-                showAlert(t('common.notAvailable'), 'warning');
-            }
-        } catch (error) {
-            console.error('Error downloading project file:', error);
-            showAlert(t('serviceCard.errors.downloadFailed'), 'error');
-        }
+    const handleProjectCompletion = (project) => {
+        setSelectedProject(project);
+        setShowCompletionModal(true);
     };
 
     const handleBackToServiceCard = () => {
         setShowContactForm(false);
         setShowProjectRequests(false);
+        setSelectedProject(null);
+    };
+
+    const handleCloseCompletionModal = () => {
+        setShowCompletionModal(false);
+        setSelectedProject(null);
+    };
+
+    // Check if project has completion status
+    const getCompletionData = (project) => {
+        if (!project.statusHistory || !Array.isArray(project.statusHistory)) {
+            return null;
+        }
+        
+        // Find the latest completion entry
+        const completionEntry = project.statusHistory.find(entry => entry.status === 'completed');
+        return completionEntry || null;
+    };
+
+    // Handle viewing completion details
+    const handleViewCompletionDetails = (project) => {
+        const completionData = getCompletionData(project);
+        if (completionData) {
+            setSelectedCompletionData(completionData);
+            setSelectedProject(project);
+            setShowCompletionDetails(true);
+        } else {
+            showAlert('No completion details available for this project', 'warning');
+        }
+    };
+
+    // Close completion details modal
+    const handleCloseCompletionDetails = () => {
+        setShowCompletionDetails(false);
+        setSelectedCompletionData(null);
         setSelectedProject(null);
     };
 
@@ -720,8 +743,10 @@ const ServiceCard = ({
                          </div>
                         </div>
                     </div>
+                    {console.log("project....",project)}
           {/* Accordion Content */}
           {expandedCards[project.id] && (
+    
          
             <>
             <p className="card-detail-heading mb-0 mt-4 mb-3">{t('projectDetails.title', 'Project Details')}</p>
@@ -792,14 +817,38 @@ const ServiceCard = ({
                   </>
                 ) : project.status === 'inProgress' ? (
                   <>
-                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%', padding:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
+                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%', padding:"10px"}} onClick={() => handleProjectCompletion(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
                     {/* Price Quote button is hidden when status is inProgress */}
                   </>
-                ): (
+                ):  project.status === 'completed' ? (
                   <>
-                    <button  className='p-3 pt-4' style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleDownloadProjectFile(project)}>
+                    <div style={{backgroundColor: '#17a2b8',color: 'white',width: '100%', padding:"10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold'}}>
+                      <i className="fas fa-check-circle me-2"></i>
+                      {t('serviceCard.buttons.projectCompleted', 'Project Completed')}
+                    </div>
+
+                  </>
+                ):  project.status === 'awaiting_payment' ? (
+                  <>
+                    <div style={{backgroundColor: '#ffc107',color: 'white',width: '100%', padding:"10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold'}}>
+                      <i className="fas fa-clock me-2"></i>
+                      {t('serviceCard.buttons.projectCompletedAwaitingPayment', 'Project Completed - Awaiting Payment')}
+                    </div>
+            
+                  </>
+                ):  project.status === 'paid' ? (
+                  <>
+                    <div style={{backgroundColor: '#28a745',color: 'white',width: '100%', padding:"10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold'}}>
+                      <i className="fas fa-check-circle me-2"></i>
+                      {t('serviceCard.buttons.projectCompletedPaymentCompleted', 'Project Completed - Payment Completed')}
+                    </div>
+               
+                  </>
+                ):(
+                  <>
+                    <button  className='p-3 pt-4' style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleProjectCompletion(project)}>
                       {t('serviceCard.buttons.projectCompletionFile')}
                     </button>
                     {/* Only show Request Quote button if no proposals are accepted */}
@@ -864,6 +913,22 @@ const ServiceCard = ({
                     selectedProject={selectedProject}
                 />
             )}
+            
+            {/* Project Completion Modal */}
+            <ProjectCompletionModal
+                isOpen={showCompletionModal}
+                onClose={handleCloseCompletionModal}
+                project={selectedProject}
+                onRefresh={handleRefresh}
+            />
+            
+            {/* Project Completion Details Modal */}
+            <ProjectCompletionDetailsModal
+                isOpen={showCompletionDetails}
+                onClose={handleCloseCompletionDetails}
+                completionData={selectedCompletionData}
+                project={selectedProject}
+            />
         </>
     );
 };

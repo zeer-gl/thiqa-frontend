@@ -6,6 +6,7 @@ import AccIcon from "/public/images/accordian-icon.svg";
 import { BaseUrl } from '../assets/BaseUrl.jsx';
 import { useAlert } from '../context/AlertContext';
 import { notifyServiceProviderOfferAccepted } from '../utils/notificationService';
+import ProjectCompletionDetailsModal from './ProjectCompletionDetailsModal';
 import '../css/components/phone-modal.scss';
 
 const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalAccepted, acceptedProposals = new Set() }) => {
@@ -16,6 +17,8 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [acceptingProposal, setAcceptingProposal] = useState(null);
     const [decliningProposal, setDecliningProposal] = useState(null);
+    const [showCompletionDetails, setShowCompletionDetails] = useState(false);
+    const [selectedCompletionData, setSelectedCompletionData] = useState(null);
 
     // Handle phone button click
     const handlePhoneClick = (professional) => {
@@ -27,6 +30,51 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const closePhoneModal = () => {
         setShowPhoneModal(false);
         setSelectedProfessional(null);
+    };
+
+    // Check if project has completion status
+    const getCompletionData = (project) => {
+        console.log('🔍 getCompletionData called with project:', project);
+        console.log('🔍 Project status:', project.status);
+        console.log('🔍 Project statusHistory:', project.statusHistory);
+        
+        // First check if project status is completed
+        if (project.status === 'completed'|| project.status === 'awaiting_payment') {
+            console.log('✅ Project status is completed');
+            // If project status is completed, look for completion data in statusHistory
+            if (project.statusHistory && Array.isArray(project.statusHistory)) {
+                const completionEntry = project.statusHistory.find(entry => entry.status === 'completed');
+                console.log('🔍 Found completion entry:', completionEntry);
+                return completionEntry || null;
+            } else {
+                console.log('❌ No statusHistory found or not an array');
+            }
+        } else {
+            console.log('❌ Project status is not completed:', project.status);
+        }
+        return null;
+    };
+
+    // Handle viewing completion details
+    const handleViewCompletionDetails = (project) => {
+        console.log('🔍 handleViewCompletionDetails called with project:', project);
+        const completionData = getCompletionData(project);
+        console.log('🔍 Retrieved completion data:', completionData);
+        
+        if (completionData) {
+            console.log('✅ Setting completion data and showing modal');
+            setSelectedCompletionData(completionData);
+            setShowCompletionDetails(true);
+        } else {
+            console.log('❌ No completion data found - cannot show modal');
+            showAlert('No completion details available for this project', 'warning');
+        }
+    };
+
+    // Close completion details modal
+    const closeCompletionDetails = () => {
+        setShowCompletionDetails(false);
+        setSelectedCompletionData(null);
     };
 
     // Handle phone call
@@ -342,7 +390,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                 <div key={index} className="offer-item">
                                     <div className="offer-company">
                                         <div>
-                                            <h4 className="ar-heading-bold">{offer.professionalId?.name || t('project-offers.professional')}</h4>
+                                            <h4 className="ar-heading-bold">{offer.professionalData?.name || t('project-offers.professional')}</h4>
                                             <p className="offer-price">{t('project-offers.price')}: {offer.price} KWD</p>
                                             <p className="offer-duration">{t('project-offers.duration')}: {new Date(offer.duration).toLocaleDateString()}</p>
                                             {offer.note && <p className="offer-note">{offer.note}</p>}
@@ -353,17 +401,126 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             const isLocallyAccepted = acceptedProposals.has(offer._id || offer.id);
                                             const isApiAccepted = offer.isAccepted;
                                             const isApiRejected = offer.status === 'rejected';
-                                            const shouldShowButtons = !isLocallyAccepted && !isApiAccepted && !isApiRejected;
+                                            const isCompleted = project.status === 'completed';
+                                            const isAwaitingPayment = project.status === 'awaiting_payment';
+                                            const isPaid = project.status === 'paid';
+                                            const completionData = getCompletionData(project);
+                                            const shouldShowButtons = !isLocallyAccepted && !isApiAccepted && !isApiRejected && !isCompleted;
                                             
                                             console.log('🔍 Button Rendering Debug:', {
                                                 proposalId: offer._id || offer.id,
                                                 isLocallyAccepted,
                                                 isApiAccepted,
                                                 isApiRejected,
+                                                isCompleted,
                                                 shouldShowButtons,
+                                                projectStatus: project.status,
                                                 offerStatus: offer.status,
-                                                offer: offer
+                                                offer: offer,
+                                                completionData: completionData
                                             });
+                                            
+                                            // Show completion status if project is completed
+                                            if (isPaid) {
+                                
+                                                
+                                                return (
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                        <div className="offer-status approved" style={{
+                                                            padding: '10px 20px',
+                                                            backgroundColor: '#28a745',
+                                                            color: 'white',
+                                                            borderRadius: '5px',
+                                                            fontWeight: 'bold',
+                                                            textAlign: 'center'
+                                                        }}>
+                                                            <i className="fas fa-check-circle me-2"></i>
+                                                            {t('project-offers.status-completed', 'Project Completed')}
+                                                        </div>
+                                                    
+                                                    </div>
+                                                );
+                                            }
+                                            // Show completion status if project is completed
+                                            if (isAwaitingPayment) {
+                                
+                                                
+                                                return (
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                        <div className="offer-status approved" style={{
+                                                            padding: '10px 20px',
+                                                            backgroundColor: '#28a745',
+                                                            color: 'white',
+                                                            borderRadius: '5px',
+                                                            fontWeight: 'bold',
+                                                            textAlign: 'center'
+                                                        }}>
+                                                            <i className="fas fa-check-circle me-2"></i>
+                                                            {t('project-offers.status-approved', 'Project Approved')}
+                                                        </div>
+                                                        <button 
+                                                            className="btn-call pt-2"
+                                                            onClick={() => {
+                                                                console.log('🔍 VIEW DETAILS AND PAYMENT CLICKED - Project:', project);
+                                                                console.log('🔍 Completion Data:', completionData);
+                                                                handleViewCompletionDetails(project);
+                                                            }}
+                                                            style={{ 
+                                                                backgroundColor: '#21395D',
+                                                                border: 'none',
+                                                                minWidth: '150px',
+                                                                color: 'white',
+                                                                padding: '10px 15px',
+                                                                borderRadius: '5px',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-credit-card me-2"></i>
+                                                            {t('project-offers.view-details-and-payment', 'View Details and Make Payment')}
+                                                        </button>
+                                                    </div>
+                                                );
+                                            }
+                                            if (isCompleted) {
+                                                console.log('🎯 SHOWING COMPLETION STATUS - Project:', project);
+                                                console.log('🎯 Completion Data:', completionData);
+                                                
+                                                return (
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                        <div className="offer-status completed" style={{
+                                                            padding: '10px 20px',
+                                                            backgroundColor: '#17a2b8',
+                                                            color: 'white',
+                                                            borderRadius: '5px',
+                                                            fontWeight: 'bold',
+                                                            textAlign: 'center'
+                                                        }}>
+                                                            <i className="fas fa-check-circle me-2"></i>
+                                                            {t('project-offers.status-completed', 'Project Completed')}
+                                                        </div>
+                                                        <button 
+                                                            className="btn-call pt-2"
+                                                            onClick={() => {
+                                                                console.log('🔍 VIEW DETAILS CLICKED - Project:', project);
+                                                                console.log('🔍 Completion Data:', completionData);
+                                                                handleViewCompletionDetails(project);
+                                                            }}
+                                                            style={{ 
+                                                                backgroundColor: '#21395D',
+                                                                border: 'none',
+                                                                minWidth: '150px',
+                                                                color: 'white',
+                                                                padding: '10px 15px',
+                                                                borderRadius: '5px',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-eye me-2"></i>
+                                                            {t('project-offers.view-completion-details', 'View Completion Details')}
+                                                        </button>
+                                                    </div>
+                                                );
+                                            }
                                             
                                             // Show status text if accepted or rejected
                                             if (isApiAccepted || isLocallyAccepted) {
@@ -595,6 +752,14 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                     </div>
                 </div>
             )}
+
+            {/* Project Completion Details Modal */}
+            <ProjectCompletionDetailsModal
+                isOpen={showCompletionDetails}
+                onClose={closeCompletionDetails}
+                completionData={selectedCompletionData}
+                project={project}
+            />
         </div>
     );
 };
