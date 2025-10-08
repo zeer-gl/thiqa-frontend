@@ -142,6 +142,7 @@ const ProjectOffers = () => {
                     area: offer.area,
                     price: offer.price,
                     description: offer.description,
+                    statusHistory: offer.statusHistory,
                     dateOfRequest: offer.dateOfRequest,
                     projectDesign: offer.projectDesign,
                     proposals: (offer.proposals || []).map(proposal => {
@@ -153,14 +154,17 @@ const ProjectOffers = () => {
                         
                         // Extract professional ID properly
                         let professionalId = proposal.professionalId;
+                        let professionalData = proposal.professionalId;
                         
                         // If professionalId is an object, extract the _id
                         if (typeof professionalId === 'object' && professionalId._id) {
+                            professionalData=professionalId;
                             professionalId = professionalId._id;
                         }
                         
                         // If no professionalId, try to get it from professional object
                         if (!professionalId && proposal.professional) {
+                            professionalData=proposal.professional;
                             professionalId = proposal.professional._id;
                         }
                         
@@ -169,6 +173,7 @@ const ProjectOffers = () => {
                         
                         return {
                             ...proposal,
+                            professionalData:professionalData,
                             professionalId: professionalId,
                             isAccepted: proposal.isAccepted || false
                         };
@@ -242,7 +247,7 @@ const ProjectOffers = () => {
         return offer.subtitle === activeFilter;
     });
     
-    console.log('Filtered offers for display:', filteredOffers.length);
+    console.log('Filtered offers for display:', filteredOffers);
     console.log('Search query:', searchQuery);
     console.log('Active filter:', activeFilter);
     console.log('Total project offers:', projectOffers.length);

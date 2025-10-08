@@ -658,7 +658,11 @@
     "professional": "Professional",
     "noPhoneNumber": "No phone number available",
     "status-accepted": "Accepted",
-    "status-declined": "Declined"
+    "status-declined": "Declined",
+    "status-completed": "Project Completed",
+    "status-approved": "Project Approved",
+    "view-completion-details": "View Completion Details",
+    "view-details-and-payment": "View Details and Make Payment"
   },
 
   "request-quote": {
@@ -1570,7 +1574,12 @@
       "submitProposal": "Submit Proposal",
       "submitting": "Submitting",
       "priceQuote": "Price Quote",
-      "projectCompletionFile": "Project Completion File",
+        "projectCompletionFile": "Project Completion File",
+        "projectCompleted": "Project Completed",
+        "projectCompletedAwaitingPayment": "Project Completed - Awaiting Payment",
+        "projectCompletedPaymentCompleted": "Project Completed - Payment Completed",
+        "viewCompletionDetails": "View Completion Details",
+        "viewDetailsAndPayment": "View Details and Make Payment",
       "allProjects": "All Projects",
       "accepted": "Accepted",
       "startProject": "Start Project",
@@ -1742,5 +1751,42 @@
     "errorRedirectMessage": "Redirecting to checkout page in {{count}} seconds...",
     "goToProducts": "Go to Products",
     "goToCheckout": "Go to Checkout"
+  },
+  "projectCompletion": {
+    "title": "Project Completion",
+    "selectImages": "Select Completion Images",
+    "chooseFiles": "Choose Images",
+    "fileRequirements": "Supported formats: JPG, PNG, GIF, WebP. Max size: 5MB per file",
+    "selectedFiles": "Selected Files",
+    "completionNote": "Completion Note",
+    "notePlaceholder": "Describe the completed work...",
+    "submit": "Submit Completion",
+    "noFilesSelected": "Please select at least one image",
+    "noteRequired": "Please add a completion note",
+    "authRequired": "Authentication required",
+    "submitFailed": "Failed to submit completion files",
+    "success": "Project completion files submitted successfully",
+    "invalidFiles": "Invalid files: {{files}}"
+  },
+  "projectCompletionDetails": {
+    "title": "Project Completion Details",
+    "status": {
+      "completed": "Project Completed"
+    },
+    "completedOn": "Completed on",
+    "completionNote": "Completion Note",
+    "completionImages": "Completion Images",
+    "noImages": "No completion images available",
+    "approve": "Approve & Pay",
+    "approving": "Approving...",
+    "errors": {
+      "projectIdMissing": "Project ID is missing",
+      "authRequired": "Authentication required",
+      "approveFailed": "Failed to approve project completion"
+    },
+    "success": {
+      "approved": "Project completion approved successfully! Opening payment page...",
+      "approvedNoLink": "Project completion approved successfully! Payment link will be generated."
+    }
   }
 }
