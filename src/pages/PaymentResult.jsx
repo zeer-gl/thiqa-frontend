@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCart } from '../context/CartContext';
 import '../css/pages/fatorah-error.scss';
 
 /**
@@ -20,6 +21,7 @@ import '../css/pages/fatorah-error.scss';
 const PaymentResult = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { clearCart } = useCart();
     const [searchParams] = useSearchParams();
     const [countdown, setCountdown] = useState(5);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -45,6 +47,8 @@ const PaymentResult = () => {
                     localStorage.setItem('cart', JSON.stringify(orderData.cartItems));
                     // Clear pending order
                     localStorage.removeItem('pendingOrder');
+                    // Dispatch event to notify CartContext of the change
+                    window.dispatchEvent(new CustomEvent('cartUpdated'));
                 } catch (e) {
                     console.error('Error restoring cart:', e);
                 }
@@ -64,17 +68,22 @@ const PaymentResult = () => {
 
         // Handle cart based on payment result
         if (success) {
-            // Clear cart and pending order on successful payment
-            localStorage.removeItem('cart');
+            // Cart is already cleared when payment was initiated, just clean up pending order
+            console.log('✅ Payment successful - cart already cleared, cleaning up pending order');
             localStorage.removeItem('pendingOrder');
         } else {
             // Restore cart on failed payment
+            console.log('❌ Payment failed - restoring cart items');
             const pendingOrder = localStorage.getItem('pendingOrder');
             if (pendingOrder) {
                 try {
                     const orderData = JSON.parse(pendingOrder);
+                    // Restore cart items to localStorage (CartContext will pick this up)
                     localStorage.setItem('cart', JSON.stringify(orderData.cartItems));
                     localStorage.removeItem('pendingOrder');
+                    // Dispatch event to notify CartContext of the change
+                    window.dispatchEvent(new CustomEvent('cartUpdated'));
+                    console.log('🛒 Cart restored with', orderData.cartItems.length, 'items');
                 } catch (e) {
                     console.error('Error restoring cart:', e);
                 }
@@ -173,6 +182,8 @@ const PaymentResult = () => {
                                             const orderData = JSON.parse(pendingOrder);
                                             localStorage.setItem('cart', JSON.stringify(orderData.cartItems));
                                             localStorage.removeItem('pendingOrder');
+                                            // Dispatch event to notify CartContext of the change
+                                            window.dispatchEvent(new CustomEvent('cartUpdated'));
                                         } catch (e) {
                                             console.error('Error restoring cart:', e);
                                         }

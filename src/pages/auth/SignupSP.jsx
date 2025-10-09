@@ -376,7 +376,7 @@ const validateForm = () => {
                 if (prev <= 1) {
                     clearInterval(interval);
                     setTimerInterval(null);
-                    return 59;
+                    return 0; // Stop at 0 instead of resetting to 59
                 }
                 return prev - 1;
             });
@@ -497,37 +497,32 @@ const validateForm = () => {
         // Clear existing OTP input fields
         setOtpValues(["", "", "", ""]);
         
-        // Resend OTP by calling registration API again
-        const professionalData = {
-            name: name,
-            email: email,
-            phoneNo: phoneNo,
-            password: password,
-            workTitle: workTitle,
-            selectedSpecializations: selectedSpecializations,
-            experience: experience,
-            bio: bio,
-            latitude: latitude,
-            longitude: longitude,
-            resume: resume
-        };
-        
-        const registrationResult = await registerProfessionalAndGetOTP(professionalData);
-        
-        if (registrationResult.success) {
-            // Store professionalId and registration data from resend response
-            if (registrationResult.professionalId) {
-                setProfessionalId(registrationResult.professionalId);
+        try {
+            // Use the dedicated resend OTP API endpoint for professionals
+            const response = await fetch(`${BaseUrl}/professional/resend-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email
+                })
+            });
+            
+            const data = await response.json();
+            console.log('Professional resend OTP API response:', data);
+            
+            if (response.ok) {
+                // Reset timer and start countdown
+                setTimer(59);
+                startTimer();
+                showAlert(data.message || t('auth.signup.otpResent', 'OTP resent successfully'), 'success');
+            } else {
+                // Resend failed, show error
+                const errorMessage = data.message || data.error || 'Failed to resend OTP';
+                showAlert(errorMessage, 'error');
             }
-            if (registrationResult.registrationData) {
-                setRegistrationData(registrationResult.registrationData);
-                console.log('✅ Updated registration data after resend:', registrationResult.registrationData);
-            }
-            setTimer(59);
-            startTimer();
-            showAlert(registrationResult.message || t('auth.signup.otpResent'), 'success');
-        } else {
-            showAlert(registrationResult.message || t('auth.signup.otpSendFailed'), 'error');
+        } catch (error) {
+            console.error('Error during professional OTP resend:', error);
+            showAlert(t('auth.signup.otpSendFailed', 'Failed to resend OTP. Please try again.'), 'error');
         }
     };
 
@@ -1663,8 +1658,16 @@ const validateForm = () => {
                         </form>
 
                         <div className="text-center mt-3">
-                            <a href="#" onClick={handleResend} className="otp-resend-link navy text-decoration-none">
-                                {t('auth.signupsp.otp.resend', 'Resend Code')}
+                            <a 
+                                href="#" 
+                                onClick={timer > 0 ? undefined : handleResend} 
+                                className={`otp-resend-link navy text-decoration-none ${timer > 0 ? 'disabled' : ''}`}
+                                style={{ 
+                                    cursor: timer > 0 ? 'not-allowed' : 'pointer',
+                                    opacity: timer > 0 ? 0.5 : 1
+                                }}
+                            >
+                                {timer > 0 ? `${t('auth.signupsp.otp.resend', 'Resend Code')} (${formattedTime})` : t('auth.signupsp.otp.resend', 'Resend Code')}
                             </a>
                         </div>
                     </div>
