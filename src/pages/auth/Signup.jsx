@@ -550,7 +550,7 @@ function Signup() {
         if (prev <= 1) {
           clearInterval(interval);
           setTimerInterval(null);
-          return 59;
+          return 0; // Stop at 0 instead of resetting to 59
         }
         return prev - 1;
       });
@@ -653,27 +653,32 @@ function Signup() {
     // Clear existing OTP input fields
     setOtpValues(["", "", "", ""]);
     
-    // Resend OTP by calling registration API again
-    const userData = {
-      name: name,
-      email: email,
-      phoneNo: phoneNo,
-      password: password
-    };
-    
-    const registrationResult = await registerUserAndGetOTP(userData);
-    
-    if (registrationResult.success) {
-      // Update stored registration data from resend response
-      if (registrationResult.registrationData) {
-        setRegistrationData(registrationResult.registrationData);
-        console.log('✅ Updated registration data after resend:', registrationResult.registrationData);
+    try {
+      // Use the dedicated resend OTP API endpoint
+      const response = await fetch(`${BaseUrl}/customer/resend-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email
+        })
+      });
+      
+      const data = await response.json();
+      console.log('Resend OTP API response:', data);
+      
+      if (response.ok) {
+        // Reset timer and start countdown
+        setTimer(59);
+        startTimer();
+        showAlert(data.message || t('auth.signup.otpResent', 'OTP resent successfully'), 'success');
+      } else {
+        // Resend failed, show error
+        const errorMessage = data.message || data.error || 'Failed to resend OTP';
+        showAlert(errorMessage, 'error');
       }
-      setTimer(59);
-      startTimer();
-      showAlert(registrationResult.message || t('auth.signup.otpResent'), 'success');
-    } else {
-      showAlert(registrationResult.message || t('auth.signup.otpSendFailed'), 'error');
+    } catch (error) {
+      console.error('Error during OTP resend:', error);
+      showAlert(t('auth.signup.otpSendFailed', 'Failed to resend OTP. Please try again.'), 'error');
     }
   };
 
@@ -998,8 +1003,16 @@ function Signup() {
               <button type="submit" className="btn otp-submit-btn w-100 d-flex align-items-center justify-content-center">{t("auth.signup.otp.submit")}</button>
             </form>
             <div className="text-center mt-3">
-              <a href="#" onClick={handleResend} className="otp-resend-link navy text-decoration-none">
-                {t("auth.signup.otp.resend")}
+              <a 
+                href="#" 
+                onClick={timer > 0 ? undefined : handleResend} 
+                className={`otp-resend-link navy text-decoration-none ${timer > 0 ? 'disabled' : ''}`}
+                style={{ 
+                  cursor: timer > 0 ? 'not-allowed' : 'pointer',
+                  opacity: timer > 0 ? 0.5 : 1
+                }}
+              >
+                {timer > 0 ? `${t("auth.signup.otp.resend")} (${formattedTime})` : t("auth.signup.otp.resend")}
               </a>
             </div>
           </div>

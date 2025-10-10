@@ -9,36 +9,21 @@ import paypalImage from '../assets/payment/paypal.png';
 import SidePattern from "../../public/images/side-pattern.svg";
 import { BaseUrl } from '../assets/BaseUrl';
 import { useAlert } from '../context/AlertContext';
+import { useCart } from '../context/CartContext';
 import PhoneIcon from '/public/images/profile/phone-icon.svg';
 
 const Checkout = () => {
     const { t } = useTranslation();
     const { showAlert } = useAlert();
     const navigate = useNavigate();
+    const { cartItems, clearCart } = useCart();
     const [showPaymentModal, setShowPaymentModal] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [loadingAddresses, setLoadingAddresses] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // Load cart data from localStorage
-    useEffect(() => {
-        const loadCartData = () => {
-            try {
-                const cartData = localStorage.getItem('cart');
-                if (cartData) {
-                    const parsedCart = JSON.parse(cartData);
-                    setCartItems(Array.isArray(parsedCart) ? parsedCart : []);
-                }
-            } catch (error) {
-                console.error('Error loading cart data:', error);
-                setCartItems([]);
-            }
-        };
-        
-        loadCartData();
-    }, []);
+    // Cart data is now managed by CartContext, no need for manual loading
 
     // Fetch addresses from API
     const fetchAddresses = async () => {
@@ -148,24 +133,27 @@ const Checkout = () => {
                 const orderData = await response.json();
                 showAlert(t('checkout.messages.orderPlacedSuccess'), 'success');
                 
-                // Don't clear cart immediately - wait for successful payment
-                // Cart will be cleared only after successful payment confirmation
+                // Clear cart immediately when payment is initiated to prevent duplicate orders
                 
                 // Check if there's an invoice URL to redirect to
                 if (orderData.paymentInfo && orderData.paymentInfo.invoiceUrl) {
-                    // Store order info for payment result handling
+                    // Clear cart immediately when payment URL is generated
+                    console.log('🛒 Clearing cart immediately - payment initiated');
+                    clearCart(); // Clear cart as soon as payment is initiated
+                    
+                    // Store order info for payment result handling (for potential restoration on failure)
                     localStorage.setItem('pendingOrder', JSON.stringify({
                         orderId: orderData.orderId,
-                        cartItems: cartItems,
+                        cartItems: cartItems, // Keep original cart items for restoration if needed
                         timestamp: Date.now()
                     }));
                     
+                    console.log('🛒 Cart cleared, redirecting to payment URL');
                     // Redirect to Fatora payment page in the same tab
                     window.location.href = orderData.paymentInfo.invoiceUrl;
                 } else {
                     // Clear cart only if no payment gateway (direct success)
-                    localStorage.removeItem('cart');
-                    setCartItems([]);
+                    clearCart(); // Use CartContext clearCart function
                     setShowPaymentModal(true);
                 }
             } else {

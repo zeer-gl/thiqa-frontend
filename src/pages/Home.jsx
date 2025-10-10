@@ -112,6 +112,19 @@ const Home = () => {
         setLiked(!liked);
     };
 
+    // Function to validate Arabic text
+    const isArabicText = (text) => {
+        // Arabic Unicode ranges:
+        // U+0600-U+06FF: Arabic
+        // U+0750-U+077F: Arabic Supplement
+        // U+08A0-U+08FF: Arabic Extended-A
+        // U+FB50-U+FDFF: Arabic Presentation Forms-A
+        // U+FE70-U+FEFF: Arabic Presentation Forms-B
+        // Also allow spaces, common punctuation, and numbers
+        const arabicRegex = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\u060C\u061B\u061F\u0640\u066A\u066B\u066C\u066D\u200C\u200D\u200E\u200F\u2010-\u2015\u2018-\u201F\u2026]*$/;
+        return arabicRegex.test(text);
+    };
+
     // Service management functions
     const fetchServices = async () => {
         try {
@@ -1852,12 +1865,24 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className="form-control"
+                                                className={`form-control ${serviceForm.nameAr && !isArabicText(serviceForm.nameAr) ? 'is-invalid' : ''}`}
                                                 value={serviceForm.nameAr}
-                                                onChange={(e) => setServiceForm({...serviceForm, nameAr: e.target.value})}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    // Only allow Arabic characters, spaces, and common punctuation
+                                                    if (value === '' || isArabicText(value)) {
+                                                        setServiceForm({...serviceForm, nameAr: value});
+                                                    }
+                                                }}
                                                 disabled={serviceFormLoading}
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
+                                                placeholder={t('pages.home.serviceManagement.serviceNameArPlaceholder', 'Enter service name in Arabic')}
                                             />
+                                            {serviceForm.nameAr && !isArabicText(serviceForm.nameAr) && (
+                                                <div className="invalid-feedback">
+                                                    {t('pages.home.serviceManagement.arabicTextRequired', 'Please enter text in Arabic only')}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label" style={{

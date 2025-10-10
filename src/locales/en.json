@@ -1787,6 +1787,14 @@
     "success": {
       "approved": "Project completion approved successfully! Opening payment page...",
       "approvedNoLink": "Project completion approved successfully! Payment link will be generated."
+    },
+    "pages": {
+      "home": {
+        "serviceManagement": {
+          "serviceNameArPlaceholder": "Enter service name in Arabic",
+          "arabicTextRequired": "Please enter text in Arabic only"
+        }
+      }
     }
   }
 }

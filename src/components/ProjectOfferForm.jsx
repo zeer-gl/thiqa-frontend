@@ -802,7 +802,7 @@ const ProjectOfferForm = ({
                     </div>
 
                     {/* File Upload Field */}
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <div className="file-upload-container">
                             <input
                                 type="file"
@@ -820,7 +820,7 @@ const ProjectOfferForm = ({
                                 </span>
                             </label>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Notes Text Area */}
                     <div className="form-group">
