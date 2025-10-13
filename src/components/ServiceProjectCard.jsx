@@ -19,7 +19,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const [decliningProposal, setDecliningProposal] = useState(null);
     const [showCompletionDetails, setShowCompletionDetails] = useState(false);
     const [selectedCompletionData, setSelectedCompletionData] = useState(null);
-
+    const isAwaitingPayment = project.status === 'awaiting_payment';
     // Handle phone button click
     const handlePhoneClick = (professional) => {
         setSelectedProfessional(professional);
@@ -43,7 +43,9 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
             console.log('✅ Project status is completed');
             // If project status is completed, look for completion data in statusHistory
             if (project.statusHistory && Array.isArray(project.statusHistory)) {
-                const completionEntry = project.statusHistory.find(entry => entry.status === 'completed');
+                const completionEntry = project.statusHistory
+                .filter(entry => entry.status === 'completed') // get all completed entries
+                .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
                 console.log('🔍 Found completion entry:', completionEntry);
                 return completionEntry || null;
             } else {
@@ -759,6 +761,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 onClose={closeCompletionDetails}
                 completionData={selectedCompletionData}
                 project={project}
+                hideRejectButton={isAwaitingPayment}
             />
         </div>
     );

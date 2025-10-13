@@ -245,6 +245,15 @@
         }
       }
 
+      &.btn-danger {
+        background-color: #dc3545;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #c82333;
+        }
+      }
+
       &:disabled {
         opacity: 0.6;
         cursor: not-allowed;
@@ -354,5 +363,214 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+// Rejection Modal Styles
+.rejection-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1060;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.rejection-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalSlideIn 0.3s ease-out;
+
+  .rejection-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e9ecef;
+
+    h5 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #dc3545;
+      margin: 0;
+    }
+
+    .rejection-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6c757d;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+      }
+    }
+  }
+
+  .rejection-modal-body {
+    padding: 20px 24px;
+
+    p {
+      color: #495057;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .rejection-reason-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #dc3545;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+      }
+
+      &::placeholder {
+        color: #adb5bd;
+      }
+    }
+
+    .character-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 8px;
+    }
+  }
+
+  .rejection-modal-actions {
+    padding: 16px 24px 20px;
+    border-top: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      min-width: 100px;
+
+      &.btn-secondary {
+        background-color: #6c757d;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #5a6268;
+        }
+      }
+
+      &.btn-danger {
+        background-color: #dc3545;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: #c82333;
+        }
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsive Design for Rejection Modal
+@media (max-width: 768px) {
+  .rejection-modal-overlay {
+    padding: 10px;
+  }
+
+  .rejection-modal {
+    max-height: 90vh;
+
+    .rejection-modal-header {
+      padding: 16px 20px 12px;
+
+      h5 {
+        font-size: 1.2rem;
+      }
+    }
+
+    .rejection-modal-body {
+      padding: 16px 20px;
+    }
+
+    .rejection-modal-actions {
+      padding: 12px 20px 16px;
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// RTL Support for Rejection Modal
+[dir="rtl"] {
+  .rejection-modal {
+    .rejection-modal-header {
+      .rejection-modal-close {
+        margin-left: auto;
+        margin-right: 0;
+      }
+    }
+
+    .rejection-modal-body {
+      .character-count {
+        text-align: left;
+      }
+    }
+
+    .rejection-modal-actions {
+      flex-direction: row-reverse;
+    }
   }
 }

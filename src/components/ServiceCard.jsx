@@ -34,6 +34,7 @@ const ServiceCard = ({
     const [loading, setLoading] = useState(true);
     const [submittingProposal, setSubmittingProposal] = useState(null);
     const [acceptingProposal, setAcceptingProposal] = useState(null);
+    const [quotedProjects, setQuotedProjects] = useState(new Set()); // Track locally quoted projects
     
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -63,6 +64,14 @@ const ServiceCard = ({
     // Check if the current professional has already applied to a project
     const hasAlreadyApplied = (project) => {
         const currentProfessionalId = getCurrentProfessionalId();
+        const projectId = project._id || project.id;
+        
+        // First check local state for recently quoted projects
+        if (quotedProjects.has(projectId)) {
+            return true;
+        }
+        
+        // Then check existing proposals from server
         if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
             return false;
         }
@@ -72,6 +81,14 @@ const ServiceCard = ({
             const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
             return proposalProfessionalId === currentProfessionalId;
         });
+    };
+
+    // Mark a project as quoted locally
+    const markProjectAsQuoted = (project) => {
+        const projectId = project._id || project.id;
+        if (projectId) {
+            setQuotedProjects(prev => new Set([...prev, projectId]));
+        }
     };
 
     // Check if the current professional's proposal is rejected
@@ -267,6 +284,13 @@ const ServiceCard = ({
         setShowContactForm(true);
     };
 
+    // Handle successful form submission
+    const handleFormSubmissionSuccess = (project) => {
+        markProjectAsQuoted(project);
+        setShowContactForm(false);
+        setSelectedProject(null);
+    };
+
     const handleStartProject = async (project) => {
         try {
             setSubmittingProposal(project.id);
@@ -385,7 +409,9 @@ const ServiceCard = ({
         }
         
         // Find the latest completion entry
-        const completionEntry = project.statusHistory.find(entry => entry.status === 'completed');
+        const completionEntry = project.statusHistory
+        .filter(entry => entry.status === 'completed') // get all completed entries
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
         return completionEntry || null;
     };
 
@@ -905,6 +931,7 @@ const ServiceCard = ({
                 <ContactCustomerForm 
                     project={selectedProject} 
                     onBack={handleBackToServiceCard}
+                    onSuccess={() => handleFormSubmissionSuccess(selectedProject)}
                     formType="contactCustomer"
                 />
             ) : (

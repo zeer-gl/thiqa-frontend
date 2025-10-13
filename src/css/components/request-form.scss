@@ -262,6 +262,18 @@
             font-weight: $font-weight-semibold;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-height: 48px; // Ensure consistent height with spinner
+            
+            &:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+            
+            .spinner-border-sm {
+                width: 1rem;
+                height: 1rem;
+                border-width: 0.1em;
+            }
         }
     }
 }

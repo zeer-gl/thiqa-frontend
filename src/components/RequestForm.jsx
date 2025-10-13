@@ -195,7 +195,7 @@ const RequestForm = ({
                         <div className="form-actions">
                             <button 
                                 type="submit" 
-                                className="submit-btn btn w-100"
+                                className="submit-btn btn w-100 d-flex align-items-center justify-content-center"
                                 disabled={isSubmitting || fileSizeError}
                                 onClick={() => {
                                     console.log('🔘 Submit button clicked');
@@ -205,7 +205,14 @@ const RequestForm = ({
                                     console.log('🔘 File size error:', fileSizeError);
                                 }}
                             >
-                                {isSubmitting ? t('common.sending') : submitButtonText}
+                                {isSubmitting ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        {t('common.sending')}
+                                    </>
+                                ) : (
+                                    submitButtonText
+                                )}
                             </button>
                         </div>
                     )}
