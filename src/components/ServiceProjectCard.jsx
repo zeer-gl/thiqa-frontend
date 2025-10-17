@@ -20,6 +20,8 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const [showCompletionDetails, setShowCompletionDetails] = useState(false);
     const [selectedCompletionData, setSelectedCompletionData] = useState(null);
     const isAwaitingPayment = project.status === 'awaiting_payment';
+
+    console.log('🔍 Project:____', project);
     // Handle phone button click
     const handlePhoneClick = (professional) => {
         setSelectedProfessional(professional);
@@ -412,7 +414,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                 <div key={index} className="offer-item">
                                     <div className="offer-company">
                                         <div>
-                                            <h4 className="ar-heading-bold">{offer.professionalData?.name || t('project-offers.professional')}</h4>
+                                            <h4 className="ar-heading-bold">{offer.professionalData?.name || 'Vendor'}</h4>
                                             <p className="offer-price">{t('project-offers.price')}: {offer.price} KWD</p>
                                             <p className="offer-duration">{t('project-offers.duration')}: {new Date(offer.duration).toLocaleDateString()}</p>
                                             {offer.note && <p className="offer-note">{offer.note}</p>}

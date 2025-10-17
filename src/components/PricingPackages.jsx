@@ -19,6 +19,7 @@ const PricingPackages = () => {
     const [showPaymentMethods, setShowPaymentMethods] = useState(false);
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+    const [currentSubscription, setCurrentSubscription] = useState(null);
 
     // Helpers to localize API-provided text
     const translatePlanName = (name) => {
@@ -86,6 +87,46 @@ const PricingPackages = () => {
             isActive
         });
     }, []);
+
+    // Fetch current subscription status
+    const fetchCurrentSubscription = async () => {
+        try {
+            const token = localStorage.getItem('token-sp');
+            
+            if (!token) {
+                console.log('No token found for subscription status');
+                return;
+            }
+
+            const response = await fetch(`${BaseUrl}/professional/subscription/current-plan`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                console.log('Failed to fetch current subscription status');
+                return;
+            }
+
+            const data = await response.json();
+            console.log('Current subscription status:', data);
+            
+            if (data.success) {
+                setHasActiveSubscription(data.hasActiveSubscription);
+                setCurrentSubscription(data.currentPlan);
+                
+                // Update current plan if user has active subscription
+                if (data.hasActiveSubscription && data.currentPlan) {
+                    setCurrentPlan(data.currentPlan);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching current subscription status:', error);
+        }
+    };
 
     // Fetch subscription plans from API
     const fetchSubscriptionPlans = async () => {
@@ -155,13 +196,17 @@ const PricingPackages = () => {
 
                 console.log('Mapped packages:', mappedPackages);
                 setPackages(mappedPackages);
-                setCurrentPlan(data.currentPlan);
+                
+                // Update current plan from API response if available
+                if (data.currentPlan) {
+                    setCurrentPlan(data.currentPlan);
+                }
                 
                 // Set first package as selected if no current plan
-                if (!data.currentPlan && mappedPackages.length > 0) {
+                if (!currentSubscription && mappedPackages.length > 0) {
                     setSelectedPackage(mappedPackages[0].id);
-                } else if (data.currentPlan) {
-                    setSelectedPackage(data.currentPlan.id);
+                } else if (currentSubscription) {
+                    setSelectedPackage(currentSubscription.id);
                 }
             }
         } catch (error) {
@@ -233,9 +278,13 @@ const PricingPackages = () => {
         }
     ];
 
-    // Load subscription plans on component mount
+    // Load subscription plans and current status on component mount
     useEffect(() => {
-        fetchSubscriptionPlans();
+        const loadData = async () => {
+            await fetchCurrentSubscription();
+            await fetchSubscriptionPlans();
+        };
+        loadData();
     }, []);
 
     // Re-localize already loaded packages when language changes
@@ -252,6 +301,11 @@ const PricingPackages = () => {
 
     const handlePackageSelect = (packageId) => {
         setSelectedPackage(packageId);
+    };
+
+    // Function to refresh subscription status
+    const refreshSubscriptionStatus = async () => {
+        await fetchCurrentSubscription();
     };
 
     const handlePackageClick = async (packageId) => {
@@ -569,9 +623,12 @@ const PricingPackages = () => {
                 {packages.length > 0 ? (
                     <div className="row justify-content-center g-3">
                         {packages.map((pkg) => {
-                            // Check if this is the "Basic" plan and user has active subscription
-                            const isBasicPlan = pkg.title === 'Basic' || pkg.originalName === 'Basic';
-                            const isSubscribed = hasActiveSubscription && isBasicPlan;
+                            // Check if this package is the user's current active subscription
+                            const isCurrentPlan = currentSubscription && 
+                                (pkg.id === currentSubscription.id || 
+                                 pkg.originalName === currentSubscription.name ||
+                                 pkg.title === currentSubscription.name);
+                            const isSubscribed = hasActiveSubscription && isCurrentPlan;
                             
                             return (
                             <div key={pkg.id} className="col-lg-6 col-md-6 col-sm-12 mb-3 mt-0">
@@ -581,12 +638,12 @@ const PricingPackages = () => {
                                     style={{ cursor: isSubscribed ? 'default' : 'pointer' }}
                                 >
                                     <div className="package-header">
-                                        <div className={`radio-button ${selectedPackage === pkg.id ? 'selected' : ''}`}>
+                                        <div className={`radio-button ${isSubscribed ? 'selected' : ''}`}>
                                             <div className="radio-inner"></div>
                                         </div>
                                         <div className="package-title">
                                             {pkg.title}
-                                            {pkg.isCurrentPlan && (
+                                            {isSubscribed && (
                                                 <span className="current-plan-badge">{t('pricingPackages.currentPlan', 'Current Plan')}</span>
                                             )}
                                         </div>
@@ -610,26 +667,31 @@ const PricingPackages = () => {
                                             </div>
                                         )}
                                     </div>
-                                    {!pkg.isCurrentPlan && (
-                                        <div className="package-action mt-3">
-                                            {isSubscribed ? (
-                                                <button 
-                                                    className="btn pt-3 w-100" 
-                                                    style={{
-                                                        backgroundColor: '#21395D', 
-                                                        color: 'white'
-                                                    }}
-                                                    disabled
-                                                >
-                                                    {t('pricingPackages.subscribed', 'Subscribed')}
-                                                </button>
-                                            ) : (
-                                                <button className="btn pt-3 w-100" style={{backgroundColor: '#21395D',color: 'white'}}>
-                                                    {t('pricingPackages.selectPlan', 'Select Plan')}
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
+                                    <div className="package-action mt-3">
+                                        {isSubscribed ? (
+                                            <button 
+                                                className="btn pt-3 w-100" 
+                                                style={{
+                                                    backgroundColor: '#6c757d', 
+                                                    color: 'white'
+                                                }}
+                                                disabled
+                                            >
+                                                {t('pricingPackages.subscribed', 'Subscribed')}
+                                            </button>
+                                        ) : (
+                                            <button 
+                                                className="btn pt-3 w-100" 
+                                                style={{backgroundColor: '#21395D', color: 'white'}}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePackageClick(pkg.id);
+                                                }}
+                                            >
+                                                {t('pricingPackages.selectPlan', 'Select Plan')}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             );

@@ -13,952 +13,970 @@ import Pagination from './Pagination';
 import ProjectCompletionModal from './ProjectCompletionModal';
 import ProjectCompletionDetailsModal from './ProjectCompletionDetailsModal';
 
-const ServiceCard = ({ 
-    title, 
-    subtitle,
-    searchPlaceholder
+const ServiceCard = ({
+  title,
+  subtitle,
+  searchPlaceholder
 }) => {
-    const { t, i18n } = useTranslation();
-    const { showAlert } = useAlert();
-    const navigate = useNavigate();
-    const [liked, setLiked] = useState(false);
-    const [selectedFilter, setSelectedFilter] = useState('all');
-    const [expandedCards, setExpandedCards] = useState({});
-    const [showContactForm, setShowContactForm] = useState(false);
-    const [showProjectRequests, setShowProjectRequests] = useState(false);
-    const [selectedProject, setSelectedProject] = useState(null);
-    const [showCompletionModal, setShowCompletionModal] = useState(false);
-    const [showCompletionDetails, setShowCompletionDetails] = useState(false);
-    const [selectedCompletionData, setSelectedCompletionData] = useState(null);
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [submittingProposal, setSubmittingProposal] = useState(null);
-    const [acceptingProposal, setAcceptingProposal] = useState(null);
-    const [quotedProjects, setQuotedProjects] = useState(new Set()); // Track locally quoted projects
-    
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
-    const itemsPerPage = 5; // Set to 5 items per page as requested
-    
-    // Subscription state
-    const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
-    const [subscriptionChecked, setSubscriptionChecked] = useState(false);
-    
-    // Get current professional ID from localStorage
-    const getCurrentProfessionalId = () => {
-        try {
-            const spUserData = localStorage.getItem('spUserData');
-            if (spUserData) {
-                const userData = JSON.parse(spUserData);
-                return userData._id;
-            }
-            return null;
-        } catch (error) {
-            console.error('Error getting professional ID:', error);
-            return null;
-        }
-    };
+  const { t, i18n } = useTranslation();
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
+  const [liked, setLiked] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [expandedCards, setExpandedCards] = useState({});
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [showProjectRequests, setShowProjectRequests] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showCompletionDetails, setShowCompletionDetails] = useState(false);
+  const [selectedCompletionData, setSelectedCompletionData] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submittingProposal, setSubmittingProposal] = useState(null);
+  const [acceptingProposal, setAcceptingProposal] = useState(null);
+  const [quotedProjects, setQuotedProjects] = useState(new Set()); // Track locally quoted projects
 
-    // Check if the current professional has already applied to a project
-    const hasAlreadyApplied = (project) => {
-        const currentProfessionalId = getCurrentProfessionalId();
-        const projectId = project._id || project.id;
-        
-        // First check local state for recently quoted projects
-        if (quotedProjects.has(projectId)) {
-            return true;
-        }
-        
-        // Then check existing proposals from server
-        if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
-            return false;
-        }
-        
-        // Check if current professional's ID exists in any of the proposals
-        return project.proposals.some(proposal => {
-            const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
-            return proposalProfessionalId === currentProfessionalId;
-        });
-    };
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const itemsPerPage = 5; // Set to 5 items per page as requested
 
-    // Mark a project as quoted locally
-    const markProjectAsQuoted = (project) => {
-        const projectId = project._id || project.id;
-        if (projectId) {
-            setQuotedProjects(prev => new Set([...prev, projectId]));
-        }
-    };
+  // Subscription state
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+  const [subscriptionChecked, setSubscriptionChecked] = useState(false);
 
-    // Check if the current professional's proposal is rejected
-    const isProposalRejected = (project) => {
-        const currentProfessionalId = getCurrentProfessionalId();
-        if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
-            return false;
-        }
-        
-        // Find the proposal for current professional and check if it's rejected
-        const professionalProposal = project.proposals.find(proposal => {
-            const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
-            return proposalProfessionalId === currentProfessionalId;
-        });
-        
-        return professionalProposal && professionalProposal.status === 'rejected';
-    };
+  // Get current professional ID from localStorage
+  const getCurrentProfessionalId = () => {
+    try {
+      const spUserData = localStorage.getItem('spUserData');
+      if (spUserData) {
+        const userData = JSON.parse(spUserData);
+        return userData._id;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting professional ID:', error);
+      return null;
+    }
+  };
 
-    // Check if user has active subscription/package using localStorage payment status
-    const checkUserSubscription = () => {
-        try {
-            // Check localStorage payment status first (highest priority)
-            const spPaymentStatus = localStorage.getItem('spPaymentStatus');
-            const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
-            
-            if (spPaymentStatus === 'true' || spHasActiveSubscription === 'true') {
-                console.log('✅ ServiceCard: Using localStorage payment status - true');
-                return true;
-            }
-            
-            // Fallback to spUserData if localStorage keys don't exist
-            const spUserData = localStorage.getItem('spUserData');
-            if (spUserData) {
-                const userData = JSON.parse(spUserData);
-                console.log('ServiceCard: User data:', userData);
-                console.log('ServiceCard: User subscription data:', {
-                    hasActiveSubscription: userData.hasActiveSubscription,
-                    subscriptionStatus: userData.subscriptionStatus,
-                    subscriptionPlan: userData.subscriptionPlan,
-                    subscriptionExpiry: userData.subscriptionExpiry
-                });
-                return userData.hasActiveSubscription || userData.subscriptionStatus === 'active';
-            }
-            return false;
-        } catch (error) {
-            console.error('Error checking user subscription:', error);
-            return false;
-        }
-    };
+  // Check if the current professional has already applied to a project
+  const hasAlreadyApplied = (project) => {
+    const currentProfessionalId = getCurrentProfessionalId();
+    const projectId = project._id || project.id;
 
-    // Fetch demand quotes from API with pagination
-    const fetchDemandQuotes = async (page = 1) => {
-        try {
-            setLoading(true);
-            const token = localStorage.getItem('token-sp');
-            
-            if (!token) {
-                showAlert(t('serviceCard.errors.loginRequired'), 'error');
-                return;
-            }
+    // First check local state for recently quoted projects
+    if (quotedProjects.has(projectId)) {
+      return true;
+    }
 
-            // Check if user has active subscription before fetching demand quotes
-            const subscriptionActive = checkUserSubscription();
-            setHasActiveSubscription(subscriptionActive);
-            setSubscriptionChecked(true);
-            
-            if (!subscriptionActive) {
-                console.log('User does not have active subscription, not fetching demand quotes');
-                setProjects([]);
-                setTotalPages(1);
-                setTotalCount(0);
-                setCurrentPage(1);
-                setLoading(false);
-                return;
-            }
+    // Then check existing proposals from server
+    if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
+      return false;
+    }
 
-            const response = await fetch(`${BaseUrl}/professional/demand-quotes?page=${page}&limit=${itemsPerPage}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+    // Check if current professional's ID exists in any of the proposals
+    return project.proposals.some(proposal => {
+      const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
+      return proposalProfessionalId === currentProfessionalId;
+    });
+  };
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch demand quotes');
-            }
+  // Mark a project as quoted locally
+  const markProjectAsQuoted = (project) => {
+    const projectId = project._id || project.id;
+    if (projectId) {
+      setQuotedProjects(prev => new Set([...prev, projectId]));
+    }
+  };
 
-            const data = await response.json();
-            console.log('Demand quotes API response:', data);
-            
-            if (data.data && Array.isArray(data.data)) {
-                // Get current professional ID
-                const currentProfessionalId = getCurrentProfessionalId();
-                
-                // Map API data to component structure
-                const mappedProjects = data.data.map((quote) => ({
-                    id: quote._id,
-                    clientName: quote.customerId?.name || 'Unknown Client',
-                    projectName: quote.projectName || 'Untitled Project',
-                    status: quote.status === 'in progress' ? 'inProgress' : quote.status,
-                    date: new Date(quote.dateOfRequest).toLocaleDateString('en-GB'),
-                    description: quote.description || 'No description available',
-                    clientImage: quote.customerId?.pic || null,
-                    address: quote.address,
-                    area: quote.area,
-                    price: quote.price,
-                    typeOfProject: quote.typeOfProject?.name,
-                    projectDesign: quote.projectDesign,
-                    isAccepted: quote.isAccepted,
-                    acceptedByType: quote.acceptedByType,
-                    proposals: quote.proposals || [],
-                    originalData: quote, // Keep original data for reference
-                    targetedProfessionalId: quote.professionalId // Add targeted professional ID
-                }));
-                
-                // Filter projects based on professional targeting
-                const filteredProjects = mappedProjects.filter(project => {
-                    // If project has a targeted professional ID, only show it to that professional
-                    if (project.targetedProfessionalId) {
-                        return project.targetedProfessionalId === currentProfessionalId;
-                    }
-                    // If no targeted professional ID, show to all professionals (general requests)
-                    return true;
-                });
+  // Check if the current professional's proposal is rejected
+  const isProposalRejected = (project) => {
+    const currentProfessionalId = getCurrentProfessionalId();
+    if (!currentProfessionalId || !project.proposals || project.proposals.length === 0) {
+      return false;
+    }
 
-                console.log("filteredProjects....",filteredProjects);
-                
-                
-                setProjects(filteredProjects);
-                
-                // Handle pagination data
-                if (data.pagination) {
-                    setTotalPages(data.pagination.totalPages || 1);
-                    setTotalCount(filteredProjects.length); // Use filtered count
-                    setCurrentPage(data.pagination.currentPage || page);
-                    console.log('Pagination data:', data.pagination);
-                } else {
-                    // Fallback if no pagination data
-                    setTotalPages(1);
-                    setTotalCount(filteredProjects.length); // Use filtered count
-                    setCurrentPage(1);
-                }
-            } else {
-                setProjects([]);
-                setTotalPages(1);
-                setTotalCount(0);
-                setCurrentPage(1);
-            }
-        } catch (error) {
-            console.error('Error fetching demand quotes:', error);
-            showAlert(t('serviceCard.errors.loadFailed'), 'error');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Handle page change
-    const handlePageChange = (page) => {
-        console.log('Page changed to:', page);
-        setCurrentPage(page);
-        fetchDemandQuotes(page);
-    };
-
-    // Load demand quotes on component mount
-    useEffect(() => {
-        fetchDemandQuotes();
-    }, []);
-
-    const toggleLike = () => {
-        setLiked(!liked);
-    };
-
-    const handleFilterClick = (filter) => {
-        setSelectedFilter(filter);
-    };
-
-    // Filter projects based on selected filter
-    const filteredProjects = projects.filter(project => {
-        const matchesFilter = selectedFilter === 'all' || project.status === selectedFilter;
-        return matchesFilter;
+    // Find the proposal for current professional and check if it's rejected
+    const professionalProposal = project.proposals.find(proposal => {
+      const proposalProfessionalId = proposal.professionalId?._id || proposal.professionalId;
+      return proposalProfessionalId === currentProfessionalId;
     });
 
-    const toggleExpansion = (cardId) => {
-        setExpandedCards(prev => ({
-            ...prev,
-            [cardId]: !prev[cardId]
+    return professionalProposal && professionalProposal.status === 'rejected';
+  };
+
+  // Check if user has active subscription/package using localStorage payment status
+  const checkUserSubscription = () => {
+    try {
+      // Check localStorage payment status first (highest priority)
+      const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+      const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+
+      if (spPaymentStatus === 'true' || spHasActiveSubscription === 'true') {
+        console.log('✅ ServiceCard: Using localStorage payment status - true');
+        return true;
+      }
+
+      // Fallback to spUserData if localStorage keys don't exist
+      const spUserData = localStorage.getItem('spUserData');
+      if (spUserData) {
+        const userData = JSON.parse(spUserData);
+        console.log('ServiceCard: User data:', userData);
+        console.log('ServiceCard: User subscription data:', {
+          hasActiveSubscription: userData.hasActiveSubscription,
+          subscriptionStatus: userData.subscriptionStatus,
+          subscriptionPlan: userData.subscriptionPlan,
+          subscriptionExpiry: userData.subscriptionExpiry
+        });
+        return userData.hasActiveSubscription || userData.subscriptionStatus === 'active';
+      }
+      return false;
+    } catch (error) {
+      console.error('Error checking user subscription:', error);
+      return false;
+    }
+  };
+
+  // Fetch demand quotes from API with pagination
+  const fetchDemandQuotes = async (page = 1) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token-sp');
+
+      if (!token) {
+        showAlert(t('serviceCard.errors.loginRequired'), 'error');
+        return;
+      }
+
+      // Check if user has active subscription before fetching demand quotes
+      const subscriptionActive = checkUserSubscription();
+      setHasActiveSubscription(true);
+      // setHasActiveSubscription(subscriptionActive);
+      setSubscriptionChecked(true);
+
+      // if (!subscriptionActive) {
+      //   console.log('User does not have active subscription, not fetching demand quotes');
+      //   setProjects([]);
+      //   setTotalPages(1);
+      //   setTotalCount(0);
+      //   setCurrentPage(1);
+      //   setLoading(false);
+      //   return;
+      // }
+
+      const response = await fetch(`${BaseUrl}/professional/demand-quotes?page=${page}&limit=${itemsPerPage}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch demand quotes');
+      }
+
+      const data = await response.json();
+      console.log('Demand quotes API response:', data);
+
+      if (data.data && Array.isArray(data.data)) {
+        // Get current professional ID
+        const currentProfessionalId = getCurrentProfessionalId();
+
+        // Map API data to component structure
+        const mappedProjects = data.data.map((quote) => ({
+          id: quote._id,
+          clientName: quote.customerId?.name || 'Unknown Client',
+          projectName: quote.projectName || 'Untitled Project',
+          status: quote.status === 'in progress' ? 'inProgress' : quote.status,
+          date: new Date(quote.dateOfRequest).toLocaleDateString('en-GB'),
+          description: quote.description || 'No description available',
+          clientImage: quote.customerId?.pic || null,
+          address: quote.address,
+          area: quote.area,
+          price: quote.price,
+          typeOfProject: quote.typeOfProject?.name,
+          projectDesign: quote.projectDesign,
+          isAccepted: quote.isAccepted,
+          acceptedByType: quote.acceptedByType,
+          proposals: quote.proposals || [],
+          originalData: quote, // Keep original data for reference
+          targetedProfessionalId: quote.professionalId // Add targeted professional ID
         }));
-    };
 
-    const handleContactCustomer = (project) => {
-        setSelectedProject(project);
-        setShowContactForm(true);
-    };
+        // Filter projects based on professional targeting
+        const filteredProjects = mappedProjects.filter(project => {
+          // If project has a targeted professional ID, only show it to that professional
+          if (project.targetedProfessionalId) {
+            return project.targetedProfessionalId === currentProfessionalId;
+          }
+          // If no targeted professional ID, show to all professionals (general requests)
+          return true;
+        });
 
-    // Handle successful form submission
-    const handleFormSubmissionSuccess = (project) => {
-        markProjectAsQuoted(project);
-        setShowContactForm(false);
-        setSelectedProject(null);
-    };
-
-    const handleStartProject = async (project) => {
-        try {
-            setSubmittingProposal(project.id);
-            
-            console.log('=== START PROJECT DEBUG ===');
-            console.log('Project:', project);
-            console.log('Project ID (demandId):', project.id);
-            
-            // Get professional authentication data
-            const professionalToken = localStorage.getItem('token-sp');
-            const professionalData = localStorage.getItem('spUserData');
-            const userRole = localStorage.getItem('userRole');
-            
-            console.log('=== PROFESSIONAL AUTHENTICATION CHECK ===');
-            console.log('User Role:', userRole);
-            console.log('Professional Token:', !!professionalToken);
-            console.log('Professional Data:', !!professionalData);
-            
-            // Validate professional authentication
-            if (!professionalToken || !professionalData) {
-                showAlert(t('serviceCard.errors.professionalAuthRequired'), 'error');
-                return;
-            }
-            
-            if (userRole !== 'sp') {
-                showAlert(t('serviceCard.errors.accessDeniedSP', { role: userRole }), 'error');
-                return;
-            }
-            
-            const professional = JSON.parse(professionalData);
-            console.log('Professional ID:', professional._id);
-            
-            // Validate required parameters
-            if (!project.id) {
-                showAlert(t('serviceCard.errors.projectIdMissing'), 'error');
-                return;
-            }
-            
-            if (!professional._id) {
-                showAlert(t('serviceCard.errors.professionalIdMissing'), 'error');
-                return;
-            }
-            
-            console.log('=== SENDING API REQUEST ===');
-            console.log('Timestamp:', new Date().toISOString());
-            console.log('Demand ID:', project.id);
-            console.log('Professional ID:', professional._id);
-            
-            const response = await fetch(`${BaseUrl}/professional/start-project`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${professionalToken}`,
-                },
-                body: JSON.stringify({
-                    demandId: project.id,
-                    professionalId: professional._id
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('❌ API Error Response:', errorData);
-                
-                // Handle specific errors
-                if (errorData.message?.includes('not authorized')) {
-                    showAlert(t('serviceCard.errors.unauthorizedSubmit'), 'error');
-                } else if (errorData.message?.includes('not found')) {
-                    showAlert(t('serviceCard.errors.projectNotFound'), 'error');
-                } else if (errorData.message?.includes('already submitted')) {
-                    showAlert(t('serviceCard.errors.alreadySubmitted'), 'warning');
-                } else {
-                    showAlert(errorData?.message || t('serviceCard.errors.submitFailed'), 'error');
-                }
-                return;
-            }
-
-            const data = await response.json();
-            console.log('✅ Project started successfully:', data);
-            
-            // Show success message
-            showAlert(t('serviceCard.success.projectStarted'), 'success');
-            
-            // Refresh the project list to show updated status
-            fetchDemandQuotes(currentPage);
-            
-        } catch (error) {
-            console.error('❌ Error submitting proposal:', error);
-            showAlert(error.message || t('serviceCard.errors.submitFailed'), 'error');
-        } finally {
-            setSubmittingProposal(null);
-        }
-    };
+        console.log("filteredProjects....", filteredProjects);
 
 
-    const handleProjectCompletion = (project) => {
-        setSelectedProject(project);
-        setShowCompletionModal(true);
-    };
+        setProjects(filteredProjects);
 
-    const handleBackToServiceCard = () => {
-        setShowContactForm(false);
-        setShowProjectRequests(false);
-        setSelectedProject(null);
-    };
-
-    const handleCloseCompletionModal = () => {
-        setShowCompletionModal(false);
-        setSelectedProject(null);
-    };
-
-    // Check if project has completion status
-    const getCompletionData = (project) => {
-        if (!project.statusHistory || !Array.isArray(project.statusHistory)) {
-            return null;
-        }
-        
-        // Find the latest completion entry
-        const completionEntry = project.statusHistory
-        .filter(entry => entry.status === 'completed') // get all completed entries
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
-        return completionEntry || null;
-    };
-
-    // Handle viewing completion details
-    const handleViewCompletionDetails = (project) => {
-        const completionData = getCompletionData(project);
-        if (completionData) {
-            setSelectedCompletionData(completionData);
-            setSelectedProject(project);
-            setShowCompletionDetails(true);
+        // Handle pagination data
+        if (data.pagination) {
+          setTotalPages(data.pagination.totalPages || 1);
+          setTotalCount(filteredProjects.length); // Use filtered count
+          setCurrentPage(data.pagination.currentPage || page);
+          console.log('Pagination data:', data.pagination);
         } else {
-            showAlert('No completion details available for this project', 'warning');
+          // Fallback if no pagination data
+          setTotalPages(1);
+          setTotalCount(filteredProjects.length); // Use filtered count
+          setCurrentPage(1);
         }
-    };
+      } else {
+        setProjects([]);
+        setTotalPages(1);
+        setTotalCount(0);
+        setCurrentPage(1);
+      }
+    } catch (error) {
+      console.error('Error fetching demand quotes:', error);
+      showAlert(t('serviceCard.errors.loadFailed'), 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Close completion details modal
-    const handleCloseCompletionDetails = () => {
-        setShowCompletionDetails(false);
-        setSelectedCompletionData(null);
-        setSelectedProject(null);
-    };
+  // Handle page change
+  const handlePageChange = (page) => {
+    console.log('Page changed to:', page);
+    setCurrentPage(page);
+    fetchDemandQuotes(page);
+  };
 
-    const handleRefresh = () => {
-        fetchDemandQuotes(currentPage);
-    };
+  // Load demand quotes on component mount
+  useEffect(() => {
+    fetchDemandQuotes();
+  }, []);
 
-    const handleAcceptProposal = async (project) => {
-        try {
-            setAcceptingProposal(project.id);
-            
-            console.log('=== ACCEPT PROPOSAL DEBUG ===');
-            console.log('Project:', project);
-            console.log('Project ID:', project.id);
-            console.log('Original Data:', project.originalData);
-            console.log('Proposals:', project.proposals);
-            
-            // Get customer authentication data
-            const customerToken = localStorage.getItem('token');
-            const customerData = localStorage.getItem('userData');
-            const userRole = localStorage.getItem('userRole');
-            
-            console.log('=== CUSTOMER AUTHENTICATION CHECK ===');
-            console.log('User Role:', userRole);
-            console.log('Customer Token:', !!customerToken);
-            console.log('Customer Data:', !!customerData);
-            
-            // Validate customer authentication
-            if (!customerToken || !customerData) {
-                showAlert(t('serviceCard.errors.customerAuthRequired'), 'error');
-                return;
-            }
-            
-            if (userRole !== 'user') {
-                showAlert(t('serviceCard.errors.accessDeniedCustomer', { role: userRole }), 'error');
-                return;
-            }
-            
-            const customer = JSON.parse(customerData);
-            console.log('Customer ID:', customer._id);
-            
-            // Get demandId from original data (this is the demand quote ID)
-            const demandId = project.originalData?._id || project.id;
-            
-            // Determine if this is a professional or vendor project
-            let professionalId = null;
-            let vendorId = null;
-            
-            if (project.proposals && project.proposals.length > 0) {
-                const firstProposal = project.proposals[0];
-                
-                // Check if it's a professional proposal
-                if (firstProposal.professionalId) {
-                    professionalId = firstProposal.professionalId._id || firstProposal.professionalId;
-                    if (typeof professionalId === 'object' && professionalId._id) {
-                        professionalId = professionalId._id;
-                    }
-                }
-                
-                // Check if it's a vendor proposal
-                if (firstProposal.vendorId) {
-                    vendorId = firstProposal.vendorId._id || firstProposal.vendorId;
-                    if (typeof vendorId === 'object' && vendorId._id) {
-                        vendorId = vendorId._id;
-                    }
-                }
-            }
-            
-            console.log('=== EXTRACTED PARAMETERS ===');
-            console.log('Demand ID:', demandId);
-            console.log('Professional ID:', professionalId);
-            console.log('Vendor ID:', vendorId);
-            console.log('Project Type:', professionalId ? 'Professional' : vendorId ? 'Vendor' : 'Unknown');
-            
-            // Validate required parameters
-            if (!demandId) {
-                showAlert(t('serviceCard.errors.demandIdMissing'), 'error');
-                return;
-            }
-            
-            if (!professionalId && !vendorId) {
-                showAlert(t('serviceCard.errors.noProposalsFound'), 'error');
-                return;
-            }
-            
-            // Ensure we don't send both (API requirement)
-            if (professionalId && vendorId) {
-                showAlert(t('serviceCard.errors.multipleProposalTypes'), 'error');
-                return;
-            }
-            
-            // Prepare request body based on proposal type
-            const requestBody = {
-                demandId: demandId,
-                action: "accept"
-            };
-            
-            // Add either professionalId OR vendorId (not both)
-            if (professionalId) {
-                requestBody.professionalId = professionalId;
-            } else if (vendorId) {
-                requestBody.vendorId = vendorId;
-            }
-            
-            console.log('=== SENDING API REQUEST ===');
-            console.log('Timestamp:', new Date().toISOString());
-            console.log('Request Body:', requestBody);
-            console.log('Demand ID:', demandId);
-            console.log('Professional ID:', professionalId);
-            console.log('Vendor ID:', vendorId);
-            console.log('Action: accept');
-            
-            const response = await fetch(`${BaseUrl}/customer/acceptReject-proposal`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${customerToken}`,
-                },
-                body: JSON.stringify(requestBody)
-            });
+  const toggleLike = () => {
+    setLiked(!liked);
+  };
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('❌ API Error Response:', errorData);
-                
-                // Handle specific errors
-                if (errorData.message?.includes('not authorized')) {
-                    showAlert(t('serviceCard.errors.unauthorizedAccept'), 'error');
-                } else if (errorData.message?.includes('not found')) {
-                    showAlert(t('serviceCard.errors.proposalNotFound'), 'error');
-                } else if (errorData.message?.includes('already accepted')) {
-                    showAlert(t('serviceCard.errors.alreadyAccepted'), 'warning');
-                } else if (errorData.message?.includes('Demand ID, action, and either Professional ID or Vendor ID are required')) {
-                    showAlert(t('serviceCard.errors.missingParameters'), 'error');
-                } else if (errorData.message?.includes('but not both')) {
-                    showAlert(t('serviceCard.errors.invalidProposalData'), 'error');
-                } else {
-                    showAlert(errorData?.message || t('serviceCard.errors.acceptFailed'), 'error');
-                }
-                return;
-            }
+  const handleFilterClick = (filter) => {
+    setSelectedFilter(filter);
+  };
 
-            const data = await response.json();
-            console.log('✅ Proposal accepted successfully:', data);
-            
-            // Show success message
-            showAlert(t('serviceCard.success.proposalAccepted'), 'success');
-            
-            // Send notification to service provider
-            try {
-                const customer = JSON.parse(localStorage.getItem('userData'));
-                const projectTitle = project.title || project.projectName || 'Project';
-                
-                console.log('📧 Sending notification to service provider...');
-                await notifyServiceProviderOfferAccepted(
-                    professionalId || vendorId,
-                    customer._id,
-                    demandId,
-                    projectTitle,
-                    i18n.language
-                );
-                console.log('✅ Notification sent to service provider');
-            } catch (notificationError) {
-                console.error('⚠️ Failed to send notification to service provider:', notificationError);
-                // Don't show error to user - notification failure shouldn't break the main flow
-            }
-            
-            // Refresh the project list to show updated status
-            fetchDemandQuotes(currentPage);
-            
-        } catch (error) {
-            console.error('❌ Error accepting proposal:', error);
-            showAlert(error.message || t('serviceCard.errors.acceptFailed'), 'error');
-        } finally {
-            setAcceptingProposal(null);
+  // Filter projects based on selected filter
+  const filteredProjects = projects.filter(project => {
+    const matchesFilter = selectedFilter === 'all' || project.status === selectedFilter;
+    return matchesFilter;
+  });
+
+  const toggleExpansion = (cardId) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId]
+    }));
+  };
+
+  const handleContactCustomer = (project) => {
+    setSelectedProject(project);
+    setShowContactForm(true);
+  };
+
+  // Handle successful form submission
+  const handleFormSubmissionSuccess = (project) => {
+    markProjectAsQuoted(project);
+    setShowContactForm(false);
+    setSelectedProject(null);
+  };
+
+  const handleStartProject = async (project) => {
+    try {
+      setSubmittingProposal(project.id);
+
+      console.log('=== START PROJECT DEBUG ===');
+      console.log('Project:', project);
+      console.log('Project ID (demandId):', project.id);
+
+      // Get professional authentication data
+      const professionalToken = localStorage.getItem('token-sp');
+      const professionalData = localStorage.getItem('spUserData');
+      const userRole = localStorage.getItem('userRole');
+
+      console.log('=== PROFESSIONAL AUTHENTICATION CHECK ===');
+      console.log('User Role:', userRole);
+      console.log('Professional Token:', !!professionalToken);
+      console.log('Professional Data:', !!professionalData);
+
+      // Validate professional authentication
+      if (!professionalToken || !professionalData) {
+        showAlert(t('serviceCard.errors.professionalAuthRequired'), 'error');
+        return;
+      }
+
+      if (userRole !== 'sp') {
+        showAlert(t('serviceCard.errors.accessDeniedSP', { role: userRole }), 'error');
+        return;
+      }
+
+      const professional = JSON.parse(professionalData);
+      console.log('Professional ID:', professional._id);
+
+      // Validate required parameters
+      if (!project.id) {
+        showAlert(t('serviceCard.errors.projectIdMissing'), 'error');
+        return;
+      }
+
+      if (!professional._id) {
+        showAlert(t('serviceCard.errors.professionalIdMissing'), 'error');
+        return;
+      }
+
+      console.log('=== SENDING API REQUEST ===');
+      console.log('Timestamp:', new Date().toISOString());
+      console.log('Demand ID:', project.id);
+      console.log('Professional ID:', professional._id);
+
+      const response = await fetch(`${BaseUrl}/professional/start-project`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${professionalToken}`,
+        },
+        body: JSON.stringify({
+          demandId: project.id,
+          professionalId: professional._id
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ API Error Response:', errorData);
+
+        // Handle specific errors
+        if (errorData.message?.includes('not authorized')) {
+          showAlert(t('serviceCard.errors.unauthorizedSubmit'), 'error');
+        } else if (errorData.message?.includes('not found')) {
+          showAlert(t('serviceCard.errors.projectNotFound'), 'error');
+        } else if (errorData.message?.includes('already submitted')) {
+          showAlert(t('serviceCard.errors.alreadySubmitted'), 'warning');
+        } else {
+          showAlert(errorData?.message || t('serviceCard.errors.submitFailed'), 'error');
         }
-    };
+        return;
+      }
 
-    const handleViewQuote = () => {
-        console.log('=== VIEW QUOTE REDIRECT ===');
-        console.log('Redirecting to:', '/request-quote/list');
-        navigate('/request-quote/list');
-    };
+      const data = await response.json();
+      console.log('✅ Project started successfully:', data);
 
-    return (
-        <>
-            {!showContactForm && !showProjectRequests ? (
-                <div className="">
-      <div className="main-container">
-        <div className="service-card-content">
-            <div className="service-card-header">
+      // Show success message
+      showAlert(t('serviceCard.success.projectStarted'), 'success');
+
+      // Refresh the project list to show updated status
+      fetchDemandQuotes(currentPage);
+
+    } catch (error) {
+      console.error('❌ Error submitting proposal:', error);
+      showAlert(error.message || t('serviceCard.errors.submitFailed'), 'error');
+    } finally {
+      setSubmittingProposal(null);
+    }
+  };
+
+
+  const handleProjectCompletion = (project) => {
+    setSelectedProject(project);
+    setShowCompletionModal(true);
+  };
+
+  const handleBackToServiceCard = () => {
+    setShowContactForm(false);
+    setShowProjectRequests(false);
+    setSelectedProject(null);
+  };
+
+  const handleCloseCompletionModal = () => {
+    setShowCompletionModal(false);
+    setSelectedProject(null);
+  };
+
+  // Check if project has completion status
+  const getCompletionData = (project) => {
+    if (!project.statusHistory || !Array.isArray(project.statusHistory)) {
+      return null;
+    }
+
+    // Find the latest completion entry
+    const completionEntry = project.statusHistory
+      .filter(entry => entry.status === 'completed') // get all completed entries
+      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
+    return completionEntry || null;
+  };
+
+  // Handle viewing completion details
+  const handleViewCompletionDetails = (project) => {
+    const completionData = getCompletionData(project);
+    if (completionData) {
+      setSelectedCompletionData(completionData);
+      setSelectedProject(project);
+      setShowCompletionDetails(true);
+    } else {
+      showAlert('No completion details available for this project', 'warning');
+    }
+  };
+
+  // Close completion details modal
+  const handleCloseCompletionDetails = () => {
+    setShowCompletionDetails(false);
+    setSelectedCompletionData(null);
+    setSelectedProject(null);
+  };
+
+  const handleRefresh = () => {
+    fetchDemandQuotes(currentPage);
+  };
+
+  const handleAcceptProposal = async (project) => {
+    try {
+      setAcceptingProposal(project.id);
+
+      console.log('=== ACCEPT PROPOSAL DEBUG ===');
+      console.log('Project:', project);
+      console.log('Project ID:', project.id);
+      console.log('Original Data:', project.originalData);
+      console.log('Proposals:', project.proposals);
+
+      // Get customer authentication data
+      const customerToken = localStorage.getItem('token');
+      const customerData = localStorage.getItem('userData');
+      const userRole = localStorage.getItem('userRole');
+
+      console.log('=== CUSTOMER AUTHENTICATION CHECK ===');
+      console.log('User Role:', userRole);
+      console.log('Customer Token:', !!customerToken);
+      console.log('Customer Data:', !!customerData);
+
+      // Validate customer authentication
+      if (!customerToken || !customerData) {
+        showAlert(t('serviceCard.errors.customerAuthRequired'), 'error');
+        return;
+      }
+
+      if (userRole !== 'user') {
+        showAlert(t('serviceCard.errors.accessDeniedCustomer', { role: userRole }), 'error');
+        return;
+      }
+
+      const customer = JSON.parse(customerData);
+      console.log('Customer ID:', customer._id);
+
+      // Get demandId from original data (this is the demand quote ID)
+      const demandId = project.originalData?._id || project.id;
+
+      // Determine if this is a professional or vendor project
+      let professionalId = null;
+      let vendorId = null;
+
+      if (project.proposals && project.proposals.length > 0) {
+        const firstProposal = project.proposals[0];
+
+        // Check if it's a professional proposal
+        if (firstProposal.professionalId) {
+          professionalId = firstProposal.professionalId._id || firstProposal.professionalId;
+          if (typeof professionalId === 'object' && professionalId._id) {
+            professionalId = professionalId._id;
+          }
+        }
+
+        // Check if it's a vendor proposal
+        if (firstProposal.vendorId) {
+          vendorId = firstProposal.vendorId._id || firstProposal.vendorId;
+          if (typeof vendorId === 'object' && vendorId._id) {
+            vendorId = vendorId._id;
+          }
+        }
+      }
+
+      console.log('=== EXTRACTED PARAMETERS ===');
+      console.log('Demand ID:', demandId);
+      console.log('Professional ID:', professionalId);
+      console.log('Vendor ID:', vendorId);
+      console.log('Project Type:', professionalId ? 'Professional' : vendorId ? 'Vendor' : 'Unknown');
+
+      // Validate required parameters
+      if (!demandId) {
+        showAlert(t('serviceCard.errors.demandIdMissing'), 'error');
+        return;
+      }
+
+      if (!professionalId && !vendorId) {
+        showAlert(t('serviceCard.errors.noProposalsFound'), 'error');
+        return;
+      }
+
+      // Ensure we don't send both (API requirement)
+      if (professionalId && vendorId) {
+        showAlert(t('serviceCard.errors.multipleProposalTypes'), 'error');
+        return;
+      }
+
+      // Prepare request body based on proposal type
+      const requestBody = {
+        demandId: demandId,
+        action: "accept"
+      };
+
+      // Add either professionalId OR vendorId (not both)
+      if (professionalId) {
+        requestBody.professionalId = professionalId;
+      } else if (vendorId) {
+        requestBody.vendorId = vendorId;
+      }
+
+      console.log('=== SENDING API REQUEST ===');
+      console.log('Timestamp:', new Date().toISOString());
+      console.log('Request Body:', requestBody);
+      console.log('Demand ID:', demandId);
+      console.log('Professional ID:', professionalId);
+      console.log('Vendor ID:', vendorId);
+      console.log('Action: accept');
+
+      const response = await fetch(`${BaseUrl}/customer/acceptReject-proposal`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${customerToken}`,
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ API Error Response:', errorData);
+
+        // Handle specific errors
+        if (errorData.message?.includes('not authorized')) {
+          showAlert(t('serviceCard.errors.unauthorizedAccept'), 'error');
+        } else if (errorData.message?.includes('not found')) {
+          showAlert(t('serviceCard.errors.proposalNotFound'), 'error');
+        } else if (errorData.message?.includes('already accepted')) {
+          showAlert(t('serviceCard.errors.alreadyAccepted'), 'warning');
+        } else if (errorData.message?.includes('Demand ID, action, and either Professional ID or Vendor ID are required')) {
+          showAlert(t('serviceCard.errors.missingParameters'), 'error');
+        } else if (errorData.message?.includes('but not both')) {
+          showAlert(t('serviceCard.errors.invalidProposalData'), 'error');
+        } else {
+          showAlert(errorData?.message || t('serviceCard.errors.acceptFailed'), 'error');
+        }
+        return;
+      }
+
+      const data = await response.json();
+      console.log('✅ Proposal accepted successfully:', data);
+
+      // Show success message
+      showAlert(t('serviceCard.success.proposalAccepted'), 'success');
+
+      // Send notification to service provider
+      try {
+        const customer = JSON.parse(localStorage.getItem('userData'));
+        const projectTitle = project.title || project.projectName || 'Project';
+
+        console.log('📧 Sending notification to service provider...');
+        await notifyServiceProviderOfferAccepted(
+          professionalId || vendorId,
+          customer._id,
+          demandId,
+          projectTitle,
+          i18n.language
+        );
+        console.log('✅ Notification sent to service provider');
+      } catch (notificationError) {
+        console.error('⚠️ Failed to send notification to service provider:', notificationError);
+        // Don't show error to user - notification failure shouldn't break the main flow
+      }
+
+      // Refresh the project list to show updated status
+      fetchDemandQuotes(currentPage);
+
+    } catch (error) {
+      console.error('❌ Error accepting proposal:', error);
+      showAlert(error.message || t('serviceCard.errors.acceptFailed'), 'error');
+    } finally {
+      setAcceptingProposal(null);
+    }
+  };
+
+  const handleViewQuote = () => {
+    console.log('=== VIEW QUOTE REDIRECT ===');
+    console.log('Redirecting to:', '/request-quote/list');
+    navigate('/request-quote/list');
+  };
+
+  return (
+    <>
+      {!showContactForm && !showProjectRequests ? (
+        <div className="">
+          <div className="main-container">
+            <div className="service-card-content">
+              <div className="service-card-header">
                 <div className="service-card-header-left">
-                    <p className="service-card-header-left-title">{t('serviceCard.title', 'Project Price requests')}</p>
+                  <p className="service-card-header-left-title">{t('serviceCard.title', 'Project Price requests')}</p>
 
                 </div>
-             
+
+              </div>
             </div>
-        </div>
-      <div className="service-card-content-bottom">
-      <button 
-                         className={`filter-tag  pe-4  ${selectedFilter === 'all' ? 'active' : ''}`}
-                         onClick={() => handleFilterClick('all')}
-                         style={{display: 'flex',alignItems: 'center',justifyContent: 'center'}}
-                     >
-                         {/* <div className="status-dot all"></div> */}
-                         {t('serviceCard.buttons.allProjects')}
-                     </button>
-      <button 
-                         className={`filter-tag ${selectedFilter === 'open' ? 'active' : ''}`}
-                         onClick={() => handleFilterClick('open')}
-                        style={{padding:'9px 26px'}}
-                     >
-                         <div className="status-dot open"></div>
-                         <span>
-                         {t('projectPriceRequest.status.open', 'مفتوح')}
-                         </span>
-                       
-                     </button>
-                     <button 
-                         className={`filter-tag ${selectedFilter === 'inProgress' ? 'active' : ''}`}
-                         onClick={() => handleFilterClick('inProgress')}
-                         style={{padding:'11px 26px'}}
-                     >
-                         <div className="status-dot in-progress"></div>
-                         <span>
-                         {t('projectPriceRequest.status.inProgress', 'في طور الإنجاز')}
-                         </span>
-                      
-                     </button>
-      </div>
-      {/* Loading State */}
-      {loading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
-          </div>
-          <p className="mt-3">{t('serviceCard.loadingProjectRequests', 'Loading project requests...')}</p>
-        </div>
-      ) : !subscriptionChecked ? (
-        <div className="text-center py-5">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
-          </div>
-          <p className="mt-3">{t('serviceCard.checkingSubscription', 'Checking subscription status...')}</p>
-        </div>
-      ) : !hasActiveSubscription ? (
-        <div className="text-center py-5">
-          <div className="subscription-required">
-            <i className="fas fa-crown fa-3x text-warning mb-3"></i>
-            <h5 className="text-warning mb-3">{t('serviceCard.subscriptionRequired.title', 'Subscription Required')}</h5>
-            <p className="text-muted mb-4">
-              {t('serviceCard.subscriptionRequired.message', 'You need an active subscription to view project requests. Please purchase a package to access demand quotes.')}
-            </p>
-            <button 
-              className="btn"
-              onClick={() => {
-                // Navigate to packages tab while preserving language
-                const currentLanguage = i18n.language;
-                const url = new URL(window.location);
-                url.searchParams.set('tab', 'packages');
-                
-                // Store current language in localStorage to preserve it
-                localStorage.setItem('i18nextLng', currentLanguage);
-                
-                // Use navigate instead of window.location.href to preserve language
-                navigate(url.pathname + url.search);
-              }}
-            style={{backgroundColor: '#21395D',color: 'white'}}
-            >
-              <i className="fas fa-shopping-cart me-2"></i>
-              {t('serviceCard.subscriptionRequired.viewPackages', 'View Packages')}
-            </button>
-          </div>
-        </div>
-      ) : filteredProjects.length > 0 ? (
-        /* Map through filtered projects - keeping your exact design */
-        filteredProjects.map((project) => (
-        <div key={project.id}>
-          <div className="main-profile" onClick={() => toggleExpansion(project.id)} style={{cursor: 'pointer'}}>
-                        <div className="image-container">
-                          <div style={{width: '50px', height: '50px'}}>
-                            {project.clientImage && project.clientImage.trim() !== '' ? (
-                              <img 
-                                src={project.clientImage} 
-                            alt="Customer Profile"
-                                style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius:"50%"}}
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'flex';
-                                }}
-                              />
-                            ) : null}
-                            <div 
-                              className="default-avatar"
-                              style={{
-                                width: '100%', 
-                                height: '100%', 
-                                borderRadius: '50%',
-                                backgroundColor: '#21395D',
-                                display: project.clientImage && project.clientImage.trim() !== '' ? 'none' : 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                color: 'white',
-                                fontSize: '18px',
-                                fontWeight: 'bold'
-                              }}
-                            >
-                              {project.clientName ? project.clientName.charAt(0).toUpperCase() : 'U'}
-                            </div>
-                          </div>
-                            <div className="content-image">
-                                <p className="ar-heading-bold">{project.clientName}</p>
-                                <p className="ar-subheading-bold">{project.projectName}</p>
-                            </div>
+            <div className="service-card-content-bottom">
+              <button
+                className={`filter-tag  pe-4  ${selectedFilter === 'all' ? 'active' : ''}`}
+                onClick={() => handleFilterClick('all')}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                {/* <div className="status-dot all"></div> */}
+                {t('serviceCard.buttons.allProjects')}
+              </button>
+              <button
+                className={`filter-tag ${selectedFilter === 'open' ? 'active' : ''}`}
+                onClick={() => handleFilterClick('open')}
+                style={{ padding: '9px 26px' }}
+              >
+                <div className="status-dot open"></div>
+                <span>
+                  {t('projectPriceRequest.status.open', 'مفتوح')}
+                </span>
 
-                        </div>
-                        <div className="content-container">
-                        <button 
-                             className={`filter-tag ${project.status === 'open' ? 'active' :''}`}
-                             style={{padding:'11px 30px'}}
-                         >
-                             <div className={`status-dot ${project.status === 'inProgress' ? 'in-progress' : project.status}`}></div>
-                             <span>
-                             {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') : 
-                              project.status === 'inProgress' ? t('projectPriceRequest.status.inProgress', 'في طور الإنجاز') : 
-                              project.status}
-                             </span>
-                           
-                         </button>
-                         
-                      
-                         
-                         {/* Accordion Arrow */}
-                         <div className="accordion-arrow">
-                             {expandedCards[project.id] ? <FaChevronUp /> : <FaChevronDown />}
-                         </div>
-                        </div>
-                    </div>
-                    {console.log("project....",project)}
-          {/* Accordion Content */}
-          {expandedCards[project.id] && (
-    
-         
-            <>
-            <p className="card-detail-heading mb-0 mt-4 mb-3">{t('projectDetails.title', 'Project Details')}</p>
-              <div className="card-detail">
-            
-                <p className="card-detail-subheading mb-0">
-                  <b>{t('projectDetails.description', 'Description')}:</b> {project.description}
-                </p>
-                <p className="card-detail-subheading mb-0">
-                  <b>{t('projectDetails.address', 'Address')}:</b> {project.address}
-                </p>
-                <p className="card-detail-subheading mb-0">
-                  <b>{t('projectDetails.projectType', 'Project Type')}:</b> {project.typeOfProject}
-                </p>
-                <p className="card-detail-subheading mb-0">
-                  <b>{t('projectDetails.budget', 'Budget')}:</b> {project.price} KWD
-                </p>
-                {project.isAccepted && (
-                  <p className="card-detail-subheading text-success mb-0">
-                    <b>{t('projectDetails.status', 'Status')}:</b> {t('projectDetails.acceptedBy', 'Accepted by')} {project?.clientName}
+              </button>
+              <button
+                className={`filter-tag ${selectedFilter === 'inProgress' ? 'active' : ''}`}
+                onClick={() => handleFilterClick('inProgress')}
+                style={{ padding: '11px 26px' }}
+              >
+                <div className="status-dot in-progress"></div>
+                <span>
+                  {t('projectPriceRequest.status.inProgress', 'في طور الإنجاز')}
+                </span>
+
+              </button>
+            </div>
+            {/* Loading State */}
+            {loading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
+                </div>
+                <p className="mt-3">{t('serviceCard.loadingProjectRequests', 'Loading project requests...')}</p>
+              </div>
+            ) : !subscriptionChecked ? (
+              <div className="text-center py-5">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">{t('common.loading', 'Loading...')}</span>
+                </div>
+                <p className="mt-3">{t('serviceCard.checkingSubscription', 'Checking subscription status...')}</p>
+              </div>
+            ) : !hasActiveSubscription ? (
+              <div className="text-center py-5">
+                <div className="subscription-required">
+                  <i className="fas fa-crown fa-3x text-warning mb-3"></i>
+                  <h5 className="text-warning mb-3">{t('serviceCard.subscriptionRequired.title', 'Subscription Required')}</h5>
+                  <p className="text-muted mb-4">
+                    {t('serviceCard.subscriptionRequired.message', 'You need an active subscription to view project requests. Please purchase a package to access demand quotes.')}
                   </p>
-                )}
-              </div>
-              <div className="button-container mt-3">
-                {project.status === 'open' ? (
-                  <>
-                    {/* Check if professional's proposal is rejected */}
-                    {isProposalRejected(project) ? (
-                      <div 
-                        className="alert alert-danger" 
-                        style={{
-                          backgroundColor: '#f8d7da',
-                          color: '#721c24',
-                          padding: '15px',
-                          borderRadius: '5px',
-                          textAlign: 'center',
-                          border: '1px solid #f5c6cb',
-                          width: '100%',
-                          margin: '0'
-                        }}
-                      >
-                        <i className="fas fa-times-circle me-2"></i>
-                        {t('serviceCard.status.rejected', 'Project or Offer is Rejected')}
-                      </div>
-                    ) : hasAlreadyApplied(project) && !project.isAccepted ? (
-                      /* Check if professional has already applied */
-                      <button 
-                        className="btn-secondary p-3" 
-                        style={{
-                          backgroundColor: '#6c757d',
-                          cursor: 'not-allowed',
-                          opacity: 0.7
-                        }}
-                        disabled
-                      >
-                        {t('serviceCard.buttons.alreadyApplied')}
-                      </button>
-                    ) : (
-                      /* Only show Request Quote button if no proposals are accepted and professional hasn't applied */
-                      !project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
-                        <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
-                          {t('serviceCard.buttons.priceQuote')}
-                        </button>
-                      )
-                    )}
-                  
-                 
-                  </>
-                ) : project.status === 'inProgress' ? (
-                  <>
-                    <button style={{backgroundColor: '#21395D',color: 'white',width: '100%', padding:"10px"}} onClick={() => handleProjectCompletion(project)}>
-                      {t('serviceCard.buttons.projectCompletionFile')}
-                    </button>
-                    {/* Price Quote button is hidden when status is inProgress */}
-                  </>
-                ):  project.status === 'completed' ? (
-                  <>
-                    <div style={{backgroundColor: '#17a2b8',color: 'white',width: '100%', padding:"10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold'}}>
-                      <i className="fas fa-check-circle me-2"></i>
-                      {t('serviceCard.buttons.projectCompleted', 'Project Completed')}
-                    </div>
+                  <button
+                    className="btn"
+                    onClick={() => {
+                      // Navigate to packages tab while preserving language
+                      const currentLanguage = i18n.language;
+                      const url = new URL(window.location);
+                      url.searchParams.set('tab', 'packages');
 
-                  </>
-                ):  project.status === 'awaiting_payment' ? (
-                  <>
-                    <div style={{backgroundColor: '#ffc107',color: 'white',width: '100%', padding:"10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold'}}>
-                      <i className="fas fa-clock me-2"></i>
-                      {t('serviceCard.buttons.projectCompletedAwaitingPayment', 'Project Completed - Awaiting Payment')}
-                    </div>
-            
-                  </>
-                ):  project.status === 'paid' ? (
-                  <>
-                    <div style={{backgroundColor: '#28a745',color: 'white',width: '100%', padding:"10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold'}}>
-                      <i className="fas fa-check-circle me-2"></i>
-                      {t('serviceCard.buttons.projectCompletedPaymentCompleted', 'Project Completed - Payment Completed')}
-                    </div>
-               
-                  </>
-                ):(
-                  <>
-                    <button  className='p-3 pt-4' style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"10px"}} onClick={() => handleProjectCompletion(project)}>
-                      {t('serviceCard.buttons.projectCompletionFile')}
-                    </button>
-                    {/* Only show Request Quote button if no proposals are accepted */}
-                    {!project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
-                      <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
-                        {t('serviceCard.buttons.priceQuote')}
-                      </button>
-                    )}
-                 
-                  </>
-                )}
-                {
-                    project?.status==='open' && project?.proposals[0]?.status==='accepted' && (
-                        <button className="p-2" style={{backgroundColor: '#21395D',color: 'white',width: '100%',paddingTop:"12px"}} onClick={() => handleStartProject(project)}>
-                            {t('serviceCard.buttons.startProject', 'Start Project')}
-                        </button>
-                    )
-                }
+                      // Store current language in localStorage to preserve it
+                      localStorage.setItem('i18nextLng', currentLanguage);
+
+                      // Use navigate instead of window.location.href to preserve language
+                      navigate(url.pathname + url.search);
+                    }}
+                    style={{ backgroundColor: '#21395D', color: 'white' }}
+                  >
+                    <i className="fas fa-shopping-cart me-2"></i>
+                    {t('serviceCard.subscriptionRequired.viewPackages', 'View Packages')}
+                  </button>
+                </div>
               </div>
-            </>
-          )}
-        </div>
-      ))
-      ) : (
-        <div className="text-center py-5">
-          <div className="empty-projects">
-            <i className="fas fa-folder-open fa-3x text-muted mb-3"></i>
-            <h5 className="text-muted">{t('common.noProjectRequestsFound')}</h5>
-            <p className="text-muted">
-              {t('common.noProjectRequestsAvailable')}
-            </p>
+            ) : filteredProjects.length > 0 ? (
+              /* Map through filtered projects - keeping your exact design */
+              filteredProjects.map((project) => (
+                <div key={project.id}>
+                  <div className="main-profile" onClick={() => toggleExpansion(project.id)} style={{ cursor: 'pointer' }}>
+                    <div className="image-container">
+                      <div style={{ width: '50px', height: '50px' }}>
+                        {project.clientImage && project.clientImage.trim() !== '' ? (
+                          <img
+                            src={project.clientImage}
+                            alt="Customer Profile"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: "50%" }}
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="default-avatar"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            backgroundColor: '#21395D',
+                            display: project.clientImage && project.clientImage.trim() !== '' ? 'none' : 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '18px',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          {project.clientName ? project.clientName.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                      </div>
+                      <div className="content-image">
+                        <p className="ar-heading-bold">{project.clientName}</p>
+                        <p className="ar-subheading-bold">{project.projectName}</p>
+                      </div>
+
+                    </div>
+                    <div className="content-container">
+                      <button
+                        className={`filter-tag ${project.status === 'open' ? 'active' : ''}`}
+                        style={{ padding: '11px 30px' }}
+                      >
+                        <div className={`status-dot ${project.status === 'inProgress' ? 'in-progress' : project.status}`}></div>
+                        <span>
+                          {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') :
+                            project.status === 'inProgress' ? t('projectPriceRequest.status.inProgress', 'في طور الإنجاز') :
+                              project.status}
+                        </span>
+
+                      </button>
+
+
+
+                      {/* Accordion Arrow */}
+                      <div className="accordion-arrow">
+                        {expandedCards[project.id] ? <FaChevronUp /> : <FaChevronDown />}
+                      </div>
+                    </div>
+                  </div>
+                  {console.log("project....", project)}
+                  {/* Accordion Content */}
+                  {expandedCards[project.id] && (
+
+
+                    <>
+                      <p className="card-detail-heading mb-0 mt-4 mb-3">{t('projectDetails.title', 'Project Details')}</p>
+                      <div className="card-detail">
+
+                        <p className="card-detail-subheading mb-0">
+                          <b>{t('projectDetails.description', 'Description')}:</b> {project.description}
+                        </p>
+                        <p className="card-detail-subheading mb-0">
+                          <b>{t('projectDetails.address', 'Address')}:</b> {project.address}
+                        </p>
+                        <p className="card-detail-subheading mb-0">
+                          <b>{t('projectDetails.projectType', 'Project Type')}:</b> {project.typeOfProject}
+                        </p>
+                        <p className="card-detail-subheading mb-0">
+                          <b>{t('projectDetails.budget', 'Budget')}:</b> {project.price} KWD
+                        </p>
+                        {project.isAccepted && (
+                          <p className="card-detail-subheading text-success mb-0">
+                            <b>{t('projectDetails.status', 'Status')}:</b> {t('projectDetails.acceptedBy', 'Accepted by')} {project?.clientName}
+                          </p>
+                        )}
+                      </div>
+                      <div className="button-container mt-3">
+                        {project.status === 'open' ? (
+                          <>
+                            {/* Check if professional's proposal is rejected */}
+                            {isProposalRejected(project) ? (
+                              <div
+                                className="alert alert-danger"
+                                style={{
+                                  backgroundColor: '#f8d7da',
+                                  color: '#721c24',
+                                  padding: '15px',
+                                  borderRadius: '5px',
+                                  textAlign: 'center',
+                                  border: '1px solid #f5c6cb',
+                                  width: '100%',
+                                  margin: '0'
+                                }}
+                              >
+                                <i className="fas fa-times-circle me-2"></i>
+                                {t('serviceCard.status.rejected', 'Project or Offer is Rejected')}
+                              </div>
+                            ) : project.acceptedByType === 'vendor' ? (
+                              /* Check if project is accepted by vendor */
+                              <button
+                                className="btn-secondary p-3"
+                                style={{
+                                  backgroundColor: '#28a745',
+                                  color: 'white',
+                                  cursor: 'not-allowed',
+                                  opacity: 0.8
+                                }}
+                                disabled
+                              >
+                                <i className="fas fa-check-circle me-2"></i>
+                                {t('serviceCard.buttons.acceptedByVendor', 'Already Accepted by Vendor')}
+                              </button>
+                            ) : hasAlreadyApplied(project) && !project.isAccepted ? (
+                              /* Check if professional has already applied */
+                              <button
+                                className="btn-secondary p-3"
+                                style={{
+                                  backgroundColor: '#6c757d',
+                                  cursor: 'not-allowed',
+                                  opacity: 0.7
+                                }}
+                                disabled
+                              >
+                                {t('serviceCard.buttons.alreadyApplied')}
+                              </button>
+                            ) : (
+                              /* Only show Request Quote button if no proposals are accepted and professional hasn't applied */
+                              !project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
+                                <button className="btn-secondary p-3" onClick={() => handleContactCustomer(project)}>
+                                  {t('serviceCard.buttons.priceQuote')}
+                                </button>
+                              )
+                            )}
+
+
+                          </>
+                        ) : project.status === 'inProgress' ? (
+                          <>
+                            <button style={{ backgroundColor: '#21395D', color: 'white', width: '100%', padding: "10px" }} onClick={() =>{}}>
+                              {t('serviceCard.buttons.projectCompletionFiles',"Project is Completed by admin")}
+                            </button>
+                            {/* <button style={{ backgroundColor: '#21395D', color: 'white', width: '100%', padding: "10px" }} onClick={() => handleProjectCompletion(project)}>
+                              {t('serviceCard.buttons.projectCompletionFile')}
+                            </button> */}
+                            {/* Price Quote button is hidden when status is inProgress */}
+                          </>
+                        ) : project.status === 'completed' ? (
+                          <>
+                            <div style={{ backgroundColor: '#17a2b8', color: 'white', width: '100%', padding: "10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold' }}>
+                              <i className="fas fa-check-circle me-2"></i>
+                              {t('serviceCard.buttons.projectCompleted', 'Project Completed')}
+                            </div>
+
+                          </>
+                        ) : project.status === 'awaiting_payment' ? (
+                          <>
+                            <div style={{ backgroundColor: '#ffc107', color: 'white', width: '100%', padding: "10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold' }}>
+                              <i className="fas fa-clock me-2"></i>
+                              {t('serviceCard.buttons.projectCompletedAwaitingPayment', 'Project Completed - Awaiting Payment')}
+                            </div>
+
+                          </>
+                        ) : project.status === 'paid' ? (
+                          <>
+                            <div style={{ backgroundColor: '#28a745', color: 'white', width: '100%', padding: "10px", borderRadius: '5px', textAlign: 'center', fontWeight: 'bold' }}>
+                              <i className="fas fa-check-circle me-2"></i>
+                              {t('serviceCard.buttons.projectCompletedPaymentCompleted', 'Project Completed - Payment Completed')}
+                            </div>
+
+                          </>
+                        ) : (
+                          <>
+                            <button className='p-3 pt-4' style={{ backgroundColor: '#21395D', color: 'white', width: '100%', paddingTop: "10px" }} onClick={() => handleProjectCompletion(project)}>
+                              {t('serviceCard.buttons.projectCompletionFile')}
+                            </button>
+                            {/* Only show Request Quote button if no proposals are accepted */}
+                            {!project.isAccepted && !(project?.proposals && project.proposals.some(proposal => proposal.status === 'accepted')) && (
+                              <button className="btn-secondary" onClick={() => handleContactCustomer(project)}>
+                                {t('serviceCard.buttons.priceQuote')}
+                              </button>
+                            )}
+
+                          </>
+                        )}
+                        {
+                          project?.status === 'open' && project?.proposals[0]?.status === 'accepted' && project?.acceptedByType !== 'vendor' && (
+                            <button className="p-2" style={{ backgroundColor: '#21395D', color: 'white', width: '100%', paddingTop: "12px" }} onClick={() => handleStartProject(project)}>
+                              {t('serviceCard.buttons.startProject', 'Start Project')}
+                            </button>
+                          )
+                        }
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-5">
+                <div className="empty-projects">
+                  <i className="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                  <h5 className="text-muted">{t('common.noProjectRequestsFound')}</h5>
+                  <p className="text-muted">
+                    {t('common.noProjectRequestsAvailable')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Dynamic Pagination Component */}
+            {totalPages > 1 && (
+              <div className="pagination-container mt-4">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                  hideNavigation={false}
+                  showArrows={false}
+                  className="service-card-pagination"
+                />
+
+              </div>
+            )}
+
           </div>
         </div>
+      ) : showContactForm ? (
+        <ContactCustomerForm
+          project={selectedProject}
+          onBack={handleBackToServiceCard}
+          onSuccess={() => handleFormSubmissionSuccess(selectedProject)}
+          formType="contactCustomer"
+        />
+      ) : (
+        <ProjectPriceRequests
+          onBack={handleBackToServiceCard}
+          selectedProject={selectedProject}
+        />
       )}
-      
-      {/* Dynamic Pagination Component */}
-      {totalPages > 1 && (
-        <div className="pagination-container mt-4">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            hideNavigation={false}
-            showArrows={false}
-            className="service-card-pagination"
-          />
-      
-        </div>
-      )}
-      
-      </div>
-      </div>
-            ) : showContactForm ? (
-                <ContactCustomerForm 
-                    project={selectedProject} 
-                    onBack={handleBackToServiceCard}
-                    onSuccess={() => handleFormSubmissionSuccess(selectedProject)}
-                    formType="contactCustomer"
-                />
-            ) : (
-                <ProjectPriceRequests 
-                    onBack={handleBackToServiceCard}
-                    selectedProject={selectedProject}
-                />
-            )}
-            
-            {/* Project Completion Modal */}
-            <ProjectCompletionModal
-                isOpen={showCompletionModal}
-                onClose={handleCloseCompletionModal}
-                project={selectedProject}
-                onRefresh={handleRefresh}
-            />
-            
-            {/* Project Completion Details Modal */}
-            <ProjectCompletionDetailsModal
-                isOpen={showCompletionDetails}
-                onClose={handleCloseCompletionDetails}
-                completionData={selectedCompletionData}
-                project={selectedProject}
-            />
-        </>
-    );
+
+      {/* Project Completion Modal */}
+      <ProjectCompletionModal
+        isOpen={showCompletionModal}
+        onClose={handleCloseCompletionModal}
+        project={selectedProject}
+        onRefresh={handleRefresh}
+      />
+
+      {/* Project Completion Details Modal */}
+      <ProjectCompletionDetailsModal
+        isOpen={showCompletionDetails}
+        onClose={handleCloseCompletionDetails}
+        completionData={selectedCompletionData}
+        project={selectedProject}
+      />
+    </>
+  );
 };
 
 export default ServiceCard;
- 
