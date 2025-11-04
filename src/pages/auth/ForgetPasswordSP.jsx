@@ -29,7 +29,7 @@ function ForgetPasswordSP() {
     // Flow state
     const [currentStep, setCurrentStep] = useState(1); // 1: Email, 2: OTP, 3: Reset Password
     const [resetToken, setResetToken] = useState("");
-    const [usePhone, setUsePhone] = useState(false); // Toggle between email and phone
+    const [usePhone, setUsePhone] = useState(true); // Default to phone per backend SMS flow
     
     // Error state
     const [errors, setErrors] = useState({});
@@ -61,8 +61,8 @@ function ForgetPasswordSP() {
             case 'otp':
                 if (!value.trim()) {
                     error = t('auth.validation.otpRequired', 'OTP is required');
-                } else if (!/^\d{4}$/.test(value)) {
-                    error = t('auth.validation.otpInvalid', 'Please enter a valid 4-digit OTP');
+                } else if (!/^\d{6}$/.test(value)) {
+                    error = t('auth.validation.otpInvalid', 'Please enter a valid 6-digit OTP');
                 }
                 break;
             case 'newPassword':
@@ -270,7 +270,7 @@ function ForgetPasswordSP() {
                                     </h2>
                                     <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
                                         {currentStep === 1 && t('auth.forgotPassword.subtitle', 'Enter your email or phone number to receive OTP')}
-                                        {currentStep === 2 && t('auth.forgotPassword.otpSubtitle', 'Enter the 4-digit OTP sent to you')}
+                                        {currentStep === 2 && t('auth.forgotPassword.otpSubtitle', 'Enter the 6-digit OTP sent to you')}
                                         {currentStep === 3 && t('auth.forgotPassword.resetSubtitle', 'Enter your new password')}
                                     </h5>
                                 </div>
@@ -347,10 +347,10 @@ function ForgetPasswordSP() {
                                                     type="text" 
                                                     className={`form-control ${errors.otp ? 'is-invalid' : ''}`}
                                                     id="otp"
-                                                    placeholder={t('auth.forgotPassword.otpPlaceholder', '1234')}
+                                                    placeholder={t('auth.forgotPassword.otpPlaceholder', '123456')}
                                                     value={otp}
                                                     onChange={(e) => handleInputChange('otp', e.target.value)}
-                                                    maxLength="4"
+                                                    maxLength="6"
                                                 />
                                                 {errors.otp && (
                                                     <div className="text-danger mt-1">{errors.otp}</div>

@@ -29,7 +29,7 @@ const OTPModal = ({ show, onClose }) => {
         if (otp.every(d => d !== "")) {
             navigate('/');
         } else {
-            alert(t('otpModal.enterAllDigits', 'Please enter all 4 digits.'));
+            alert(t('otpModal.enterAllDigits', 'Please enter all 6 digits.'));
         }
     };
 
