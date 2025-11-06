@@ -550,13 +550,19 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             if (isApiAccepted || isLocallyAccepted) {
                                                 return (
                                                     <div className="offer-status accepted" style={{
-                                                        padding: '10px 20px',
-                                                        backgroundColor: '#28a745',
-                                                        color: 'white',
-                                                        borderRadius: '5px',
-                                                        fontWeight: 'bold',
-                                                        textAlign: 'center'
+                                                        padding: '8px 14px',
+                                                        backgroundColor: '#E8F5E9',
+                                                        color: '#1E7E34',
+                                                        border: '1px solid #1E7E34',
+                                                        borderRadius: '9999px',
+                                                        fontWeight: 600,
+                                                        textAlign: 'center',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        boxShadow: '0 2px 6px rgba(30, 126, 52, 0.15)'
                                                     }}>
+                                                        <i className="fas fa-check-circle"></i>
                                                         {t('project-offers.status-accepted')}
                                                     </div>
                                                 );
@@ -565,13 +571,19 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             if (isApiRejected) {
                                                 return (
                                                     <div className="offer-status declined" style={{
-                                                        padding: '10px 20px',
-                                                        backgroundColor: '#dc3545',
-                                                        color: 'white',
-                                                        borderRadius: '5px',
-                                                        fontWeight: 'bold',
-                                                        textAlign: 'center'
+                                                        padding: '8px 14px',
+                                                        backgroundColor: '#FDECEA',
+                                                        color: '#C2302A',
+                                                        border: '1px solid #C2302A',
+                                                        borderRadius: '9999px',
+                                                        fontWeight: 600,
+                                                        textAlign: 'center',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        boxShadow: '0 2px 6px rgba(194, 48, 42, 0.15)'
                                                     }}>
+                                                        <i className="fas fa-times-circle"></i>
                                                         {t('project-offers.status-declined')}
                                                     </div>
                                                 );
@@ -602,9 +614,29 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                             }}
                                                             disabled={acceptingProposal === (offer._id || offer.id) || decliningProposal === (offer._id || offer.id)}
                                                             style={{ 
-                                                                backgroundColor: acceptingProposal === (offer._id || offer.id) ? '#6c757d' : '#28a745',
+                                                                backgroundColor: acceptingProposal === (offer._id || offer.id) ? '#6c757d' : '#2E7D32',
+                                                                color: '#FFFFFF',
                                                                 border: 'none',
-                                                                minWidth: '100px'
+                                                                borderRadius: '9999px',
+                                                                padding: '8px 18px',
+                                                                minWidth: '120px',
+                                                                boxShadow: '0 2px 6px rgba(46, 125, 50, 0.25)',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                fontWeight: 600,
+                                                                cursor: 'pointer',
+                                                                padding: '8px 14px',
+                                                                backgroundColor: '#E8F5E9',
+                                                                color: '#1E7E34',
+                                                                border: '1px solid #1E7E34',
+                                                                borderRadius: '9999px',
+                                                                fontWeight: 600,
+                                                                textAlign: 'center',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                boxShadow: '0 2px 6px rgba(30, 126, 52, 0.15)'
                                                             }}
                                                         >
                                                             {acceptingProposal === (offer._id || offer.id) ? (
@@ -613,7 +645,10 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                                     {t('project-offers.accepting') || 'Accepting...'}
                                                                 </>
                                                             ) : (
-                                                                t('project-offers.accept') || 'Accept'
+                                                                <>
+                                                                    <i className="fas fa-check"></i>
+                                                                    {t('project-offers.accept') || 'Accept'}
+                                                                </>
                                                             )}
                                                         </button>
                                                         
@@ -638,9 +673,29 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                             }}
                                                             disabled={acceptingProposal === (offer._id || offer.id) || decliningProposal === (offer._id || offer.id)}
                                                             style={{ 
-                                                                backgroundColor: decliningProposal === (offer._id || offer.id) ? '#6c757d' : '#dc3545',
+                                                                backgroundColor: decliningProposal === (offer._id || offer.id) ? '#6c757d' : '#D32F2F',
+                                                                color: '#FFFFFF',
                                                                 border: 'none',
-                                                                minWidth: '100px'
+                                                                borderRadius: '9999px',
+                                                                padding: '8px 18px',
+                                                                minWidth: '120px',
+                                                                boxShadow: '0 2px 6px rgba(211, 47, 47, 0.25)',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                fontWeight: 600,
+                                                                cursor: 'pointer',
+                                                                padding: '8px 14px',
+                                                                backgroundColor: '#FDECEA',
+                                                                color: '#C2302A',
+                                                                border: '1px solid #C2302A',
+                                                                borderRadius: '9999px',
+                                                                fontWeight: 600,
+                                                                textAlign: 'center',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                boxShadow: '0 2px 6px rgba(194, 48, 42, 0.15)'
                                                             }}
                                                         >
                                                             {decliningProposal === (offer._id || offer.id) ? (
@@ -649,7 +704,10 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                                     {t('project-offers.declining') || 'Declining...'}
                                                                 </>
                                                             ) : (
-                                                                t('project-offers.decline') || 'Decline'
+                                                                <>
+                                                                    <i className="fas fa-times"></i>
+                                                                    {t('project-offers.decline') || 'Decline'}
+                                                                </>
                                                             )}
                                                         </button>
                                                     </div>
