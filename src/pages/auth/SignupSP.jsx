@@ -70,7 +70,7 @@ function SignupSP() {
     
     // OTP state
     const [showOtpModal, setShowOtpModal] = useState(false);
-    const [otpValues, setOtpValues] = useState(['', '', '', '']);
+    const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
     const [timer, setTimer] = useState(59);
     const [timerInterval, setTimerInterval] = useState(null);
     const [phoneError, setPhoneError] = useState('');
@@ -142,7 +142,7 @@ function SignupSP() {
                 // (Backend returns token and professional data during registration)
                 return { 
                     success: true, 
-                    message: data.message || 'OTP sent to your email', 
+                    message: data.message || 'OTP sent to your phone', 
                     professionalId: data.professionalId || data._id || data.professional?._id,
                     registrationData: {
                         token: data.token,
@@ -392,7 +392,7 @@ const validateForm = () => {
             newOtpValues[index] = value;
             setOtpValues(newOtpValues);
 
-            if (value !== '' && index < 3) {
+            if (value !== '' && index < 5) {
                 otpRefs.current[index + 1].focus();
             }
         }
@@ -495,7 +495,7 @@ const validateForm = () => {
         e.preventDefault();
         
         // Clear existing OTP input fields
-        setOtpValues(["", "", "", ""]);
+        setOtpValues(["", "", "", "", "", ""]);
         
         try {
             // Use the dedicated resend OTP API endpoint for professionals
@@ -503,7 +503,7 @@ const validateForm = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email: email
+                    phoneNo: phoneNo
                 })
             });
             
@@ -528,7 +528,7 @@ const validateForm = () => {
 
     const closeModal = () => {
         setShowOtpModal(false);
-        setOtpValues(['', '', '', '']);
+        setOtpValues(['', '', '', '', '', '']);
         setTimer(59);
         setProfessionalId(null);
         
@@ -1625,7 +1625,7 @@ const validateForm = () => {
                             </div>
                             <h3 className="otp-title mb-2 ar-heading-bold">{t('auth.signupsp.otp.title', 'Enter OTP')}</h3>
                             <p className="otp-description navy">
-                                {t('auth.signupsp.otp.emailDescription', 'Enter the code sent to your email to verify your account.')}
+                                {t('auth.signupsp.otp.phoneDescription', 'Enter the code sent to your phone to verify your account.')}
                             </p>
                         </div>
 

@@ -159,6 +159,7 @@ import BackupIcon from '@mui/icons-material/Backup';
 const ProjectOfferForm = ({ 
     project, 
     onBack, 
+    onSuccess,
     formType = 'projectOffer',
     demandQuoteId, // Optional explicit demandQuoteId prop
     // Form configuration props
@@ -611,8 +612,10 @@ const ProjectOfferForm = ({
                     projectFile: null,
                     notes: ''
                 });
-                // Call onBack if provided
-                if (onBack) {
+                // Call onSuccess if provided, otherwise fallback to onBack
+                if (onSuccess) {
+                    onSuccess();
+                } else if (onBack) {
                     onBack();
                 }
             } else {

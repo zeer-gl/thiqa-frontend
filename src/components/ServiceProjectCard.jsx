@@ -19,7 +19,9 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const [decliningProposal, setDecliningProposal] = useState(null);
     const [showCompletionDetails, setShowCompletionDetails] = useState(false);
     const [selectedCompletionData, setSelectedCompletionData] = useState(null);
+    const isAwaitingPayment = project.status === 'awaiting_payment';
 
+    console.log('🔍 Project:____', project);
     // Handle phone button click
     const handlePhoneClick = (professional) => {
         setSelectedProfessional(professional);
@@ -43,7 +45,9 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
             console.log('✅ Project status is completed');
             // If project status is completed, look for completion data in statusHistory
             if (project.statusHistory && Array.isArray(project.statusHistory)) {
-                const completionEntry = project.statusHistory.find(entry => entry.status === 'completed');
+                const completionEntry = project.statusHistory
+                .filter(entry => entry.status === 'completed') // get all completed entries
+                .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0];
                 console.log('🔍 Found completion entry:', completionEntry);
                 return completionEntry || null;
             } else {
@@ -83,14 +87,14 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
         closePhoneModal();
     };
 
-    // Handle accepting a proposal
-    const handleAcceptProposal = async (proposalId, professionalId) => {
+    // Handle accepting a proposal (supports professionalId or vendorId)
+    const handleAcceptProposal = async (proposalId, participantIds) => {
         try {
             setAcceptingProposal(proposalId);
             
             console.log('=== ACCEPTING PROPOSAL ===');
             console.log('Proposal ID:', proposalId);
-            console.log('Professional ID:', professionalId);
+            console.log('Participant IDs (raw):', participantIds);
             console.log('Project ID:', project.id);
             
             // Get customer authentication data
@@ -120,48 +124,55 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 throw new Error('Project ID (demandId) is missing');
             }
             
-            if (!professionalId) {
-                throw new Error('Professional ID is missing');
+            // Extract professionalId/vendorId from participantIds
+            let finalProfessionalId = null;
+            let finalVendorId = null;
+            
+            if (participantIds && typeof participantIds === 'object') {
+                const rawProfessional = participantIds.professionalId;
+                const rawVendor = participantIds.vendorId;
+                
+                if (rawProfessional) {
+                    finalProfessionalId = typeof rawProfessional === 'object' && rawProfessional._id ? rawProfessional._id : rawProfessional;
+                }
+                if (rawVendor) {
+                    finalVendorId = typeof rawVendor === 'object' && rawVendor._id ? rawVendor._id : rawVendor;
+                }
+            } else if (typeof participantIds === 'string') {
+                // Fallback: if a single string was provided, assume it's a professionalId
+                finalProfessionalId = participantIds;
             }
             
-            // Extract professional ID from object if it's an object
-            let finalProfessionalId = professionalId;
-            console.log('🔍 DEBUGGING PROFESSIONAL ID EXTRACTION:');
-            console.log('Professional ID type:', typeof professionalId);
-            console.log('Professional ID value:', professionalId);
-            console.log('Is object?', typeof professionalId === 'object');
-            console.log('Has _id?', professionalId && professionalId._id);
+            console.log('Professional ID (final):', finalProfessionalId);
+            console.log('Vendor ID (final):', finalVendorId);
             
-            if (typeof professionalId === 'object' && professionalId._id) {
-                finalProfessionalId = professionalId._id;
-                console.log('✅ Extracted Professional ID from object:', finalProfessionalId);
-            } else {
-                console.log('ℹ️ Professional ID is already a string or no _id found');
-            }
-            
-            // Validate that we have the final professional ID after extraction
-            if (!finalProfessionalId) {
-                throw new Error('Professional ID could not be extracted from the proposal data');
+            // Validate we have at least one id
+            if (!finalProfessionalId && !finalVendorId) {
+                throw new Error('Missing participant ID. Either Professional ID or Vendor ID is required.');
             }
             
             console.log('=== SENDING API REQUEST (UPDATED VERSION) ===');
             console.log('Timestamp:', new Date().toISOString());
             console.log('Demand ID (Project ID):', project.id);
             console.log('Professional ID (final):', finalProfessionalId);
+            console.log('Vendor ID (final):', finalVendorId);
             console.log('Action: accept');
             console.log('Customer ID:', customer._id);
             
+            const payload = {
+                demandId: project.id,
+                action: "accept"
+            };
+            if (finalProfessionalId) payload.professionalId = finalProfessionalId;
+            if (finalVendorId) payload.vendorId = finalVendorId;
+
             const response = await fetch(`${BaseUrl}/customer/acceptReject-proposal`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${customerToken}`,
                 },
-                body: JSON.stringify({
-                    demandId: project.id,
-                    professionalId: finalProfessionalId,
-                    action: "accept"
-                })
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
@@ -190,20 +201,22 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
             // Show success message using showAlert
             showAlert(t('project-offers.proposal-accepted') || 'Proposal accepted successfully!', 'success');
             
-            // Send notification to service provider
+            // Send notification to service provider (only for professional submissions)
             try {
-                const customer = JSON.parse(localStorage.getItem('userData'));
-                const projectTitle = project.title || project.projectName || 'Project';
-                
-                console.log('📧 Sending notification to service provider...');
-                await notifyServiceProviderOfferAccepted(
-                    finalProfessionalId,
-                    customer._id,
-                    project.id,
-                    projectTitle,
-                    'en' // Default to English for now
-                );
-                console.log('✅ Notification sent to service provider');
+                if (finalProfessionalId) {
+                    const customer = JSON.parse(localStorage.getItem('userData'));
+                    const projectTitle = project.title || project.projectName || 'Project';
+                    
+                    console.log('📧 Sending notification to service provider...');
+                    await notifyServiceProviderOfferAccepted(
+                        finalProfessionalId,
+                        customer._id,
+                        project.id,
+                        projectTitle,
+                        'en' // Default to English for now
+                    );
+                    console.log('✅ Notification sent to service provider');
+                }
             } catch (notificationError) {
                 console.error('⚠️ Failed to send notification to service provider:', notificationError);
                 // Don't show error to user - notification failure shouldn't break the main flow
@@ -224,14 +237,14 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
         }
     };
 
-    // Handle declining a proposal
-    const handleDeclineProposal = async (proposalId, professionalId) => {
+    // Handle declining a proposal (supports professionalId or vendorId)
+    const handleDeclineProposal = async (proposalId, participantIds) => {
         try {
             setDecliningProposal(proposalId);
             
             console.log('=== DECLINING PROPOSAL ===');
             console.log('Proposal ID:', proposalId);
-            console.log('Professional ID:', professionalId);
+            console.log('Participant IDs (raw):', participantIds);
             console.log('Project ID:', project.id);
             
             // Get customer authentication data
@@ -261,44 +274,55 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 throw new Error('Project ID (demandId) is missing');
             }
             
-            if (!professionalId) {
-                throw new Error('Professional ID is missing');
+            // Extract professionalId/vendorId from participantIds
+            let finalProfessionalId = null;
+            let finalVendorId = null;
+            
+            if (participantIds && typeof participantIds === 'object') {
+                const rawProfessional = participantIds.professionalId;
+                const rawVendor = participantIds.vendorId;
+                
+                if (rawProfessional) {
+                    finalProfessionalId = typeof rawProfessional === 'object' && rawProfessional._id ? rawProfessional._id : rawProfessional;
+                }
+                if (rawVendor) {
+                    finalVendorId = typeof rawVendor === 'object' && rawVendor._id ? rawVendor._id : rawVendor;
+                }
+            } else if (typeof participantIds === 'string') {
+                // Fallback: if a single string was provided, assume it's a professionalId
+                finalProfessionalId = participantIds;
             }
             
-            // Extract professional ID from object if it's an object
-            let finalProfessionalId = professionalId;
-            console.log('🔍 DEBUGGING PROFESSIONAL ID EXTRACTION:');
-            console.log('Professional ID type:', typeof professionalId);
-            console.log('Professional ID value:', professionalId);
+            console.log('Professional ID (final):', finalProfessionalId);
+            console.log('Vendor ID (final):', finalVendorId);
             
-            if (typeof professionalId === 'object' && professionalId._id) {
-                finalProfessionalId = professionalId._id;
-                console.log('✅ Extracted Professional ID from object:', finalProfessionalId);
-            }
-            
-            // Validate that we have the final professional ID after extraction
-            if (!finalProfessionalId) {
-                throw new Error('Professional ID could not be extracted from the proposal data');
+            // Validate we have at least one id
+            if (!finalProfessionalId && !finalVendorId) {
+                throw new Error('Missing participant ID. Either Professional ID or Vendor ID is required.');
             }
             
             console.log('=== SENDING DECLINE API REQUEST ===');
             console.log('Timestamp:', new Date().toISOString());
             console.log('Demand ID (Project ID):', project.id);
             console.log('Professional ID (final):', finalProfessionalId);
+            console.log('Vendor ID (final):', finalVendorId);
             console.log('Action: reject');
             console.log('Customer ID:', customer._id);
             
+            const payload = {
+                demandId: project.id,
+                action: "reject"
+            };
+            if (finalProfessionalId) payload.professionalId = finalProfessionalId;
+            if (finalVendorId) payload.vendorId = finalVendorId;
+
             const response = await fetch(`${BaseUrl}/customer/acceptReject-proposal`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${customerToken}`,
                 },
-                body: JSON.stringify({
-                    demandId: project.id,
-                    professionalId: finalProfessionalId,
-                    action: "reject"
-                })
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
@@ -390,7 +414,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                 <div key={index} className="offer-item">
                                     <div className="offer-company">
                                         <div>
-                                            <h4 className="ar-heading-bold">{offer.professionalData?.name || t('project-offers.professional')}</h4>
+                                            <h4 className="ar-heading-bold">{offer.professionalData?.name || 'Vendor'}</h4>
                                             <p className="offer-price">{t('project-offers.price')}: {offer.price} KWD</p>
                                             <p className="offer-duration">{t('project-offers.duration')}: {new Date(offer.duration).toLocaleDateString()}</p>
                                             {offer.note && <p className="offer-note">{offer.note}</p>}
@@ -526,13 +550,19 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             if (isApiAccepted || isLocallyAccepted) {
                                                 return (
                                                     <div className="offer-status accepted" style={{
-                                                        padding: '10px 20px',
-                                                        backgroundColor: '#28a745',
-                                                        color: 'white',
-                                                        borderRadius: '5px',
-                                                        fontWeight: 'bold',
-                                                        textAlign: 'center'
+                                                        padding: '8px 14px',
+                                                        backgroundColor: '#E8F5E9',
+                                                        color: '#1E7E34',
+                                                        border: '1px solid #1E7E34',
+                                                        borderRadius: '9999px',
+                                                        fontWeight: 600,
+                                                        textAlign: 'center',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        boxShadow: '0 2px 6px rgba(30, 126, 52, 0.15)'
                                                     }}>
+                                                        <i className="fas fa-check-circle"></i>
                                                         {t('project-offers.status-accepted')}
                                                     </div>
                                                 );
@@ -541,13 +571,19 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                             if (isApiRejected) {
                                                 return (
                                                     <div className="offer-status declined" style={{
-                                                        padding: '10px 20px',
-                                                        backgroundColor: '#dc3545',
-                                                        color: 'white',
-                                                        borderRadius: '5px',
-                                                        fontWeight: 'bold',
-                                                        textAlign: 'center'
+                                                        padding: '8px 14px',
+                                                        backgroundColor: '#FDECEA',
+                                                        color: '#C2302A',
+                                                        border: '1px solid #C2302A',
+                                                        borderRadius: '9999px',
+                                                        fontWeight: 600,
+                                                        textAlign: 'center',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        boxShadow: '0 2px 6px rgba(194, 48, 42, 0.15)'
                                                     }}>
+                                                        <i className="fas fa-times-circle"></i>
                                                         {t('project-offers.status-declined')}
                                                     </div>
                                                 );
@@ -565,21 +601,42 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                                 console.log('Offer object:', offer);
                                                                 console.log('Offer ID:', offer._id || offer.id);
                                                                 console.log('Professional ID (raw):', offer.professionalId);
+                                                                console.log('Vendor ID (raw):', offer.vendorId);
                                                                 
-                                                                // Extract professional ID before passing to function
-                                                                let professionalIdToPass = offer.professionalId;
-                                                                if (typeof offer.professionalId === 'object' && offer.professionalId._id) {
-                                                                    professionalIdToPass = offer.professionalId._id;
-                                                                    console.log('✅ Extracted professional ID for button click:', professionalIdToPass);
-                                                                }
+                                                                // Prepare participant IDs to pass (support both professional and vendor)
+                                                                const participantIds = {
+                                                                    professionalId: (typeof offer.professionalId === 'object' && offer.professionalId?._id) ? offer.professionalId._id : offer.professionalId,
+                                                                    vendorId: (typeof offer.vendorId === 'object' && offer.vendorId?._id) ? offer.vendorId._id : offer.vendorId,
+                                                                };
+                                                                console.log('✅ Participant IDs prepared for accept:', participantIds);
                                                                 
-                                                                handleAcceptProposal(offer._id || offer.id, professionalIdToPass);
+                                                                handleAcceptProposal(offer._id || offer.id, participantIds);
                                                             }}
                                                             disabled={acceptingProposal === (offer._id || offer.id) || decliningProposal === (offer._id || offer.id)}
                                                             style={{ 
-                                                                backgroundColor: acceptingProposal === (offer._id || offer.id) ? '#6c757d' : '#28a745',
+                                                                backgroundColor: acceptingProposal === (offer._id || offer.id) ? '#6c757d' : '#2E7D32',
+                                                                color: '#FFFFFF',
                                                                 border: 'none',
-                                                                minWidth: '100px'
+                                                                borderRadius: '9999px',
+                                                                padding: '8px 18px',
+                                                                minWidth: '120px',
+                                                                boxShadow: '0 2px 6px rgba(46, 125, 50, 0.25)',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                fontWeight: 600,
+                                                                cursor: 'pointer',
+                                                                padding: '8px 14px',
+                                                                backgroundColor: '#E8F5E9',
+                                                                color: '#1E7E34',
+                                                                border: '1px solid #1E7E34',
+                                                                borderRadius: '9999px',
+                                                                fontWeight: 600,
+                                                                textAlign: 'center',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                boxShadow: '0 2px 6px rgba(30, 126, 52, 0.15)'
                                                             }}
                                                         >
                                                             {acceptingProposal === (offer._id || offer.id) ? (
@@ -588,7 +645,10 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                                     {t('project-offers.accepting') || 'Accepting...'}
                                                                 </>
                                                             ) : (
-                                                                t('project-offers.accept') || 'Accept'
+                                                                <>
+                                                                    <i className="fas fa-check"></i>
+                                                                    {t('project-offers.accept') || 'Accept'}
+                                                                </>
                                                             )}
                                                         </button>
                                                         
@@ -600,21 +660,42 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                                 console.log('Offer object:', offer);
                                                                 console.log('Offer ID:', offer._id || offer.id);
                                                                 console.log('Professional ID (raw):', offer.professionalId);
+                                                                console.log('Vendor ID (raw):', offer.vendorId);
                                                                 
-                                                                // Extract professional ID before passing to function
-                                                                let professionalIdToPass = offer.professionalId;
-                                                                if (typeof offer.professionalId === 'object' && offer.professionalId._id) {
-                                                                    professionalIdToPass = offer.professionalId._id;
-                                                                    console.log('✅ Extracted professional ID for decline:', professionalIdToPass);
-                                                                }
+                                                                // Prepare participant IDs to pass (support both professional and vendor)
+                                                                const participantIds = {
+                                                                    professionalId: (typeof offer.professionalId === 'object' && offer.professionalId?._id) ? offer.professionalId._id : offer.professionalId,
+                                                                    vendorId: (typeof offer.vendorId === 'object' && offer.vendorId?._id) ? offer.vendorId._id : offer.vendorId,
+                                                                };
+                                                                console.log('✅ Participant IDs prepared for reject:', participantIds);
                                                                 
-                                                                handleDeclineProposal(offer._id || offer.id, professionalIdToPass);
+                                                                handleDeclineProposal(offer._id || offer.id, participantIds);
                                                             }}
                                                             disabled={acceptingProposal === (offer._id || offer.id) || decliningProposal === (offer._id || offer.id)}
                                                             style={{ 
-                                                                backgroundColor: decliningProposal === (offer._id || offer.id) ? '#6c757d' : '#dc3545',
+                                                                backgroundColor: decliningProposal === (offer._id || offer.id) ? '#6c757d' : '#D32F2F',
+                                                                color: '#FFFFFF',
                                                                 border: 'none',
-                                                                minWidth: '100px'
+                                                                borderRadius: '9999px',
+                                                                padding: '8px 18px',
+                                                                minWidth: '120px',
+                                                                boxShadow: '0 2px 6px rgba(211, 47, 47, 0.25)',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                fontWeight: 600,
+                                                                cursor: 'pointer',
+                                                                padding: '8px 14px',
+                                                                backgroundColor: '#FDECEA',
+                                                                color: '#C2302A',
+                                                                border: '1px solid #C2302A',
+                                                                borderRadius: '9999px',
+                                                                fontWeight: 600,
+                                                                textAlign: 'center',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                boxShadow: '0 2px 6px rgba(194, 48, 42, 0.15)'
                                                             }}
                                                         >
                                                             {decliningProposal === (offer._id || offer.id) ? (
@@ -623,7 +704,10 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                                     {t('project-offers.declining') || 'Declining...'}
                                                                 </>
                                                             ) : (
-                                                                t('project-offers.decline') || 'Decline'
+                                                                <>
+                                                                    <i className="fas fa-times"></i>
+                                                                    {t('project-offers.decline') || 'Decline'}
+                                                                </>
                                                             )}
                                                         </button>
                                                     </div>
@@ -759,6 +843,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                 onClose={closeCompletionDetails}
                 completionData={selectedCompletionData}
                 project={project}
+                hideRejectButton={isAwaitingPayment}
             />
         </div>
     );

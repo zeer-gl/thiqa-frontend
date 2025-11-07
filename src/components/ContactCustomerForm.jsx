@@ -2,13 +2,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ProjectOfferForm from './ProjectOfferForm';
 
-const ContactCustomerForm = ({ project, onBack, formType = 'contactCustomer' }) => {
+const ContactCustomerForm = ({ project, onBack, onSuccess, formType = 'contactCustomer' }) => {
     const { t } = useTranslation();
 
     return (
         <ProjectOfferForm
             project={project}
             onBack={onBack}
+            onSuccess={onSuccess}
             formType={formType}
             title={t('contactCustomer.title', 'إيداع عرض للمشروع')}
             subtitle={t('contactCustomer.subtitle', 'إيداع عرض للمشروع : بناء فيلا')}

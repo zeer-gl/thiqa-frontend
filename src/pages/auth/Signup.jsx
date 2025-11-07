@@ -22,7 +22,7 @@ import LockIcon from '/public/images/auth/lock.svg';
 function Signup() {
   const { t, i18n } = useTranslation();
   const [showOtpModal, setShowOtpModal] = useState(false);
-  const [otpValues, setOtpValues] = useState(["", "", "", ""]);
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(59);
   const [timerInterval, setTimerInterval] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -147,16 +147,16 @@ function Signup() {
   };
 
 
-  // Function to verify OTP via API
-  const verifyOTP = async (email, otpCode) => {
+  // Function to verify OTP via API (phone-based)
+  const verifyOTP = async (phone, otpCode) => {
     try {
-      console.log('Verifying OTP via API for email:', email);
+      console.log('Verifying OTP via API for phone:', phone);
       
       const response = await fetch(`${BaseUrl}/customer/verifyOtp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email,
+          phoneNo: phone,
           otp: otpCode
         })
       });
@@ -564,7 +564,7 @@ function Signup() {
       const newOtpValues = [...otpValues];
       newOtpValues[index] = value;
       setOtpValues(newOtpValues);
-      if (value !== "" && index < 3) {
+      if (value !== "" && index < 5) {
         otpRefs.current[index + 1].focus();
       }
     }
@@ -593,7 +593,7 @@ function Signup() {
     // Step 1: Verify OTP via API
     const otpCode = otpValues.join('');
     
-    const verificationResult = await verifyOTP(email, otpCode);
+    const verificationResult = await verifyOTP(phoneNo, otpCode);
     
     if (verificationResult.success) {
       // Step 2: OTP verification successful - use stored registration data
@@ -651,7 +651,7 @@ function Signup() {
     e.preventDefault();
     
     // Clear existing OTP input fields
-    setOtpValues(["", "", "", ""]);
+    setOtpValues(["", "", "", "", "", ""]);
     
     try {
       // Use the dedicated resend OTP API endpoint
@@ -659,7 +659,7 @@ function Signup() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email
+          phoneNo: phoneNo
         })
       });
       
@@ -684,7 +684,7 @@ function Signup() {
 
   const closeModal = () => {
     setShowOtpModal(false);
-    setOtpValues(["", "", "", ""]);
+    setOtpValues(["", "", "", "", "", ""]);
     setTimer(59);
     setRegistrationData(null);
     
@@ -979,7 +979,7 @@ function Signup() {
                 <img style={{ maxWidth: "100px" }} src={Logo} alt="" />
               </div>
               <h3 className="otp-title mb-2 ar-heading-bold">{t("auth.signup.otp.title")}</h3>
-              <p className="otp-description navy">{t("auth.signup.otp.emailDescription", "Enter the code sent to your email to verify your account.")}</p>
+              <p className="otp-description navy">{t("auth.signup.otp.phoneDescription", "Enter the code sent to your phone to verify your account.")}</p>
             </div>
             <div className="otp-timer mb-4">
               <span className="otp-timer-text">{t("auth.signup.otp.timerPrefix")} {formattedTime}</span>

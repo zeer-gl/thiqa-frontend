@@ -877,7 +877,7 @@
         "submit": "Submit",
         "resend": "Resend Code",
         "timerPrefix": "Time left:",
-        "alert": "Please enter all 4 digits."
+        "alert": "Please enter all 6 digits."
       },
       "registerAsSeeker": "Register as Service Provider",
       "registerAsCustomer": "Register as a Customer",
@@ -900,12 +900,12 @@
       "subtitle": "Enter your phone number to receive OTP",
       "verifyOtp": "Verify OTP",
       "resetPassword": "Reset Password",
-      "otpSubtitle": "Enter the 4-digit OTP sent to your phone",
+      "otpSubtitle": "Enter the 6-digit OTP sent to your phone",
       "resetSubtitle": "Enter your new password",
       "phoneNumber": "Phone Number",
       "phonePlaceholder": "+965 12345678",
       "otp": "OTP Code",
-      "otpPlaceholder": "1234",
+      "otpPlaceholder": "123456",
       "newPassword": "New Password",
       "newPasswordPlaceholder": "Enter new password",
       "confirmPassword": "Confirm Password",
@@ -938,7 +938,7 @@
       "phoneRequired": "Phone number is required",
       "phoneInvalid": "Please enter a valid phone number",
       "otpRequired": "OTP is required",
-      "otpInvalid": "Please enter a valid 4-digit OTP",
+      "otpInvalid": "Please enter a valid 6-digit OTP",
       "passwordRequired": "Password is required",
       "passwordMinLength": "Password must be at least 6 characters",
       "confirmPasswordRequired": "Please confirm your password",
@@ -1594,7 +1594,7 @@
     "title": "Enter Code",
     "subtitle": "Enter the code sent to your mobile phone to reset your password",
     "submitButton": "Enter Code",
-    "enterAllDigits": "Please enter all 4 digits."
+    "enterAllDigits": "Please enter all 6 digits."
   },
   "pageTitles": {
     "home": "Home",
@@ -1779,14 +1779,22 @@
     "noImages": "No completion images available",
     "approve": "Approve & Pay",
     "approving": "Approving...",
+    "reject": "Reject",
+    "rejecting": "Rejecting...",
+    "rejectTitle": "Reject Project Completion",
+    "rejectMessage": "Please provide a reason for rejecting this project completion:",
+    "rejectPlaceholder": "Enter your reason for rejection...",
     "errors": {
       "projectIdMissing": "Project ID is missing",
       "authRequired": "Authentication required",
-      "approveFailed": "Failed to approve project completion"
+      "approveFailed": "Failed to approve project completion",
+      "rejectFailed": "Failed to reject project completion",
+      "rejectionReasonRequired": "Please provide a reason for rejection"
     },
     "success": {
       "approved": "Project completion approved successfully! Opening payment page...",
-      "approvedNoLink": "Project completion approved successfully! Payment link will be generated."
+      "approvedNoLink": "Project completion approved successfully! Payment link will be generated.",
+      "rejected": "Project completion rejected successfully!"
     },
     "pages": {
       "home": {
