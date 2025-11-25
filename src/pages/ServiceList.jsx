@@ -660,6 +660,7 @@ const ServiceList = () => {
                             <div className="skeleton-company-info">
                               <div className="skeleton-logo"></div>
                               <div className="skeleton-text-group">
+                                <div className="skeleton-text skeleton-name"></div>
                                 <div className="skeleton-text skeleton-service"></div>
                               </div>
                             </div>
