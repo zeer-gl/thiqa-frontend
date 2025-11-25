@@ -139,7 +139,7 @@ const Checkout = () => {
                 console.log('📦 Order response:', orderData);
                 console.log('💳 Payment Info:', orderData.paymentInfo);
                 
-                showAlert(t('checkout.messages.orderPlacedSuccess'), 'success');
+                // showAlert(t('checkout.messages.orderPlacedSuccess'), 'success');
                 
                 // Check if there's an invoice URL to redirect to
                 // Try multiple possible paths for the invoice URL
