@@ -88,6 +88,7 @@ const Checkout = () => {
             
             if (!userDataString) {
                 showAlert(t('checkout.messages.userDataNotFound'), 'error');
+                setIsProcessing(false);
                 return;
             }
 
@@ -97,6 +98,7 @@ const Checkout = () => {
             } catch (parseError) {
                 console.error('Error parsing user data:', parseError);
                 showAlert(t('checkout.messages.invalidUserData'), 'error');
+                setIsProcessing(false);
                 return;
             }
 
@@ -104,6 +106,7 @@ const Checkout = () => {
             
             if (!customerId) {
                 showAlert(t('checkout.messages.userIdNotFound'), 'error');
+                setIsProcessing(false);
                 return;
             }
 
@@ -131,30 +134,49 @@ const Checkout = () => {
 
             if (response.ok) {
                 const orderData = await response.json();
+                
+                // Debug: Log the full response to understand the structure
+                console.log('📦 Order response:', orderData);
+                console.log('💳 Payment Info:', orderData.paymentInfo);
+                
                 showAlert(t('checkout.messages.orderPlacedSuccess'), 'success');
                 
-                // Clear cart immediately when payment is initiated to prevent duplicate orders
-                
                 // Check if there's an invoice URL to redirect to
-                if (orderData.paymentInfo && orderData.paymentInfo.invoiceUrl) {
-                    // Clear cart immediately when payment URL is generated
-                    console.log('🛒 Clearing cart immediately - payment initiated');
-                    clearCart(); // Clear cart as soon as payment is initiated
-                    
-                    // Store order info for payment result handling (for potential restoration on failure)
+                // Try multiple possible paths for the invoice URL
+                const invoiceUrl = orderData.paymentInfo?.invoiceUrl || 
+                                  orderData.paymentInfo?.paymentUrl || 
+                                  orderData.invoiceUrl ||
+                                  orderData.paymentUrl;
+                
+                console.log('🔗 Invoice URL found:', invoiceUrl);
+                
+                if (invoiceUrl) {
+                    // Store order info for payment result handling (cart will be cleared on successful payment)
                     localStorage.setItem('pendingOrder', JSON.stringify({
                         orderId: orderData.orderId,
                         cartItems: cartItems, // Keep original cart items for restoration if needed
                         timestamp: Date.now()
                     }));
                     
-                    console.log('🛒 Cart cleared, redirecting to payment URL');
-                    // Redirect to Fatora payment page in the same tab
-                    window.location.href = orderData.paymentInfo.invoiceUrl;
+                    console.log('🛒 Order placed, redirecting to payment URL:', invoiceUrl);
+                    console.log('🛒 Cart will be cleared on successful payment');
+                    
+                    // Don't set isProcessing to false before redirect - let it stay true during redirect
+                    // Use setTimeout to ensure alert is shown and state updates complete before redirect
+                    setTimeout(() => {
+                        // Redirect to Fatora payment page in the same tab
+                        // Using window.location.replace to prevent back button issues
+                        console.log('🚀 Executing redirect to:', invoiceUrl);
+                        window.location.replace(invoiceUrl);
+                    }, 300);
+                    // Don't set isProcessing to false here - we're redirecting away
+                    return; // Exit early since we're redirecting
                 } else {
+                    console.warn('⚠️ No invoice URL found in response. Payment info:', orderData.paymentInfo);
                     // Clear cart only if no payment gateway (direct success)
                     clearCart(); // Use CartContext clearCart function
                     setShowPaymentModal(true);
+                    setIsProcessing(false);
                 }
             } else {
                 const errorData = await response.json();
@@ -164,9 +186,10 @@ const Checkout = () => {
         } catch (error) {
             console.error('Error placing order:', error);
             showAlert(error.message || t('checkout.messages.failedToPlaceOrder'), 'error');
-        } finally {
             setIsProcessing(false);
         }
+        // Note: isProcessing is not reset in finally block when redirecting
+        // because we return early and the redirect happens via setTimeout
     };
 
     const handleCloseModal = () => {
