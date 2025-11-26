@@ -648,9 +648,38 @@ const ServiceList = () => {
 
                                 <div className="providers-grid">
                   {loading ? (
-                    <div className="text-center">
-                      <p>{t('service-list.loading', 'Loading professionals...')}</p>
-                    </div>
+                    <>
+                      {/* Loading Skeleton Cards */}
+                      {[...Array(9)].map((_, index) => (
+                        <div key={`skeleton-${index}`} className="provider-card-skeleton">
+                          <div className="skeleton-image-section">
+                            <div className="skeleton-image"></div>
+                            <div className="skeleton-favorite-btn"></div>
+                          </div>
+                          <div className="skeleton-info-section">
+                            <div className="skeleton-company-info">
+                              <div className="skeleton-logo"></div>
+                              <div className="skeleton-text-group">
+                                <div className="skeleton-text skeleton-name"></div>
+                                <div className="skeleton-text skeleton-service"></div>
+                              </div>
+                            </div>
+                            <div className="skeleton-category-btn"></div>
+                          </div>
+                        </div>
+                      ))}
+                      {/* Loading Message */}
+                      <div className="loading-overlay-message">
+                        <div className="loading-spinner-wrapper">
+                          <div className="loading-spinner"></div>
+                        </div>
+                        <p className="loading-text">
+                          {activeFilter !== 'all' 
+                            ? `Loading ${serviceCategories.find(cat => cat.id === activeFilter)?.name || 'professionals'}...`
+                            : t('service-list.loading', 'Loading professionals...')}
+                        </p>
+                      </div>
+                    </>
                   ) : currentProviders.length === 0 ? (
                     <div className='text-center'>
                       <h6 style={{textAlign:"center",margin:"auto",textWrap:"nowrap"}}>
@@ -713,20 +742,50 @@ const ServiceList = () => {
                                                     </div>
 
                                                     <div className="category-button-section">
-                                                        {provider.specializations && provider.specializations.length > 0 ? (
-                                                            <button className="category-btn">
-                                                                {provider.specializations[0].name}
-                                                                {provider.specializations.length > 1 && (
-                                                                    <span className="more-count">
-                                                                        +{provider.specializations.length - 1} more
-                                                                    </span>
-                                                                )}
-                                                            </button>
-                                                        ) : (
-                                                            <button className="category-btn">
-                                                                {provider.category}
-                                                            </button>
-                                                        )}
+                                                        {(() => {
+                                                            // Helper function to get the display specialization
+                                                            const getDisplaySpecialization = () => {
+                                                                if (!provider.specializations || provider.specializations.length === 0) {
+                                                                    return { name: provider.category, remainingCount: 0 };
+                                                                }
+                                                                
+                                                                // If a filter is active (not 'all'), find the selected specialization
+                                                                if (activeFilter !== 'all') {
+                                                                    // Find the selected category to get its ID
+                                                                    const selectedCategory = serviceCategories.find(cat => cat.id === activeFilter);
+                                                                    if (selectedCategory) {
+                                                                        // Find the specialization that matches the selected filter
+                                                                        const selectedSpecializationIndex = provider.specializations.findIndex(
+                                                                            spec => spec._id === selectedCategory.id || spec.name === selectedCategory.name
+                                                                        );
+                                                                        
+                                                                        if (selectedSpecializationIndex !== -1) {
+                                                                            // Found the selected specialization, show it first
+                                                                            const selectedSpec = provider.specializations[selectedSpecializationIndex];
+                                                                            const remainingCount = provider.specializations.length - 1;
+                                                                            return { name: selectedSpec.name, remainingCount };
+                                                                        }
+                                                                    }
+                                                                }
+                                                                
+                                                                // Default: show first specialization
+                                                                const remainingCount = provider.specializations.length > 1 ? provider.specializations.length - 1 : 0;
+                                                                return { name: provider.specializations[0].name, remainingCount };
+                                                            };
+                                                            
+                                                            const { name, remainingCount } = getDisplaySpecialization();
+                                                            
+                                                            return (
+                                                                <button className="category-btn">
+                                                                    {name}
+                                                                    {remainingCount > 0 && (
+                                                                        <span className="more-count">
+                                                                            +{remainingCount} more
+                                                                        </span>
+                                                                    )}
+                                                                </button>
+                                                            );
+                                                        })()}
                                                     </div>
                                                 </div>
                                             </div>

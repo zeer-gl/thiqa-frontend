@@ -53,24 +53,52 @@ const PaymentResult = () => {
                     console.error('Error restoring cart:', e);
                 }
             }
-            // Redirect to checkout page to continue shopping
-            navigate('/checkout');
+            // Redirect to payment/cart page to continue shopping
+            navigate('/payment');
             return;
         }
         
         // Determine if payment was successful
         const success = (paymentId && id) || 
                        paymentStatus === 'Paid' || 
+                       paymentStatus === 'paid' ||
                        paymentStatus === 'success' ||
-                       (!error && paymentId && paymentStatus !== 'failed');
+                       (!error && paymentId && paymentStatus !== 'failed' && paymentStatus !== 'Failed');
         
         setIsSuccess(success);
 
         // Handle cart based on payment result
         if (success) {
-            // Cart is already cleared when payment was initiated, just clean up pending order
-            console.log('✅ Payment successful - cart already cleared, cleaning up pending order');
+            // Clear cart on successful payment immediately
+            console.log('✅ Payment successful - clearing cart and cleaning up pending order');
+            console.log('💰 Payment Status:', paymentStatus);
+            console.log('🛒 Cart items before clearing:', localStorage.getItem('cart'));
+            
+            // Clear cart from localStorage first
+            localStorage.removeItem('cart');
+            
+            // Clear cart using context
+            clearCart();
+            
+            // Remove pending order
             localStorage.removeItem('pendingOrder');
+            
+            // Dispatch event to ensure cart is cleared across all components
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
+            
+            // Verify cart is cleared
+            setTimeout(() => {
+                const cartAfter = localStorage.getItem('cart');
+                console.log('🛒 Cart items after clearing:', cartAfter);
+                if (cartAfter) {
+                    console.warn('⚠️ Cart still has items after clearing!');
+                    // Force clear again
+                    localStorage.removeItem('cart');
+                    window.dispatchEvent(new CustomEvent('cartUpdated'));
+                } else {
+                    console.log('✅ Cart successfully cleared');
+                }
+            }, 100);
         } else {
             // Restore cart on failed payment
             console.log('❌ Payment failed - restoring cart items');
@@ -99,7 +127,7 @@ const PaymentResult = () => {
                     if (success) {
                         navigate('/products'); // Redirect to product list on success
                     } else {
-                        navigate('/checkout'); // Redirect to checkout on failure (cart restored)
+                        navigate('/payment'); // Redirect to payment/cart page on failure (cart restored)
                     }
                     return 0;
                 }
@@ -109,6 +137,29 @@ const PaymentResult = () => {
 
         return () => clearInterval(timer);
     };
+
+    // Clear cart immediately when component mounts with successful payment
+    useEffect(() => {
+        const paymentStatus = searchParams.get('PaymentStatus') || searchParams.get('status');
+        const paymentId = searchParams.get('paymentId') || searchParams.get('PaymentId');
+        const id = searchParams.get('Id');
+        const error = searchParams.get('Error');
+        
+        const success = (paymentId && id) || 
+                       paymentStatus === 'Paid' || 
+                       paymentStatus === 'paid' ||
+                       paymentStatus === 'success' ||
+                       (!error && paymentId && paymentStatus !== 'failed' && paymentStatus !== 'Failed');
+        
+        if (success) {
+            console.log('🔄 Component mounted with successful payment - clearing cart immediately');
+            // Force clear cart immediately on mount
+            localStorage.removeItem('cart');
+            clearCart();
+            localStorage.removeItem('pendingOrder');
+            window.dispatchEvent(new CustomEvent('cartUpdated'));
+        }
+    }, []); // Run once on mount
 
     useEffect(() => {
         const cleanup = handleRedirect();
@@ -153,9 +204,23 @@ const PaymentResult = () => {
                                     : t('paymentResult.errorDetailsTitle', 'Payment Processing Error')
                                 }
                             </p>
+                            {isSuccess && paymentStatus && (
+                                <div style={{ 
+                                    marginBottom: '15px', 
+                                    padding: '12px 16px', 
+                                    backgroundColor: '#ecfdf5', 
+                                    border: '1px solid #10b981', 
+                                    borderRadius: '8px',
+                                    textAlign: 'center'
+                                }}>
+                                    <strong style={{ color: '#065f46', fontSize: '16px', fontWeight: '600' }}>
+                                        Payment Status: <span style={{ textTransform: 'uppercase', color: '#10b981' }}>PAID</span>
+                                    </strong>
+                                </div>
+                            )}
                             <p className="error-details-text">
                                 {isSuccess 
-                                    ? t('paymentResult.successDetailsText', 'Your payment has been completed successfully. You can now access your purchased products.')
+                                    ? t('paymentResult.successDetailsText', 'Your payment has been completed successfully. Your cart has been cleared and you can now access your purchased products.')
                                     : t('paymentResult.errorDetailsText', 'Your payment could not be completed. Please try again or contact support if the issue persists.')
                                 }
                             </p>
@@ -188,7 +253,7 @@ const PaymentResult = () => {
                                             console.error('Error restoring cart:', e);
                                         }
                                     }
-                                    navigate('/checkout');
+                                    navigate('/payment');
                                 }
                             }}
                         >

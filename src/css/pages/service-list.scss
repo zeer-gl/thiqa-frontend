@@ -12,11 +12,14 @@
         flex-direction: column;
 
         .service-providers-section {
+            position: relative;
+            
             .providers-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
                 gap: 1.5rem;
                 margin-bottom: 2rem;
+                position: relative;
 
                 .provider-card-link {
                     text-decoration: none;
@@ -173,6 +176,139 @@
                     }
                 }
             }
+            
+            // Loading Skeleton Styles
+            .provider-card-skeleton {
+                background: $white-color;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                animation: skeleton-pulse 1.5s ease-in-out infinite;
+                
+                .skeleton-image-section {
+                    position: relative;
+                    height: 200px;
+                    background: #f0f0f0;
+                    
+                    .skeleton-image {
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                        background-size: 200% 100%;
+                        animation: skeleton-shimmer 1.5s infinite;
+                    }
+                    
+                    .skeleton-favorite-btn {
+                        position: absolute;
+                        top: 12px;
+                        left: 12px;
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                        background: rgba(255, 255, 255, 0.8);
+                        backdrop-filter: blur(4px);
+                    }
+                }
+                
+                .skeleton-info-section {
+                    padding: 12px;
+                    background-color: #EEE7DBB2;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    min-height: 60px;
+                    
+                    .skeleton-company-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        flex: 1;
+                        
+                        .skeleton-logo {
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
+                            background-size: 200% 100%;
+                            animation: skeleton-shimmer 1.5s infinite;
+                        }
+                        
+                        .skeleton-text-group {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 8px;
+                            
+                            .skeleton-text {
+                                height: 12px;
+                                border-radius: 4px;
+                                background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
+                                background-size: 200% 100%;
+                                animation: skeleton-shimmer 1.5s infinite;
+                                
+                                &.skeleton-name {
+                                    width: 60%;
+                                }
+                                
+                                &.skeleton-service {
+                                    width: 80%;
+                                    height: 10px;
+                                }
+                            }
+                        }
+                    }
+                    
+                    .skeleton-category-btn {
+                        width: 80px;
+                        height: 28px;
+                        border-radius: 5px;
+                        background: linear-gradient(90deg, #e0e0e0 25%, #d0d0d0 50%, #e0e0e0 75%);
+                        background-size: 200% 100%;
+                        animation: skeleton-shimmer 1.5s infinite;
+                    }
+                }
+            }
+            
+            // Loading Overlay Message
+            .loading-overlay-message {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                background: rgba(255, 255, 255, 0.98);
+                padding: 1.5rem 2.5rem;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(33, 57, 93, 0.15);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(33, 57, 93, 0.1);
+                pointer-events: none;
+                
+                .loading-spinner-wrapper {
+                    .loading-spinner {
+                        width: 40px;
+                        height: 40px;
+                        border: 3px solid #EEE7DB;
+                        border-top-color: $primary-color;
+                        border-right-color: $primary-color;
+                        border-radius: 50%;
+                        animation: spinner-rotate 0.8s linear infinite;
+                    }
+                }
+                
+                .loading-text {
+                    font-size: $font-size-medium;
+                    font-weight: $font-weight-semibold;
+                    color: $primary-color;
+                    margin: 0;
+                    font-family: $font-family-primary;
+                    text-align: center;
+                }
+            }
         }
 
         .sidebar-section {
@@ -292,6 +428,34 @@
                 }
             }
         }
+    }
+}
+
+// Loading Animations
+@keyframes skeleton-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes spinner-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }
 

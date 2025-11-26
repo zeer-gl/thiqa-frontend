@@ -98,10 +98,10 @@ const ProfileBanner = ({ isServiceProvider = false ,userProfile}) => {
                 {!isServiceProvider && (
                     <>
                         {/* Divider */}
-                        <div className="divider"></div>
+                        {/* <div className="divider"></div> */}
 
                         {/* Location Section */}
-                        <div className="location-section">
+                        {/* <div className="location-section">
                             <div className="location-info">
                                 <div className="location-text">
                                     <div className={`d-flex align-items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -124,7 +124,7 @@ const ProfileBanner = ({ isServiceProvider = false ,userProfile}) => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </>
                 )}
             </div>

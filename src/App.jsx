@@ -272,6 +272,11 @@ function AppContent() {
                                 <PaymentResult />
                             </AuthWrapper>
                         } />
+                        <Route path="/payment-result" element={
+                            <AuthWrapper>
+                                <PaymentResult />
+                            </AuthWrapper>
+                        } />
                         <Route path="/request-quote/success" element={
                             <AuthWrapper>
                                 <PriceRequestSuccess />
