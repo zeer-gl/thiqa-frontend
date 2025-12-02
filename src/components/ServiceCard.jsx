@@ -791,7 +791,7 @@ const ServiceCard = ({
                         <p className="card-detail-subheading mb-0">
                           <b>{t('projectDetails.budget', 'Budget')}:</b> {project.price} KWD
                         </p>
-                        {project.isAccepted && (
+                        {project.isAccepted && !isProposalRejected(project)&&(
                           <p className="card-detail-subheading text-success mb-0">
                             <b>{t('projectDetails.status', 'Status')}:</b> {t('projectDetails.acceptedBy', 'Accepted by')} {project?.clientName}
                           </p>
