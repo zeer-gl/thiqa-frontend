@@ -757,7 +757,8 @@ const ServiceCard = ({
                         <span>
                           {project.status === 'open' ? t('projectPriceRequest.status.open', 'مفتوح') :
                             project.status === 'inProgress' ? t('projectPriceRequest.status.inProgress', 'في طور الإنجاز') :
-                              project.status}
+                              project.status === 'completed' ? t('projectPriceRequest.status.completed', 'Completed') :
+                                project.status}
                         </span>
 
                       </button>

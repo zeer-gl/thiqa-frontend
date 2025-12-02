@@ -133,7 +133,15 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
                 try {
                     const errorData = JSON.parse(responseText);
                     console.error('Parsed Error Data:', errorData);
-                    errorMessage = errorData.message || errorData.error || errorMessage;
+                    const backendMessage = errorData.message || errorData.error || '';
+                    
+                    // Check for specific backend error messages and translate them
+                    if (backendMessage.includes('You already have an active subscription') || 
+                        backendMessage.includes('Only one subscription allowed at a time')) {
+                        errorMessage = t('pricingPackages.activeSubscriptionExists', 'You already have an active subscription. Only one subscription allowed at a time.');
+                    } else {
+                        errorMessage = backendMessage || errorMessage;
+                    }
                 } catch (e) {
                     console.error('Failed to parse error response as JSON:', e);
                     errorMessage = `Server error (${response.status}): ${responseText}`;
@@ -209,7 +217,11 @@ const PaymentMethods = ({ selectedPlan, paymentMethods, onBack, onPaymentSuccess
             // More specific error messages
             let userMessage = t('paymentMethods.initiateFailedRetry', 'Payment initiation failed. Please try again.');
             
-            if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+            // Check for specific backend error messages and translate them
+            if (error.message.includes('You already have an active subscription') || 
+                error.message.includes('Only one subscription allowed at a time')) {
+                userMessage = t('pricingPackages.activeSubscriptionExists', 'You already have an active subscription. Only one subscription allowed at a time.');
+            } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
                 userMessage = t('paymentMethods.networkError', 'Network error. Please check your internet connection and try again.');
             } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
                 userMessage = t('paymentMethods.sessionExpired', 'Session expired. Please login again and try.');

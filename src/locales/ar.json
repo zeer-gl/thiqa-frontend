@@ -59,7 +59,12 @@
         "startAdding": "ابدأ بإضافة خدمتك الأولى",
         "delivery": "التسليم",
         "unitPlaceholder": "مثال: كيلو، لتر، ساعة",
-        "deliveryTimePlaceholder": "مثال: 3-5 أيام عمل"
+        "deliveryTimePlaceholder": "مثال: 3-5 أيام عمل",
+        "serviceNameArPlaceholder": "أدخل اسم الخدمة بالعربية",
+        "arabicTextRequired": "يرجى إدخال النص بالعربية فقط",
+        "nameArRequired": "اسم الخدمة بالعربية مطلوب",
+        "imageSizeError": "يجب أن يكون حجم الصورة أقل من 1 ميجابايت",
+        "imageTypeError": "يرجى اختيار ملف صورة صالح (JPEG، PNG، GIF، WebP)"
       },
       "featureSection": {
         "customerSupport": {
@@ -731,6 +736,7 @@
       "userAlreadyExists": "المستخدم بهذا البريد الإلكتروني أو رقم الهاتف موجود بالفعل. يرجى استخدام بيانات مختلفة أو محاولة تسجيل الدخول.",
       "emailAlreadyExists": "البريد الإلكتروني موجود بالفعل. يرجى استخدام بريد إلكتروني مختلف أو محاولة تسجيل الدخول.",
       "phoneAlreadyExists": "رقم الهاتف موجود بالفعل. يرجى استخدام رقم هاتف مختلف أو محاولة تسجيل الدخول.",
+      "phoneNumberAlreadyExists": "المستخدم بهذا الرقم موجود بالفعل",
       "emailAndPhoneExist": "البريد الإلكتروني ورقم الهاتف موجودان بالفعل. يرجى استخدام بيانات مختلفة أو محاولة تسجيل الدخول.",
       "genericError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
       "validation": {
@@ -908,6 +914,8 @@
       "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
       "resetError": "فشل في إعادة تعيين كلمة المرور",
       "networkError": "حدث خطأ في الشبكة",
+      "customerNotFound": "لم يتم العثور على العميل بالبريد الإلكتروني أو رقم الهاتف المقدم",
+      "professionalNotFound": "لم يتم العثور على مقدم الخدمة بالبريد الإلكتروني أو رقم الهاتف المقدم",
       "email": "البريد الإلكتروني",
       "phone": "الهاتف",
       "emailPlaceholder": "example@example.com",
@@ -956,7 +964,8 @@
       "phoneNumberValue": "+91 95744 68870",
       "editProfileButton": "تعديل الملف",
       "changePasswordButton": "تغيير كلمة المرور",
-      "logout": "تسجيل الخروج"
+      "logout": "تسجيل الخروج",
+      "profileUpdated": "تم تحديث الملف الشخصي بنجاح!"
     },
     "changePassword": {
       "title": "تغيير كلمة المرور",
@@ -973,7 +982,7 @@
       "currentPasswordIncorrect": "كلمة المرور الحالية غير صحيحة",
       "passwordTooWeak": "كلمة المرور ضعيفة جداً",
       "networkError": "خطأ في الشبكة",
-      "successMessage": "تم تغيير كلمة المرور بنجاح",
+      "successMessage": "تم تحديث كلمة المرور بنجاح",
       "errorMessage": "فشل في تغيير كلمة المرور"
     },
     "phoneVerification": {
@@ -1037,6 +1046,7 @@
       "updateError": "فشل في تحديث العنوان",
       "deleteSuccess": "تم حذف العنوان بنجاح",
       "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+      "allFieldsRequired": "جميع الحقول مطلوبة",
       "invalidLatitude": "يجب أن يكون خط العرض بين -90 و 90",
       "invalidLongitude": "يجب أن يكون خط الطول بين -180 و 180",
       "saveError": "فشل في حفظ العنوان"
@@ -1418,7 +1428,8 @@
         "open": "مفتوح",
         "inProgress": "في طور الإنجاز",
         "accepted": "مقبول",
-        "completeConstruction": "بناء كلي"
+        "completeConstruction": "بناء كلي",
+        "completed": "مكتمل"
       },
       "viewPrice": "عرض السعر",
       "downloadDesign": "تحميل تصميم المشروع",
@@ -1561,6 +1572,7 @@
       "submitting": "جاري الإرسال",
       "priceQuote": "عرض السعر",
       "projectCompletionFile": "ملف إنجاز المشروع",
+      "projectCompletionFiles": "تم إكمال المشروع من قبل المدير",
       "projectCompleted": "تم إكمال المشروع",
       "projectCompletedAwaitingPayment": "تم إكمال المشروع - في انتظار الدفع",
       "projectCompletedPaymentCompleted": "تم إكمال المشروع - تم الدفع",
@@ -1683,7 +1695,8 @@
     "mobileTooLong": "رقم الهاتف المحمول طويل جداً. الحد الأقصى المسموح هو 11 رقماً.",
     "mobileTooShort": "رقم الهاتف المحمول قصير جداً. يرجى تقديم رقم هاتف صحيح.",
     "networkError": "خطأ في الشبكة. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.",
-    "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى والمحاولة."
+    "sessionExpired": "انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى والمحاولة.",
+    "activeSubscriptionExists": "لديك بالفعل اشتراك نشط. يُسمح باشتراك واحد فقط في كل مرة."
   },
   "Favourite": "مفضل",
   "Unfavourite": "غير مفضل",

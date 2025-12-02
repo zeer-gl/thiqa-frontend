@@ -59,7 +59,10 @@
         "startAdding": "Start by adding your first service",
         "delivery": "Delivery",
         "unitPlaceholder": "e.g., Kg, Ltr, Hour",
-        "deliveryTimePlaceholder": "e.g., 3-5 business days"
+        "deliveryTimePlaceholder": "e.g., 3-5 business days",
+        "nameArRequired": "Service name in Arabic is required",
+        "imageSizeError": "Image size must be less than 1MB",
+        "imageTypeError": "Please select a valid image file (JPEG, PNG, GIF, WebP)"
       },
       "featureSection": {
         "customerSupport": {
@@ -741,6 +744,7 @@
       "userAlreadyExists": "User with this email or phone number already exists. Please use different credentials or try logging in.",
       "emailAlreadyExists": "Email already exists. Please use a different email or try logging in.",
       "phoneAlreadyExists": "Phone number already exists. Please use a different phone number or try logging in.",
+      "phoneNumberAlreadyExists": "User with this phone number already exists",
       "emailAndPhoneExist": "Email and phone number already exist. Please use different credentials or try logging in.",
       "genericError": "An error occurred. Please try again.",
       "validation": {
@@ -919,6 +923,8 @@
       "passwordResetSuccess": "Password reset successfully",
       "resetError": "Failed to reset password",
       "networkError": "Network error occurred",
+      "customerNotFound": "Customer not found with the provided email or phone number",
+      "professionalNotFound": "Professional not found with the provided email or phone number",
       "email": "Email",
       "phone": "Phone",
       "emailPlaceholder": "example@example.com",
@@ -967,7 +973,8 @@
       "phoneNumberValue": "+91 95744 68870",
       "editProfileButton": "Edit Profile",
       "changePasswordButton": "Change Password",
-      "logout": "Logout"
+      "logout": "Logout",
+      "profileUpdated": "Profile updated successfully!"
     },
     "changePassword": {
       "title": "Change Password",
@@ -984,7 +991,7 @@
       "currentPasswordIncorrect": "Current password is incorrect",
       "passwordTooWeak": "Password is too weak",
       "networkError": "Network error",
-      "successMessage": "Password changed successfully",
+      "successMessage": "Password updated successfully",
       "errorMessage": "Failed to change password"
     },
     "phoneVerification": {
@@ -1048,6 +1055,7 @@
       "updateError": "Failed to update address",
       "deleteSuccess": "Address deleted successfully",
       "fillRequiredFields": "Please fill in all required fields",
+      "allFieldsRequired": "All fields are required",
       "invalidLatitude": "Latitude must be between -90 and 90",
       "invalidLongitude": "Longitude must be between -180 and 180",
       "saveError": "Failed to save address"
@@ -1432,7 +1440,8 @@
         "open": "Open",
         "inProgress": "In Progress",
         "accepted": "Accepted",
-        "completeConstruction": "Complete Construction"
+        "completeConstruction": "Complete Construction",
+        "completed": "Completed"
       },
       "viewPrice": "View Price",
       "downloadDesign": "Download Project Design",
@@ -1575,6 +1584,7 @@
       "submitting": "Submitting",
       "priceQuote": "Price Quote",
         "projectCompletionFile": "Project Completion File",
+        "projectCompletionFiles": "Project is Completed by admin",
         "projectCompleted": "Project Completed",
         "projectCompletedAwaitingPayment": "Project Completed - Awaiting Payment",
         "projectCompletedPaymentCompleted": "Project Completed - Payment Completed",
@@ -1684,7 +1694,8 @@
     "mobileTooLong": "Mobile number is too long. Maximum allowed is 11 digits.",
     "mobileTooShort": "Mobile number is too short. Please provide a valid mobile number.",
     "networkError": "Network error. Please check your internet connection and try again.",
-    "sessionExpired": "Session expired. Please login again and try."
+    "sessionExpired": "Session expired. Please login again and try.",
+    "activeSubscriptionExists": "You already have an active subscription. Only one subscription allowed at a time."
   },
   "Favourite": "Favorite",
   "Unfavourite": "Unfavorite",
@@ -1800,7 +1811,8 @@
       "home": {
         "serviceManagement": {
           "serviceNameArPlaceholder": "Enter service name in Arabic",
-          "arabicTextRequired": "Please enter text in Arabic only"
+          "arabicTextRequired": "Please enter text in Arabic only",
+          "nameArRequired": "Service name in Arabic is required"
         }
       }
     }
