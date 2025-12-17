@@ -9,7 +9,7 @@ import { notifyServiceProviderOfferAccepted } from '../utils/notificationService
 import ProjectCompletionDetailsModal from './ProjectCompletionDetailsModal';
 import '../css/components/phone-modal.scss';
 
-const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalAccepted, acceptedProposals = new Set() }) => {
+const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalAccepted, acceptedProposals = new Set(), onRefreshProjects }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { showAlert } = useAlert();
@@ -79,6 +79,13 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
     const closeCompletionDetails = () => {
         setShowCompletionDetails(false);
         setSelectedCompletionData(null);
+        // Refresh projects after closing modal (e.g., after opening payment link)
+        if (onRefreshProjects) {
+            // Delay refresh slightly to ensure any background operations complete
+            setTimeout(() => {
+                onRefreshProjects();
+            }, 1500);
+        }
     };
 
     // Handle phone call

@@ -181,7 +181,8 @@ const OrderRequest = () => {
 
         budget: Yup.number()
             .typeError(t('order-request.budget-number', 'Budget must be a number'))
-            .required(t('order-request.budget-required', 'Budget is required')),
+            .required(t('order-request.budget-required', 'Budget is required'))
+            .min(0.01, t('order-request.budget-positive', 'Budget must be greater than 0')),
         dateOfRequest: Yup.date()
             .required(t('order-request.date-required'))
             .min(new Date(new Date().setHours(0,0,0,0)), t('order-request.date-future')),
@@ -375,11 +376,33 @@ const OrderRequest = () => {
             }
 
     
+            const result = await res.json();
+            
+            if (!res.ok) {
+                const errorData = result;
+                let errorMessage = errorData.message || errorData.error || t('common.errorCreatingDemandQuote', 'Error creating demand quote');
+                
+                // Try to translate common backend errors
+                if (errorData.message || errorData.error) {
+                    const backendError = (errorData.message || errorData.error).toLowerCase();
+                    if (backendError.includes('notification validation failed') || backendError.includes('message_ar')) {
+                        errorMessage = t('common.notificationSystemError');
+                    } else if (backendError.includes('cast to string failed')) {
+                        errorMessage = t('common.dataFormatError');
+                    }
+                }
+                
+                showAlert(errorMessage, 'error');
+                setSubmitting(false);
+                return;
+            }
+            
             showAlert(t('common.requestSubmittedSuccessfully', 'Request submitted successfully'), 'success');
             resetForm();
             navigate('/request-quote/success');
         } catch (e) {
-            showAlert(e?.message || t('common.somethingWentWrong', 'Something went wrong'), 'error');
+            const errorMessage = e?.message || t('common.errorCreatingDemandQuote', 'Error creating demand quote');
+            showAlert(errorMessage, 'error');
         } finally {
             setSubmitting(false);
         }

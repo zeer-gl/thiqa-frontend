@@ -1,10 +1,13 @@
 // context/SPProfileContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BaseUrl } from "../assets/BaseUrl";
+import { checkUserSuspension, handleSuspendedUser } from "../utils/suspensionHandler";
 
 const SPProfileContext = createContext();
 
 export const SPProfileProvider = ({ children }) => {
+  const { t } = useTranslation();
   const [spProfile, setSpProfile] = useState(null);
   const [loadingSpProfile, setLoadingSpProfile] = useState(false);
   const [spProfileError, setSpProfileError] = useState("");
@@ -139,6 +142,14 @@ export const SPProfileProvider = ({ children }) => {
       if (spSubscriptionStatus) {
         profileData.subscriptionStatus = spSubscriptionStatus;
         console.log('✅ SP Profile: Using localStorage spSubscriptionStatus:', spSubscriptionStatus);
+      }
+      
+      // Check if service provider is suspended
+      const isSuspended = checkUserSuspension(profileData, 'sp');
+      if (isSuspended) {
+        console.error('❌ Service provider account is suspended');
+        handleSuspendedUser(t('common.accountSuspended', 'Your account has been suspended. Please contact support.'));
+        return null;
       }
       
       // Update the SP profile state

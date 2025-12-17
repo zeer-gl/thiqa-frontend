@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useAutoLogout from './hooks/useAutoLogout';
 
 // Layout
 import Navbar from './layout/Navbar';
@@ -52,6 +53,9 @@ import PageTitle from './components/PageTitle';
 import AuthWrapper from './components/AuthWrapper';
 import RoleBasedWrapper from './components/RoleBasedWrapper';
 
+// Initialize API interceptor for suspended user handling
+import './utils/apiInterceptor';
+
 // Styles
 import './css/global/global.scss';
 import './css/utilities.scss';
@@ -67,6 +71,9 @@ function AppContent() {
     const location = useLocation();
     const [isAppInitialized, setIsAppInitialized] = useState(false);
     const [authChecked, setAuthChecked] = useState(false);
+    
+    // Auto-logout after 25 minutes of inactivity
+    useAutoLogout(25 * 60 * 1000); // 25 minutes in milliseconds
 
     useEffect(() => {
         const direction = i18n.language === 'ar' ? 'rtl' : 'ltr';

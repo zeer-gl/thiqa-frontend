@@ -1,5 +1,5 @@
 import {useTranslation} from 'react-i18next';
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 import axios from 'axios';
 import { useAlert } from '../context/AlertContext';
 import '../css/pages/home.scss';
@@ -76,6 +76,14 @@ const Home = () => {
         existingImage: null
     });
     const [imageError, setImageError] = useState('');
+    const [formErrors, setFormErrors] = useState({
+        nameEn: '',
+        nameAr: '',
+        price: '',
+        unit: '',
+        deliveryTime: '',
+        image: ''
+    });
     
     // Pagination states for professionals
     const [currentProfessionalsPage, setCurrentProfessionalsPage] = useState(1);
@@ -123,6 +131,94 @@ const Home = () => {
         // Also allow spaces, common punctuation, and numbers
         const arabicRegex = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s\u060C\u061B\u061F\u0640\u066A\u066B\u066C\u066D\u200C\u200D\u200E\u200F\u2010-\u2015\u2018-\u201F\u2026]*$/;
         return arabicRegex.test(text);
+    };
+
+    // Check if text contains Arabic characters
+    const containsArabic = (text) => {
+        const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+        return arabicRegex.test(text);
+    };
+
+    // Validate delivery time format (should be reasonable like "3-5 days", "1 week", "2 hours", etc.)
+    const validateDeliveryTime = (time) => {
+        if (!time || time.trim() === '') {
+            return false;
+        }
+        // Allow formats like: "3-5 days", "1 week", "2 hours", "5 business days", "3 days", etc.
+        // Should contain at least one number and some text
+        const deliveryTimeRegex = /^[\d\s\-\w]+$/i;
+        const hasNumber = /\d/.test(time);
+        const hasText = /[a-zA-Z\u0600-\u06FF]/.test(time);
+        return deliveryTimeRegex.test(time) && hasNumber && hasText && time.trim().length >= 3;
+    };
+
+    // Validate unit format (should be common unit abbreviations like Kg, Watt, Ltr, Hour, etc.)
+    const validateUnit = (unit) => {
+        if (!unit || unit.trim() === '') {
+            return false;
+        }
+        // Common unit formats: Kg, kg, KG, Watt, watt, WATT, Ltr, ltr, LTR, Hour, hour, HOUR, etc.
+        // Allow alphanumeric characters, but should be a reasonable unit abbreviation (2-10 characters)
+        const unitRegex = /^[a-zA-Z\u0600-\u06FF]{1,20}$/;
+        const trimmedUnit = unit.trim();
+        // Check if it's a reasonable length and contains only letters (no numbers or special chars except Arabic)
+        return unitRegex.test(trimmedUnit) && trimmedUnit.length >= 1 && trimmedUnit.length <= 20;
+    };
+
+    // Check if service provider has active subscription
+    const checkSubscription = () => {
+        try {
+            // First check userProfile from context (most reliable source)
+            if (userProfile?.hasActiveSubscription === true || userProfile?.subscriptionStatus === 'active') {
+                // Also verify localStorage matches to ensure consistency
+                const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+                const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+                const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
+                
+                // If userProfile says active, check localStorage as secondary verification
+                if (spPaymentStatus === 'true' || spHasActiveSubscription === 'true' || spSubscriptionStatus === 'active') {
+                    return true;
+                }
+                // If userProfile says active but localStorage doesn't, still trust userProfile
+                if (userProfile?.hasActiveSubscription === true) {
+                    return true;
+                }
+            }
+
+            // Check localStorage payment status (only if userProfile is not available or doesn't have subscription)
+            const spPaymentStatus = localStorage.getItem('spPaymentStatus');
+            const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
+            const spSubscriptionStatus = localStorage.getItem('spSubscriptionStatus');
+
+            // Strict check: all must be explicitly false/null to return false
+            if (spPaymentStatus === 'true' || spHasActiveSubscription === 'true' || spSubscriptionStatus === 'active') {
+                // Double check: if userProfile exists and says no subscription, trust userProfile more
+                if (userProfile && userProfile.hasActiveSubscription === false) {
+                    return false;
+                }
+                return true;
+            }
+
+            // Check spUserData as last resort
+            const spUserData = localStorage.getItem('spUserData');
+            if (spUserData) {
+                try {
+                    const userData = JSON.parse(spUserData);
+                    if (userData.hasActiveSubscription === true || userData.subscriptionStatus === 'active') {
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('Error parsing spUserData:', e);
+                }
+            }
+            
+            // Default to false - no subscription found
+            return false;
+        } catch (error) {
+            console.error('Error checking subscription:', error);
+            // On error, default to false (no subscription) for security
+            return false;
+        }
     };
 
     // Service management functions
@@ -239,6 +335,12 @@ const Home = () => {
     // Unified function to handle both create and update service
     const saveService = async (serviceData, serviceId = null) => {
         console.log('🔄 Saving service',serviceId);
+        
+        // Enforce subscription check at API level
+        if (!checkSubscription()) {
+            throw new Error(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to create or edit services. Please subscribe to a plan first.'));
+        }
+        
         try {
             const token = localStorage.getItem('token-sp');
             if (!token) {
@@ -384,11 +486,68 @@ const Home = () => {
         }
     };
 
+    // Check if service has bookings/orders
+    const checkServiceBookings = async (serviceId) => {
+        try {
+            const token = localStorage.getItem('token-sp');
+            if (!token) {
+                throw new Error('Please login again');
+            }
+
+            // Check for service requests with this service ID
+            // Note: This endpoint might require customer auth, so we'll handle errors gracefully
+            const response = await axios.get(`${BaseUrl}/customer/get-service-request`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // The API returns an array of service requests
+            // Check if there are any service requests for this service
+            if (response.data && Array.isArray(response.data)) {
+                const serviceRequests = response.data.filter(
+                    request => request.service && (
+                        request.service.toString() === serviceId.toString() || 
+                        (request.service._id && request.service._id.toString() === serviceId.toString())
+                    )
+                );
+                return serviceRequests.length > 0;
+            } else if (response.data && response.data.serviceRequests && Array.isArray(response.data.serviceRequests)) {
+                const serviceRequests = response.data.serviceRequests.filter(
+                    request => request.service && (
+                        request.service.toString() === serviceId.toString() || 
+                        (request.service._id && request.service._id.toString() === serviceId.toString())
+                    )
+                );
+                return serviceRequests.length > 0;
+            }
+            return false;
+        } catch (error) {
+            console.error('❌ Error checking service bookings:', error);
+            // If we can't check (e.g., endpoint requires customer auth), 
+            // we'll allow deletion but log the error for debugging
+            // In production, the backend should handle this check
+            return false;
+        }
+    };
+
     const deleteService = async (serviceId) => {
         try {
             const token = localStorage.getItem('token-sp');
             if (!token) {
                 throw new Error('Please login again');
+            }
+
+            // Check subscription before deletion
+            if (!checkSubscription()) {
+                throw new Error(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to delete services. Please subscribe to a plan first.'));
+            }
+
+            // Check if service has bookings before deletion
+            const hasBookings = await checkServiceBookings(serviceId);
+            if (hasBookings) {
+                throw new Error(t('pages.home.serviceManagement.cannotDeleteWithBookings', 'Cannot delete service that has bookings. Please cancel or complete all bookings first.'));
             }
 
             console.log('🔍 Delete Service Debug:', {
@@ -427,15 +586,110 @@ const Home = () => {
     const handleServiceSubmit = async (e) => {
         e.preventDefault();
         
-        // Client-side validation: Arabic name is required
-        if (!serviceForm.nameAr || serviceForm.nameAr.trim() === '') {
-            showAlert(t('pages.home.serviceManagement.nameArRequired', 'Service name in Arabic is required'), 'error');
+        // Reset errors
+        setFormErrors({
+            nameEn: '',
+            nameAr: '',
+            price: '',
+            unit: '',
+            deliveryTime: '',
+            image: ''
+        });
+
+        // Check subscription before allowing service creation/editing
+        if (!checkSubscription()) {
+            showAlert(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to create or edit services. Please subscribe to a plan first.'), 'error');
+            navigate('/profile-sp?tab=packages');
             return;
         }
-        
-        // Validate image before submission
+
+        let hasErrors = false;
+        const newErrors = {
+            nameEn: '',
+            nameAr: '',
+            price: '',
+            unit: '',
+            deliveryTime: '',
+            image: ''
+        };
+
+        // Validate English name: should not contain Arabic characters and max 50 characters
+        if (!serviceForm.nameEn || serviceForm.nameEn.trim() === '') {
+            newErrors.nameEn = t('pages.home.serviceManagement.nameEnRequired', 'Service name in English is required');
+            hasErrors = true;
+        } else if (containsArabic(serviceForm.nameEn)) {
+            newErrors.nameEn = t('pages.home.serviceManagement.noArabicInEnglish', 'English name cannot contain Arabic characters');
+            hasErrors = true;
+        } else if (serviceForm.nameEn.trim().length > 50) {
+            newErrors.nameEn = t('pages.home.serviceManagement.nameEnMaxLength', 'Service name must be 50 characters or less');
+            hasErrors = true;
+        }
+
+        // Validate Arabic name: should contain Arabic characters and max 50 characters
+        if (!serviceForm.nameAr || serviceForm.nameAr.trim() === '') {
+            newErrors.nameAr = t('pages.home.serviceManagement.nameArRequired', 'Service name in Arabic is required');
+            hasErrors = true;
+        } else if (!isArabicText(serviceForm.nameAr)) {
+            newErrors.nameAr = t('pages.home.serviceManagement.arabicTextRequired', 'Please enter text in Arabic only');
+            hasErrors = true;
+        } else if (serviceForm.nameAr.trim().length > 50) {
+            newErrors.nameAr = t('pages.home.serviceManagement.nameArMaxLength', 'Service name must be 50 characters or less');
+            hasErrors = true;
+        }
+
+        // Validate price: must be a positive number (greater than 0)
+        if (!serviceForm.price || serviceForm.price.trim() === '') {
+            newErrors.price = t('pages.home.serviceManagement.priceRequired', 'Price is required');
+            hasErrors = true;
+        } else {
+            const priceNum = parseFloat(serviceForm.price);
+            if (isNaN(priceNum) || priceNum < 0) {
+                newErrors.price = t('pages.home.serviceManagement.priceInvalid', 'Price must be a positive number');
+                hasErrors = true;
+            } else if (priceNum === 0) {
+                newErrors.price = t('pages.home.serviceManagement.priceMustBePositive', 'Price must be greater than 0');
+                hasErrors = true;
+            }
+        }
+
+        // Validate unit: must be a valid unit format
+        if (!serviceForm.unit || serviceForm.unit.trim() === '') {
+            newErrors.unit = t('pages.home.serviceManagement.unitRequired', 'Unit is required');
+            hasErrors = true;
+        } else if (!validateUnit(serviceForm.unit)) {
+            newErrors.unit = t('pages.home.serviceManagement.unitInvalid', 'Unit should be in format like Kg, Watt, Ltr, Hour, etc.');
+            hasErrors = true;
+        }
+
+        // Validate delivery time: should be in a reasonable format
+        if (!serviceForm.deliveryTime || serviceForm.deliveryTime.trim() === '') {
+            newErrors.deliveryTime = t('pages.home.serviceManagement.deliveryTimeRequired', 'Delivery time is required');
+            hasErrors = true;
+        } else if (!validateDeliveryTime(serviceForm.deliveryTime)) {
+            newErrors.deliveryTime = t('pages.home.serviceManagement.deliveryTimeInvalid', 'Please enter a valid delivery time (e.g., "3-5 days", "1 week")');
+            hasErrors = true;
+        }
+
+        // Validate image: required for new services
+        if (!editingService && !serviceForm.image && !serviceForm.existingImage) {
+            newErrors.image = t('pages.home.serviceManagement.imageRequired', 'Service image is required');
+            hasErrors = true;
+        }
+
+        // Validate image file if provided
         if (serviceForm.image && !validateImage(serviceForm.image)) {
-            return; // Stop submission if image validation fails
+            newErrors.image = imageError;
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            setFormErrors(newErrors);
+            // Show first error as alert
+            const firstError = Object.values(newErrors).find(err => err !== '');
+            if (firstError) {
+                showAlert(firstError, 'error');
+            }
+            return;
         }
         
         try {
@@ -488,6 +742,14 @@ const Home = () => {
             });
             setEditingService(null);
             setShowServiceModal(false);
+            setFormErrors({
+                nameEn: '',
+                nameAr: '',
+                price: '',
+                deliveryTime: '',
+                image: ''
+            });
+            setImageError('');
                 console.log('✅ Modal closed and form reset');
             }
         } catch (error) {
@@ -498,6 +760,13 @@ const Home = () => {
     };
 
     const handleEditService = async (service) => {
+        // Check subscription before allowing service editing
+        if (!checkSubscription()) {
+            showAlert(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to edit services. Please subscribe to a plan first.'), 'error');
+            navigate('/profile-sp?tab=packages');
+            return;
+        }
+        
         try {
             // Fetch fresh service data from API
             const serviceResponse = await getSingleService(service._id);
@@ -527,6 +796,13 @@ const Home = () => {
     };
 
     const handleDeleteService = (service) => {
+        // Check subscription before allowing service deletion
+        if (!checkSubscription()) {
+            showAlert(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to delete services. Please subscribe to a plan first.'), 'error');
+            navigate('/profile-sp?tab=packages');
+            return;
+        }
+        
         setServiceToDelete(service);
         setShowDeleteModal(true);
     };
@@ -1024,6 +1300,31 @@ const Home = () => {
     const spPaymentStatus = localStorage.getItem('spPaymentStatus');
     const spHasActiveSubscription = localStorage.getItem('spHasActiveSubscription');
     
+    // Check if user has active subscription for button disabling
+    // Use useMemo to recalculate when userProfile changes
+    const hasActiveSubscription = useMemo(() => {
+        const result = checkSubscription();
+        console.log('🔍 Subscription Check for Buttons:', {
+            result,
+            spPaymentStatus: localStorage.getItem('spPaymentStatus'),
+            spHasActiveSubscription: localStorage.getItem('spHasActiveSubscription'),
+            spSubscriptionStatus: localStorage.getItem('spSubscriptionStatus'),
+            userProfileHasActive: userProfile?.hasActiveSubscription,
+            userProfileStatus: userProfile?.subscriptionStatus
+        });
+        return result;
+    }, [userProfile]);
+
+    // Close service modal if subscription is lost
+    useEffect(() => {
+        if (showServiceModal && !hasActiveSubscription) {
+            console.log('⚠️ Subscription lost, closing service modal');
+            setShowServiceModal(false);
+            showAlert(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to create or edit services. Please subscribe to a plan first.'), 'error');
+            navigate('/profile-sp?tab=packages');
+        }
+    }, [hasActiveSubscription, showServiceModal, navigate, t, showAlert]);
+    
     // Service providers can now access all features without subscription check
     // But we still check localStorage for payment status
     const shouldShowUpgradeOnly = false;
@@ -1131,7 +1432,7 @@ const Home = () => {
                     <img className='w-100' src={HeroPattern} alt=""/>
                 </div>
             </section>
-                    {isServiceProvider && userProfile?.hasActiveSubscription && (
+                    {isServiceProvider && (
                         <section className="service-management-section py-5" style={{backgroundColor: '#f8f9fa'}}>
                             <div className="container">
                                 <div className="row">
@@ -1140,8 +1441,23 @@ const Home = () => {
                                             {/* <h2 className="ar-heading-bold">{t('pages.home.serviceManagement.title', 'My Services')}</h2> */}
                                             <button 
                                                 className="btn  d-flex align-items-center justify-content-center"
-                                                onClick={() => setShowServiceModal(true)}
-                                                style={{backgroundColor: '#21395D',color: 'white'}}
+                                                disabled={!hasActiveSubscription}
+                                                onClick={() => {
+                                                    // Check subscription before opening service modal
+                                                    if (!checkSubscription()) {
+                                                        showAlert(t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to create services. Please subscribe to a plan first.'), 'error');
+                                                        navigate('/profile-sp?tab=packages');
+                                                        return;
+                                                    }
+                                                    setShowServiceModal(true);
+                                                }}
+                                                style={{
+                                                    backgroundColor: hasActiveSubscription ? '#21395D' : '#6c757d',
+                                                    color: 'white',
+                                                    opacity: hasActiveSubscription ? 1 : 0.6,
+                                                    cursor: hasActiveSubscription ? 'pointer' : 'not-allowed'
+                                                }}
+                                                title={!hasActiveSubscription ? t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to create services. Please subscribe to a plan first.') : ''}
                                             >
                                                 <i className="fas fa-plus me-2"></i>
                                                 <span>
@@ -1190,7 +1506,13 @@ const Home = () => {
                                                                     <div className="btn-group w-100" role="group" style={{display: 'flex', justifyContent: 'center',alignItems: 'center',gap: '10px'}}>
                                                                         <button 
                                                                             className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
+                                                                            disabled={!hasActiveSubscription}
                                                                             onClick={() => handleEditService(service)}
+                                                                            style={{
+                                                                                opacity: hasActiveSubscription ? 1 : 0.6,
+                                                                                cursor: hasActiveSubscription ? 'pointer' : 'not-allowed'
+                                                                            }}
+                                                                            title={!hasActiveSubscription ? t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to edit services. Please subscribe to a plan first.') : ''}
                                                                         >
                                                                             <i className="fas fa-edit "></i>
                                                                             <span>
@@ -1200,7 +1522,13 @@ const Home = () => {
                                                                         </button>
                                                                         <button 
                                                                             className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
+                                                                            disabled={!hasActiveSubscription}
                                                                             onClick={() => handleDeleteService(service)}
+                                                                            style={{
+                                                                                opacity: hasActiveSubscription ? 1 : 0.6,
+                                                                                cursor: hasActiveSubscription ? 'pointer' : 'not-allowed'
+                                                                            }}
+                                                                            title={!hasActiveSubscription ? t('pages.home.serviceManagement.subscriptionRequired', 'You need an active subscription to delete services. Please subscribe to a plan first.') : ''}
                                                                         >
                                                                             <i className="fas fa-trash me-1"></i>
                                                                             <span >
@@ -1784,7 +2112,7 @@ const Home = () => {
             )}
 
             {/* Service Modal */}
-            {showServiceModal && (
+            {showServiceModal && hasActiveSubscription && (
                 <div className="modal show d-block" 
                 
                 style={{
@@ -1844,13 +2172,35 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className="form-control"
+                                                className={`form-control ${formErrors.nameEn ? 'is-invalid' : ''}`}
                                                 value={serviceForm.nameEn}
-                                                onChange={(e) => setServiceForm({...serviceForm, nameEn: e.target.value})}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    // Limit to 50 characters
+                                                    if (value.length <= 50) {
+                                                        setServiceForm({...serviceForm, nameEn: value});
+                                                        // Clear error when user types
+                                                        if (formErrors.nameEn) {
+                                                            setFormErrors({...formErrors, nameEn: ''});
+                                                        }
+                                                    }
+                                                }}
                                                 disabled={serviceFormLoading}
                                                 required
+                                                maxLength={50}
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
+                                            {formErrors.nameEn && (
+                                                <div className="invalid-feedback d-block">
+                                                    {formErrors.nameEn}
+                                                </div>
+                                            )}
+                                            <small className="form-text text-muted" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                fontSize: '0.75rem'
+                                            }}>
+                                                {serviceForm.nameEn.length}/50
+                                            </small>
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label" style={{
@@ -1865,24 +2215,36 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className={`form-control ${serviceForm.nameAr && !isArabicText(serviceForm.nameAr) ? 'is-invalid' : ''}`}
+                                                className={`form-control ${formErrors.nameAr || (serviceForm.nameAr && !isArabicText(serviceForm.nameAr)) ? 'is-invalid' : ''}`}
                                                 value={serviceForm.nameAr}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
-                                                    // Only allow Arabic characters, spaces, and common punctuation
-                                                    if (value === '' || isArabicText(value)) {
+                                                    // Limit to 50 characters and only allow Arabic characters
+                                                    if (value.length <= 50 && (value === '' || isArabicText(value))) {
                                                         setServiceForm({...serviceForm, nameAr: value});
+                                                        // Clear error when user types
+                                                        if (formErrors.nameAr) {
+                                                            setFormErrors({...formErrors, nameAr: ''});
+                                                        }
                                                     }
                                                 }}
                                                 disabled={serviceFormLoading}
+                                                required
+                                                maxLength={50}
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                                 placeholder={t('pages.home.serviceManagement.serviceNameArPlaceholder', 'Enter service name in Arabic')}
                                             />
-                                            {serviceForm.nameAr && !isArabicText(serviceForm.nameAr) && (
-                                                <div className="invalid-feedback">
-                                                    {t('pages.home.serviceManagement.arabicTextRequired', 'Please enter text in Arabic only')}
+                                            {(formErrors.nameAr || (serviceForm.nameAr && !isArabicText(serviceForm.nameAr))) && (
+                                                <div className="invalid-feedback d-block">
+                                                    {formErrors.nameAr || t('pages.home.serviceManagement.arabicTextRequired', 'Please enter text in Arabic only')}
                                                 </div>
                                             )}
+                                            <small className="form-text text-muted" style={{
+                                                textAlign: i18n.language === 'ar' ? 'right' : 'left',
+                                                fontSize: '0.75rem'
+                                            }}>
+                                                {serviceForm.nameAr.length}/50
+                                            </small>
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label" style={{
@@ -1897,13 +2259,33 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="number" 
-                                                className="form-control"
+                                                className={`form-control ${formErrors.price ? 'is-invalid' : ''}`}
                                                 value={serviceForm.price}
-                                                onChange={(e) => setServiceForm({...serviceForm, price: e.target.value})}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    // Block negative values - only allow empty string or positive numbers
+                                                    if (value === '' || (!isNaN(value) && !value.startsWith('-') && parseFloat(value) >= 0)) {
+                                                        setServiceForm({...serviceForm, price: value});
+                                                        // Clear error when user types
+                                                        if (formErrors.price) {
+                                                            setFormErrors({...formErrors, price: ''});
+                                                        }
+                                                    } else if (value.startsWith('-')) {
+                                                        // Show error immediately for negative values
+                                                        setFormErrors({...formErrors, price: t('pages.home.serviceManagement.priceInvalid', 'Price must be a positive number')});
+                                                    }
+                                                }}
                                                 disabled={serviceFormLoading}
                                                 required
+                                                min="0"
+                                                step="0.01"
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
+                                            {formErrors.price && (
+                                                <div className="invalid-feedback d-block">
+                                                    {formErrors.price}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label" style={{
@@ -1918,14 +2300,26 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className="form-control"
+                                                className={`form-control ${formErrors.unit ? 'is-invalid' : ''}`}
                                                 value={serviceForm.unit}
-                                                onChange={(e) => setServiceForm({...serviceForm, unit: e.target.value})}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setServiceForm({...serviceForm, unit: value});
+                                                    // Clear error when user types
+                                                    if (formErrors.unit) {
+                                                        setFormErrors({...formErrors, unit: ''});
+                                                    }
+                                                }}
                                                 placeholder={t('pages.home.serviceManagement.unitPlaceholder', 'e.g., Kg, Ltr, Hour')}
                                                 disabled={serviceFormLoading}
                                                 required
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
+                                            {formErrors.unit && (
+                                                <div className="invalid-feedback d-block">
+                                                    {formErrors.unit}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="col-12 mb-3">
                                             <label className="form-label" style={{
@@ -1940,14 +2334,26 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className="form-control"
+                                                className={`form-control ${formErrors.deliveryTime ? 'is-invalid' : ''}`}
                                                 value={serviceForm.deliveryTime}
-                                                onChange={(e) => setServiceForm({...serviceForm, deliveryTime: e.target.value})}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setServiceForm({...serviceForm, deliveryTime: value});
+                                                    // Clear error when user types
+                                                    if (formErrors.deliveryTime) {
+                                                        setFormErrors({...formErrors, deliveryTime: ''});
+                                                    }
+                                                }}
                                                 placeholder={t('pages.home.serviceManagement.deliveryTimePlaceholder', 'e.g., 3-5 business days')}
                                                 disabled={serviceFormLoading}
                                                 required
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
+                                            {formErrors.deliveryTime && (
+                                                <div className="invalid-feedback d-block">
+                                                    {formErrors.deliveryTime}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="col-12 mb-3">
                                             <label className="form-label" style={{
@@ -1958,7 +2364,7 @@ const Home = () => {
                                                 color: '#333',
                                                 fontSize: '0.95rem'
                                             }}>
-                                                {t('pages.home.serviceManagement.serviceImage', 'Service Image')}
+                                                {t('pages.home.serviceManagement.serviceImage', 'Service Image')} {!editingService && <span className="text-danger">*</span>}
                                             </label>
                                             {serviceForm.existingImage && (
                                                 <div className="mb-2">
@@ -1976,12 +2382,16 @@ const Home = () => {
                                             <input 
                                                 id="service-image-input"
                                                 type="file" 
-                                                className={`form-control d-none ${imageError ? 'is-invalid' : ''}`}
+                                                className={`form-control d-none ${imageError || formErrors.image ? 'is-invalid' : ''}`}
                                                 accept="image/*"
                                                 onChange={(e) => {
                                                     const file = e.target.files[0];
                                                     setServiceForm({...serviceForm, image: file});
                                                     validateImage(file);
+                                                    // Clear error when user selects file
+                                                    if (formErrors.image) {
+                                                        setFormErrors({...formErrors, image: ''});
+                                                    }
                                                 }}
                                                 disabled={serviceFormLoading}
                                             />
@@ -1998,14 +2408,14 @@ const Home = () => {
                                                     {serviceForm.image?.name || t('pages.home.serviceManagement.noFileChosen', 'No file chosen')}
                                                 </span>
                                             </div>
-                                            {imageError && (
+                                            {(imageError || formErrors.image) && (
                                                 <div className="invalid-feedback d-block" style={{
                                                     color: '#dc3545',
                                                     fontSize: '0.875rem',
                                                     marginTop: '0.25rem',
                                                     textAlign: i18n.language === 'ar' ? 'right' : 'left'
                                                 }}>
-                                                    {imageError}
+                                                    {formErrors.image || imageError}
                                         </div>
                                             )}
                                             <small className="form-text text-muted" style={{
@@ -2047,6 +2457,13 @@ const Home = () => {
                                                         deliveryTime: '',
                                                         image: null,
                                                         existingImage: null
+                                                    });
+                                                    setFormErrors({
+                                                        nameEn: '',
+                                                        nameAr: '',
+                                                        price: '',
+                                                        deliveryTime: '',
+                                                        image: ''
                                                     });
                                                     setImageError('');
                                                 }}
@@ -2114,6 +2531,13 @@ const Home = () => {
                                                         deliveryTime: '',
                                                         image: null,
                                                         existingImage: null
+                                                    });
+                                                    setFormErrors({
+                                                        nameEn: '',
+                                                        nameAr: '',
+                                                        price: '',
+                                                        deliveryTime: '',
+                                                        image: ''
                                                     });
                                                     setImageError('');
                                                 }}
