@@ -45,7 +45,6 @@ function Signup() {
   const[emailError,setEmailError]=useState('');
   const[phoneError,setPhoneError]=useState('')
   const[phoneValid,setPhoneValid]=useState(false)
-  const [registrationData, setRegistrationData] = useState(null);
 
   const navigate = useNavigate();
   const otpRefs = useRef([]);
@@ -200,17 +199,12 @@ function Signup() {
       console.log('Registration API response:', data);
       
       if (response.ok) {
-        // Registration successful, OTP sent to email
-        // Store the registration data for use after OTP verification
-        // (Backend returns token and customer data during registration)
+        // Registration successful, OTP sent to phone
+        // Backend now returns pendingRegistrationId (no token/customer data yet)
         return { 
           success: true, 
-          message: data.message || 'OTP sent to your email',
-          registrationData: {
-            token: data.token,
-            customer: data.customer || data,
-            customerId: data.customerId || data._id || data.customer?._id
-          }
+          message: data.message || 'OTP sent to your phone',
+          pendingRegistrationId: data.pendingRegistrationId
         };
       } else {
         // Registration failed
@@ -247,12 +241,8 @@ function Signup() {
       const registrationResult = await registerUserAndGetOTP(userData);
       
       if (registrationResult.success) {
-        // Step 2: Registration successful, OTP sent to email - show OTP modal
-        // Store registration data (token and customer info) for use after OTP
-        if (registrationResult.registrationData) {
-          setRegistrationData(registrationResult.registrationData);
-          console.log('✅ Registration data stored for later use:', registrationResult.registrationData);
-        }
+        // Step 2: Registration successful, OTP sent to phone - show OTP modal
+        // No need to store registration data anymore - will get token/customer from OTP verification
         showAlert(registrationResult.message, 'success');
         setShowOtpModal(true);
         startTimer();
@@ -596,33 +586,33 @@ function Signup() {
     const verificationResult = await verifyOTP(phoneNo, otpCode);
     
     if (verificationResult.success) {
-      // Step 2: OTP verification successful - use stored registration data
-      console.log('✅ OTP Verification successful, using stored registration data...');
-      console.log('Stored registration data:', registrationData);
+      // Step 2: OTP verification successful - backend now returns token and customer data
+      console.log('✅ OTP Verification successful');
+      console.log('Verification response data:', verificationResult.data);
       
       // Set login status FIRST
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userRole', 'user');
       
-      // Use stored registration data (from registration API response)
-      if (registrationData) {
-        // Store token from registration
-        if (registrationData.token) {
-          localStorage.setItem('token', registrationData.token);
-          console.log('✅ Token stored from registration:', registrationData.token);
+      // Use data from OTP verification response (backend creates user and returns token/customer)
+      if (verificationResult.data) {
+        // Store token from verification response
+        if (verificationResult.data.token) {
+          localStorage.setItem('token', verificationResult.data.token);
+          console.log('✅ Token stored from verification:', verificationResult.data.token);
         } else {
-          console.warn('⚠️ No token in stored registration data');
+          console.warn('⚠️ No token in verification response');
         }
         
-        // Store customer data from registration
-        if (registrationData.customer) {
-          localStorage.setItem('userData', JSON.stringify(registrationData.customer));
-          console.log('✅ Customer data stored');
+        // Store customer data from verification response
+        if (verificationResult.data.customer) {
+          localStorage.setItem('userData', JSON.stringify(verificationResult.data.customer));
+          console.log('✅ Customer data stored from verification');
         } else {
-          console.warn('⚠️ No customer data in stored registration data');
+          console.warn('⚠️ No customer data in verification response');
         }
       } else {
-        console.error('❌ No registration data available! This should not happen.');
+        console.error('❌ No data in verification response!');
       }
       
       // Debug: Log all stored values
@@ -686,8 +676,6 @@ function Signup() {
     setShowOtpModal(false);
     setOtpValues(["", "", "", "", "", ""]);
     setTimer(59);
-    setRegistrationData(null);
-    
     // Clear timer interval
     if (timerInterval) {
       clearInterval(timerInterval);
