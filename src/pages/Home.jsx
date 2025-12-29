@@ -125,6 +125,21 @@ const Home = () => {
         return arabicRegex.test(text);
     };
 
+    // Function to validate English text (letters and spaces only)
+    const isEnglishText = (text) => {
+        if (!text) return true;
+        const englishRegex = /^[A-Za-z\s]+$/;
+        return englishRegex.test(text);
+    };
+
+    // Function to validate unit format (e.g., Kg, Ltr, Hour)
+    const isValidUnit = (unit) => {
+        if (!unit) return false;
+        const normalized = unit.trim();
+        const validUnits = ['Kg', 'kg', 'KG', 'Ltr', 'ltr', 'LTR', 'Hour', 'hour', 'HOUR'];
+        return validUnits.includes(normalized);
+    };
+
     // Service management functions
     const fetchServices = async () => {
         try {
@@ -430,6 +445,15 @@ const Home = () => {
         // Client-side validation: Arabic name is required
         if (!serviceForm.nameAr || serviceForm.nameAr.trim() === '') {
             showAlert(t('pages.home.serviceManagement.nameArRequired', 'Service name in Arabic is required'), 'error');
+            return;
+        }
+
+        // Client-side validation: Service image is required
+        if (
+            (!editingService && !serviceForm.image) || // creating new service: must upload image
+            (editingService && !serviceForm.image && !serviceForm.existingImage) // editing: must have either existing or new image
+        ) {
+            showAlert(t('pages.home.serviceManagement.imageRequired', 'Service image is required'), 'error');
             return;
         }
         
@@ -1844,13 +1868,25 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className="form-control"
+                                                className={`form-control ${serviceForm.nameEn && !isEnglishText(serviceForm.nameEn) ? 'is-invalid' : ''}`}
                                                 value={serviceForm.nameEn}
-                                                onChange={(e) => setServiceForm({...serviceForm, nameEn: e.target.value})}
+                                                maxLength={50}
+                                                onChange={(e) => {
+                                                    const value = (e.target.value || '').slice(0, 50);
+                                                    setServiceForm({
+                                                        ...serviceForm,
+                                                        nameEn: value
+                                                    });
+                                                }}
                                                 disabled={serviceFormLoading}
                                                 required
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
+                                            {serviceForm.nameEn && !isEnglishText(serviceForm.nameEn) && (
+                                                <div className="invalid-feedback">
+                                                    {t('pages.home.serviceManagement.englishTextRequired', 'Please enter text in English letters only')}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="col-md-6 mb-3">
                                             <label className="form-label" style={{
@@ -1867,8 +1903,10 @@ const Home = () => {
                                                 type="text" 
                                                 className={`form-control ${serviceForm.nameAr && !isArabicText(serviceForm.nameAr) ? 'is-invalid' : ''}`}
                                                 value={serviceForm.nameAr}
+                                                maxLength={50}
                                                 onChange={(e) => {
-                                                    const value = e.target.value;
+                                                    const rawValue = e.target.value || '';
+                                                    const value = rawValue.slice(0, 50);
                                                     // Only allow Arabic characters, spaces, and common punctuation
                                                     if (value === '' || isArabicText(value)) {
                                                         setServiceForm({...serviceForm, nameAr: value});
@@ -1899,7 +1937,10 @@ const Home = () => {
                                                 type="number" 
                                                 className="form-control"
                                                 value={serviceForm.price}
-                                                onChange={(e) => setServiceForm({...serviceForm, price: e.target.value})}
+                                                onChange={(e) => {
+                                                    const value = e.target.value?.toString().slice(0, 6);
+                                                    setServiceForm({...serviceForm, price: value});
+                                                }}
                                                 disabled={serviceFormLoading}
                                                 required
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
@@ -1918,7 +1959,7 @@ const Home = () => {
                                             </label>
                                             <input 
                                                 type="text" 
-                                                className="form-control"
+                                                className={`form-control ${serviceForm.unit && !isValidUnit(serviceForm.unit) ? 'is-invalid' : ''}`}
                                                 value={serviceForm.unit}
                                                 onChange={(e) => setServiceForm({...serviceForm, unit: e.target.value})}
                                                 placeholder={t('pages.home.serviceManagement.unitPlaceholder', 'e.g., Kg, Ltr, Hour')}
@@ -1926,6 +1967,11 @@ const Home = () => {
                                                 required
                                                 style={{textAlign: i18n.language === 'ar' ? 'right' : 'left'}}
                                             />
+                                            {serviceForm.unit && !isValidUnit(serviceForm.unit) && (
+                                                <div className="invalid-feedback">
+                                                    {t('pages.home.serviceManagement.unitInvalid', "Unit should be in format like 'Kg', 'Ltr', or 'Hour'.")}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="col-12 mb-3">
                                             <label className="form-label" style={{
@@ -1942,7 +1988,10 @@ const Home = () => {
                                                 type="text" 
                                                 className="form-control"
                                                 value={serviceForm.deliveryTime}
-                                                onChange={(e) => setServiceForm({...serviceForm, deliveryTime: e.target.value})}
+                                                onChange={(e) => {
+                                                    const onlyDigits = (e.target.value || '').replace(/\D/g, '').slice(0, 3);
+                                                    setServiceForm({...serviceForm, deliveryTime: onlyDigits});
+                                                }}
                                                 placeholder={t('pages.home.serviceManagement.deliveryTimePlaceholder', 'e.g., 3-5 business days')}
                                                 disabled={serviceFormLoading}
                                                 required

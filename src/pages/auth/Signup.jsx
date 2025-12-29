@@ -756,7 +756,7 @@ function Signup() {
                             )
                          }
                         
-                <form onSubmit={handleCreateAccount} className="signup-form" style={{ maxHeight: '90vh', overflowY: 'auto', paddingTop: '2rem' }}>
+                <form onSubmit={handleCreateAccount} className="signup-form" style={{ paddingTop: '2rem' }}>
                   <div>
                     <div className="form-group mb-3">
                       <div className="position-relative">

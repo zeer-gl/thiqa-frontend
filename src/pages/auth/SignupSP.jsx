@@ -1075,7 +1075,7 @@ const validateForm = () => {
                                         </Link>
                                     </h5> */}
                                 </div>
-                                <form onSubmit={handleCreateAccount} className='signup-form' style={{ maxHeight: '90vh', overflowY: 'auto', paddingTop: '2rem' }}>
+                                <form onSubmit={handleCreateAccount} className='signup-form' style={{ paddingTop: '2rem' }}>
                                     <div className="d-flex flex-column justify-content-center">
                                         {/* Name */}
                                         <div className="form-group mb-3">

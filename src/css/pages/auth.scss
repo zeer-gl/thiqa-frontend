@@ -35,7 +35,7 @@
 }
 
 .login-form-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -47,28 +47,7 @@
 
   // SignupSP specific styling
   .signup-form {
-    max-height: 90vh;
-    overflow-y: auto;
     padding-top: 2rem;
-    
-    // Custom scrollbar styling
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 3px;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 3px;
-      
-      &:hover {
-        background: #a8a8a8;
-      }
-    }
   }
 
   // Icons are now inserted as inline elements; remove background images
