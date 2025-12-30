@@ -522,7 +522,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                             <i className="fas fa-check-circle me-2"></i>
                                                             {t('project-offers.status-completed', 'Project Completed')}
                                                         </div>
-                                                        <button 
+                                                        {/* <button 
                                                             className="btn-call pt-2"
                                                             onClick={() => {
                                                                 console.log('🔍 VIEW DETAILS CLICKED - Project:', project);
@@ -541,7 +541,7 @@ const ServiceProjectCard = ({ project, isExpanded, onToggle, offers, onProposalA
                                                         >
                                                             <i className="fas fa-eye me-2"></i>
                                                             {t('project-offers.view-completion-details', 'View Completion Details')}
-                                                        </button>
+                                                        </button> */}
                                                     </div>
                                                 );
                                             }

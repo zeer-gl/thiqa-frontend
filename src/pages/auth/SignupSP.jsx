@@ -75,8 +75,6 @@ function SignupSP() {
     const [timerInterval, setTimerInterval] = useState(null);
     const [phoneError, setPhoneError] = useState('');
     const [phoneValid, setPhoneValid] = useState(false);
-    const [professionalId, setProfessionalId] = useState(null);
-    const [registrationData, setRegistrationData] = useState(null);
     
     
     const otpRefs = useRef([]);
@@ -130,25 +128,12 @@ function SignupSP() {
             console.log('Professional registration API response:', data);
             
             if (response.ok) {
-                // Registration successful, OTP sent to email
-                // Store professionalId from response for OTP verification
-                if (data.professionalId || data._id || data.professional?._id) {
-                    const id = data.professionalId || data._id || data.professional._id;
-                    setProfessionalId(id);
-                    console.log('Professional ID stored for OTP verification:', id);
-                }
-                
-                // Store the registration data for use after OTP verification
-                // (Backend returns token and professional data during registration)
+                // Registration successful, OTP sent to phone
+                // Backend now returns pendingRegistrationId (no token/professional data yet)
                 return { 
                     success: true, 
                     message: data.message || 'OTP sent to your phone', 
-                    professionalId: data.professionalId || data._id || data.professional?._id,
-                    registrationData: {
-                        token: data.token,
-                        professional: data.professional || data,
-                        professionalId: data.professionalId || data._id || data.professional?._id
-                    }
+                    pendingRegistrationId: data.pendingRegistrationId
                 };
             } else {
                 // Registration failed
@@ -162,15 +147,15 @@ function SignupSP() {
     };
 
     // Function to verify OTP via API for professionals
-    const verifyOTP = async (professionalId, otpCode) => {
+    const verifyOTP = async (phoneNo, otpCode) => {
         try {
-            console.log('Verifying OTP via API for professional ID:', professionalId);
+            console.log('Verifying OTP via API for phone:', phoneNo);
             
             const response = await fetch(`${BaseUrl}/professional/verify-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    professionalId: professionalId,
+                    phoneNo: phoneNo,
                     otp: otpCode
                 })
             });
@@ -344,12 +329,8 @@ const validateForm = () => {
             const registrationResult = await registerProfessionalAndGetOTP(professionalData);
             
             if (registrationResult.success) {
-                // Step 2: Registration successful, OTP sent to email - show OTP modal
-                // Store registration data (token and professional info) for use after OTP
-                if (registrationResult.registrationData) {
-                    setRegistrationData(registrationResult.registrationData);
-                    console.log('✅ Registration data stored for later use:', registrationResult.registrationData);
-                }
+                // Step 2: Registration successful, OTP sent to phone - show OTP modal
+                // No need to store registration data anymore - will get token/professional from OTP verification
                 showAlert(registrationResult.message, 'success');
                 setShowOtpModal(true);
                 startTimer();
@@ -418,50 +399,50 @@ const validateForm = () => {
             return;
         }
         
-        if (!professionalId) {
-            showAlert('Professional ID not found. Please try registering again.', 'error');
+        if (!phoneNo) {
+            showAlert('Phone number not found. Please try registering again.', 'error');
             return;
         }
         
         // Step 1: Verify OTP via API
         const otpCode = otpValues.join('');
         
-        const verificationResult = await verifyOTP(professionalId, otpCode);
+        const verificationResult = await verifyOTP(phoneNo, otpCode);
         
         if (verificationResult.success) {
-            // Step 2: OTP verification successful - use stored registration data
-            console.log('✅ OTP Verification successful, using stored registration data...');
-            console.log('Stored registration data:', registrationData);
+            // Step 2: OTP verification successful - backend now returns token and professional data
+            console.log('✅ OTP Verification successful');
+            console.log('Verification response data:', verificationResult.data);
             
             // Set login status FIRST
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userRole', 'sp');
             
-            // Use stored registration data (from registration API response)
-            if (registrationData) {
-                // Store token from registration
-                if (registrationData.token) {
-                    localStorage.setItem('token-sp', registrationData.token);
-                    console.log('✅ Token stored from registration:', registrationData.token);
+            // Use data from OTP verification response (backend creates user and returns token/professional)
+            if (verificationResult.data) {
+                // Store token from verification response
+                if (verificationResult.data.token) {
+                    localStorage.setItem('token-sp', verificationResult.data.token);
+                    console.log('✅ Token stored from verification:', verificationResult.data.token);
                 } else {
-                    console.warn('⚠️ No token in stored registration data');
+                    console.warn('⚠️ No token in verification response');
                 }
                 
-                // Store professional data from registration
-                if (registrationData.professional) {
-                    localStorage.setItem('spUserData', JSON.stringify(registrationData.professional));
-                    const profId = registrationData.professional._id || registrationData.professionalId;
+                // Store professional data from verification response
+                if (verificationResult.data.professional) {
+                    localStorage.setItem('spUserData', JSON.stringify(verificationResult.data.professional));
+                    const profId = verificationResult.data.professional._id || verificationResult.data.professionalId;
                     if (profId) {
                         localStorage.setItem('serviceProviderId', profId);
                         console.log('✅ Professional data stored:', profId);
                     }
-                } else if (registrationData.professionalId) {
+                } else if (verificationResult.data.professionalId) {
                     // Minimal data if professional object not available
-                    localStorage.setItem('serviceProviderId', registrationData.professionalId);
-                    console.log('✅ Professional ID stored:', registrationData.professionalId);
+                    localStorage.setItem('serviceProviderId', verificationResult.data.professionalId);
+                    console.log('✅ Professional ID stored:', verificationResult.data.professionalId);
                 }
             } else {
-                console.error('❌ No registration data available! This should not happen.');
+                console.error('❌ No data in verification response!');
             }
             
             // Set default payment status to true for new service providers
@@ -530,7 +511,6 @@ const validateForm = () => {
         setShowOtpModal(false);
         setOtpValues(['', '', '', '', '', '']);
         setTimer(59);
-        setProfessionalId(null);
         
         // Clear timer interval
         if (timerInterval) {
@@ -1075,7 +1055,7 @@ const validateForm = () => {
                                         </Link>
                                     </h5> */}
                                 </div>
-                                <form onSubmit={handleCreateAccount} className='signup-form' style={{ maxHeight: '90vh', overflowY: 'auto', paddingTop: '2rem' }}>
+                                <form onSubmit={handleCreateAccount} className='signup-form' style={{ paddingTop: '2rem' }}>
                                     <div className="d-flex flex-column justify-content-center">
                                         {/* Name */}
                                         <div className="form-group mb-3">
