@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import PaymentSuccessModal from '../components/PaymentSuccessModal';
@@ -22,6 +22,10 @@ const Checkout = () => {
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [loadingAddresses, setLoadingAddresses] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+    const [loadingPaymentMethods, setLoadingPaymentMethods] = useState(false);
+    const hasFetchedPaymentMethods = useRef(false);
 
     // Cart data is now managed by CartContext, no need for manual loading
 
@@ -65,6 +69,88 @@ const Checkout = () => {
         fetchAddresses();
     }, []);
 
+    // Fetch payment methods when cart items are available
+    // This handles both initial mount and cart changes
+    useEffect(() => {
+        // Only fetch if we have cart items and haven't loaded payment methods yet
+        if (cartItems && cartItems.length > 0) {
+            // Check if we need to fetch (not already loading and no methods loaded)
+            if (!loadingPaymentMethods && paymentMethods.length === 0) {
+                fetchPaymentMethods();
+            }
+        } else {
+            // Reset if cart is empty
+            setPaymentMethods([]);
+            setSelectedPaymentMethod(null);
+            hasFetchedPaymentMethods.current = false;
+        }
+    }, [cartItems]);
+
+    // Also ensure payment methods are fetched on mount if cart items are already available
+    // This handles the case where cartItems are loaded before the component mounts
+    useEffect(() => {
+        if (cartItems && cartItems.length > 0 && paymentMethods.length === 0 && !loadingPaymentMethods) {
+            // Small delay to ensure CartContext has fully initialized
+            const timer = setTimeout(() => {
+                fetchPaymentMethods();
+            }, 100);
+            
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
+    // Calculate order total for payment methods (matching backend calculation)
+    const calculateOrderTotal = () => {
+        const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+        // Backend calculates: tax (10%) and shipping (5 per vendor)
+        // Since we don't know vendor count from frontend, we'll use a simplified calculation
+        // The backend will recalculate anyway, but we need approximate amount for payment methods
+        const taxAmount = subtotal * 0.1;
+        const shippingCost = 5; // Flat shipping per vendor (minimum)
+        return subtotal + taxAmount + shippingCost;
+    };
+
+    // Fetch payment methods from API
+    const fetchPaymentMethods = async () => {
+        try {
+            setLoadingPaymentMethods(true);
+            const totalAmount = calculateOrderTotal();
+            
+            const response = await fetch(`${BaseUrl}/customer/order/payment-methods?amount=${totalAmount}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch payment methods: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.success && data.data && Array.isArray(data.data.paymentMethods)) {
+                setPaymentMethods(data.data.paymentMethods);
+                // Auto-select first payment method if none selected
+                if (data.data.paymentMethods.length > 0 && !selectedPaymentMethod) {
+                    setSelectedPaymentMethod(data.data.paymentMethods[0]);
+                }
+            } else {
+                setPaymentMethods([]);
+            }
+        } catch (error) {
+            console.error('Error fetching payment methods:', error);
+            // Don't show error alert - just log it, payment methods are optional
+            setPaymentMethods([]);
+        } finally {
+            setLoadingPaymentMethods(false);
+        }
+    };
+
+    const handlePaymentMethodSelect = (method) => {
+        setSelectedPaymentMethod(method);
+    };
+
     const handleAddressSelect = (addressId) => {
         setSelectedAddressId(addressId);
     };
@@ -79,6 +165,12 @@ const Checkout = () => {
             showAlert(t('checkout.messages.cartEmpty'), 'error');
             return;
         }
+
+        // Validate payment method selection (optional - will default to 2 if not provided)
+        // if (!selectedPaymentMethod) {
+        //     showAlert(t('checkout.messages.selectPaymentMethod'), 'error');
+        //     return;
+        // }
 
         try {
             setIsProcessing(true);
@@ -119,7 +211,8 @@ const Checkout = () => {
                     price: item.price
                 })),
                 customerAddressId: selectedAddressId,
-                totalAmount: cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+                totalAmount: cartItems.reduce((total, item) => total + (item.price * item.quantity), 0),
+                paymentMethodId: selectedPaymentMethod?.PaymentMethodId || 2 // Use selected method or default to 2 (VISA/MASTER)
             };
 
             // Make API call to create order
@@ -296,7 +389,59 @@ const Checkout = () => {
                                 )}
                             </div>
 
-                        
+                            {/* Payment Method Selection Section */}
+                            <div className="payment-method-selection mb-4">
+                                <h4 className="form-title mb-3 fw-bold">{t('checkout.payment-method')}</h4>
+                                
+                                {loadingPaymentMethods ? (
+                                    <div className="text-center py-3">
+                                        <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">{t('common.loading')}</span>
+                                        </div>
+                                        <p className="mt-2">{t('common.loading')}</p>
+                                    </div>
+                                ) : paymentMethods.length > 0 ? (
+                                    <div className="payment-methods-list">
+                                        {paymentMethods.map((method) => (
+                                            <div 
+                                                key={method.PaymentMethodId} 
+                                                className={`payment-method-item ${selectedPaymentMethod?.PaymentMethodId === method.PaymentMethodId ? 'selected' : ''}`}
+                                                onClick={() => handlePaymentMethodSelect(method)}
+                                            >
+                                                <div className="payment-method-content">
+                                                    <div className="payment-method-header">
+                                                        <input
+                                                            type="radio"
+                                                            name="selectedPaymentMethod"
+                                                            checked={selectedPaymentMethod?.PaymentMethodId === method.PaymentMethodId}
+                                                            onChange={() => handlePaymentMethodSelect(method)}
+                                                        />
+                                                        <span className="checkmark"></span>
+                                                        <div className="payment-method-info">
+                                                            <h5 className="payment-method-name">{method.PaymentMethodEn}</h5>
+                                                            {method.ServiceCharge > 0 && (
+                                                                <p className="service-charge">
+                                                                    {t('checkout.serviceCharge')}: {method.ServiceCharge} {method.CurrencyIso}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="no-payment-methods text-center py-4">
+                                        <p className="text-muted">{t('checkout.no-payment-methods')}</p>
+                                        <button 
+                                            className="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                                            onClick={fetchPaymentMethods}
+                                        >
+                                            {t('checkout.retry-payment-methods')}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
 
                           
                         </div>

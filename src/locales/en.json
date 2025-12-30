@@ -410,6 +410,10 @@
     "expiration-date": "Expiration Date",
     "cvv": "CVV",
     "postal-code": "Postal Code",
+    "serviceCharge": "Service Charge",
+    "no-payment-methods": "No payment methods available. Please try again.",
+    "retry-payment-methods": "Retry",
+    "selectPaymentMethod": "Please select a payment method",
     "messages": {
       "orderPlacedSuccess": "Order placed successfully!",
       "selectDeliveryAddress": "Please select a delivery address",
@@ -417,7 +421,8 @@
       "userDataNotFound": "User data not found. Please try logging in again.",
       "invalidUserData": "Invalid user data. Please try logging in again.",
       "userIdNotFound": "User ID not found in user data. Please try logging in again.",
-      "failedToPlaceOrder": "Failed to place order. Please try again."
+      "failedToPlaceOrder": "Failed to place order. Please try again.",
+      "selectPaymentMethod": "Please select a payment method"
     }
   },
   "payment-success-modal": {
