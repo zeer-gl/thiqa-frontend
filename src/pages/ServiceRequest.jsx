@@ -416,16 +416,21 @@ const ServiceRequest = () => {
                 console.error('API Error:', errorData);
                 
                 // Handle specific error cases
-                let errorMessage = errorData.message || errorData.error || `Failed to create quote request (${response.status})`;
+                let errorMessage = errorData.message || errorData.error || t('common.errorCreatingDemandQuote', 'Error creating demand quote');
+                
+                // If error message is from backend, try to translate common errors
+                if (errorData.message || errorData.error) {
+                    const backendError = (errorData.message || errorData.error).toLowerCase();
+                    if (backendError.includes('notification validation failed') || backendError.includes('message_ar')) {
+                        errorMessage = t('common.notificationSystemError');
+                    } else if (backendError.includes('cast to string failed')) {
+                        errorMessage = t('common.dataFormatError');
+                    }
+                    // Keep original backend message if no translation found
+                }
                 
                 if (response.status === 413) {
                     errorMessage = t('common.fileSizeTooLargeError');
-                } else if (errorData.error && errorData.error.includes('Notification validation failed')) {
-                    errorMessage = t('common.notificationSystemError');
-                } else if (errorData.error && errorData.error.includes('message_ar')) {
-                    errorMessage = t('common.notificationSystemError');
-                } else if (errorData.error && errorData.error.includes('Cast to string failed')) {
-                    errorMessage = t('common.dataFormatError');
                 }
                 
                 showAlert(errorMessage, 'error');

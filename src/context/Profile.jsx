@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState, useRef } from "r
 import { useTranslation } from "react-i18next";
 import { BaseUrl } from "../assets/BaseUrl";
 import { getProfessionalId, cleanAndValidateProfessionalId } from "../utils/professionalIdUtils";
+import { checkUserSuspension, handleSuspendedUser } from "../utils/suspensionHandler";
 
 const UserContext = createContext();
 

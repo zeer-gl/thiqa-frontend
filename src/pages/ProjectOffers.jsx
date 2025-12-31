@@ -228,6 +228,49 @@ const ProjectOffers = () => {
         window.debugProjectOffers = debugAuthAndData;
     }, []); // Only run on mount
 
+    // Refresh data when page becomes visible again (e.g., after returning from payment)
+    useEffect(() => {
+        let refreshTimeout = null;
+        let lastRefreshTime = 0;
+        const REFRESH_COOLDOWN = 2000; // Prevent refreshing more than once every 2 seconds
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                const now = Date.now();
+                // Only refresh if enough time has passed since last refresh
+                if (now - lastRefreshTime > REFRESH_COOLDOWN) {
+                    console.log('🔄 Page became visible - refreshing project offers');
+                    // Clear any pending refresh
+                    if (refreshTimeout) {
+                        clearTimeout(refreshTimeout);
+                    }
+                    // Small delay to ensure any payment processing is complete
+                    refreshTimeout = setTimeout(() => {
+                        lastRefreshTime = Date.now();
+                        fetchProjectOffers(currentPage, itemsPerPage, searchQuery);
+                    }, 1000);
+                } else {
+                    console.log('🔄 Page became visible but refresh is on cooldown');
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            if (refreshTimeout) {
+                clearTimeout(refreshTimeout);
+            }
+        };
+    }, [currentPage, searchQuery]); // Re-run if page or search changes
+
+    // Create a refresh callback to pass to child components
+    const handleRefreshProjects = () => {
+        console.log('🔄 Manual refresh triggered - refreshing project offers');
+        fetchProjectOffers(currentPage, itemsPerPage, searchQuery);
+    };
+
     // Filter logic - apply both API and client-side filtering
     const filteredOffers = projectOffers.filter((offer) => {
         // Apply search filter (client-side fallback in case API doesn't filter properly)
@@ -319,6 +362,7 @@ const ProjectOffers = () => {
                         onToggle={toggleAccordion}
                         onProposalAccepted={handleProposalAccepted}
                         acceptedProposals={acceptedProposals}
+                        onRefreshProjects={handleRefreshProjects}
                     />
                     ))
                 )}

@@ -62,7 +62,8 @@
         "deliveryTimePlaceholder": "e.g., 3-5 business days",
         "nameArRequired": "Service name in Arabic is required",
         "imageSizeError": "Image size must be less than 1MB",
-        "imageTypeError": "Please select a valid image file (JPEG, PNG, GIF, WebP)"
+        "imageTypeError": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+        "subscriptionRequired": "You need an active subscription to create or edit services. Please subscribe to a plan first."
       },
       "featureSection": {
         "customerSupport": {
@@ -543,6 +544,7 @@
       "description-required": "Description is required",
       "description-min-length": "Description must be at least 10 characters",
       "budget-required": "Budget is required",
+    "budget-positive": "Budget must be greater than 0",
       "deadline-required": "Deadline is required",
       "address-required": "Address is required",
       "type-required": "Service type is required",
@@ -1352,7 +1354,9 @@
     "dataFormatError": "There was an issue with the data format. Please check your input and try again.",
     "requestTimeout": "Request timeout. Please try again with a smaller file.",
     "networkError": "Network error. Please check your connection and try again.",
-    "requestFailed": "Request failed. Please try again."
+    "requestFailed": "Request failed. Please try again.",
+    "errorCreatingDemandQuote": "Error creating demand quote",
+    "accountSuspended": "Your account has been suspended. Please contact support."
   },
   "pricingPackages": {
     "planNames": {
@@ -1599,7 +1603,7 @@
       "accepted": "Accepted",
       "startProject": "Start Project",
       "starting": "Starting...",
-      "alreadyApplied": "You have already applied to this job"
+      "alreadyApplied": "You have applied to this job"
     },
     "status": {
       "rejected": "Project or Offer is Rejected"
@@ -1708,6 +1712,9 @@
     "errors": {
       "fillRequiredFields": "Please fill in all required fields",
       "durationRequired": "Duration is required",
+      "pastDateNotAllowed": "Past dates cannot be selected. Please select today or a future date.",
+      "priceInvalid": "Please enter a valid positive price.",
+      "priceMaxLength": "Price cannot exceed 10 digits",
       "priceRequired": "Price is required",
       "projectInfoMissing": "Project information is missing or invalid",
       "professionalAccountNotFound": "Professional account not found. Please login again.",

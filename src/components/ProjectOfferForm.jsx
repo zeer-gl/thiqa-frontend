@@ -185,15 +185,31 @@ const ProjectOfferForm = ({
     const [selectedDate, setSelectedDate] = useState('');
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [hoveredDate, setHoveredDate] = useState(null);
+    const [priceError, setPriceError] = useState('');
 
     const handleInputChange = (field, value) => {
-        // For price field, allow both numbers and alphabetic characters
+        // For price field, validate and limit input
         if (field === 'price') {
-            // Allow all characters (numbers, letters, spaces, etc.)
-            setFormData(prev => ({
-                ...prev,
-                [field]: value
-            }));
+            // Remove any non-numeric characters except decimal point
+            const numericValue = value.replace(/[^\d.]/g, '');
+            
+            // Prevent multiple decimal points
+            const parts = numericValue.split('.');
+            const cleanedValue = parts.length > 2 
+                ? parts[0] + '.' + parts.slice(1).join('') 
+                : numericValue;
+            
+            // Limit to 10 digits before decimal and 2 after (max 13 characters: 10.99)
+            const maxLength = 13;
+            if (cleanedValue.length <= maxLength) {
+                setFormData(prev => ({
+                    ...prev,
+                    [field]: cleanedValue
+                }));
+                setPriceError('');
+            } else {
+                setPriceError(t('projectOfferForm.errors.priceMaxLength', 'Price cannot exceed 10 digits'));
+            }
         } else if (field === 'projectDuration') {
             // For project duration, allow typing dates in YYYY-MM-DD format
             // Allow typing but also validate format
@@ -245,6 +261,17 @@ const ProjectOfferForm = ({
     };
 
     const handleDateSelect = (date) => {
+        // Check if date is in the past
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const selectedDateObj = new Date(date);
+        selectedDateObj.setHours(0, 0, 0, 0);
+        
+        if (selectedDateObj < today) {
+            showAlert(t('projectOfferForm.errors.pastDateNotAllowed', 'Past dates cannot be selected. Please select today or a future date.'), 'error');
+            return;
+        }
+        
         // Create date string in YYYY-MM-DD format (same as generateCalendarDays)
         const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         
@@ -295,6 +322,16 @@ const ProjectOfferForm = ({
         try {
             const date = new Date(dateString);
             if (!isNaN(date.getTime())) {
+                // Check if date is in the past
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                date.setHours(0, 0, 0, 0);
+                
+                if (date < today) {
+                    showAlert(t('projectOfferForm.errors.pastDateNotAllowed', 'Past dates cannot be selected. Please select today or a future date.'), 'error');
+                    return ''; // Return empty string to clear invalid past date
+                }
+                
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
@@ -329,6 +366,9 @@ const ProjectOfferForm = ({
             const isCurrentMonth = date.getMonth() === month;
             const isToday = date.toDateString() === today.toDateString();
             
+            // Check if date is in the past (before today)
+            const isPastDate = date < today && !isToday;
+            
             // Create date string in YYYY-MM-DD format for comparison
             const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const isSelected = selectedDate && dateString === selectedDate;
@@ -341,7 +381,8 @@ const ProjectOfferForm = ({
                 isToday,
                 isSelected,
                 isHovered,
-                dateString
+                dateString,
+                isPastDate
             });
         }
         
@@ -409,6 +450,34 @@ const ProjectOfferForm = ({
         if (!formData.price.trim()) {
             showAlert(t('projectOfferForm.errors.priceRequired'), 'error');
             return;
+        }
+
+        // Validate date is not in the past
+        if (formData.projectDuration) {
+            const selectedDateObj = new Date(formData.projectDuration);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            selectedDateObj.setHours(0, 0, 0, 0);
+            
+            if (selectedDateObj < today) {
+                showAlert(t('projectOfferForm.errors.pastDateNotAllowed', 'Past dates cannot be selected. Please select today or a future date.'), 'error');
+                return;
+            }
+        }
+
+        // Validate price is a valid positive number
+        if (formData.price) {
+            const priceNum = parseFloat(formData.price);
+            if (isNaN(priceNum) || priceNum <= 0) {
+                showAlert(t('projectOfferForm.errors.priceInvalid', 'Please enter a valid positive price.'), 'error');
+                setPriceError(t('projectOfferForm.errors.priceInvalid', 'Please enter a valid positive price.'));
+                return;
+            }
+            if (priceNum > 9999999999.99) {
+                showAlert(t('projectOfferForm.errors.priceMaxLength', 'Price cannot exceed 10 digits'), 'error');
+                setPriceError(t('projectOfferForm.errors.priceMaxLength', 'Price cannot exceed 10 digits'));
+                return;
+            }
         }
 
         // Validate demand quote ID - prioritize explicit prop, then project object
@@ -791,17 +860,29 @@ const ProjectOfferForm = ({
                     <div className="form-group">
                         <input
                             type="text"
-                            className="form-input"
+                            className={`form-input ${priceError ? 'error' : ''}`}
                             placeholder={pricePlaceholder}
                             value={formData.price}
                             onChange={(e) => handleInputChange('price', e.target.value)}
                             dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}
+                            maxLength={13}
                             style={{
                                 textAlign: i18n.language === 'ar' ? 'right' : 'left',
                                 direction: i18n.language === 'ar' ? 'rtl' : 'ltr',
-                                backgroundColor: 'transparent'
+                                backgroundColor: 'transparent',
+                                borderColor: priceError ? '#dc3545' : undefined
                             }}
                         />
+                        {priceError && (
+                            <div className="error-message" style={{
+                                color: '#dc3545',
+                                fontSize: '0.875rem',
+                                marginTop: '0.25rem',
+                                textAlign: i18n.language === 'ar' ? 'right' : 'left'
+                            }}>
+                                {priceError}
+                            </div>
+                        )}
                     </div>
 
                     {/* File Upload Field */}
@@ -906,17 +987,28 @@ const ProjectOfferForm = ({
                                 {generateCalendarDays().map((dayObj, index) => (
                                     <div
                                         key={index}
-                                        className={`calendar-day ${!dayObj.isCurrentMonth ? 'other-month' : ''} ${dayObj.isSelected ? 'selected' : ''} ${dayObj.isHovered ? 'hovered' : ''}`}
+                                        className={`calendar-day ${!dayObj.isCurrentMonth ? 'other-month' : ''} ${dayObj.isSelected ? 'selected' : ''} ${dayObj.isHovered ? 'hovered' : ''} ${dayObj.isPastDate ? 'past-date' : ''}`}
                                         onClick={() => {
-                                            // Allow selecting any date (including previous dates and future dates)
+                                            // Prevent selecting past dates
+                                            if (dayObj.isPastDate) {
+                                                showAlert(t('projectOfferForm.errors.pastDateNotAllowed', 'Past dates cannot be selected. Please select today or a future date.'), 'error');
+                                                return;
+                                            }
                                             handleDateSelect(dayObj.date);
                                         }}
-                                        onMouseEnter={() => setHoveredDate(dayObj.date)}
+                                        onMouseEnter={() => {
+                                            if (!dayObj.isPastDate) {
+                                                setHoveredDate(dayObj.date);
+                                            }
+                                        }}
                                         onMouseLeave={() => setHoveredDate(null)}
                                         style={{
-                                            cursor: 'pointer',
-                                            opacity: !dayObj.isCurrentMonth ? 0.6 : 1
+                                            cursor: dayObj.isPastDate ? 'not-allowed' : 'pointer',
+                                            opacity: !dayObj.isCurrentMonth ? 0.6 : dayObj.isPastDate ? 0.4 : 1,
+                                            backgroundColor: dayObj.isPastDate ? '#f0f0f0' : 'transparent',
+                                            color: dayObj.isPastDate ? '#999' : 'inherit'
                                         }}
+                                        title={dayObj.isPastDate ? t('projectOfferForm.errors.pastDateNotAllowed', 'Past dates cannot be selected') : ''}
                                     >
                                         {dayObj.day}
                                     </div>
