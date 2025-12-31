@@ -153,11 +153,20 @@ const ProfileSP = () => {
         // Get current language
         const currentLang = i18n.language || 'en';
         
-        // Translate based on notification type or content keywords
-        let title = notification.title || '';
-        let message = notification.message || '';
+        // First, check if notification has Arabic/English fields (like Profile.jsx)
+        // If we have proper Arabic/English fields, use them directly
+        if (notification.title_ar && notification.title_en && notification.message_ar && notification.message_en) {
+            return {
+                title: currentLang === 'ar' ? notification.title_ar : notification.title_en,
+                message: currentLang === 'ar' ? notification.message_ar : notification.message_en
+            };
+        }
         
-        // Translate common notification types
+        // Fallback: Get title and message from available fields
+        let title = notification.title_ar || notification.title_en || notification.title || '';
+        let message = notification.message_ar || notification.message_en || notification.message || '';
+        
+        // Translate common notification types by type
         if (notification.type === 'project_request') {
             title = currentLang === 'ar' ? 'طلب مشروع جديد' : 'New Project Request';
             message = currentLang === 'ar' ? 'تم إرسال طلب مشروع جديد لك' : 'A new project request has been sent to you';
@@ -175,46 +184,40 @@ const ProfileSP = () => {
             message = currentLang === 'ar' ? 'تلقيت تقييماً جديداً' : 'You have received a new review';
         }
         
-        // Normalize common backend strings
-        // Title like "New Service Request"
-        if (!title || /new\s+service\s+request/i.test(title)) {
-            title = currentLang === 'ar' ? 'طلب خدمة جديد' : 'New Service Request';
-        }
-
-        // Message like "New demand quote for <Name>"
-        if (message && /new\s+demand\s+quote\s+for\s+/i.test(message)) {
-            try {
-                const nameMatch = message.split(/new\s+demand\s+quote\s+for\s+/i)[1]?.trim();
-                const name = nameMatch || '';
-                message = t('profile.notifications.newDemandQuoteFor', { name });
-            } catch (_) {
-                // fallback to original message
+        // Translate common patterns when in Arabic mode
+        if (currentLang === 'ar') {
+            // Handle "Proposal Accepted" title
+            if (title && /proposal\s+accepted/i.test(title.toLowerCase()) && !/تم قبول العرض/.test(title)) {
+                title = 'تم قبول العرض';
             }
-        }
-        
-        // If no specific translation found, try to translate common keywords
-        if (!title && notification.title) {
-            const titleLower = notification.title.toLowerCase();
-            if (titleLower.includes('project') || titleLower.includes('مشروع')) {
-                title = currentLang === 'ar' ? 'إشعار مشروع' : 'Project Notification';
-            } else if (titleLower.includes('payment') || titleLower.includes('دفع')) {
-                title = currentLang === 'ar' ? 'إشعار دفع' : 'Payment Notification';
-            } else {
-                title = notification.title;
+            
+            // Handle "Proposal Accepted" message pattern
+            // Match: "Congratulations! Your proposal for [name] has been accepted!"
+            if (message && /congratulations/i.test(message) && /proposal/i.test(message) && /accepted/i.test(message) && !/تهانينا.*تم قبول/.test(message)) {
+                const projectMatch = message.match(/proposal\s+for\s+([^!\.]+?)(?:\s+has\s+been\s+accepted|\s+accepted|!|\.|$)/i);
+                const projectName = projectMatch ? projectMatch[1].trim() : '';
+                message = `تهانينا! تم قبول عرضك لمشروع ${projectName}! يمكنك الآن بدء المشروع.`;
             }
-        }
-        
-        if (!message && notification.message) {
-            const messageLower = notification.message.toLowerCase();
-            if (messageLower.includes('new') || messageLower.includes('جديد')) {
-                message = currentLang === 'ar' ? 'إشعار جديد' : 'New notification';
-            } else {
-                message = notification.message;
+            
+            // Normalize common backend strings
+            if (!title || /new\s+service\s+request/i.test(title)) {
+                title = 'طلب خدمة جديد';
+            }
+            
+            // Handle "New demand quote for <Name>"
+            if (message && /new\s+demand\s+quote\s+for\s+/i.test(message)) {
+                try {
+                    const nameMatch = message.split(/new\s+demand\s+quote\s+for\s+/i)[1]?.trim();
+                    const name = nameMatch || '';
+                    message = t('profile.notifications.newDemandQuoteFor', { name });
+                } catch (_) {
+                    // fallback to original message
+                }
             }
         }
         
         return { title, message };
-    }, [i18n.language]);
+    }, [i18n.language, t]);
 
     const formatNotificationDate = useCallback((dateString) => {
         if (!dateString) return '';

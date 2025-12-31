@@ -145,6 +145,32 @@
     background-image: none !important;
   }
 
+  // Remove Bootstrap's error icon to prevent overlap with buttons/content below
+  .form-control.is-invalid {
+    background-image: none !important;
+    background-repeat: initial !important;
+    background-position: initial !important;
+    background-size: auto !important;
+  }
+
+  // Ensure error messages have proper spacing and don't overlap with buttons
+  .form-group {
+    margin-bottom: 1rem;
+    
+    .text-danger {
+      display: block;
+      margin-top: 0.25rem;
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+  }
+
+  // Ensure spacing before submit button to prevent overlap
+  .signup-form .form-group:last-of-type {
+    margin-bottom: 1.5rem;
+  }
+
   // Custom toggle switch styling
   .auth-toggle-container {
     display: flex;

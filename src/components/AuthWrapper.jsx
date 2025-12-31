@@ -1,12 +1,80 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../context/AlertContext';
 import { useTranslation } from 'react-i18next';
+import { useUser } from '../context/Profile';
+import { useSPProfile } from '../context/SPProfileContext';
+import { checkUserSuspension, handleSuspendedUser } from '../utils/suspensionHandler';
 
 const AuthWrapper = ({ children }) => {
     const [isChecking, setIsChecking] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const { showAlert: showAlertFunction } = useAlert();
     const { t } = useTranslation();
+    const { userProfile, fetchUserProfile } = useUser();
+    const { spProfile, fetchSPProfile } = useSPProfile();
+    const navigate = useNavigate();
+
+    // Check for suspended status
+    useEffect(() => {
+        const checkSuspension = async () => {
+            try {
+                const userRole = localStorage.getItem('userRole');
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                if (!isLoggedIn) return;
+                
+                let profileData = null;
+                if (userRole === 'sp') {
+                    // Check SP profile if available, otherwise fetch it
+                    if (spProfile) {
+                        profileData = spProfile;
+                    } else {
+                        try {
+                            profileData = await fetchSPProfile();
+                        } catch (error) {
+                            console.error('Error fetching SP profile for suspension check:', error);
+                        }
+                    }
+                } else {
+                    // Check regular user profile if available, otherwise fetch it
+                    if (userProfile) {
+                        profileData = userProfile;
+                    } else {
+                        try {
+                            profileData = await fetchUserProfile();
+                        } catch (error) {
+                            console.error('Error fetching user profile for suspension check:', error);
+                        }
+                    }
+                }
+                
+                if (profileData && checkUserSuspension(profileData, userRole || 'user')) {
+                    handleSuspendedUser(t('common.accountSuspended', 'Your account has been suspended. Please contact support.'));
+                }
+            } catch (error) {
+                console.error('Error checking suspension status:', error);
+            }
+        };
+        
+        // Check suspension status periodically (every 30 seconds)
+        const intervalId = setInterval(checkSuspension, 30000);
+        
+        // Initial check
+        checkSuspension();
+        
+        return () => clearInterval(intervalId);
+    }, [userProfile, spProfile, fetchUserProfile, fetchSPProfile, t]);
+
+    // Listen for suspension event
+    useEffect(() => {
+        const handleSuspensionEvent = () => {
+            handleSuspendedUser(t('common.accountSuspended', 'Your account has been suspended. Please contact support.'));
+        };
+        
+        window.addEventListener('userSuspended', handleSuspensionEvent);
+        return () => window.removeEventListener('userSuspended', handleSuspensionEvent);
+    }, [t]);
 
     useEffect(() => {
         const checkAuth = () => {

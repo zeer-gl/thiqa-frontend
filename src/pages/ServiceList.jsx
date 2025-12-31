@@ -705,15 +705,18 @@ const ServiceList = () => {
                                 src={provider.image}
                                 alt={provider.name}
                                 className="provider-image"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/src/assets/payment/servicelist-card-img.svg";
+                                }}
                               />
                             ) : (
-                              <Avatar
-                                alt={provider.name || "Provider"}
+                              <img
+                                src="/src/assets/payment/servicelist-card-img.svg"
+                                alt={provider.name || "Service"}
                                 className="provider-image"
-                                sx={{ width: "100%", height: "100%" }}
-                              >
-                                {provider.name?.[0]?.toUpperCase() || "P"}
-                              </Avatar>
+                                style={{ objectFit: 'cover' }}
+                              />
                             )}
                                                     <button
                               className={`favorite-btn ${likedProfessionals[provider.id] ? 'active' : ''}`}

@@ -455,7 +455,23 @@ const PricingPackages = () => {
                 if (responseText.includes('<!DOCTYPE html>') || responseText.includes('<html')) {
                     throw new Error('Server endpoint not found. Please contact support to enable COD payments.');
                 }
-                throw new Error(`COD subscription failed: ${responseText}`);
+                
+                // Try to parse error message from response
+                try {
+                    const errorData = JSON.parse(responseText);
+                    const backendMessage = errorData.message || errorData.error || '';
+                    
+                    // Check for specific backend error messages and translate them
+                    if (backendMessage.includes('You already have an active subscription') || 
+                        backendMessage.includes('Only one subscription allowed at a time')) {
+                        throw new Error(t('pricingPackages.activeSubscriptionExists', 'You already have an active subscription. Only one subscription allowed at a time.'));
+                    } else {
+                        throw new Error(backendMessage || `COD subscription failed: ${responseText}`);
+                    }
+                } catch (parseError) {
+                    // If parsing fails, throw the original error
+                    throw new Error(`COD subscription failed: ${responseText}`);
+                }
             }
 
             const data = JSON.parse(responseText);
@@ -534,7 +550,14 @@ const PricingPackages = () => {
                 // If the API returns a payment URL (for online payment), show error for COD
                 throw new Error('COD payment method not supported by backend. Please contact support.');
             } else {
-                throw new Error(data.message || 'COD subscription failed');
+                // Check for specific backend error messages in data.message
+                const backendMessage = data.message || '';
+                if (backendMessage.includes('You already have an active subscription') || 
+                    backendMessage.includes('Only one subscription allowed at a time')) {
+                    throw new Error(t('pricingPackages.activeSubscriptionExists', 'You already have an active subscription. Only one subscription allowed at a time.'));
+                } else {
+                    throw new Error(backendMessage || 'COD subscription failed');
+                }
             }
 
         } catch (error) {
@@ -543,7 +566,11 @@ const PricingPackages = () => {
             
             let errorMessage = t('pricingPackages.codFailed', 'Failed to process COD subscription. Please try again.');
             
-            if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
+            // Check for specific backend error messages and translate them
+            if (error.message.includes('You already have an active subscription') || 
+                error.message.includes('Only one subscription allowed at a time')) {
+                errorMessage = t('pricingPackages.activeSubscriptionExists', 'You already have an active subscription. Only one subscription allowed at a time.');
+            } else if (error.message.includes('NetworkError') || error.message.includes('fetch')) {
                 errorMessage = t('pricingPackages.networkError', 'Network error. Please check your internet connection and try again.');
             } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
                 errorMessage = t('pricingPackages.sessionExpired', 'Session expired. Please login again and try.');

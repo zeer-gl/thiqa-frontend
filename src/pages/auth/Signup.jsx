@@ -247,8 +247,29 @@ function Signup() {
         setShowOtpModal(true);
         startTimer();
       } else {
-        // Registration failed, show error
-        showAlert(registrationResult.message, 'error');
+        // Registration failed, translate and show error
+        let errorMessage = registrationResult.message || 'Registration failed';
+        
+        // Translate common backend error messages
+        if (errorMessage.toLowerCase().includes('user with this phone number already exists')) {
+          errorMessage = t('auth.signup.phoneNumberAlreadyExists', {
+            defaultValue: 'User with this phone number already exists'
+          });
+        } else if (errorMessage.toLowerCase().includes('phone number already exists')) {
+          errorMessage = t('auth.signup.phoneAlreadyExists', {
+            defaultValue: 'Phone number already exists. Please use a different phone number or try logging in.'
+          });
+        } else if (errorMessage.toLowerCase().includes('user with this email already exists')) {
+          errorMessage = t('auth.signup.emailAlreadyExists', {
+            defaultValue: 'Email already exists. Please use a different email or try logging in.'
+          });
+        } else if (errorMessage.toLowerCase().includes('user with this email or phone number already exists')) {
+          errorMessage = t('auth.signup.userAlreadyExists', {
+            defaultValue: 'User with this email or phone number already exists. Please use different credentials or try logging in.'
+          });
+        }
+        
+        showAlert(errorMessage, 'error');
       }
     } catch (error) {
       console.error('Registration flow error:', error);
@@ -942,13 +963,13 @@ function Signup() {
                       </Link>
                     </div>
                     <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
-                      <a href="#" className="text-decoration-none fw-semibold d-flex align-items-center justify-content-center">
+                      <Link to="/terms-of-service" className="text-decoration-none fw-semibold d-flex align-items-center justify-content-center">
                         {t("auth.signup.terms")}
-                      </a>
+                      </Link>
                       <p className="mb-0 d-flex align-items-center justify-content-center">{t("auth.signup.and")}</p>
-                      <a href="#" className="text-decoration-none fw-semibold d-flex align-items-center justify-content-center">
+                      <Link to="/privacy-policy" className="text-decoration-none fw-semibold d-flex align-items-center justify-content-center">
                         {t("auth.signup.privacy")}
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </form>

@@ -28,6 +28,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Avatar from "@mui/material/Avatar";
 import { useLikes } from '../context/LikesContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FaEyeSlash } from "react-icons/fa";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import Star from "@mui/icons-material/Star";
@@ -767,7 +768,14 @@ const Profile = () => {
           const errorMessage = data.error.replace('customer.CustomerAddresses validation failed: ', '');
           showAlert(errorMessage, 'error');
         } else {
-          showAlert(data.message || `Failed to create address: ${response.status}`, 'error');
+          // Translate common backend error messages
+          let errorMessage = data.message || `Failed to create address: ${response.status}`;
+          if (errorMessage.toLowerCase().includes('all fields are required')) {
+            errorMessage = t('profile.addresses.allFieldsRequired', {
+              defaultValue: 'All fields are required'
+            });
+          }
+          showAlert(errorMessage, 'error');
         }
         return false;
       }
@@ -809,7 +817,14 @@ const Profile = () => {
           const errorMessage = data.error.replace('customer.CustomerAddresses validation failed: ', '');
           showAlert(errorMessage, 'error');
         } else {
-          showAlert(data.message || `Failed to update address: ${response.status}`, 'error');
+          // Translate common backend error messages
+          let errorMessage = data.message || `Failed to update address: ${response.status}`;
+          if (errorMessage.toLowerCase().includes('all fields are required')) {
+            errorMessage = t('profile.addresses.allFieldsRequired', {
+              defaultValue: 'All fields are required'
+            });
+          }
+          showAlert(errorMessage, 'error');
         }
         return false;
       }
@@ -1397,7 +1412,7 @@ const Profile = () => {
   
       // ✅ Handle response
       if (res.ok) {
-        showAlert(t("Profile updated successfully"), "success");
+        showAlert(t('profile.content.profileUpdated', 'Profile updated successfully!'), 'success');
         try {
           fetchUserProfile();
         } catch (error) {
@@ -1552,7 +1567,9 @@ const Profile = () => {
       }
       
       if (data.success) {
-        const successMessage = t('profile.changePassword.successMessage');
+        const successMessage = t('profile.changePassword.successMessage', {
+          defaultValue: i18n.language === 'ar' ? 'تم تحديث كلمة المرور بنجاح' : 'Password updated successfully'
+        });
         console.log('Success message:', successMessage); // Debug log
         showAlert(successMessage, 'success');
         // Clear form
@@ -2694,11 +2711,15 @@ const Profile = () => {
                             onClick={toggleCurrentPasswordVisibility}
                             style={{ cursor: 'pointer', zIndex: 10 }}
                           >
-                            <img 
-                              src={EyeIcon} 
-                              alt="Toggle password visibility"
-                              style={{ width: '20px', height: '20px', opacity: showCurrentPassword ? 1 : 0.6 }}
-                            />
+                            {showCurrentPassword ? (
+                              <FaEyeSlash style={{ width: '20px', height: '20px' }} />
+                            ) : (
+                              <img 
+                                src={EyeIcon} 
+                                alt="Toggle password visibility"
+                                style={{ width: '20px', height: '20px' }}
+                              />
+                            )}
                           </button>
                         </div>
                         {changePasswordErrors.currentPassword && (
@@ -2727,11 +2748,15 @@ const Profile = () => {
                             onClick={toggleNewPasswordVisibility}
                             style={{ cursor: 'pointer', zIndex: 10 }}
                           >
-                            <img 
-                              src={EyeIcon} 
-                              alt="Toggle password visibility"
-                              style={{ width: '20px', height: '20px', opacity: showNewPassword ? 1 : 0.6 }}
-                            />
+                            {showNewPassword ? (
+                              <FaEyeSlash style={{ width: '20px', height: '20px' }} />
+                            ) : (
+                              <img 
+                                src={EyeIcon} 
+                                alt="Toggle password visibility"
+                                style={{ width: '20px', height: '20px' }}
+                              />
+                            )}
                           </button>
                         </div>
                         {changePasswordErrors.newPassword && (

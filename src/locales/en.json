@@ -59,7 +59,11 @@
         "startAdding": "Start by adding your first service",
         "delivery": "Delivery",
         "unitPlaceholder": "e.g., Kg, Ltr, Hour",
-        "deliveryTimePlaceholder": "e.g., 3-5 business days"
+        "deliveryTimePlaceholder": "e.g., 3-5 business days",
+        "nameArRequired": "Service name in Arabic is required",
+        "imageSizeError": "Image size must be less than 1MB",
+        "imageTypeError": "Please select a valid image file (JPEG, PNG, GIF, WebP)",
+        "subscriptionRequired": "You need an active subscription to create or edit services. Please subscribe to a plan first."
       },
       "featureSection": {
         "customerSupport": {
@@ -540,6 +544,7 @@
       "description-required": "Description is required",
       "description-min-length": "Description must be at least 10 characters",
       "budget-required": "Budget is required",
+    "budget-positive": "Budget must be greater than 0",
       "deadline-required": "Deadline is required",
       "address-required": "Address is required",
       "type-required": "Service type is required",
@@ -746,6 +751,7 @@
       "userAlreadyExists": "User with this email or phone number already exists. Please use different credentials or try logging in.",
       "emailAlreadyExists": "Email already exists. Please use a different email or try logging in.",
       "phoneAlreadyExists": "Phone number already exists. Please use a different phone number or try logging in.",
+      "phoneNumberAlreadyExists": "User with this phone number already exists",
       "emailAndPhoneExist": "Email and phone number already exist. Please use different credentials or try logging in.",
       "genericError": "An error occurred. Please try again.",
       "validation": {
@@ -924,6 +930,8 @@
       "passwordResetSuccess": "Password reset successfully",
       "resetError": "Failed to reset password",
       "networkError": "Network error occurred",
+      "customerNotFound": "Customer not found with the provided email or phone number",
+      "professionalNotFound": "Professional not found with the provided email or phone number",
       "email": "Email",
       "phone": "Phone",
       "emailPlaceholder": "example@example.com",
@@ -972,7 +980,8 @@
       "phoneNumberValue": "+91 95744 68870",
       "editProfileButton": "Edit Profile",
       "changePasswordButton": "Change Password",
-      "logout": "Logout"
+      "logout": "Logout",
+      "profileUpdated": "Profile updated successfully!"
     },
     "changePassword": {
       "title": "Change Password",
@@ -989,7 +998,7 @@
       "currentPasswordIncorrect": "Current password is incorrect",
       "passwordTooWeak": "Password is too weak",
       "networkError": "Network error",
-      "successMessage": "Password changed successfully",
+      "successMessage": "Password updated successfully",
       "errorMessage": "Failed to change password"
     },
     "phoneVerification": {
@@ -1053,6 +1062,7 @@
       "updateError": "Failed to update address",
       "deleteSuccess": "Address deleted successfully",
       "fillRequiredFields": "Please fill in all required fields",
+      "allFieldsRequired": "All fields are required",
       "invalidLatitude": "Latitude must be between -90 and 90",
       "invalidLongitude": "Longitude must be between -180 and 180",
       "saveError": "Failed to save address"
@@ -1344,7 +1354,9 @@
     "dataFormatError": "There was an issue with the data format. Please check your input and try again.",
     "requestTimeout": "Request timeout. Please try again with a smaller file.",
     "networkError": "Network error. Please check your connection and try again.",
-    "requestFailed": "Request failed. Please try again."
+    "requestFailed": "Request failed. Please try again.",
+    "errorCreatingDemandQuote": "Error creating demand quote",
+    "accountSuspended": "Your account has been suspended. Please contact support."
   },
   "pricingPackages": {
     "planNames": {
@@ -1437,7 +1449,8 @@
         "open": "Open",
         "inProgress": "In Progress",
         "accepted": "Accepted",
-        "completeConstruction": "Complete Construction"
+        "completeConstruction": "Complete Construction",
+        "completed": "Completed"
       },
       "viewPrice": "View Price",
       "downloadDesign": "Download Project Design",
@@ -1580,6 +1593,7 @@
       "submitting": "Submitting",
       "priceQuote": "Price Quote",
         "projectCompletionFile": "Project Completion File",
+        "projectCompletionFiles": "Project is Completed by admin",
         "projectCompleted": "Project Completed",
         "projectCompletedAwaitingPayment": "Project Completed - Awaiting Payment",
         "projectCompletedPaymentCompleted": "Project Completed - Payment Completed",
@@ -1589,7 +1603,7 @@
       "accepted": "Accepted",
       "startProject": "Start Project",
       "starting": "Starting...",
-      "alreadyApplied": "You have already applied to this job"
+      "alreadyApplied": "You have applied to this job"
     },
     "status": {
       "rejected": "Project or Offer is Rejected"
@@ -1689,7 +1703,8 @@
     "mobileTooLong": "Mobile number is too long. Maximum allowed is 11 digits.",
     "mobileTooShort": "Mobile number is too short. Please provide a valid mobile number.",
     "networkError": "Network error. Please check your internet connection and try again.",
-    "sessionExpired": "Session expired. Please login again and try."
+    "sessionExpired": "Session expired. Please login again and try.",
+    "activeSubscriptionExists": "You already have an active subscription. Only one subscription allowed at a time."
   },
   "Favourite": "Favorite",
   "Unfavourite": "Unfavorite",
@@ -1697,6 +1712,9 @@
     "errors": {
       "fillRequiredFields": "Please fill in all required fields",
       "durationRequired": "Duration is required",
+      "pastDateNotAllowed": "Past dates cannot be selected. Please select today or a future date.",
+      "priceInvalid": "Please enter a valid positive price.",
+      "priceMaxLength": "Price cannot exceed 10 digits",
       "priceRequired": "Price is required",
       "projectInfoMissing": "Project information is missing or invalid",
       "professionalAccountNotFound": "Professional account not found. Please login again.",
@@ -1805,7 +1823,8 @@
       "home": {
         "serviceManagement": {
           "serviceNameArPlaceholder": "Enter service name in Arabic",
-          "arabicTextRequired": "Please enter text in Arabic only"
+          "arabicTextRequired": "Please enter text in Arabic only",
+          "nameArRequired": "Service name in Arabic is required"
         }
       }
     }

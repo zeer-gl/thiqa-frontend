@@ -1049,11 +1049,11 @@ const validateForm = () => {
                                 </div>
                                 <div className="my-4">
                                     <h2 className={`pb-3 ${i18n.language === 'ar' ? 'ar-heading-bold' : ''}`}>{t('auth.signupsp.title')}</h2>
-                                    {/* <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
+                                    <h5 className={i18n.language === 'ar' ? 'ar-heading-bold' : ''}>
                                         <Link to="/login-sp" className='text-decoration-none'>
-                                            {t('auth.signupsp.subtitle')}
+                                            {t('auth.signupsp.subtitle', 'Already have an account? Login')}
                                         </Link>
-                                    </h5> */}
+                                    </h5>
                                 </div>
                                 <form onSubmit={handleCreateAccount} className='signup-form' style={{ paddingTop: '2rem' }}>
                                     <div className="d-flex flex-column justify-content-center">
@@ -1536,6 +1536,11 @@ const validateForm = () => {
                                                 ) : t('auth.signupsp.createAccount')}
                                             </button>
                                         </div>
+                                        <div className='mt-3'>
+                                            <Link to="/login-sp" className='btn pt-2 seeker-auth-btn text-decoration-none d-flex align-items-center justify-content-center w-100'>
+                                                {t('auth.signupsp.login', 'Login')}
+                                            </Link>
+                                        </div>
                                     </div>
                                     <div className='text-center mt-4'>
                                         {errorMsg && (
@@ -1576,14 +1581,19 @@ const validateForm = () => {
                                                 {t('auth.signupsp.registerAsCustomer')}
                                             </Link>
                                         </div>
+                                        <div className='mt-3'>
+                                            <Link to="/login-sp" className='btn pt-2 ev-submit-btn text-decoration-none d-flex align-items-center justify-content-center'>
+                                                {t('auth.signupsp.login', 'Login')}
+                                            </Link>
+                                        </div>
                                         <div className='d-flex align-items-center gap-2 justify-content-center mt-4'>
-                                            <a href="#" className='text-decoration-none fw-semibold'>
+                                            <Link to="/terms-of-service" className='text-decoration-none fw-semibold'>
                                                 {t('auth.signupsp.terms')}
-                                            </a>
+                                            </Link>
                                             <p className='m-0'>{t('auth.signupsp.and')}</p>
-                                            <a href="#" className='text-decoration-none fw-semibold'>
+                                            <Link to="/privacy-policy" className='text-decoration-none fw-semibold'>
                                                 {t('auth.signupsp.privacy')}
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
 

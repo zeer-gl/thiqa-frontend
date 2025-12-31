@@ -152,11 +152,25 @@ function ForgetPasswordSP() {
                 showAlert(t('auth.forgotPassword.otpSent', 'OTP sent to your ' + (usePhone ? 'phone number' : 'email')), 'success');
                 setCurrentStep(2);
             } else {
-                throw new Error(data.message || t('auth.forgotPassword.sendOtpError', 'Failed to send OTP'));
+                // Translate common backend error messages
+                let errorMessage = data.message || t('auth.forgotPassword.sendOtpError', 'Failed to send OTP');
+                if (errorMessage.toLowerCase().includes('professional not found with the provided email or phone number')) {
+                    errorMessage = t('auth.forgotPassword.professionalNotFound', {
+                        defaultValue: 'Professional not found with the provided email or phone number'
+                    });
+                }
+                throw new Error(errorMessage);
             }
         } catch (error) {
             console.error('Send OTP Error:', error);
-            showAlert(error.message || t('auth.forgotPassword.networkError', 'Network error occurred'), 'error');
+            // Translate error message if it contains the professional not found message
+            let errorMessage = error.message || t('auth.forgotPassword.networkError', 'Network error occurred');
+            if (errorMessage.toLowerCase().includes('professional not found with the provided email or phone number')) {
+                errorMessage = t('auth.forgotPassword.professionalNotFound', {
+                    defaultValue: 'Professional not found with the provided email or phone number'
+                });
+            }
+            showAlert(errorMessage, 'error');
         }
     };
 
@@ -179,11 +193,25 @@ function ForgetPasswordSP() {
                 showAlert(t('auth.forgotPassword.otpVerified', 'OTP verified successfully'), 'success');
                 setCurrentStep(3);
             } else {
-                throw new Error(data.message || t('auth.forgotPassword.otpInvalid', 'Invalid OTP'));
+                // Translate common backend error messages
+                let errorMessage = data.message || t('auth.forgotPassword.otpInvalid', 'Invalid OTP');
+                if (errorMessage.toLowerCase().includes('professional not found with the provided email or phone number')) {
+                    errorMessage = t('auth.forgotPassword.professionalNotFound', {
+                        defaultValue: 'Professional not found with the provided email or phone number'
+                    });
+                }
+                throw new Error(errorMessage);
             }
         } catch (error) {
             console.error('Verify OTP Error:', error);
-            showAlert(error.message || t('auth.forgotPassword.networkError', 'Network error occurred'), 'error');
+            // Translate error message if it contains the professional not found message
+            let errorMessage = error.message || t('auth.forgotPassword.networkError', 'Network error occurred');
+            if (errorMessage.toLowerCase().includes('professional not found with the provided email or phone number')) {
+                errorMessage = t('auth.forgotPassword.professionalNotFound', {
+                    defaultValue: 'Professional not found with the provided email or phone number'
+                });
+            }
+            showAlert(errorMessage, 'error');
         }
     };
 
