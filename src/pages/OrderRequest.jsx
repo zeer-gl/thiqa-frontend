@@ -1,6 +1,6 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useContext, useState ,useEffect} from 'react';
+import { useContext, useState ,useEffect, useMemo} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import PageHeader from '../components/PageHeader';
@@ -248,6 +248,30 @@ const OrderRequest = () => {
         price: ''
     };
 
+    // Filter project types based on professional's specializations
+    const filteredProjectTypes = useMemo(() => {
+        const professionalId = getCurrentProviderId();
+        
+        // If no professional ID, show all project types
+        if (!professionalId || !professionalData) {
+            return projectTypes;
+        }
+        
+        // If professional has specializations, filter project types to only show those
+        if (professionalData.specializations && professionalData.specializations.length > 0) {
+            const specializationIds = professionalData.specializations.map(spec => 
+                typeof spec === 'object' ? spec._id : spec
+            );
+            
+            return projectTypes.filter(type => 
+                specializationIds.includes(type._id)
+            );
+        }
+        
+        // If professional has no specializations, show all (fallback)
+        return projectTypes;
+    }, [projectTypes, professionalData, providerId, location.search]);
+
     // Debug logging
     console.log('OrderRequest Debug:', {
         providerId: getCurrentProviderId(),
@@ -255,7 +279,9 @@ const OrderRequest = () => {
         localStorageData: getProfessionalData(),
         serviceName: getServiceName(),
         firstSpecialization: getFirstSpecialization(),
-        initialValues: initialValues
+        initialValues: initialValues,
+        allProjectTypes: projectTypes.length,
+        filteredProjectTypes: filteredProjectTypes.length
     });
 
     // Form fields configuration (order and names per backend)
@@ -277,7 +303,7 @@ const OrderRequest = () => {
             type: 'select', 
             placeholder: t('order-request.project-type'), 
             icon: 'fas fa-project-diagram',
-            options: projectTypes.map(type => ({
+            options: filteredProjectTypes.map(type => ({
                 value: type._id,
                 label: type.name
             }))
